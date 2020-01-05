@@ -10,11 +10,9 @@
         <template slot-scope="scope">
           <a style="cursor:pointer" @click="clickFileName(scope.$index, scope.row)">
             <img v-bind:src="scope.row.imageurl" style="max-width: 30px;" />
-            {{scope.row.filename}}
-            <span
+            {{scope.row.filename}}<span
               v-if="scope.row.isdir==0 && scope.row.extendname != null"
-            >.</span>
-            {{scope.row.extendname}}
+            >.</span>{{scope.row.extendname}}
           </a>
         </template>
       </el-table-column>
