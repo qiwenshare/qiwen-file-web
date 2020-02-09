@@ -18,34 +18,30 @@
 </template>
 
 <script>
+import { selectFileByFileType } from '@/request/file.js'
+
 export default {
-  name: "AsideMenu",
+  name: 'AsideMenu',
   data() {
-    return {};
+    return {}
   },
   methods: {
-    async selectFileByFileType(filetype) {
-      let filepath = this.$route.query.filepath;
+    selectFileByFileType(filetype) {
+      let filepath = this.$route.query.filepath
       this.$router.push({
-        path: "/file",
+        path: '/file',
         query: { filepath: filepath, filetype: filetype }
-      });
-      await this.$http
-        .selectFileByFileType(
-          {
-            filetype
-          },
-          true
-        )
-        .then(function(res) {
-          let result = res.data;
-          if (result.success) {
-            console.log(result.data);
-          }
-        });
+      })
+      selectFileByFileType(filetype).then(res => {
+        if (res.success) {
+          console.log(res.data)
+        } else {
+          this.$message.error(res.errorMessage)
+        }
+      })
     }
   }
-};
+}
 </script>
 
 <style scoped>

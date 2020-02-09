@@ -13,22 +13,20 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import "~@/assets/styles/varibles.styl"
-
+@import '~@/assets/styles/varibles.styl'
 .divider
-  width 100%
-  height 2px
-  margin 20px 0
-  display flex
-  // background linear-gradient(to right, $Primary , $Warning);
+  width: 100%
+  height: 2px
+  margin: 20px 0
+  display: flex
   .first
-    flex 2
-    background $Primary 
-  .second 
-    flex 1
-    background $Warning
+    flex: 2
+    background: $Primary
+  .second
+    flex: 1
+    background: $Warning
   .el-icon-bicycle
-    margin -16px -10px
-    color $Success
-    font-size 20px
+    margin: -16px -10px
+    color: $Success
+    font-size: 20px
 </style>

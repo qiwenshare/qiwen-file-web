@@ -7,43 +7,34 @@
       <el-container>
         <el-main class="el-main">
           <FileList></FileList>
-        </el-main> 
+        </el-main>
       </el-container>
     </el-container>
   </div>
 </template>
 
 <script>
-import AsideMenu from "./components/AsideMenu/AsideMenu";
-import FileList from "./components/FileList/FileList";
-
+import AsideMenu from './components/AsideMenu/AsideMenu'
+import FileList from './components/FileList/FileList'
 
 export default {
-  name: "File",
+  name: 'File',
   components: {
     AsideMenu,
     FileList
   },
-  created(){
-    this.$emit('footer', false); 
+  created() {
+    this.$emit('footer', false)
   }
-};
+}
 </script>
 
 <style lang="stylus" scoped>
-.fileWrapper {
-  width: 100% !important;
-}
-
-.el-container{
-height: 90vh; 
-//border: 1px solid #eee;
-
-}
-
-.el-main{
-      padding-top: 0px !important;
-      overflow hidden
-}
-
+.fileWrapper
+  width: 100% !important
+.el-container
+  height: 90vh
+.el-main
+  padding-top: 0px !important
+  overflow: hidden
 </style>

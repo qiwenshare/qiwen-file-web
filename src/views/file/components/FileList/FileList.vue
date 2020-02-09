@@ -1,18 +1,32 @@
 <template>
   <div>
     <el-header class="el-header">
-      <OperationMenu :operationFile="operationFile" :selectionFile="selectionFile" @showFileList="showFileList" :filepath="filepath"></OperationMenu>
+      <OperationMenu
+        :operationFile="operationFile"
+        :selectionFile="selectionFile"
+        @showFileList="showFileList"
+        :filepath="filepath"
+      ></OperationMenu>
       <BreadCrumb class="breadCrumb" :filepath="filepath"></BreadCrumb>
     </el-header>
-    <el-table @select-all="selectAllFileRow" @select="selectFileRow" ref="multipleTable" :data="fileList" tooltip-effect="dark" height="400">
+    <el-table
+      @select-all="selectAllFileRow"
+      @select="selectFileRow"
+      ref="multipleTable"
+      :data="fileList"
+      tooltip-effect="dark"
+      height="400"
+    >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="文件名" width="500">
         <template slot-scope="scope">
           <a style="cursor:pointer" @click="clickFileName(scope.$index, scope.row)">
             <img v-bind:src="scope.row.imageurl" style="max-width: 30px;" />
-            {{scope.row.filename}}<span
+            {{scope.row.filename}}
+            <span
               v-if="scope.row.isdir==0 && scope.row.extendname != null"
-            >.</span>{{scope.row.extendname}}
+            >.</span>
+            {{scope.row.extendname}}
           </a>
         </template>
       </el-table-column>
@@ -42,7 +56,9 @@
                 v-if="scope.row.extendname=='zip'"
                 @click.native="unzipFile(scope.row)"
               >解压缩</el-dropdown-item>
-              <el-dropdown-item v-if="scope.row.isdir==0" @click.native="downloadFile(scope.row)">下载</el-dropdown-item>
+              <el-dropdown-item v-if="scope.row.isdir === 0">
+                <a :href="scope.row.url" target="_blank" :download="scope.row.filename+'.'+scope.row.extendname" style="display: block;color: inherit;">下载</a>
+              </el-dropdown-item>
               <el-dropdown-item @click.native="deleteFile(scope.row)">删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -64,271 +80,225 @@
         <el-button type="primary" @click="confirmMoveFile">确 定</el-button>
       </div>
     </el-dialog>
-    <!--下载文件表单 -->
-    <form ref="downloadFileForm" action="/api/filetransfer/downloadfile" method="post">
-      <input type="hidden" ref="filename" name="filename" value="">
-      <input type="hidden" ref="fileurl"  name="fileurl"  value="">
-      <input type="hidden" ref="extendname"  name="extendname"  value="">
-    </form>
   </div>
 </template>
 
 <script>
-import OperationMenu from "./components/OperationMenu";
-import BreadCrumb from "./components/BreadCrumb";
+import OperationMenu from './components/OperationMenu'
+import BreadCrumb from './components/BreadCrumb'
+import {
+  getFileTree,
+  moveFile,
+  unzipfile,
+  deleteFile,
+  getfilelist
+} from '@/request/file.js'
 
 export default {
-  name: "FileList",
+  name: 'FileList',
   data() {
     return {
       fileList: [],
       dialogMoveFileVisible: false,
       fileTree: [],
       defaultProps: {
-        children: "children",
-        label: "label"
+        children: 'children',
+        label: 'label'
       },
-      selectFilePath: "", //移动文件路径
+      selectFilePath: '', //移动文件路径
       operationFile: {}, //当前操作行
       selectionFile: [], //选择的文件
-      filepath:"",
-      filetype:""
-    };
+      filepath: '',
+      filetype: ''
+    }
   },
   components: {
     BreadCrumb,
     OperationMenu
   },
   created: function() {
-    let filepath = this.$route.query.filepath;
-      
-    if (filepath == null){
-      filepath = "/"
+    let filepath = this.$route.query.filepath
+
+    if (filepath == null) {
+      filepath = '/'
     }
-    this.filepath = filepath;
-    this.showFileList(filepath);
+    this.filepath = filepath
+    this.showFileList(filepath)
   },
   watch: {
-    $route(to, from) {
-      let filepath = to.query.filepath;
-      
-      this.filetype = to.query.filetype;
-      if(filepath == null){
-        filepath = "/"
+    $route(to) {
+      let filepath = to.query.filepath
+
+      this.filetype = to.query.filetype
+      if (filepath == null) {
+        filepath = '/'
       }
-      this.filepath = filepath;
-      this.showFileList(filepath);
+      this.filepath = filepath
+      this.showFileList(filepath)
     }
   },
   methods: {
-    selectAllFileRow(selection){
-      this.selectionFile = selection;
+    selectAllFileRow(selection) {
+      this.selectionFile = selection
     },
-    selectFileRow(selection, row){
-      this.selectionFile = selection;
+    selectFileRow(selection) {
+      this.selectionFile = selection
     },
-    async initFileTree() {
-      let _this = this;
-      await this.$http.getFileTree({}, true).then(function(res) {
-        let result = res.data;
-        if (result.success) {
-          _this.fileTree = [result.data];
+    initFileTree() {
+      getFileTree().then(res => {
+        if (res.success) {
+          this.fileTree = [res.data]
         } else {
-          alert(result.errorMessage);
+          this.$message.error(res.errorMessage)
         }
-      });
+      })
     },
-    async confirmMoveFile() {
-      this.dialogMoveFileVisible = false;
-      
-      let _this = this;
-      await this.$http
-        .moveFile(
-          {
-            oldfilepath: this.operationFile.filepath,
-            newfilepath: this.selectFilePath,
-            filename: this.operationFile.filename,
-            extendname: this.operationFile.extendname
-          },
-          true
-        )
-        .then(function(res) {
-          let result = res.data;
-          if (result.success) {
-            _this.showFileList(_this.filepath);
-            _this.$message({
-              message: "移动文件成功",
-              type: "success"
-            });
-          } else {
-            _this.$message({
-              message: result.errorMessage,
-              type: "warning"
-            });
-          }
-        });
+    confirmMoveFile() {
+      this.dialogMoveFileVisible = false
+      let data = {
+        oldfilepath: this.operationFile.filepath,
+        newfilepath: this.selectFilePath,
+        filename: this.operationFile.filename,
+        extendname: this.operationFile.extendname
+      }
+      moveFile(data).then(res => {
+        if (res.success) {
+          this.showFileList(this.filepath)
+          this.$message.success('移动文件成功')
+        } else {
+          this.$message.error(res.errorMessage)
+        }
+      })
     },
-    unzipFile: async function(fileInfo) {
+    unzipFile: function(fileInfo) {
       const loading = this.$loading({
         lock: true,
-        text: "正在解压缩，请稍等片刻...",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
-      let _this = this;
-      await this.$http.unzipfile(fileInfo, true).then(function(res) {
-        let result = res.data;
-        if (result.success) {
-          _this.showFileList(_this.filepath);
-          _this.$message({
-            message: "解压成功",
-            type: "success"
-          });
-          loading.close();
+        text: '正在解压缩，请稍等片刻...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      unzipfile(fileInfo).then(res => {
+        if (res.success) {
+          this.showFileList(this.filepath)
+          this.$message.success('解压成功')
+          loading.close()
         } else {
-          _this.$message({
-            message: result.errorMessage,
-            type: "warning"
-          });
+          this.$message.error(res.errorMessage)
         }
-      });
+      })
     },
     selectNodeClick: function(data) {
-
       if (data.attributes.filepath == null) {
-        this.selectFilePath = "/";
+        this.selectFilePath = '/'
       } else {
-        this.selectFilePath = data.attributes.filepath;
+        this.selectFilePath = data.attributes.filepath
       }
     },
     showMoveFileDialog(file) {
-      this.operationFile = file;
-      this.dialogMoveFileVisible = true;
-      this.initFileTree();
+      this.operationFile = file
+      this.dialogMoveFileVisible = true
+      this.initFileTree()
     },
     clickFileName(index, row) {
-      this.$router.push(row.url);
+      this.$router.push(row.url)
     },
     getImagePathByExtend(extendname) {
-      if (extendname == "png" || extendname == "jpg" || extendname == "jpeg") {
-        extendname = "pic";
-      } else if (extendname == "docx" || extendname == "doc") {
-        extendname = "word";
-      } else if (extendname == "ppt" || extendname == "pptx") {
-        extendname = "ppt";
-      } else if (extendname == "xls" || extendname == "xlsx") {
-        extendname = "excel";
-      } else if (extendname == "mp4") {
-        extendname = "video";
+      if (extendname == 'png' || extendname == 'jpg' || extendname == 'jpeg') {
+        extendname = 'pic'
+      } else if (extendname == 'docx' || extendname == 'doc') {
+        extendname = 'word'
+      } else if (extendname == 'ppt' || extendname == 'pptx') {
+        extendname = 'ppt'
+      } else if (extendname == 'xls' || extendname == 'xlsx') {
+        extendname = 'excel'
+      } else if (extendname == 'mp4') {
+        extendname = 'video'
       } else if (
-        extendname == "css" ||
-        extendname == "csv" ||
-        extendname == "chm" ||
-        extendname == "zip"
+        extendname == 'css' ||
+        extendname == 'csv' ||
+        extendname == 'chm' ||
+        extendname == 'zip'
       ) {
-        extendname = extendname;
+        let t = extendname
+        extendname = t
       } else {
-        extendname = "unknown";
+        extendname = 'unknown'
       }
 
-      return require("@/assets/images/file/file_" + extendname + ".png");
+      return require('@/assets/images/file/file_' + extendname + '.png')
     },
-    async confirmDeleteFile(fileInfo) {
-      let _this = this;
-      await this.$http.deleteFile(fileInfo, true).then(function(res) {
-        let result = res.data;
-        if (result.success) {
-          _this.showFileList(_this.filepath);
-          _this.$message({
-            type: "success",
-            message: "移动成功"
-          });
+    confirmDeleteFile(fileInfo) {
+      deleteFile(fileInfo).then(res => {
+        if (res.success) {
+          this.showFileList(this.filepath)
+          this.$message.success('移动成功')
         } else {
-          _this.$message({
-            type: "warning",
-            message: result.errorMessage
-          });
+          this.$message.error(res.errorMessage)
         }
-      });
+      })
     },
     deleteFile(fileInfo) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
-          this.confirmDeleteFile(fileInfo);
-          
+          this.confirmDeleteFile(fileInfo)
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
-    downloadFile(file) {
-      this.$refs.filename.value = file.filename;
-      this.$refs.fileurl.value = file.fileurl;
-      this.$refs.extendname.value = file.extendname;
-      this.$refs.downloadFileForm.submit();
-    },
-    async showFileList(filepath) {
-      
-      let _this = this;
-      await this.$http
-        .getfilelist(
-          {
-            filepath: filepath
-          },
-          true
-        )
-        .then(function(res) {
-          let result = res.data;
-          if (result.success) {
-            var data = result.data;
-
-            var dirArr = [];
-            var fileArr = [];
-            for (var i = 0; i < data.length; i++) {
-              var isdir = data[i].isdir;
-              var filename = data[i].filename;
-              var extendname = data[i].extendname;
-              var url = "/file?filepath=" + filepath + filename + "/";
-              if (_this.filetype != null){
-               
-                url = url + "&filetype=" + _this.filetype;
-              }
-              var fileurl = data[i].fileurl;
-              var imageurl = require("@/assets/images/file/dir.png");
-
-              if (isdir == 0) {
-                url = "api" + fileurl;
-                imageurl = _this.getImagePathByExtend(extendname);
-              }
-              var dataMap = data[i];
-              dataMap.isdir = isdir;
-              dataMap.isshow = false;
-
-              dataMap.imageurl = imageurl;
-              dataMap.extendname = extendname;
-              dataMap.url = url;
-
-              if (isdir == 1) {
-                dirArr.push(dataMap);
-              } else {
-                fileArr.push(dataMap);
-              }
+    showFileList(filepath) {
+      let data = {
+        filepath: filepath
+      }
+      getfilelist(data).then(res => {
+        if (res.success) {
+          var data = res.data
+          var dirArr = []
+          var fileArr = []
+          for (var i = 0; i < data.length; i++) {
+            var isdir = data[i].isdir
+            var filename = data[i].filename
+            var extendname = data[i].extendname
+            var url = '/file?filepath=' + filepath + filename + '/'
+            if (this.filetype != null) {
+              url = url + '&filetype=' + this.filetype
             }
-            _this.fileList = dirArr.concat(fileArr);
-          } else {
-            console.log("失敗" + result);
+            var fileurl = data[i].fileurl
+            var imageurl = require('@/assets/images/file/dir.png')
+
+            if (isdir == 0) {
+              url = 'api' + fileurl
+              imageurl = this.getImagePathByExtend(extendname)
+            }
+            var dataMap = data[i]
+            dataMap.isdir = isdir
+            dataMap.isshow = false
+
+            dataMap.imageurl = imageurl
+            dataMap.extendname = extendname
+            dataMap.url = url
+
+            if (isdir == 1) {
+              dirArr.push(dataMap)
+            } else {
+              fileArr.push(dataMap)
+            }
           }
-        });
+          this.fileList = dirArr.concat(fileArr)
+        } else {
+          this.$message.error(res.errorMessage)
+        }
+      })
     }
   }
-};
+}
 </script>
 
 <style scoped>

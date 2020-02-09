@@ -6,84 +6,80 @@
       </el-breadcrumb-item>
     </el-breadcrumb>
   </div>
-  
 </template>
 
 <script>
 export default {
-  name: "BreadCrumb",
-  data(){
+  name: 'BreadCrumb',
+  data() {
     return {
-      breadCrumbList:[]
+      breadCrumbList: []
     }
   },
-  props:{ // 接收父组件的传值
+  props: {
     filepath: String
   },
   watch: {
     $route(to, from) {
-      //debugger;
-      let filetype = from.query.filetype;
-      let filepath = to.query.filepath;
-      if(filetype != null){
+      let filetype = from.query.filetype
+      // let filepath = to.query.filepath;
+      if (filetype != null) {
         //this.$router.push({path:to.fullPath, query: {filetype:filetype, filepath:filepath}});
       }
-      this.showBreadCrumb();
+      this.showBreadCrumb()
     }
   },
-  created: function(){
-    this.showBreadCrumb();
+  created: function() {
+    this.showBreadCrumb()
   },
-  methods:{
-    clickbread: function(breadPath){
-      let filetype = this.$route.query.filetype;
-      console.log(filetype);
-      
-      if (filetype == null || filetype == ""){
+  methods: {
+    clickbread: function(breadPath) {
+      let filetype = this.$route.query.filetype
+      console.log(filetype)
+
+      if (filetype == null || filetype == '') {
         this.$router.push({
-          path: "/file",
-          query: { filepath: breadPath}
-        });
-      }else{
+          path: '/file',
+          query: { filepath: breadPath }
+        })
+      } else {
         this.$router.push({
-          path: "/file",
+          path: '/file',
           query: { filepath: breadPath, filetype: filetype }
-        });
+        })
       }
     },
     showBreadCrumb: function() {
-      let filepath = this.$route.query.filepath;
-      var nameArr;
-      if (filepath == null || filepath == undefined){
-        nameArr = [];
-      }else{
-        nameArr = filepath.split("/");
+      let filepath = this.$route.query.filepath
+      var nameArr
+      if (filepath == null || filepath == undefined) {
+        nameArr = []
+      } else {
+        nameArr = filepath.split('/')
       }
-      var tempPath = "/";
-      var breadCrumbList = [];
-      var breadCrumbObj = {};
-      breadCrumbObj.breadName = "全部文件";
-      breadCrumbObj.breadPath = "/";
-      breadCrumbList.push(breadCrumbObj);
+      var tempPath = '/'
+      var breadCrumbList = []
+      var breadCrumbObj = {}
+      breadCrumbObj.breadName = '全部文件'
+      breadCrumbObj.breadPath = '/'
+      breadCrumbList.push(breadCrumbObj)
       for (var i = 0; i < nameArr.length; i++) {
-        if (nameArr[i] == "") {
-          continue;
+        if (nameArr[i] == '') {
+          continue
         }
-        tempPath += nameArr[i];
-        tempPath += "/";
-        var breadCrumbObj = {};
-        breadCrumbObj.breadName = nameArr[i];
-        breadCrumbObj.breadPath = tempPath;
-        breadCrumbList.push(breadCrumbObj);
+        tempPath += nameArr[i]
+        tempPath += '/'
+        var breadCrumbObj = {}
+        breadCrumbObj.breadName = nameArr[i]
+        breadCrumbObj.breadPath = tempPath
+        breadCrumbList.push(breadCrumbObj)
       }
-      
-      this.breadCrumbList = breadCrumbList;
+
+      this.breadCrumbList = breadCrumbList
     }
   }
-  
 }
 </script>
 
 <style scoped>
-
 </style>
