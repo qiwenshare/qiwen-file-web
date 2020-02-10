@@ -66,7 +66,7 @@ export default {
   data() {
     return {
       registerTitle: '注册',
-      registerSystem: '奇文share',
+      registerSystem: '奇文网盘',
       codeIsShow: false,
       codeSecond: 5,
       ruleForm: {

@@ -66,7 +66,7 @@ export default {
   data() {
     return {
       loginTitle: '登录',
-      loginSystem: '奇文share',
+      loginSystem: '奇文网盘',
       ruleForm: {
         userName: '',
         password: ''

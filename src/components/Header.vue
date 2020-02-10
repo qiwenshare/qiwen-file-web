@@ -70,7 +70,7 @@ export default {
           index: '3',
           name: 'file',
           link: '/file',
-          text: '共享网盘',
+          text: '网盘',
           state: 'normal'
         }
       ]
