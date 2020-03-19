@@ -32,7 +32,7 @@ export default {
         path: '/file',
         query: { filepath: filepath, filetype: filetype }
       })
-      selectFileByFileType(filetype).then(res => {
+      selectFileByFileType({filetype:filetype}).then(res => {
         if (res.success) {
           console.log(res.data)
         } else {

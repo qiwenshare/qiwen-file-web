@@ -54,7 +54,7 @@ export default {
     uploadFileData() {
       let filepath = this.$route.query.filepath
       let res = {
-        filepath: filepath === null || filepath === '' || filepath === '/' ?  '/' : filepath,
+        filepath: (filepath === undefined || filepath === null || filepath === '' || filepath === '/') ?  '/' : filepath,
         isdir: 0
       }
       return res
