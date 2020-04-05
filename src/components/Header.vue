@@ -6,7 +6,9 @@
       mode="horizontal"
     >
       <el-menu-item class="iconfont headerLogo" disabled>
-        <img class="logo" :src="logoUrl" />
+        <a href="https://www.qiwenshare.com/" target="_blank">
+          <img class="logo" :src="logoUrl" />
+        </a>
       </el-menu-item>
       <router-link
         tag="el-menu-item"
@@ -61,7 +63,7 @@ export default {
   name: 'Header',
   data() {
     return {
-      logoUrl: require('@/assets/images/common/logo2.png'),
+      logoUrl: require('@/assets/images/common/logo_header.png'),
       userImgDefault: require('@/assets/images/settings/userImg.png'),
       keyword: '',
       activeIndex: '0',
@@ -137,9 +139,11 @@ export default {
       font-size: 60px
       opacity: 1
       cursor: default
+      a 
+        display: block;
       .logo
-        height: 60px
-        vertical-align: sub
+        height: 40px
+        vertical-align: baseline
     .router-link-active
       border-bottom-color: $Primary !important
       color: $Primary !important
