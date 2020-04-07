@@ -1,31 +1,15 @@
 <template>
   <div class="headerWrapper">
-    <el-menu
-      :default-active="activeIndex"
-      class="el-menu-demo"
-      mode="horizontal"
-    >
+    <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
       <el-menu-item class="iconfont headerLogo" disabled>
         <a href="https://www.qiwenshare.com/" target="_blank">
           <img class="logo" :src="logoUrl" />
         </a>
       </el-menu-item>
-      <router-link
-        tag="el-menu-item"
-        v-for="(item, index) of headerList"
-        :key="index"
-        :index="item.index"
-        :class="item.name + ' ' + item.state"
-        class="headerItem"
-        :to="item.link"
-        exact
-        >{{ item.text }}</router-link
-      >
-      <el-submenu
-        index="11"
-        class="headerItem userDisplay right-menu-item"
-        v-show="loginState"
-      >
+      <el-menu-item class="headerItem" index="1">
+        网盘
+      </el-menu-item>
+      <el-submenu index="11" class="headerItem userDisplay right-menu-item" v-show="loginState">
         <template class="userDisplayList" slot="title">
           <el-avatar :size="34" :src="userImgUrl" fit="cover">
             <img :src="userImgDefault" />
@@ -42,16 +26,14 @@
         index="7"
         to="/login"
         v-show="!loginState"
-        >登录</router-link
-      >
+      >登录</router-link>
       <router-link
         tag="el-menu-item"
         class="headerItem register right-menu-item"
         index="8"
         to="/register"
         v-show="!loginState"
-        >注册</router-link
-      >
+      >注册</router-link>
     </el-menu>
   </div>
 </template>
@@ -65,17 +47,6 @@ export default {
     return {
       logoUrl: require('@/assets/images/common/logo_header.png'),
       userImgDefault: require('@/assets/images/settings/userImg.png'),
-      keyword: '',
-      activeIndex: '0',
-      headerList: [
-        {
-          index: '3',
-          name: 'file',
-          link: '/file',
-          text: '网盘',
-          state: 'normal'
-        }
-      ]
     }
   },
   computed: {
@@ -87,19 +58,13 @@ export default {
     },
     username() {
       return this.$store.state.username
-    },
-    notReadDot() {
-      return this.$store.state.notReadDot
-    },
-    notReadCount() {
-      return this.$store.state.notReadCount
     }
   },
   methods: {
     //  退出登录
     exitButton() {
       logout().then(res => {
-        if(res.success) {
+        if (res.success) {
           this.$message.success(res.data)
           this.$store.dispatch('getUserInfo').then(() => {
             this.$router.push({ path: '/login' })
@@ -108,15 +73,6 @@ export default {
           this.$message.error(res.errorMessage)
         }
       })
-    },
-    handleSelect(item) {
-      this.$router.push({
-        name: 'EssayDetail',
-        params: {
-          essayId: item.essayId
-        }
-      })
-      this.keyword = ''
     }
   }
 }
@@ -124,65 +80,43 @@ export default {
 
 <style lang="stylus" scoped>
 @import '~@/assets/styles/varibles.styl'
-@import '~@/assets/styles/mixins.styl'
 .headerWrapper
-  width: 100%
-  padding: 0 20px
-  box-shadow: $tabBoxShadow
-  >>> .el-menu--horizontal .el-menu-item:not(.is-disabled):hover
-    border-bottom-color: $Primary !important
+  width 100%
+  padding 0 20px
+  box-shadow $tabBoxShadow
+  >>> .el-menu--horizontal 
+    .el-menu-item:not(.is-disabled):hover
+      border-bottom-color $Primary !important
+      background $tabBackColor
   .el-menu-demo
-    display: flex
-    position: relative
+    display flex
+    position relative
     .headerLogo
-      color: $Primary
-      font-size: 60px
-      opacity: 1
-      cursor: default
-      a 
-        display: block;
+      color $Primary
+      font-size 60px
+      opacity 1
+      cursor default
+      a
+        display block
       .logo
-        height: 40px
-        vertical-align: baseline
-    .router-link-active
-      border-bottom-color: $Primary !important
-      color: $Primary !important
-    .search-input
-      height: 60px !important
-      line-height: 60px
-      padding-left: 30px
-      flex: 1
-      max-width: 300px
+        height 40px
+        vertical-align baseline
     .right-menu-item
-      position: absolute
+      position absolute
       .el-icon-edit
-        color: $Primary
+        color $Primary
       .el-icon-bell
-        color: $Primary
-    .writeEssay
-      right: 305px
-    .messageCenter
-      right: 180px
-      .not-read-dot
-        height 30px
-        line-height 30px
-        >>> .el-badge__content.is-fixed
-          right 4px
+        color $Primary
     .userDisplay
-      right: 0px
+      right 0px
       width 180px
       .username-header
-        margin-left: 6px
-        min-width: 60px
-        display: inline-block
-        text-align: center
+        margin-left 6px
+        min-width 60px
+        display inline-block
+        text-align center
     .login
-      right: 70px
+      right 70px
     .register
-      right: 0px
-.el-menu--horizontal
-  .el-menu-item:not(.is-disabled):hover
-    background: $tabBackColor
-    [class^=el-icon-]
-      color: $Primary
+      right 0px
 </style>

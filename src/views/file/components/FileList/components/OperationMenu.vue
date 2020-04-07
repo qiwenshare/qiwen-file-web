@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="operation-menu-wrapper">
     <el-upload
       class="upload-demo"
       action="api/filetransfer/uploadfile/"
@@ -21,9 +21,12 @@
     </el-button-group>
 
     <!-- 多选文件下载，页面隐藏 -->
-    <a v-for="(item,index) in selectionFile" 
+    <a
+      v-for="(item,index) in selectionFile"
       :key="index"
-      :href="item.url" target="_blank" :download="item.filename+'.' + item.extendname"
+      :href="item.url"
+      target="_blank"
+      :download="item.filename+'.' + item.extendname"
       :title="'downloadLink' + index"
       :ref="'downloadLink' + index"
     ></a>
@@ -54,7 +57,13 @@ export default {
     uploadFileData() {
       let filepath = this.$route.query.filepath
       let res = {
-        filepath: (filepath === undefined || filepath === null || filepath === '' || filepath === '/') ?  '/' : filepath,
+        filepath:
+          filepath === undefined ||
+          filepath === null ||
+          filepath === '' ||
+          filepath === '/'
+            ? '/'
+            : filepath,
         isdir: 0
       }
       return res
@@ -90,8 +99,8 @@ export default {
       })
     },
     //  下载文件
-    downloadSelectedFile(){
-      for(let i = 0; i < this.selectionFile.length; i++) {
+    downloadSelectedFile() {
+      for (let i = 0; i < this.selectionFile.length; i++) {
         let name = 'downloadLink' + i
         this.$refs[name][0].click()
       }
@@ -147,11 +156,12 @@ export default {
 }
 </script>
 
-<style scoped>
-.upload-demo {
-  display: inline-block;
-}
-.el-button--medium {
-  margin-left: 10px;
-}
+<style lang="stylus" scoped>
+.operation-menu-wrapper
+  height 60px
+  line-height 60px
+  .upload-demo
+    display inline-block
+  .el-button--medium
+    margin-left 10px
 </style>

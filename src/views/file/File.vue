@@ -1,7 +1,7 @@
 <template>
-  <div class="fileWrapper">
+  <div class="file-wrapper">
     <el-container class="el-container">
-      <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+      <el-aside width="220px">
         <AsideMenu></AsideMenu>
       </el-aside>
       <el-container>
@@ -27,11 +27,29 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.fileWrapper
-  width: 100% !important
+@import '~@/assets/styles/varibles.styl'
+.file-wrapper
+  width 100% !important
 .el-container
-  height: 90vh
+  .el-aside
+    border-right solid 1px $BorderLight
+    height calc(100vh - 70px)
+    /* 修改 滚动条 下面 的 宽度 */
+    &::-webkit-scrollbar
+      width 4px
+    /* 修改 滚动条的 下面 的 样式 */
+    &::-webkit-scrollbar-track
+      background-color #EBEEF5
+      -webkit-border-radius 2em
+      -moz-border-radius 2em
+      border-radius 2em
+    /* 修改 滑块 */
+    &::-webkit-scrollbar-thumb
+      background-color #909399
+      -webkit-border-radius 2em
+      -moz-border-radius 2em
+      border-radius 2em
 .el-main
-  padding-top: 0px !important
-  overflow: hidden
+  padding-top 0px !important
+  overflow hidden
 </style>

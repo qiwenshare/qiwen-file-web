@@ -1,21 +1,21 @@
 <template>
-  <div>
-    <el-header class="el-header">
+  <div class="file-list-wrapper">
+    <el-header class="file-list-header">
       <OperationMenu
         :operationFile="operationFile"
         :selectionFile="selectionFile"
         @showFileList="showFileList"
         :filepath="filepath"
       ></OperationMenu>
-      <BreadCrumb class="breadCrumb" :filepath="filepath"></BreadCrumb>
     </el-header>
+    <BreadCrumb class="breadCrumb" :filepath="filepath"></BreadCrumb>
     <el-table
+      class="file-table"
       @select-all="selectAllFileRow"
       @select="selectFileRow"
       ref="multipleTable"
       :data="fileList"
       tooltip-effect="dark"
-      height="400"
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="文件名" width="500">
@@ -57,7 +57,12 @@
                 @click.native="unzipFile(scope.row)"
               >解压缩</el-dropdown-item>
               <el-dropdown-item v-if="scope.row.isdir === 0">
-                <a :href="scope.row.url" target="_blank" :download="scope.row.filename+'.'+scope.row.extendname" style="display: block;color: inherit;">下载</a>
+                <a
+                  :href="scope.row.url"
+                  target="_blank"
+                  :download="scope.row.filename+'.'+scope.row.extendname"
+                  style="display: block;color: inherit;"
+                >下载</a>
               </el-dropdown-item>
               <el-dropdown-item @click.native="deleteFile(scope.row)">删除</el-dropdown-item>
             </el-dropdown-menu>
@@ -301,17 +306,30 @@ export default {
 }
 </script>
 
-<style scoped>
-.el-dialog-div {
-  height: 200px;
-  overflow: auto;
-}
-
-.el-header {
-  padding-top: 10px;
-  height: 90px !important;
-}
-.breadCrumb {
-  padding-top: 10px;
-}
+<style lang="stylus" scoped>
+.file-list-wrapper
+  .file-list-header
+    .el-dialog-div
+      height 200px
+      overflow auto
+  .file-table
+    height calc(100vh - 180px)
+    >>> .el-table__body-wrapper
+      height calc(100vh - 228px)
+      overflow-y auto
+      /* 修改 滚动条 下面 的 宽度 */
+      &::-webkit-scrollbar
+        width 10px
+      /* 修改 滚动条的 下面 的 样式 */
+      &::-webkit-scrollbar-track
+        background-color #EBEEF5
+        -webkit-border-radius 2em
+        -moz-border-radius 2em
+        border-radius 2em
+      /* 修改 滑块 */
+      &::-webkit-scrollbar-thumb
+        background-color #909399
+        -webkit-border-radius 2em
+        -moz-border-radius 2em
+        border-radius 2em
 </style>

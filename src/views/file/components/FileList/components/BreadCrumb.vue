@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="breadcrumb-wrapper">
+    <div class="title">当前位置：</div>
     <el-breadcrumb separator="/">
       <el-breadcrumb-item v-for="(item, index) in breadCrumbList" :key="index">
         <a @click="clickbread(item.breadPath)">{{item.breadName}}</a>
@@ -81,5 +82,14 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="stylus" scoped>
+.breadcrumb-wrapper
+  padding 0 20px
+  height 30px
+  line-height 30px
+  display flex
+  .title
+  >>> .el-breadcrumb
+    height 30px
+    line-height 30px
 </style>
