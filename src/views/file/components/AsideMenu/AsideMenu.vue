@@ -3,7 +3,12 @@
     <div class="aside-title">
       <i class="el-icon-share"></i> 共享网盘(Beta)
     </div>
-    <el-menu class="aside-menu" :default-openeds="['0']" :default-active="activeIndex" @select="handleSelect">
+    <el-menu
+      class="aside-menu"
+      :default-openeds="['0']"
+      :default-active="activeIndex"
+      @select="handleSelect"
+    >
       <el-menu-item index="0">
         <i class="el-icon-menu"></i>
         <span slot="title">全部</span>
@@ -78,7 +83,7 @@ export default {
             this.$message.error(res.errorMessage)
           }
         })
-      } 
+      }
       // else {
       //   //   不分类型，即全部文件
       //   this.$router.push({
@@ -108,8 +113,8 @@ export default {
 @import '~@/assets/styles/varibles.styl'
 .aside-menu-wrapper
   .aside-title
-    background $tabBackColor
-    padding-left 20px
+    background-color $Primary
+    color #fff
     height 80px
     line-height 80px
     font-size 18px

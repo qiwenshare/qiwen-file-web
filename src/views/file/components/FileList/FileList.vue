@@ -16,6 +16,8 @@
       ref="multipleTable"
       :data="fileList"
       tooltip-effect="dark"
+      v-loading="loading"
+      element-loading-text="数据加载中"
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="文件名" width="500">
@@ -103,6 +105,7 @@ export default {
   name: 'FileList',
   data() {
     return {
+      loading: true,
       fileList: [],
       dialogMoveFileVisible: false,
       fileTree: [],
@@ -297,6 +300,7 @@ export default {
             }
           }
           this.fileList = dirArr.concat(fileArr)
+          this.loading = false
         } else {
           this.$message.error(res.errorMessage)
         }
