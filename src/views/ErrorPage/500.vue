@@ -12,10 +12,6 @@ export default {
     return {
       error_500_img: require('@/assets/images/error/500.png')
     }
-  },
-  mounted() {
-    this.$emit('footer', false)
-    this.$emit('header', false)
   }
 }
 </script>

@@ -22,9 +22,6 @@ export default {
   components: {
     AsideMenu,
     FileList
-  },
-  created() {
-    this.$emit('footer', false)
   }
 }
 </script>

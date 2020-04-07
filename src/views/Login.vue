@@ -128,7 +128,6 @@ export default {
     }
   },
   created() {
-    this.$emit('footer', false)
     if (this.$store.state.isLogin) {
       // 用户若已登录，自动跳转到首页
       let username = this.$store.state.username

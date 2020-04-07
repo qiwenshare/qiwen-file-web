@@ -108,7 +108,6 @@ export default {
     }
   },
   created() {
-    this.$emit('footer', false)
     this.$nextTick(() => {
       let element = document.getElementById('registerBackground')
       new CanvasNest(element, config)

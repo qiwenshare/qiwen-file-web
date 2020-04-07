@@ -12,10 +12,6 @@ export default {
     return {
       error_401_img: require('@/assets/images/error/401.png')
     }
-  },
-  mounted() {
-    this.$emit('footer', false)
-    this.$emit('header', false)
   }
 }
 </script>
