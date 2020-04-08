@@ -2,9 +2,11 @@
   <div class="breadcrumb-wrapper">
     <div class="title">当前位置：</div>
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item v-for="(item, index) in breadCrumbList" :key="index">
-        <a @click="clickbread(item.breadPath)">{{item.breadName}}</a>
-      </el-breadcrumb-item>
+      <el-breadcrumb-item
+        v-for="(item, index) in breadCrumbList"
+        :key="index"
+        :to="{ query: { filepath: item.path, filetype: 0 } }"
+      >{{item.name}}</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
 </template>
@@ -13,70 +15,46 @@
 export default {
   name: 'BreadCrumb',
   data() {
-    return {
-      breadCrumbList: []
-    }
+    return {}
   },
-  props: {
-    filepath: String
-  },
-  watch: {
-    $route(to, from) {
-      let filetype = from.query.filetype
-      // let filepath = to.query.filepath;
-      if (filetype != null) {
-        //this.$router.push({path:to.fullPath, query: {filetype:filetype, filepath:filepath}});
-      }
-      this.showBreadCrumb()
-    }
-  },
-  created: function() {
-    this.showBreadCrumb()
-  },
-  methods: {
-    clickbread: function(breadPath) {
-      let filetype = this.$route.query.filetype
-      console.log(filetype)
-
-      if (filetype == null || filetype == '') {
-        this.$router.push({
-          path: '/file',
-          query: { filepath: breadPath }
-        })
-      } else {
-        this.$router.push({
-          path: '/file',
-          query: { filepath: breadPath, filetype: filetype }
-        })
+  computed: {
+    //  当前查看的文件路径
+    filepath: {
+      get() {
+        return this.$route.query.filepath
+      },
+      set() {
+        return ''
       }
     },
-    showBreadCrumb: function() {
-      let filepath = this.$route.query.filepath
-      var nameArr
-      if (filepath == null || filepath == undefined) {
-        nameArr = []
-      } else {
-        nameArr = filepath.split('/')
-      }
-      var tempPath = '/'
-      var breadCrumbList = []
-      var breadCrumbObj = {}
-      breadCrumbObj.breadName = '全部文件'
-      breadCrumbObj.breadPath = '/'
-      breadCrumbList.push(breadCrumbObj)
-      for (var i = 0; i < nameArr.length; i++) {
-        if (nameArr[i] == '') {
-          continue
+    //  面包屑导航栏数组
+    breadCrumbList: {
+      get() {
+        let filepathList = this.filepath.split('/')
+        let res = [] //  返回结果数组
+        let _path = [] //  存放祖先路径
+        for (let i = 0; i < filepathList.length; i++) {
+          if (filepathList[i]) {
+            _path.push(filepathList[i] + '/')
+            res.push({
+              path: _path.join(''),
+              name: filepathList[i]
+            })
+          } else if (i === 0) {
+            //  根目录
+            filepathList[i] = '/'
+            _path.push(filepathList[i])
+            res.push({
+              path: '/',
+              name: '全部文件'
+            })
+          }
         }
-        tempPath += nameArr[i]
-        tempPath += '/'
-        var breadCrumbObj = {}
-        breadCrumbObj.breadName = nameArr[i]
-        breadCrumbObj.breadPath = tempPath
-        breadCrumbList.push(breadCrumbObj)
+        return res
+      },
+      set() {
+        return []
       }
-
-      this.breadCrumbList = breadCrumbList
     }
   }
 }
@@ -88,8 +66,7 @@ export default {
   height 30px
   line-height 30px
   display flex
-  .title
-  >>> .el-breadcrumb
+  .title, >>> .el-breadcrumb
     height 30px
     line-height 30px
 </style>

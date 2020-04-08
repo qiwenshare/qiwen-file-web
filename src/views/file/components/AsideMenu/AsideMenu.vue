@@ -46,6 +46,7 @@ export default {
     return {}
   },
   computed: {
+    //  当前活跃菜单项index，也是当前被选中的文件类型
     activeIndex: {
       get() {
         return this.$route.query.filetype
@@ -56,13 +57,14 @@ export default {
     }
   },
   methods: {
+    //  导航菜单项点击事件
     handleSelect(index) {
-      //  分类型
       let filepath = this.$route.query.filepath
       this.$router.push({
         path: '/file',
         query: { filepath: filepath, filetype: index }
       })
+      //  分类型
       if (index !== '0') {
         selectFileByFileType({ filetype: index }).then(res => {
           if (res.success) {
