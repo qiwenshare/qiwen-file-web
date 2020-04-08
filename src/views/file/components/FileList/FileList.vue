@@ -26,40 +26,37 @@
       @select="selectFileRow"
     >
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column label prop="isdir" width="50">
+      <el-table-column label prop="isdir" width="60">
         <template slot-scope="scope">
           <img :src="setFileImg(scope.row.extendname)" style="max-width: 30px;" />
         </template>
       </el-table-column>
-      <el-table-column label="文件名" prop="filename" sortable>
+      <el-table-column label="文件名" prop="filename" sortable show-overflow-tooltip>
         <template slot-scope="scope">
           <div style="cursor:pointer" @click="clickFileName(scope.row)">
-            {{scope.row.filename}}
-            <span v-if="!scope.row.isdir && scope.row.extendname !== null">.</span>
-            {{scope.row.extendname}}
+            {{scope.row.filename}}<span v-if="!scope.row.isdir && scope.row.extendname !== null">.</span>{{scope.row.extendname}}
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="大小" width="150" prop="filesize" sortable>
+      <el-table-column label="类型" width="100" prop="extendname" sortable show-overflow-tooltip></el-table-column>
+      <el-table-column label="大小" width="100" prop="filesize" sortable show-overflow-tooltip>
         <template slot-scope="scope">
           <span>{{calculateFileSize(scope.row.filesize)}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改日期" prop="uploadtime" width="200" show-overflow-tooltip sortable></el-table-column>
-      <el-table-column label="操作" width="260">
+      <el-table-column label="修改日期" prop="uploadtime" width="180" show-overflow-tooltip sortable></el-table-column>
+      <el-table-column label="操作" width="150">
         <template slot-scope="scope">
-          <el-button @click.native="deleteFile(scope.row)" type="danger" size="mini">删除</el-button>
-          <el-button @click.native="showMoveFileDialog(scope.row)" type="primary" size="mini">移动</el-button>
-          <el-dropdown
-            trigger="click"
-            style="margin-left: 10px;"
-            v-if="scope.row.extendname=='zip' || scope.row.isdir === 0"
-          >
+          <!-- <el-button @click.native="deleteFile(scope.row)" type="danger" size="mini">删除</el-button>
+          <el-button @click.native="showMoveFileDialog(scope.row)" type="primary" size="mini">移动</el-button> -->
+          <el-dropdown trigger="click">
             <el-button size="mini">
               操作
               <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="deleteFile(scope.row)">删除</el-dropdown-item>
+              <el-dropdown-item @click.native="showMoveFileDialog(scope.row)">移动</el-dropdown-item>
               <el-dropdown-item
                 v-if="scope.row.extendname=='zip'"
                 @click.native="unzipFile(scope.row)"
@@ -150,12 +147,31 @@ export default {
         'css',
         'csv',
         'chm',
-        'zip'
+        'rar',
+        'zip',
+        'dmg',
+        'mp3',
+        'open',
+        'pdf',
+        'rtf',
+        'txt',
+        'oa',
+        'js',
+        'html',
+        'img',
+        'sql',
+        'jar',
+        'svg',
+        'gif',
+        'json',
+        'exe'
       ],
       //  文件图片Map映射
       fileImgMap: {
         dir: require('@/assets/images/file/dir.png'),
-        unknown: require('@/assets/images/file/file_unknown.png'),
+        chm: require('@/assets/images/file/file_chm.png'),
+        css: require('@/assets/images/file/file_css.png'),
+        csv: require('@/assets/images/file/file_csv.png'),
         png: require('@/assets/images/file/file_pic.png'),
         jpg: require('@/assets/images/file/file_pic.png'),
         jpeg: require('@/assets/images/file/file_pic.png'),
@@ -166,10 +182,25 @@ export default {
         xls: require('@/assets/images/file/file_excel.png'),
         xlsx: require('@/assets/images/file/file_excel.png'),
         mp4: require('@/assets/images/file/file_video.png'),
-        css: require('@/assets/images/file/file_css.png'),
-        csv: require('@/assets/images/file/file_csv.png'),
-        chm: require('@/assets/images/file/file_chm.png'),
-        zip: require('@/assets/images/file/file_zip.png')
+        rar: require('@/assets/images/file/file_rar.png'),
+        zip: require('@/assets/images/file/file_zip.png'),
+        dmg: require('@/assets/images/file/file_dmg.png'),
+        mp3: require('@/assets/images/file/file_music.png'),
+        open: require('@/assets/images/file/file_open.png'),
+        pdf: require('@/assets/images/file/file_pdf.png'),
+        rtf: require('@/assets/images/file/file_rtf.png'),
+        txt: require('@/assets/images/file/file_txt.png'),
+        oa: require('@/assets/images/file/file_oa.png'),
+        unknown: require('@/assets/images/file/file_unknown.png'),
+        js: require('@/assets/images/file/file_js.png'),
+        html: require('@/assets/images/file/file_html.png'),
+        img: require('@/assets/images/file/file_img.png'),
+        sql: require('@/assets/images/file/file_sql.png'),
+        jar: require('@/assets/images/file/file_jar.png'),
+        svg: require('@/assets/images/file/file_svg.png'),
+        gif: require('@/assets/images/file/file_gif.png'),
+        json: require('@/assets/images/file/file_json.png'),
+        exe: require('@/assets/images/file/file_exe.png'),
       },
       //  查看图片模态框数据
       imgReview: {
@@ -254,7 +285,7 @@ export default {
       } 
       else {
         //  若当前点击项是图片
-        const PIC = ['png', 'jpg', 'jpeg']
+        const PIC = ['png', 'jpg', 'jpeg', 'gif']
         if (PIC.includes(row.extendname)) {
           this.imgReview.url = 'api' + row.fileurl
           this.imgReview.visible = true
