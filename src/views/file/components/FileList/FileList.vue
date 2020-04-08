@@ -50,7 +50,11 @@
         <template slot-scope="scope">
           <el-button @click.native="deleteFile(scope.row)" type="danger" size="mini">删除</el-button>
           <el-button @click.native="showMoveFileDialog(scope.row)" type="primary" size="mini">移动</el-button>
-          <el-dropdown trigger="click" style="margin-left: 10px;" v-if="scope.row.extendname=='zip' || scope.row.isdir === 0">
+          <el-dropdown
+            trigger="click"
+            style="margin-left: 10px;"
+            v-if="scope.row.extendname=='zip' || scope.row.isdir === 0"
+          >
             <el-button size="mini">
               操作
               <i class="el-icon-arrow-down el-icon--right"></i>
@@ -88,6 +92,10 @@
         <el-button type="primary" @click="confirmMoveFile">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 查看图片 -->
+    <div class="img-review-wrapper" v-show="imgReview.visible" @click="imgReview.visible = false">
+      <img class="img-large" :src="imgReview.url" alt />
+    </div>
   </div>
 </template>
 
@@ -162,6 +170,11 @@ export default {
         csv: require('@/assets/images/file/file_csv.png'),
         chm: require('@/assets/images/file/file_chm.png'),
         zip: require('@/assets/images/file/file_zip.png')
+      },
+      //  查看图片模态框数据
+      imgReview: {
+        visible: false,
+        url: ''
       }
     }
   },
@@ -238,6 +251,14 @@ export default {
             filetype: '0'
           }
         })
+      } 
+      else {
+        //  若当前点击项是图片
+        const PIC = ['png', 'jpg', 'jpeg']
+        if (PIC.includes(row.extendname)) {
+          this.imgReview.url = 'api' + row.fileurl
+          this.imgReview.visible = true
+        }
       }
     },
 
@@ -422,4 +443,44 @@ export default {
           color $Primary
           .el-tree-node__expand-icon
             color inherit
+  .img-review-wrapper
+    position fixed
+    top 0
+    right 0
+    bottom 0
+    left 0
+    overflow auto
+    width 100%
+    height 100%
+    z-index 2010
+    text-align center
+    display flex
+    align-items center
+    animation: imgReviewAnimation 0.3s;
+    -webkit-animation: imgReviewAnimation 0.3s; /* Safari and Chrome */
+    animation-iteration-count: 0.3;
+    -webkit-animation-iteration-count: 0.3;
+    animation-fill-mode: forwards;
+    -webkit-animation-fill-mode: forwards; /* Safari 和 Chrome */
+    @keyframes imgReviewAnimation {
+      0% {
+        background transparent
+      }
+      100% {
+        background rgba(0, 0, 0, 0.8)
+      }
+    }
+
+    @-webkit-keyframes imgReviewAnimation /* Safari and Chrome */ {
+      0% {
+        background transparent
+      }
+      100% {
+        background rgba(0, 0, 0, 0.8)
+      }
+    }
+    .img-large
+      margin 0 auto
+      max-width 100%
+      max-height 100%
 </style>
