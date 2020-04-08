@@ -7,7 +7,6 @@ import '@/assets/styles/css/base.css'
 import '@/assets/styles/css/border.css'
 import '@/assets/styles/css/element-cover.css'
 import '@/assets/styles/css/mediaScreen.styl'
-import '@/assets/styles/iconfont/iconfont.css'
 import '@/router/before.js'
 
 Vue.config.productionTip = false;

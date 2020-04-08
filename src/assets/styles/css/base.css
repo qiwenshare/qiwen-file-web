@@ -1,5 +1,6 @@
 *{ margin:0; padding:0; box-sizing: border-box;}
-body{ font-size:16px; font-family:微软雅黑;font-style:normal;overflow-x: hidden;}
+html{ height: 100%; }
+body{ height: 100%;font-size:16px; font-family:微软雅黑;font-style:normal;overflow-x: hidden;}
 a{ text-decoration:none}
 /*a,a:hover{  transition:background 0.5s linear;-webkit-transition:background 0.5s linear;-moz-transition:background 0.5s linear;-o-transition:background 0.5s linear;}*/
 em, i{font-style: normal;}

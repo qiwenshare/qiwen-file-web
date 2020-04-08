@@ -16,25 +16,6 @@ export default function install (Vue) {
       return true
     }
   };
-  //  处理用户头像
-  Vue.prototype.fixUserImg = function (params) {
-    if(params) {
-      if(!params.includes('http')) {
-        params = '/api' + params.split(".")[0] + "_min." + params.split(".")[1]
-      }
-    } else {
-      params = '/api'
-    }
-    return params
-  };
-  //  区分跳转到个人主页or作者主页
-  Vue.prototype.fixHomeByUserId = function (params) {
-    if(params === this.$store.state.userId) {
-      return { path: '/personalHome/essay' }
-    } else {
-      return { name: 'AuthorHomeEssayList', params: { userId: params } }
-    }
-  };
   //  加载缩略图
   Vue.prototype.downloadImgMin = function (params) {
     return params.split(".")[0] + "_min." + params.split(".")[1]

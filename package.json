@@ -10,10 +10,7 @@
   "dependencies": {
     "canvas-nest.js": "^2.0.4",
     "core-js": "^2.6.5",
-    "mavon-editor": "^2.7.5",
     "qs": "^6.8.0",
-    "sockjs-client": "^1.4.0",
-    "stompjs": "^2.3.3",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1"

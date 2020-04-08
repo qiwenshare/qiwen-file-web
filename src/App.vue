@@ -32,8 +32,6 @@ export default {
     //  底部是否显示
     isFooterShow() {
       let routerNameList = [
-        'Login',
-        'Register',
         'File',
         'Error_401',
         'Error_404',
@@ -54,11 +52,9 @@ export default {
 <style lang="stylus" scoped>
 @import '~@/assets/styles/varibles.styl'
 #app
-  height 100vh
+  height 100%
   overflow-x hidden
   -webkit-text-size-adjust none
-  display flex
-  flex-direction column
   overflow-y auto
   >>> .el-backtop
     background-color $Success

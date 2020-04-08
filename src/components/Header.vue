@@ -1,7 +1,7 @@
 <template>
   <div class="headerWrapper">
     <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
-      <el-menu-item class="iconfont headerLogo" disabled>
+      <el-menu-item class="headerLogo" disabled>
         <a href="https://www.qiwenshare.com/" target="_blank">
           <img class="logo" :src="logoUrl" />
         </a>
@@ -103,10 +103,6 @@ export default {
         vertical-align baseline
     .right-menu-item
       position absolute
-      .el-icon-edit
-        color $Primary
-      .el-icon-bell
-        color $Primary
     .userDisplay
       right 0px
       width 180px

@@ -147,8 +147,8 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .loginWrapper
-  height: 500px !important
-  min-height: 500px !important
+  height: 550px !important
+  min-height: 550px !important
   padding-top: 100px
   .formWrapper
     width: 375px

@@ -11,8 +11,6 @@ export default new Vuex.Store({
     userId: 0,
     userImgUrl: '',
     userInfoObj: {},
-    notReadDot: false,
-    notReadCount: 0
   },
   mutations: {
     changeLogin(state, data) { // 改变state中的状态值
@@ -38,12 +36,6 @@ export default new Vuex.Store({
     changeUserInfoObj(state,data) {
       state.userInfoObj = Object.assign({},state.userInfoObj,data)
     },
-    changeNotReadDot(state,data) {
-      state.notReadDot = data
-    },
-    changeNotReadCount(state,data) {
-      state.notReadCount = data
-    } 
   },
   actions: {
     getUserInfo(context) {
