@@ -1,7 +1,7 @@
 <template>
   <div class="file-wrapper">
     <el-container class="el-container">
-      <el-aside width="220px">
+      <el-aside width="auto">
         <AsideMenu></AsideMenu>
       </el-aside>
       <el-container>

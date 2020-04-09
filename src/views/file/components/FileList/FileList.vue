@@ -10,8 +10,12 @@
         @showFileTreeDialog="showFileTreeDialog"
       ></OperationMenu>
     </el-header>
-    <!-- 面包屑导航栏 -->
-    <BreadCrumb class="breadcrumb"></BreadCrumb>
+    <div class="middle-wrapper">
+      <!-- 面包屑导航栏 -->
+      <BreadCrumb class="breadcrumb"></BreadCrumb>
+      <!-- 选择表格列 -->
+      <SelectColumn class="select-column" @changeColumn="changeColumn"></SelectColumn>
+    </div>
     <!-- 文件表格 -->
     <el-table
       class="file-table"
@@ -19,7 +23,7 @@
       v-loading="loading"
       element-loading-text="数据加载中"
       tooltip-effect="dark"
-      :data="fileList"
+      :data="fileList.filter(data => !fileNameSearch || data.filename.toLowerCase().includes(fileNameSearch.toLowerCase()))"
       :default-sort="{ prop: 'isdir', order: 'descending'}"
       @select-all="selectAllFileRow"
       @select="selectFileRow"
@@ -30,25 +34,83 @@
           <img :src="setFileImg(scope.row.extendname)" style="max-width: 30px;" />
         </template>
       </el-table-column>
-      <el-table-column label="文件名" prop="filename" :sort-by="['isdir','filename']" sortable show-overflow-tooltip>
+      <el-table-column
+        prop="filename"
+        :sort-by="['isdir','filename']"
+        sortable
+        show-overflow-tooltip
+      >
+        <template slot="header">
+          <span>文件名</span>
+          <el-input
+            v-model="fileNameSearch"
+            size="mini"
+            style="width: 200px;display: inline-block;float:right;margin-right: calc(100% - 294px);"
+            placeholder="输入文件名搜索"/>
+        </template>
         <template slot-scope="scope">
           <div style="cursor:pointer" @click="clickFileName(scope.row)">
-            {{scope.row.filename}}<span v-if="!scope.row.isdir && scope.row.extendname !== null">.</span>{{scope.row.extendname}}
+            {{scope.row.filename}}
+            <span v-if="!scope.row.isdir && scope.row.extendname !== null">.</span>
+            {{scope.row.extendname}}
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="类型" width="100" prop="extendname" :sort-by="['isdir','extendname']" sortable show-overflow-tooltip></el-table-column>
-      <el-table-column label="大小" width="100" prop="filesize" :sort-by="['isdir','filesize']" sortable show-overflow-tooltip>
+      <el-table-column
+        label="类型"
+        width="80"
+        prop="extendname"
+        :sort-by="['isdir','extendname']"
+        sortable
+        show-overflow-tooltip
+        v-if="selectedColumnList.includes('extendname')"
+      ></el-table-column>
+      <el-table-column
+        label="大小"
+        width="80"
+        prop="filesize"
+        :sort-by="['isdir','filesize']"
+        sortable
+        show-overflow-tooltip
+        align="right"
+        v-if="selectedColumnList.includes('filesize')"
+      >
         <template slot-scope="scope">
-          <span>{{calculateFileSize(scope.row.filesize)}}</span>
+          <div style="padding: 0 10px;">{{calculateFileSize(scope.row.filesize)}}</div>
         </template>
       </el-table-column>
-      <el-table-column label="修改日期" prop="uploadtime" width="180" :sort-by="['isdir','uploadtime']" show-overflow-tooltip sortable></el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column
+        label="修改日期"
+        prop="uploadtime"
+        width="180"
+        :sort-by="['isdir','uploadtime']"
+        show-overflow-tooltip
+        sortable
+        v-if="selectedColumnList.includes('uploadtime')"
+      ></el-table-column>
+      <el-table-column :width="operaColumnExpand ? 300 : 150">
+        <template slot="header">
+          <span>操作</span>
+          <i class="el-icon-arrow-down" title="展开操作列按钮" @click="operaColumnExpand = true"></i>
+          <i class="el-icon-arrow-up" title="收起操作列按钮" @click="operaColumnExpand = false"></i>
+        </template>
         <template slot-scope="scope">
-          <!-- <el-button @click.native="deleteFile(scope.row)" type="danger" size="mini">删除</el-button>
-          <el-button @click.native="showMoveFileDialog(scope.row)" type="primary" size="mini">移动</el-button> -->
-          <el-dropdown trigger="click">
+          <div v-if="operaColumnExpand">
+            <el-button type="danger" size="mini" @click.native="deleteFile(scope.row)">删除</el-button>
+            <el-button type="primary" size="mini" @click.native="showMoveFileDialog(scope.row)">移动</el-button>
+            <el-button type="success" size="mini" v-if="scope.row.isdir === 0">
+              <a
+                target="_blank"
+                style="display: block;color: inherit;"
+                :href="scope.row.url"
+                :download="scope.row.filename+'.'+scope.row.extendname"
+              >下载</a>
+            </el-button>
+            <el-button type="warning" size="mini" @click.native="unzipFile(scope.row)" v-if="scope.row.extendname=='zip'">解压缩</el-button>
+          </div>
+          
+
+          <el-dropdown trigger="click" v-else>
             <el-button size="mini">
               操作
               <i class="el-icon-arrow-down el-icon--right"></i>
@@ -98,6 +160,7 @@
 <script>
 import OperationMenu from './components/OperationMenu'
 import BreadCrumb from './components/BreadCrumb'
+import SelectColumn from './components/SelectColumn'
 import {
   getfilelist,
   moveFile,
@@ -110,11 +173,15 @@ import {
 export default {
   name: 'FileList',
   components: {
+    OperationMenu,
     BreadCrumb,
-    OperationMenu
+    SelectColumn
   },
   data() {
     return {
+      selectedColumnList: ['extendname', 'filesize', 'uploadtime'],
+      fileNameSearch: '',
+      operaColumnExpand: false,
       loading: true, //  表格数据-loading
       fileList: [], //  表格数据-文件列表
       //  移动文件模态框数据
@@ -201,7 +268,7 @@ export default {
         svg: require('@/assets/images/file/file_svg.png'),
         gif: require('@/assets/images/file/file_gif.png'),
         json: require('@/assets/images/file/file_json.png'),
-        exe: require('@/assets/images/file/file_exe.png'),
+        exe: require('@/assets/images/file/file_exe.png')
       },
       //  查看图片模态框数据
       imgReview: {
@@ -274,6 +341,11 @@ export default {
       }
     },
 
+    //  改变显示列
+    changeColumn(tagValueList) {
+      this.selectedColumnList = tagValueList
+    },
+
     //  点击文件名
     clickFileName(row) {
       //  若是目录则进入目录
@@ -284,33 +356,33 @@ export default {
             filetype: '0'
           }
         })
-      } 
-      //  若是文件，则进行相应的预览 
+      }
+      //  若是文件，则进行相应的预览
       else {
         //  若当前点击项是图片
-        const PIC = ['png', 'jpg', 'jpeg', 'gif','svg']
+        const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
         if (PIC.includes(row.extendname)) {
           this.imgReview.url = 'api' + row.fileurl
           this.imgReview.visible = true
         }
         //  若当前点击项是pdf
-        if(row.extendname === 'pdf') {
+        if (row.extendname === 'pdf') {
           window.open('api' + row.fileurl, '_blank')
         }
         //  若当前点击项是html、js、css、json
-        const CODE = ['html','js','css','json']
-        if(CODE.includes(row.extendname)) {
-          window.open('api' + row.fileurl, '_blank')  
+        const CODE = ['html', 'js', 'css', 'json']
+        if (CODE.includes(row.extendname)) {
+          window.open('api' + row.fileurl, '_blank')
         }
         //  若当前点击项是视频mp4格式
         const VIDEO = ['mp4']
-        if(VIDEO.includes(row.extendname)) {
-          window.open('api' + row.fileurl, '_blank')  
+        if (VIDEO.includes(row.extendname)) {
+          window.open('api' + row.fileurl, '_blank')
         }
         //  若当前点击项是视频mp3格式
         const AUDIO = ['mp3']
-        if(AUDIO.includes(row.extendname)) {
-          window.open('api' + row.fileurl, '_blank')  
+        if (AUDIO.includes(row.extendname)) {
+          window.open('api' + row.fileurl, '_blank')
         }
       }
     },
@@ -463,6 +535,14 @@ export default {
       overflow auto
   .file-table
     height calc(100vh - 180px)
+    >>> .el-table__header-wrapper
+      .el-icon-arrow-down
+      .el-icon-arrow-up
+        margin-left 6px
+        cursor pointer
+        font-weight 600
+        &:hover
+          color $Primary
     >>> .el-table__body-wrapper
       height calc(100vh - 228px)
       overflow-y auto
@@ -509,31 +589,28 @@ export default {
     text-align center
     display flex
     align-items center
-    animation: imgReviewAnimation 0.3s;
-    -webkit-animation: imgReviewAnimation 0.3s; /* Safari and Chrome */
-    animation-iteration-count: 0.3;
-    -webkit-animation-iteration-count: 0.3;
-    animation-fill-mode: forwards;
-    -webkit-animation-fill-mode: forwards; /* Safari 和 Chrome */
-    @keyframes imgReviewAnimation {
-      0% {
+    animation imgReviewAnimation 0.3s
+    -webkit-animation imgReviewAnimation 0.3s /* Safari and Chrome */
+    animation-iteration-count 0.3
+    -webkit-animation-iteration-count 0.3
+    animation-fill-mode forwards
+    -webkit-animation-fill-mode forwards /* Safari 和 Chrome */
+    @keyframes imgReviewAnimation
+      0%
         background transparent
-      }
-      100% {
+      100%
         background rgba(0, 0, 0, 0.8)
-      }
-    }
-
-    @-webkit-keyframes imgReviewAnimation /* Safari and Chrome */ {
-      0% {
+    @keyframes imgReviewAnimation
+      0%
         background transparent
-      }
-      100% {
+      100%
         background rgba(0, 0, 0, 0.8)
-      }
-    }
     .img-large
       margin 0 auto
       max-width 80%
       max-height 100%
+  .breadcrumb
+    flex 1
+  .middle-wrapper
+    display flex
 </style>

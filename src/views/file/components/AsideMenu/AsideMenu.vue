@@ -1,7 +1,14 @@
 <template>
-  <div class="aside-menu-wrapper">
+  <div class="aside-menu-wrapper" :class="{'expand': !isFolder}">
     <div class="aside-title">
-      <i class="el-icon-share"></i> 共享网盘(Beta)
+      <i class="el-icon-share" v-show="!isFolder"></i>
+      <span v-show="!isFolder">共享网盘(Beta)</span>
+      <el-tooltip class="item" effect="dark" content="收起分类栏" placement="bottom-end">
+        <i class="el-icon-d-arrow-left" v-show="!isFolder" @click="isFolder = true"></i>
+      </el-tooltip>
+      <el-tooltip class="item" effect="dark" content="展开分类栏" placement="bottom-start">
+        <i class="el-icon-d-arrow-right" v-show="isFolder" @click="isFolder = false"></i>
+      </el-tooltip>
     </div>
     <el-menu
       class="aside-menu"
@@ -10,28 +17,28 @@
       @select="handleSelect"
     >
       <el-menu-item index="0">
-        <i class="el-icon-menu"></i>
-        <span slot="title">全部</span>
+        <i class="el-icon-menu" title="全部"></i>
+        <span slot="title" v-show="!isFolder">全部</span>
       </el-menu-item>
-      <el-menu-item index="1">
+      <el-menu-item index="1" title="图片">
         <i class="el-icon-picture"></i>
-        <span slot="title">图片</span>
+        <span slot="title" v-show="!isFolder">图片</span>
       </el-menu-item>
-      <el-menu-item index="2">
+      <el-menu-item index="2" title="文档">
         <i class="el-icon-document"></i>
-        <span slot="title">文档</span>
+        <span slot="title" v-show="!isFolder">文档</span>
       </el-menu-item>
-      <el-menu-item index="3">
+      <el-menu-item index="3" title="视频">
         <i class="el-icon-video-camera-solid"></i>
-        <span slot="title">视频</span>
+        <span slot="title" v-show="!isFolder">视频</span>
       </el-menu-item>
-      <el-menu-item index="4">
+      <el-menu-item index="4" title="音乐">
         <i class="el-icon-headset"></i>
-        <span slot="title">音乐</span>
+        <span slot="title" v-show="!isFolder">音乐</span>
       </el-menu-item>
-      <el-menu-item index="5">
+      <el-menu-item index="5" title="其他">
         <i class="el-icon-takeaway-box"></i>
-        <span slot="title">其他</span>
+        <span slot="title" v-show="!isFolder">其他</span>
       </el-menu-item>
     </el-menu>
   </div>
@@ -43,7 +50,9 @@ import { selectFileByFileType } from '@/request/file.js'
 export default {
   name: 'AsideMenu',
   data() {
-    return {}
+    return {
+      isFolder: false
+    }
   },
   computed: {
     //  当前活跃菜单项index，也是当前被选中的文件类型
@@ -82,6 +91,9 @@ export default {
 <style lang="stylus" scoped>
 @import '~@/assets/styles/varibles.styl'
 .aside-menu-wrapper
+  width 69px
+  transition width 0.5s
+  -webkit-transition width 0.5s
   .aside-title
     background-color $Primary
     color #fff
@@ -89,10 +101,21 @@ export default {
     line-height 80px
     font-size 18px
     text-align center
+    position relative
+    .el-icon-d-arrow-left
+      position absolute
+      right 6px
+      top 32px
+      cursor pointer
+    .el-icon-d-arrow-right
+      cursor pointer
   >>> .el-menu
     border none
-    .el-menu-item
-      padding-left 40px !important
     .el-menu-item.is-active
       background $PrimaryHover
+.expand
+  width 220px
+  >>> .el-menu
+    .el-menu-item
+      padding-left 40px !important
 </style>
