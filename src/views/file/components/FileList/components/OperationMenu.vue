@@ -32,7 +32,7 @@
     ></a>
 
     <div class="storeDisWrapper" style="float:right;">
-      已使用 {{storageValue}} M容量
+      已使用 {{storageValue}} 容量
     </div>
   </div>
 </template>
