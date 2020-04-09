@@ -53,10 +53,14 @@
 
 ![新功能](https://images.gitee.com/uploads/images/2020/0409/183222_fa2282c6_1837873.png "屏幕截图.png")
 
+![文件类型栏收缩](https://images.gitee.com/uploads/images/2020/0409/183506_6dd24f8d_1837873.png "屏幕截图.png")
+
  **创建文件夹**  :blue_heart: 
 ![输入图片说明](https://images.gitee.com/uploads/images/2019/1022/205531_b3bf3380_947714.png "屏幕截图.png")
  **操作列展示**  :purple_heart: 
-![输入图片说明](https://images.gitee.com/uploads/images/2019/1022/205841_9544a2ef_947714.png "屏幕截图.png")
+![操作列扩展](https://images.gitee.com/uploads/images/2020/0409/183336_ab936775_1837873.png "屏幕截图.png")
+
+![操作列合并](https://images.gitee.com/uploads/images/2020/0409/183412_6a3ed5e0_1837873.png "屏幕截图.png")
  **文件的复制和移动**  :heart: 
 ![输入图片说明](https://images.gitee.com/uploads/images/2019/1022/210106_d4b619f3_947714.png "屏幕截图.png")
  **文件在线解压缩**  :green_heart: 
