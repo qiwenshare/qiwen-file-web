@@ -53,7 +53,7 @@
 
 ![新功能](https://images.gitee.com/uploads/images/2020/0409/183222_fa2282c6_1837873.png "屏幕截图.png")
 
-![文件类型栏收缩](https://images.gitee.com/uploads/images/2020/0409/183506_6dd24f8d_1837873.png "屏幕截图.png")
+![左侧菜单栏收缩](https://images.gitee.com/uploads/images/2020/0409/183644_a6902a69_1837873.png "屏幕截图.png")
 
  **创建文件夹**  :blue_heart: 
 ![输入图片说明](https://images.gitee.com/uploads/images/2019/1022/205531_b3bf3380_947714.png "屏幕截图.png")
