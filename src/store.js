@@ -11,6 +11,7 @@ export default new Vuex.Store({
     userId: 0,
     userImgUrl: '',
     userInfoObj: {},
+    operaColumnExpand: Number(sessionStorage.getItem('operaColumnExpand')) //  操作列是否展开，0不展开，1展开
   },
   mutations: {
     changeLogin(state, data) { // 改变state中的状态值
@@ -36,6 +37,10 @@ export default new Vuex.Store({
     changeUserInfoObj(state,data) {
       state.userInfoObj = Object.assign({},state.userInfoObj,data)
     },
+    changeOperaColumnExpand(state,data) {
+      sessionStorage.setItem('operaColumnExpand', data)
+      state.operaColumnExpand = data
+    }
   },
   actions: {
     getUserInfo(context) {

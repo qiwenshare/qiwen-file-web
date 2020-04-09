@@ -23,7 +23,7 @@
       v-loading="loading"
       element-loading-text="数据加载中"
       tooltip-effect="dark"
-      :data="fileList.filter(data => !fileNameSearch || data.filename.toLowerCase().includes(fileNameSearch.toLowerCase()))"
+      :data="tableData"
       :default-sort="{ prop: 'isdir', order: 'descending'}"
       @select-all="selectAllFileRow"
       @select="selectFileRow"
@@ -88,11 +88,11 @@
         sortable
         v-if="selectedColumnList.includes('uploadtime')"
       ></el-table-column>
-      <el-table-column :width="operaColumnExpand ? 300 : 150">
+      <el-table-column :width="operaColumnWidth">
         <template slot="header">
           <span>操作</span>
-          <i class="el-icon-arrow-down" title="展开操作列按钮" @click="operaColumnExpand = true"></i>
-          <i class="el-icon-arrow-up" title="收起操作列按钮" @click="operaColumnExpand = false"></i>
+          <i class="el-icon-circle-plus" title="展开操作列按钮" @click="$store.commit('changeOperaColumnExpand', 1)"></i>
+          <i class="el-icon-remove" title="收起操作列按钮" @click="$store.commit('changeOperaColumnExpand', 0)"></i>
         </template>
         <template slot-scope="scope">
           <div v-if="operaColumnExpand">
@@ -108,8 +108,6 @@
             </el-button>
             <el-button type="warning" size="mini" @click.native="unzipFile(scope.row)" v-if="scope.row.extendname=='zip'">解压缩</el-button>
           </div>
-          
-
           <el-dropdown trigger="click" v-else>
             <el-button size="mini">
               操作
@@ -181,7 +179,6 @@ export default {
     return {
       selectedColumnList: ['extendname', 'filesize', 'uploadtime'],
       fileNameSearch: '',
-      operaColumnExpand: false,
       loading: true, //  表格数据-loading
       fileList: [], //  表格数据-文件列表
       //  移动文件模态框数据
@@ -286,6 +283,25 @@ export default {
       set() {
         return ''
       }
+    },
+    //  过滤后的表格数据
+    tableData() {
+      return this.fileList.filter(data => !this.fileNameSearch || data.filename.toLowerCase().includes(this.fileNameSearch.toLowerCase()))
+    },
+    //  判断当前用户设置的操作列是否展开
+    operaColumnExpand() {
+      return this.$store.state.operaColumnExpand
+    },
+    //  判断当前路径下是否有普通文件
+    isIncludeNormalFile() {
+      return this.fileList.map(data => data.isdir).includes(0)
+    },
+    //  判断当前路径下是否有压缩文件
+    isIncludeZipRarFile() {
+      return this.fileList.map(data => data.extendname).includes('zip') || this.fileList.map(data => data.extendname).includes('rar')
+    },
+    operaColumnWidth() {
+      return this.operaColumnExpand ? (this.isIncludeNormalFile ? ( this.isIncludeZipRarFile ? 300 : 220) : 150 ): 150
     }
   },
   created() {
@@ -536,11 +552,11 @@ export default {
   .file-table
     height calc(100vh - 180px)
     >>> .el-table__header-wrapper
-      .el-icon-arrow-down
-      .el-icon-arrow-up
+      .el-icon-circle-plus
+      .el-icon-remove
         margin-left 6px
         cursor pointer
-        font-weight 600
+        font-size 16px
         &:hover
           color $Primary
     >>> .el-table__body-wrapper
