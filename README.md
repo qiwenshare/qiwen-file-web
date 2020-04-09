@@ -16,7 +16,7 @@
 1. 用户的登录和注册
 #### 文件操作
 1. 用户可对目录结构进行增加，删除，修改 
-2. 提供文件的上传，下载， 
+2. 提供文件的上传，下载，部分文件可在线预览 
 3. 支持对zip文件的在线解压缩 
 4. 支持文件和目录的移动和复制 
 5. 多文件格式分类查看 
@@ -34,9 +34,10 @@
 
 ## 安装教程
 
-1. 拉取代码
-2. 代码安装编译命令：npm install
-3. 热部署运行命令:npm run serve
+1. 拉取代码: git clone https://gitee.com/qiwen-cloud/qiwen-file-web.git 或下载zip包
+2. 依赖安装：npm install
+3. 运行: npm run serve
+4. 打包: npm run build
 
 
 ## 使用说明
