@@ -49,7 +49,10 @@
 
 ## 部分功能演示截图
  **主页**  :yellow_heart: 
-![输入图片说明](https://images.gitee.com/uploads/images/2019/1022/205351_b35a50d9_947714.png "屏幕截图.png")
+![新版主页](https://images.gitee.com/uploads/images/2020/0409/182847_8f60ac83_1837873.png "屏幕截图.png")
+
+![新功能](https://images.gitee.com/uploads/images/2020/0409/183222_fa2282c6_1837873.png "屏幕截图.png")
+
  **创建文件夹**  :blue_heart: 
 ![输入图片说明](https://images.gitee.com/uploads/images/2019/1022/205531_b3bf3380_947714.png "屏幕截图.png")
  **操作列展示**  :purple_heart: 
