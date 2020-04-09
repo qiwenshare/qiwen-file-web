@@ -21,7 +21,6 @@
       tooltip-effect="dark"
       :data="fileList"
       :default-sort="{ prop: 'isdir', order: 'descending'}"
-      :sort-by="['isdir','uploadtime','filename']"
       @select-all="selectAllFileRow"
       @select="selectFileRow"
     >
@@ -31,20 +30,20 @@
           <img :src="setFileImg(scope.row.extendname)" style="max-width: 30px;" />
         </template>
       </el-table-column>
-      <el-table-column label="文件名" prop="filename" sortable show-overflow-tooltip>
+      <el-table-column label="文件名" prop="filename" :sort-by="['isdir','filename']" sortable show-overflow-tooltip>
         <template slot-scope="scope">
           <div style="cursor:pointer" @click="clickFileName(scope.row)">
             {{scope.row.filename}}<span v-if="!scope.row.isdir && scope.row.extendname !== null">.</span>{{scope.row.extendname}}
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="类型" width="100" prop="extendname" sortable show-overflow-tooltip></el-table-column>
-      <el-table-column label="大小" width="100" prop="filesize" sortable show-overflow-tooltip>
+      <el-table-column label="类型" width="100" prop="extendname" :sort-by="['isdir','extendname']" sortable show-overflow-tooltip></el-table-column>
+      <el-table-column label="大小" width="100" prop="filesize" :sort-by="['isdir','filesize']" sortable show-overflow-tooltip>
         <template slot-scope="scope">
           <span>{{calculateFileSize(scope.row.filesize)}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改日期" prop="uploadtime" width="180" show-overflow-tooltip sortable></el-table-column>
+      <el-table-column label="修改日期" prop="uploadtime" width="180" :sort-by="['isdir','uploadtime']" show-overflow-tooltip sortable></el-table-column>
       <el-table-column label="操作" width="150">
         <template slot-scope="scope">
           <!-- <el-button @click.native="deleteFile(scope.row)" type="danger" size="mini">删除</el-button>
@@ -143,6 +142,7 @@ export default {
         'pptx',
         'xls',
         'xlsx',
+        'avi',
         'mp4',
         'css',
         'csv',
@@ -182,6 +182,7 @@ export default {
         xls: require('@/assets/images/file/file_excel.png'),
         xlsx: require('@/assets/images/file/file_excel.png'),
         mp4: require('@/assets/images/file/file_video.png'),
+        avi: require('@/assets/images/file/file_avi.png'),
         rar: require('@/assets/images/file/file_rar.png'),
         zip: require('@/assets/images/file/file_zip.png'),
         dmg: require('@/assets/images/file/file_dmg.png'),
@@ -275,6 +276,7 @@ export default {
 
     //  点击文件名
     clickFileName(row) {
+      //  若是目录则进入目录
       if (row.isdir) {
         this.$router.push({
           query: {
@@ -283,12 +285,32 @@ export default {
           }
         })
       } 
+      //  若是文件，则进行相应的预览 
       else {
         //  若当前点击项是图片
-        const PIC = ['png', 'jpg', 'jpeg', 'gif']
+        const PIC = ['png', 'jpg', 'jpeg', 'gif','svg']
         if (PIC.includes(row.extendname)) {
           this.imgReview.url = 'api' + row.fileurl
           this.imgReview.visible = true
+        }
+        //  若当前点击项是pdf
+        if(row.extendname === 'pdf') {
+          window.open('api' + row.fileurl, '_blank')
+        }
+        //  若当前点击项是html、js、css、json
+        const CODE = ['html','js','css','json']
+        if(CODE.includes(row.extendname)) {
+          window.open('api' + row.fileurl, '_blank')  
+        }
+        //  若当前点击项是视频mp4格式
+        const VIDEO = ['mp4']
+        if(VIDEO.includes(row.extendname)) {
+          window.open('api' + row.fileurl, '_blank')  
+        }
+        //  若当前点击项是视频mp3格式
+        const AUDIO = ['mp3']
+        if(AUDIO.includes(row.extendname)) {
+          window.open('api' + row.fileurl, '_blank')  
         }
       }
     },
@@ -512,6 +534,6 @@ export default {
     }
     .img-large
       margin 0 auto
-      max-width 100%
+      max-width 80%
       max-height 100%
 </style>
