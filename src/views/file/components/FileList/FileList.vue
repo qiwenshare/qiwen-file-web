@@ -14,7 +14,7 @@
       <!-- 面包屑导航栏 -->
       <BreadCrumb class="breadcrumb"></BreadCrumb>
       <!-- 选择表格列 -->
-      <SelectColumn class="select-column" @changeColumn="changeColumn"></SelectColumn>
+      <SelectColumn class="select-column"></SelectColumn>
     </div>
     <!-- 文件表格 -->
     <el-table
@@ -177,7 +177,6 @@ export default {
   },
   data() {
     return {
-      selectedColumnList: ['extendname', 'filesize', 'uploadtime'],
       fileNameSearch: '',
       loading: true, //  表格数据-loading
       fileList: [], //  表格数据-文件列表
@@ -288,6 +287,10 @@ export default {
     tableData() {
       return this.fileList.filter(data => !this.fileNameSearch || data.filename.toLowerCase().includes(this.fileNameSearch.toLowerCase()))
     },
+    //  判断当前用户设置的左侧栏是否折叠
+    selectedColumnList() {
+      return this.$store.state.selectedColumnList
+    },
     //  判断当前用户设置的操作列是否展开
     operaColumnExpand() {
       return this.$store.state.operaColumnExpand
@@ -355,11 +358,6 @@ export default {
       } else {
         return (size / GB).toFixed(3) + 'TB'
       }
-    },
-
-    //  改变显示列
-    changeColumn(tagValueList) {
-      this.selectedColumnList = tagValueList
     },
 
     //  点击文件名

@@ -4,10 +4,10 @@
       <i class="el-icon-share" v-show="!isFolder"></i>
       <span v-show="!isFolder">共享网盘(Beta)</span>
       <el-tooltip class="item" effect="dark" content="收起分类栏" placement="bottom-end">
-        <i class="el-icon-d-arrow-left" v-show="!isFolder" @click="isFolder = true"></i>
+        <i class="el-icon-d-arrow-left" v-show="!isFolder" @click="$store.commit('changeIsFolder', 1)"></i>
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="展开分类栏" placement="bottom-start">
-        <i class="el-icon-d-arrow-right" v-show="isFolder" @click="isFolder = false"></i>
+        <i class="el-icon-d-arrow-right" v-show="isFolder" @click="$store.commit('changeIsFolder', 0)"></i>
       </el-tooltip>
     </div>
     <el-menu
@@ -51,7 +51,7 @@ export default {
   name: 'AsideMenu',
   data() {
     return {
-      isFolder: false
+      // isFolder: false
     }
   },
   computed: {
@@ -63,7 +63,11 @@ export default {
       set() {
         return '0'
       }
-    }
+    },
+    //  判断当前用户设置的左侧栏是否折叠
+    isFolder() {
+      return this.$store.state.isFolder
+    },
   },
   methods: {
     //  导航菜单项点击事件

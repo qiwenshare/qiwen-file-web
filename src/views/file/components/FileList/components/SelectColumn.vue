@@ -36,14 +36,18 @@ export default {
       }, {
         value: 'uploadtime',
         label: '修改日期'
-      }],
-      selectedColumnList: ['extendname','filesize','uploadtime']
+      }]
     }
   },
+  computed: {
+    selectedColumnList() {
+      return this.$store.state.selectedColumnList
+    }
+  },  
   methods: {
     //  选择器值改变时触发
     changeColumn(tagValueList) {
-      this.$emit('changeColumn', tagValueList)
+      this.$store.commit('changeSelectedColumnList', tagValueList)
     }
   }
 }

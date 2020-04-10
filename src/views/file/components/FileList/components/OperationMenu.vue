@@ -31,9 +31,7 @@
       :ref="'downloadLink' + index"
     ></a>
 
-    <div class="storeDisWrapper" style="float:right;">
-      已使用 {{storageValue}} 容量
-    </div>
+    <div class="storeDisWrapper" style="float:right;">已使用 {{storageValue}} 容量</div>
   </div>
 </template>
 
@@ -87,6 +85,7 @@ export default {
   },
   created() {
     this.showStorage()
+    this.handleEnterDown()
   },
   methods: {
     //  上传按钮
@@ -97,6 +96,45 @@ export default {
         this.showStorage()
       } else {
         this.$message.error(result.errorMessage)
+      }
+    },
+    //  enter+down 新建文件夹
+    handleEnterDown() {
+      //  测试enter+down组合键触发事件
+      let self = this
+      let code1 = 0
+      let code2 = 0
+
+      document.onkeydown = function(e) {
+        let evn = e || event
+        let key = evn.keyCode || evn.which || evn.charCode
+
+        // enter
+        if (key === 13) {
+          code1 = 13
+          e.preventDefault() //禁止默认事件
+        }
+        // down keyup时及时的 归零
+        if (key === 40) {
+          code2 = 0
+          e.preventDefault() //禁止默认事件
+        }
+      }
+      document.onkeyup = function(e) {
+        // enter keyup时及时的 归零
+        if (e.keyCode === 13) {
+          code1 = 0
+        }
+        //  down
+        if (e.keyCode === 40) {
+          code2 = 40
+        }
+        // enter+down
+        if (code1 === 13 && code2 === 40) {
+          console.log('enter + down')
+          //  这里写你要触发的事件名称
+          self.addFolder()
+        }
       }
     },
     //  新建文件夹按钮：打开模态框

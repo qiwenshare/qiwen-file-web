@@ -11,7 +11,9 @@ export default new Vuex.Store({
     userId: 0,
     userImgUrl: '',
     userInfoObj: {},
-    operaColumnExpand: Number(sessionStorage.getItem('operaColumnExpand')) //  操作列是否展开，0不展开，1展开
+    operaColumnExpand: Number(sessionStorage.getItem('operaColumnExpand')), //  操作列是否展开，0不展开，1展开
+    isFolder: Number(sessionStorage.getItem('isFolder')), //  左侧栏是否折叠，0不折叠，1折叠
+    selectedColumnList: sessionStorage.getItem('selectedColumnList') || ['extendname','filesize','uploadtime']  //  列显隐
   },
   mutations: {
     changeLogin(state, data) { // 改变state中的状态值
@@ -40,6 +42,14 @@ export default new Vuex.Store({
     changeOperaColumnExpand(state,data) {
       sessionStorage.setItem('operaColumnExpand', data)
       state.operaColumnExpand = data
+    },
+    changeIsFolder(state,data) {
+      sessionStorage.setItem('isFolder', data)
+      state.isFolder = data
+    },
+    changeSelectedColumnList(state,data) {
+      sessionStorage.setItem('selectedColumnList', data)
+      state.selectedColumnList = data
     }
   },
   actions: {
