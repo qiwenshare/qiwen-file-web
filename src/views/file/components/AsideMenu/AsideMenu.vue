@@ -51,7 +51,7 @@ export default {
   name: 'AsideMenu',
   data() {
     return {
-      // isFolder: false
+      fileListByFiletype: []
     }
   },
   computed: {
@@ -82,6 +82,7 @@ export default {
         selectFileByFileType({ filetype: index }).then(res => {
           if (res.success) {
             console.log(res.data)
+            this.fileListByFiletype = res.data
           } else {
             this.$message.error(res.errorMessage)
           }

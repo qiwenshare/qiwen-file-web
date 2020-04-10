@@ -6,6 +6,8 @@
         :operationFile="operationFile"
         :selectionFile="selectionFile"
         :filepath="filepath"
+        :storageValue="storageValue"
+        @showStorage="showStorage"
         @showFileList="showFileList"
         @showFileTreeDialog="showFileTreeDialog"
       ></OperationMenu>
@@ -165,7 +167,8 @@ import {
   unzipfile,
   deleteFile,
   getFileTree,
-  batchMoveFile
+  batchMoveFile,
+  getstorage
 } from '@/request/file.js'
 
 export default {
@@ -177,6 +180,7 @@ export default {
   },
   data() {
     return {
+      storageValue: 0,
       fileNameSearch: '',
       loading: true, //  表格数据-loading
       fileList: [], //  表格数据-文件列表
@@ -309,6 +313,7 @@ export default {
   },
   created() {
     this.showFileList()
+    this.showStorage()
   },
   methods: {
     /**
@@ -520,6 +525,7 @@ export default {
       deleteFile(fileInfo).then(res => {
         if (res.success) {
           this.showFileList()
+          this.showStorage()
           this.$message.success('删除成功')
         } else {
           this.$message.error(res.errorMessage)
@@ -535,6 +541,32 @@ export default {
       this.dialogMoveFile.isBatchMove = true //  是批量移动
       this.initFileTree()
       this.dialogMoveFile.visible = param
+    },
+
+    //  获取已占用内存
+    showStorage() {
+      getstorage().then(res => {
+        if (res.success) {
+          let size = res.data ? res.data.storagesize : 0
+          const B = 1024
+          const KB = Math.pow(1024, 2)
+          const MB = Math.pow(1024, 3)
+          const GB = Math.pow(1024, 4)
+          if (!size) {
+            this.storageValue = 0 + 'KB'
+          } else if (size < KB) {
+            this.storageValue = (size / B).toFixed(0) + 'KB'
+          } else if (size < MB) {
+            this.storageValue = (size / KB).toFixed(2) + 'MB'
+          } else if (size < GB) {
+            this.storageValue = (size / MB).toFixed(3) + 'GB'
+          } else {
+            this.storageValue = (size / GB).toFixed(4) + 'TB'
+          }
+        } else {
+          this.$message.error(res.errorMessage)
+        }
+      })
     }
   }
 }

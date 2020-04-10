@@ -37,21 +37,21 @@
 
 <script>
 import {
-  deleteFile,
-  // batchDeleteFile,
-  createFile,
-  getstorage
+  // deleteFile,
+  batchDeleteFile,
+  createFile
 } from '@/request/file.js'
 
 export default {
   name: 'OperationMenu',
   props: {
     selectionFile: Array,
-    operationFile: Object
+    operationFile: Object,
+    storageValue: Number
   },
   data() {
     return {
-      storageValue: 0,
+      // storageValue: 0,
       fileTree: [],
       batchDeleteFileDialog: false
     }
@@ -84,7 +84,6 @@ export default {
     }
   },
   created() {
-    this.showStorage()
     this.handleEnterDown()
   },
   methods: {
@@ -93,12 +92,12 @@ export default {
       if (result.success) {
         this.$message.success('上传成功')
         this.$emit('showFileList')
-        this.showStorage()
+        this.$emit('showStorage')
       } else {
         this.$message.error(result.errorMessage)
       }
     },
-    //  enter+down 新建文件夹
+    //  enter+down 新建文件夹，请不要删除
     handleEnterDown() {
       //  测试enter+down组合键触发事件
       let self = this
@@ -169,51 +168,25 @@ export default {
         }
       })
     },
-    //  获取已占用内存
-    showStorage() {
-      getstorage().then(res => {
-        if (res.success) {
-          let size = res.data.storagesize
-          const B = 1024
-          const KB = Math.pow(1024, 2)
-          const MB = Math.pow(1024, 3)
-          const GB = Math.pow(1024, 4)
-          if (!size) {
-            this.storageValue = 0 + 'KB'
-          } else if (size < KB) {
-            this.storageValue = (size / B).toFixed(0) + 'KB'
-          } else if (size < MB) {
-            this.storageValue = (size / KB).toFixed(2) + 'MB'
-          } else if (size < GB) {
-            this.storageValue = (size / MB).toFixed(3) + 'GB'
-          } else {
-            this.storageValue = (size / GB).toFixed(4) + 'TB'
-          }
-        } else {
-          this.$message.error(res.errorMessage)
-        }
-      })
-    },
 
     //  批量操作-删除按钮
     deleteSelectedFile() {
-      //  批量删除接口报错，暂时先用循环数组，单个删除接口代替
-      this.selectionFile.forEach(element => {
-        deleteFile(element).then(res => {
-          if (res.success) {
-            this.$message.success('删除成功')
-          } else {
-            this.$message.error(res.errorMessage)
-          }
-        })
-      })
-      this.$emit('showFileList')
-      // console.log(JSON.stringify(this.selectionFile))
-      // let data = {
-      //   files: this.selectionFile
-      // }
-      //  此接口报错
-      /*
+      // //  批量删除接口报错，暂时先用循环数组，单个删除接口代替
+      // this.selectionFile.forEach(element => {
+      //   deleteFile(element).then(res => {
+      //     if (res.success) {
+      //       this.$message.success('删除成功')
+      //     } else {
+      //       this.$message.error(res.errorMessage)
+      //     }
+      //   })
+      // })
+      // this.$emit('showFileList')
+
+      let data = {
+        files: JSON.stringify(this.selectionFile)
+      }
+      //  批量删除接口
       batchDeleteFile(data).then(res => {
         if (res.success) {
           this.$message({
@@ -221,12 +194,11 @@ export default {
             type: 'success'
           })
           this.$emit('showFileList')
-          this.showStorage()
+          this.$emit('showStorage')
         } else {
           this.$message.error('失败' + res.errorMessage)
         }
       })
-      */
     },
     //  批量操作-移动按钮
     moveSelectedFile() {

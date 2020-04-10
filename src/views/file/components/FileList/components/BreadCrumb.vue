@@ -30,7 +30,7 @@ export default {
     //  面包屑导航栏数组
     breadCrumbList: {
       get() {
-        let filepathList = this.filepath.split('/')
+        let filepathList = this.filepath ? this.filepath.split('/') : []
         let res = [] //  返回结果数组
         let _path = [] //  存放祖先路径
         for (let i = 0; i < filepathList.length; i++) {

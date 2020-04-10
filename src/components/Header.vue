@@ -1,39 +1,40 @@
 <template>
   <div class="headerWrapper">
-    <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
-      <el-menu-item class="headerLogo" disabled>
+    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
+      <el-menu-item class="headerLogo" index="0" disabled>
         <a href="https://www.qiwenshare.com/" target="_blank">
           <img class="logo" :src="logoUrl" />
         </a>
       </el-menu-item>
-      <el-menu-item class="headerItem" index="1">
-        网盘
+      <el-menu-item
+        class="headerItem"
+        index="1"
+        :router="{ name: 'file', query: { filepath: '/', filetype: '0' } }"
+      >网盘</el-menu-item>
+      <el-menu-item class="headerItem userDisplay right-menu-item" index="2" v-show="loginState">
+        <el-avatar :size="34" :src="userImgUrl" fit="cover">
+          <img :src="userImgDefault" />
+        </el-avatar>
+        <span class="username-header">{{ username }}</span>
       </el-menu-item>
-      <el-submenu index="11" class="headerItem userDisplay right-menu-item" v-show="loginState">
-        <template class="userDisplayList" slot="title">
-          <el-avatar :size="34" :src="userImgUrl" fit="cover">
-            <img :src="userImgDefault" />
-          </el-avatar>
-          <span class="username-header">{{ username }}</span>
-        </template>
-        <el-menu-item index="11-4" @click="exitButton()">
-          <i class="el-icon-s-promotion"></i>退出
-        </el-menu-item>
-      </el-submenu>
-      <router-link
-        tag="el-menu-item"
+      <el-menu-item
+        class="headerItem exit right-menu-item"
+        index="3"
+        v-show="loginState"
+        @click="exitButton()"
+      >退出</el-menu-item>
+      <el-menu-item
         class="headerItem login right-menu-item"
-        index="7"
-        to="/login"
+        index="4"
         v-show="!loginState"
-      >登录</router-link>
-      <router-link
-        tag="el-menu-item"
+        router="/login"
+      >登录</el-menu-item>
+      <el-menu-item
         class="headerItem register right-menu-item"
-        index="8"
-        to="/register"
+        index="5"
         v-show="!loginState"
-      >注册</router-link>
+        router="/register"
+      >注册</el-menu-item>
     </el-menu>
   </div>
 </template>
@@ -46,10 +47,24 @@ export default {
   data() {
     return {
       logoUrl: require('@/assets/images/common/logo_header.png'),
-      userImgDefault: require('@/assets/images/settings/userImg.png'),
+      userImgDefault: require('@/assets/images/settings/userImg.png')
     }
   },
   computed: {
+    activeIndex: {
+      get() {
+        let routerName = this.$route.name
+        const ROUTERMAP = {
+          File: 1,
+          Login: 4,
+          Register: 5
+        }
+        return ROUTERMAP[routerName]
+      },
+      set() {
+        return 1
+      }
+    },
     loginState() {
       return this.$store.state.isLogin
     },
@@ -67,6 +82,9 @@ export default {
         if (res.success) {
           this.$message.success(res.data)
           this.$store.dispatch('getUserInfo').then(() => {
+            sessionStorage.removeItem('operaColumnExpand')
+            sessionStorage.removeItem('isFolder')
+            sessionStorage.removeItem('selectedColumnList')
             this.$router.push({ path: '/login' })
           })
         } else {
@@ -84,7 +102,7 @@ export default {
   width 100%
   padding 0 20px
   box-shadow $tabBoxShadow
-  >>> .el-menu--horizontal 
+  >>> .el-menu--horizontal
     .el-menu-item:not(.is-disabled):hover
       border-bottom-color $Primary !important
       background $tabBackColor
@@ -104,13 +122,15 @@ export default {
     .right-menu-item
       position absolute
     .userDisplay
-      right 0px
+      right 70px
       width 180px
       .username-header
         margin-left 6px
         min-width 60px
         display inline-block
         text-align center
+    .exit
+      right 0
     .login
       right 70px
     .register
