@@ -148,9 +148,9 @@
       </el-table-column>
     </el-table>
     <!-- 查看图片 -->
-    <div class="img-review-wrapper" v-show="imgReview.visible" @click="imgReview.visible = false">
+    <!-- <div class="img-review-wrapper" v-show="imgReview.visible" @click="imgReview.visible = false">
       <img class="img-large" :src="imgReview.url" alt />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -249,11 +249,11 @@ export default {
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
       },
-      //  查看图片模态框数据
-      imgReview: {
-        visible: false,
-        url: ''
-      }
+      // //  查看图片模态框数据
+      // imgReview: {
+      //   visible: false,
+      //   url: ''
+      // }
     }
   },
   computed: {
@@ -357,8 +357,9 @@ export default {
         //  若当前点击项是图片
         const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
         if (PIC.includes(row.extendname)) {
-          this.imgReview.url = 'api' + row.fileurl
-          this.imgReview.visible = true
+          this.$emit('getImgReviewData', row.fileurl, true)
+          // this.imgReview.url = 'api' + row.fileurl
+          // this.imgReview.visible = true
         }
         //  若当前点击项是pdf
         if (row.extendname === 'pdf') {
@@ -462,6 +463,7 @@ export default {
 
 <style lang="stylus" scoped>
 @import '~@/assets/styles/varibles.styl'
+@import '~@/assets/styles/mixins.styl'
 .file-table-wrapper
   .file-table
     width 100% !important 
@@ -476,21 +478,7 @@ export default {
     >>> .el-table__body-wrapper
       height calc(100vh - 228px)
       overflow-y auto
-      /* 修改 滚动条 下面 的 宽度 */
-      &::-webkit-scrollbar
-        width 10px
-      /* 修改 滚动条的 下面 的 样式 */
-      &::-webkit-scrollbar-track
-        background-color #EBEEF5
-        -webkit-border-radius 2em
-        -moz-border-radius 2em
-        border-radius 2em
-      /* 修改 滑块 */
-      &::-webkit-scrollbar-thumb
-        background-color #909399
-        -webkit-border-radius 2em
-        -moz-border-radius 2em
-        border-radius 2em
+      setScrollbar(10px)
   .img-review-wrapper
     position fixed
     top 0

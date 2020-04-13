@@ -15,6 +15,15 @@
     <div class="middle-wrapper">
       <!-- 面包屑导航栏 -->
       <BreadCrumb class="breadcrumb"></BreadCrumb>
+      <!-- 图片是否切换为网格预览图 -->
+      <div class="change-image-grid" v-show="filetype === 1">
+        <i
+          class="el-icon-s-grid"
+          :class="{'active': isImageGrid}"
+          :title="isImageGrid ? '切换为列表模式' : '切换为网格模式'"
+          @click="$store.commit('changeIsImageGrid', isImageGrid ? 0 : 1)"
+        ></i>
+      </div>
       <!-- 选择表格列 -->
       <SelectColumn class="select-column"></SelectColumn>
     </div>
@@ -22,18 +31,26 @@
     <FileTable
       :fileList="fileList"
       :loading="loading"
+      v-show="!isImageGrid || filetype !== 1"
       @setMoveFileDialogData="setMoveFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
       @showStorage="showStorage"
       @getTableDataByType="getTableDataByType"
+      @getImgReviewData="getImgReviewData"
     ></FileTable>
+    <!-- 图片网格模式 -->
+    <ImageGrid class="image-grid" v-if="isImageGrid && filetype === 1" :fileList="fileList" @getImgReviewData="getImgReviewData"></ImageGrid>
     <!-- 移动文件模态框 -->
     <MoveFileDialog
       :dialogMoveFile="dialogMoveFile"
       @setSelectFilePath="setSelectFilePath"
       @confirmMoveFile="confirmMoveFile"
     ></MoveFileDialog>
+    <!-- 查看图片 -->
+    <div class="img-review-wrapper" v-show="imgReview.visible" @click="imgReview.visible = false">
+      <img class="img-large" :src="imgReview.url" alt />
+    </div>
   </div>
 </template>
 
@@ -42,6 +59,7 @@ import OperationMenu from './components/OperationMenu'
 import BreadCrumb from './components/BreadCrumb'
 import SelectColumn from './components/SelectColumn'
 import FileTable from './components/FileTable'
+import ImageGrid from './components/ImageGrid'
 import MoveFileDialog from './components/MoveFileDialog'
 import {
   getfilelist,
@@ -59,6 +77,7 @@ export default {
     BreadCrumb,
     SelectColumn,
     FileTable,
+    ImageGrid,
     MoveFileDialog
   },
   data() {
@@ -173,6 +192,9 @@ export default {
       set() {
         return 0
       }
+    },
+    isImageGrid() {
+      return this.$store.state.isImageGrid
     }
   },
   created() {
@@ -184,9 +206,11 @@ export default {
      * 表格数据获取相关事件
      */
     getTableDataByType() {
-      if(this.filetype) { //  分类型
+      if (this.filetype) {
+        //  分类型
         this.showFileListByType()
-      } else {  //  全部文件
+      } else {
+        //  全部文件
         this.showFileList()
       }
     },
@@ -350,6 +374,12 @@ export default {
           this.$message.error(res.errorMessage)
         }
       })
+    },
+
+    //  获取查看大图的数据
+    getImgReviewData(fileurl, visible) {
+      this.imgReview.url = 'api' + fileurl
+      this.imgReview.visible = visible
     }
   }
 }
@@ -362,8 +392,51 @@ export default {
     .el-dialog-div
       height 200px
       overflow auto
-  .breadcrumb
-    flex 1
   .middle-wrapper
     display flex
+    .breadcrumb
+      flex 1
+    .change-image-grid
+      margin-right 10px
+      height 30px
+      .el-icon-s-grid
+        line-height 30px
+        font-size 22px
+        color $Info
+        cursor pointer
+      .active
+        color $Primary
+  .img-review-wrapper
+    position fixed
+    top 0
+    right 0
+    bottom 0
+    left 0
+    overflow auto
+    width 100%
+    height 100%
+    z-index 2010
+    text-align center
+    display flex
+    align-items center
+    animation imgReviewAnimation 0.3s
+    -webkit-animation imgReviewAnimation 0.3s /* Safari and Chrome */
+    animation-iteration-count 0.3
+    -webkit-animation-iteration-count 0.3
+    animation-fill-mode forwards
+    -webkit-animation-fill-mode forwards /* Safari 和 Chrome */
+    @keyframes imgReviewAnimation
+      0%
+        background transparent
+      100%
+        background rgba(0, 0, 0, 0.8)
+    @keyframes imgReviewAnimation
+      0%
+        background transparent
+      100%
+        background rgba(0, 0, 0, 0.8)
+    .img-large
+      margin 0 auto
+      max-width 80%
+      max-height 100%
 </style>

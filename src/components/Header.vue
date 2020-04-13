@@ -85,6 +85,7 @@ export default {
             sessionStorage.removeItem('operaColumnExpand')
             sessionStorage.removeItem('isFolder')
             sessionStorage.removeItem('selectedColumnList')
+            sessionStorage.removeItem('isImageGrid')
             this.$router.push({ path: '/login' })
           })
         } else {

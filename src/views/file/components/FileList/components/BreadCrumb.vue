@@ -11,7 +11,6 @@
         :to="{ query: { filepath: item.path, filetype: 0 } }"
       >{{item.name}}</el-breadcrumb-item>
     </el-breadcrumb>
-    
   </div>
 </template>
 
