@@ -49,7 +49,12 @@
         sortable
         show-overflow-tooltip
         v-if="selectedColumnList.includes('extendname')"
-      ></el-table-column>
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.extendname">{{scope.row.extendname}}</span>
+          <span v-else>文件夹</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="大小"
         width="80"

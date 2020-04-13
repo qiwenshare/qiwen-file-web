@@ -1,13 +1,17 @@
 <template>
   <div class="breadcrumb-wrapper">
     <div class="title">当前位置：</div>
-    <el-breadcrumb separator="/">
+    <el-breadcrumb v-if="filetype" separator="/">
+      <el-breadcrumb-item>全部{{filetypeMap[filetype]}}</el-breadcrumb-item>
+    </el-breadcrumb>
+    <el-breadcrumb v-else separator="/">
       <el-breadcrumb-item
         v-for="(item, index) in breadCrumbList"
         :key="index"
         :to="{ query: { filepath: item.path, filetype: 0 } }"
       >{{item.name}}</el-breadcrumb-item>
     </el-breadcrumb>
+    
   </div>
 </template>
 
@@ -15,7 +19,15 @@
 export default {
   name: 'BreadCrumb',
   data() {
-    return {}
+    return {
+      filetypeMap: {
+        1: '图片',
+        2: '文档',
+        3: '视频',
+        4: '音乐',
+        5: '其他'
+      }
+    }
   },
   computed: {
     //  面包屑导航栏数组
@@ -46,6 +58,15 @@ export default {
       },
       set() {
         return []
+      }
+    },
+    //  文件类型索引
+    filetype: {
+      get() {
+        return Number(this.$route.query.filetype)
+      },
+      set() {
+        return 0
       }
     }
   }

@@ -45,6 +45,7 @@ import FileTable from './components/FileTable'
 import MoveFileDialog from './components/MoveFileDialog'
 import {
   getfilelist,
+  selectFileByFileType,
   getFileTree,
   getstorage,
   moveFile,
@@ -75,7 +76,7 @@ export default {
       selectFilePath: '', //  移动文件路径
       operationFile: {}, // 当前操作行
       selectionFile: [], // 勾选的文件
-      filetype: '', //  文件类型
+      // filetype: '', //  文件类型
       //  可以识别的文件类型
       fileImgTypeList: [
         'png',
@@ -164,20 +165,22 @@ export default {
       set() {
         return ''
       }
+    },
+    filetype: {
+      get() {
+        return Number(this.$route.query.filetype)
+      },
+      set() {
+        return 0
+      }
     }
   },
-  watch: {
-    // $route(from, to) {
-    //   console.log(from.query)
-    //   console.log(to.query)
-    // },
-    // filepath(newValue, oldValue) {
-    //   console.log(newValue, oldValue, "watch执行")
-    //   this.showFileList()
-    // }
-  },
   created() {
-    this.showFileList()
+    if(this.filetype) { //  分类型
+      this.showFileListByType()
+    } else {  //  全部文件
+      this.showFileList()
+    }
     this.showStorage()
   },
   methods: {
@@ -190,6 +193,21 @@ export default {
         filepath: this.filepath
       }
       getfilelist(data).then(res => {
+        if (res.success) {
+          this.fileList = res.data
+          this.loading = false
+        } else {
+          this.$message.error(res.errorMessage)
+        }
+      })
+    },
+    //  根据文件类型展示文件列表
+    showFileListByType() {
+      //  分类型
+      let data = {
+        filetype: this.filetype
+      }
+      selectFileByFileType(data).then(res => {
         if (res.success) {
           this.fileList = res.data
           this.loading = false
@@ -251,9 +269,7 @@ export default {
       this.dialogMoveFile.isBatchMove = isBatchMove
         ? isBatchMove
         : this.dialogMoveFile.isBatchMove
-      console.log(isBatchMove, this.dialogMoveFile.isBatchMove)
       this.dialogMoveFile.visible = visible
-      console.log(this.dialogMoveFile.isBatchMove, this.dialogMoveFile.visible)
     },
     //  移动文件模态框：初始化文件目录树
     initFileTree() {

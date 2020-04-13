@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Header v-if="isHeaderShow" id="headWrapper"></Header>
-    <keep-alive>
+    <keep-alive exclude="File">
       <router-view class="mainContent" :key="$route.fullPath"></router-view>
     </keep-alive>
     <Footer v-if="isFooterShow"></Footer>
