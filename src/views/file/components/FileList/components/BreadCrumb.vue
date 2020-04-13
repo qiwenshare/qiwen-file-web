@@ -18,19 +18,11 @@ export default {
     return {}
   },
   computed: {
-    //  当前查看的文件路径
-    filepath: {
-      get() {
-        return this.$route.query.filepath
-      },
-      set() {
-        return ''
-      }
-    },
     //  面包屑导航栏数组
     breadCrumbList: {
       get() {
-        let filepathList = this.filepath ? this.filepath.split('/') : []
+        let filepath = this.$route.query.filepath
+        let filepathList = filepath ? filepath.split('/') : []
         let res = [] //  返回结果数组
         let _path = [] //  存放祖先路径
         for (let i = 0; i < filepathList.length; i++) {

@@ -4,15 +4,23 @@
       <i class="el-icon-share" v-show="!isFolder"></i>
       <span v-show="!isFolder">共享网盘(Beta)</span>
       <el-tooltip class="item" effect="dark" content="收起分类栏" placement="bottom-end">
-        <i class="el-icon-d-arrow-left" v-show="!isFolder" @click="$store.commit('changeIsFolder', 1)"></i>
+        <i
+          class="el-icon-d-arrow-left"
+          v-show="!isFolder"
+          @click="$store.commit('changeIsFolder', 1)"
+        ></i>
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="展开分类栏" placement="bottom-start">
-        <i class="el-icon-d-arrow-right" v-show="isFolder" @click="$store.commit('changeIsFolder', 0)"></i>
+        <i
+          class="el-icon-d-arrow-right"
+          v-show="isFolder"
+          @click="$store.commit('changeIsFolder', 0)"
+        ></i>
       </el-tooltip>
     </div>
     <el-menu
       class="aside-menu"
-      :default-openeds="['0']"
+      :default-openeds="[0]"
       :default-active="activeIndex"
       @select="handleSelect"
     >
@@ -61,13 +69,13 @@ export default {
         return this.$route.query.filetype
       },
       set() {
-        return '0'
+        return 0
       }
     },
     //  判断当前用户设置的左侧栏是否折叠
     isFolder() {
       return this.$store.state.isFolder
-    },
+    }
   },
   methods: {
     //  导航菜单项点击事件
@@ -78,7 +86,7 @@ export default {
         query: { filepath: filepath, filetype: index }
       })
       //  分类型
-      if (index !== '0') {
+      if (index !== 0) {
         selectFileByFileType({ filetype: index }).then(res => {
           if (res.success) {
             console.log(res.data)

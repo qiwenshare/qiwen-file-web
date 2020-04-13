@@ -15,7 +15,7 @@
 
 <script>
 import AsideMenu from './components/AsideMenu/AsideMenu'
-import FileList from './components/FileList/FileList'
+import FileList from './components/FileList'
 
 export default {
   name: 'File',

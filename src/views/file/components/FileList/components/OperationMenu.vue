@@ -171,18 +171,6 @@ export default {
 
     //  批量操作-删除按钮
     deleteSelectedFile() {
-      // //  批量删除接口报错，暂时先用循环数组，单个删除接口代替
-      // this.selectionFile.forEach(element => {
-      //   deleteFile(element).then(res => {
-      //     if (res.success) {
-      //       this.$message.success('删除成功')
-      //     } else {
-      //       this.$message.error(res.errorMessage)
-      //     }
-      //   })
-      // })
-      // this.$emit('showFileList')
-
       let data = {
         files: JSON.stringify(this.selectionFile)
       }
@@ -202,7 +190,7 @@ export default {
     },
     //  批量操作-移动按钮
     moveSelectedFile() {
-      this.$emit('showFileTreeDialog', true)
+      this.$emit('setMoveFileDialogData', true, true)
     },
     //  批量操作：下载按钮
     downloadSelectedFile() {

@@ -9,7 +9,7 @@
       <el-menu-item
         class="headerItem"
         index="1"
-        :router="{ name: 'file', query: { filepath: '/', filetype: '0' } }"
+        :router="{ name: 'file', query: { filepath: '/', filetype: 0 } }"
       >网盘</el-menu-item>
       <el-menu-item class="headerItem userDisplay right-menu-item" index="2" v-show="loginState">
         <el-avatar :size="34" :src="userImgUrl" fit="cover">
