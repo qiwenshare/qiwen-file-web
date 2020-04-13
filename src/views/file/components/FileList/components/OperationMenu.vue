@@ -11,11 +11,11 @@
       <el-button size="medium" type="primary" icon="el-icon-upload2" id="uploadFileId">上传</el-button>
     </el-upload>
 
-    <el-button size="medium" @click="addFolder()">新建文件夹</el-button>
+    <el-button size="medium" @click="addFolder()" v-if="!filetype">新建文件夹</el-button>
 
     <div style="display: inline-block;" v-if="selectionFile.length !== 0">
       <el-button size="medium" icon="el-icon-delete" @click="deleteSelectedFile()">删除</el-button>
-      <el-button size="medium" icon="el-icon-edit" @click="moveSelectedFile()">移动</el-button>
+      <el-button size="medium" icon="el-icon-edit" @click="moveSelectedFile()" v-if="!filetype">移动</el-button>
       <!-- <el-button size="medium" icon="el-icon-document-copy">拷贝</el-button> -->
       <el-button size="medium" icon="el-icon-download" @click="downloadSelectedFile()">下载</el-button>
     </div>
@@ -51,7 +51,6 @@ export default {
   },
   data() {
     return {
-      // storageValue: 0,
       fileTree: [],
       batchDeleteFileDialog: false
     }
@@ -64,6 +63,15 @@ export default {
       },
       set() {
         return ''
+      }
+    },
+    //  文件类型索引
+    filetype: {
+      get() {
+        return Number(this.$route.query.filetype)
+      },
+      set() {
+        return 0
       }
     },
     //  上传文件组件参数
@@ -91,7 +99,7 @@ export default {
     uploadFileSuccess(result) {
       if (result.success) {
         this.$message.success('上传成功')
-        this.$emit('showFileList')
+        this.$emit('getTableDataByType')
         this.$emit('showStorage')
       } else {
         this.$message.error(result.errorMessage)
@@ -162,7 +170,7 @@ export default {
       createFile(data).then(res => {
         if (res.success) {
           this.$message.success('添加成功')
-          this.$emit('showFileList')
+          this.$emit('getTableDataByType')
         } else {
           this.$message.warning(res.errorMessage)
         }
@@ -181,7 +189,7 @@ export default {
             message: res.data,
             type: 'success'
           })
-          this.$emit('showFileList')
+          this.$emit('getTableDataByType')
           this.$emit('showStorage')
         } else {
           this.$message.error('失败' + res.errorMessage)

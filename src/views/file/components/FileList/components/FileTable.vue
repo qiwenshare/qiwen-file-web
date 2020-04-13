@@ -4,6 +4,7 @@
     <el-table
       class="file-table"
       ref="multipleTable"
+      fit
       v-loading="loading"
       element-loading-text="数据加载中"
       tooltip-effect="dark"
@@ -15,7 +16,7 @@
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label prop="isdir" width="60">
         <template slot-scope="scope">
-          <img :src="setFileImg(scope.row.extendname)" style="max-width: 30px;" />
+          <img :src="setFileImg(scope.row.extendname)" style="width: 30px;" />
         </template>
       </el-table-column>
       <el-table-column
@@ -39,6 +40,16 @@
             <span v-if="!scope.row.isdir && scope.row.extendname !== null">.</span>
             {{scope.row.extendname}}
           </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="路径"
+        prop="filepath"
+        show-overflow-tooltip
+        v-if="Number($route.query.filetype)"
+      >
+        <template slot-scope="scope">
+          {{scope.row.filepath}}
         </template>
       </el-table-column>
       <el-table-column
@@ -166,7 +177,6 @@ export default {
           label: 'label'
         }
       },
-      filetype: '', //  文件类型
       //  可以识别的文件类型
       fileImgTypeList: [
         'png',
@@ -404,7 +414,7 @@ export default {
       })
       unzipfile(fileInfo).then(res => {
         if (res.success) {
-          this.$emit('showFileList')
+          this.$emit('getTableDataByType')
           this.$emit('showStorage')
           this.$message.success('解压成功')
           loading.close()
@@ -438,7 +448,7 @@ export default {
     confirmDeleteFile(fileInfo) {
       deleteFile(fileInfo).then(res => {
         if (res.success) {
-          this.$emit('showFileList')
+          this.$emit('getTableDataByType')
           this.$emit('showStorage')
           this.$message.success('删除成功')
         } else {
@@ -454,6 +464,7 @@ export default {
 @import '~@/assets/styles/varibles.styl'
 .file-table-wrapper
   .file-table
+    width 100% !important 
     height calc(100vh - 180px)
     >>> .el-table__header-wrapper
       .el-icon-circle-plus, .el-icon-remove

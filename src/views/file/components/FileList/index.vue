@@ -8,7 +8,7 @@
         :filepath="filepath"
         :storageValue="storageValue"
         @showStorage="showStorage"
-        @showFileList="showFileList"
+        @getTableDataByType="getTableDataByType"
         @setMoveFileDialogData="setMoveFileDialogData"
       ></OperationMenu>
     </el-header>
@@ -26,7 +26,7 @@
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
       @showStorage="showStorage"
-      @showFileList="showFileList"
+      @getTableDataByType="getTableDataByType"
     ></FileTable>
     <!-- 移动文件模态框 -->
     <MoveFileDialog
@@ -176,18 +176,21 @@ export default {
     }
   },
   created() {
-    if(this.filetype) { //  分类型
-      this.showFileListByType()
-    } else {  //  全部文件
-      this.showFileList()
-    }
+    this.getTableDataByType()
     this.showStorage()
   },
   methods: {
     /**
      * 表格数据获取相关事件
      */
-    //  获取当前路径下的所有文件
+    getTableDataByType() {
+      if(this.filetype) { //  分类型
+        this.showFileListByType()
+      } else {  //  全部文件
+        this.showFileList()
+      }
+    },
+    //  获取当前路径下的文件列表
     showFileList() {
       let data = {
         filepath: this.filepath
@@ -296,7 +299,7 @@ export default {
         batchMoveFile(data).then(res => {
           if (res.success) {
             this.$message.success(res.data)
-            this.showFileList()
+            this.getTableDataByType()
             this.dialogMoveFile.visible = false
             this.selectionFile = []
           } else {
@@ -314,7 +317,7 @@ export default {
         moveFile(data).then(res => {
           if (res.success) {
             this.$message.success('移动文件成功')
-            this.showFileList()
+            this.getTableDataByType()
             this.dialogMoveFile.visible = false
           } else {
             this.$message.error(res.errorMessage)
