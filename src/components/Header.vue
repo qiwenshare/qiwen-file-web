@@ -1,15 +1,15 @@
 <template>
   <div class="headerWrapper">
-    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
-      <el-menu-item class="headerLogo" index="0" disabled>
+    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router>
+      <el-menu-item class="headerLogo" :index="0" disabled>
         <a href="https://www.qiwenshare.com/" target="_blank">
           <img class="logo" :src="logoUrl" />
         </a>
       </el-menu-item>
       <el-menu-item
         class="headerItem"
-        index="1"
-        :router="{ name: 'file', query: { filepath: '/', filetype: 0 } }"
+        :index="1"
+        :route="{ name: 'File', query: { filepath: '/', filetype: 0 } }"
       >网盘</el-menu-item>
       <el-menu-item class="headerItem userDisplay right-menu-item" index="2" v-show="loginState">
         <el-avatar :size="34" :src="userImgUrl" fit="cover">
@@ -19,21 +19,21 @@
       </el-menu-item>
       <el-menu-item
         class="headerItem exit right-menu-item"
-        index="3"
         v-show="loginState"
+        :index="3"
         @click="exitButton()"
       >退出</el-menu-item>
       <el-menu-item
         class="headerItem login right-menu-item"
-        index="4"
         v-show="!loginState"
-        router="/login"
+        :index="4"
+        :route="{ name: 'Login' }"
       >登录</el-menu-item>
       <el-menu-item
         class="headerItem register right-menu-item"
-        index="5"
         v-show="!loginState"
-        router="/register"
+        :index="5"
+        :route="{ name: 'Register' }"
       >注册</el-menu-item>
     </el-menu>
   </div>
@@ -59,6 +59,7 @@ export default {
           Login: 4,
           Register: 5
         }
+        console.log(routerName, ROUTERMAP[routerName])
         return ROUTERMAP[routerName]
       },
       set() {

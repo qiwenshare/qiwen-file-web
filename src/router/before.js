@@ -5,12 +5,16 @@ import store from '@/store'
 router.beforeEach((to, from, next) => {
   store.dispatch("getUserInfo").then(() => {
     if (to.matched.some(m => m.meta.requireAuth)) {
-      if (!store.state.isLogin) { // 没有登录      
+      if (!store.state.isLogin) { // 没有登录    
         next({ 
           path: '/login', 
           query: { Rurl: to.fullPath } 
         }) //将to参数中的url传递给login页面进行操作    
+      } else {
+        next()   // 正常跳转到你设置好的页面 
       }
+    } else {
+      next()  // 正常跳转到你设置好的页面 
     }
     /* 路由发生变化修改页面title */
     if (to.meta.title) {
@@ -24,6 +28,5 @@ router.beforeEach((to, from, next) => {
       meta.content = to.meta.content;
       head[0].appendChild(meta)
     }
-    next()   // 正常跳转到你设置好的页面 
   })
 })

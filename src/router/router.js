@@ -10,15 +10,7 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: () => import('@/views/file/File.vue'),
-      redirect: { path: '/file', query: { filepath: '/', filetype: 0 } },
-      meta: {
-        requireAuth: true,
-        title: '奇文网盘',
-        content: {
-          description: '基于springboot + vue 框架开发的Web文件系统，旨在为用户提供一个简单、方便的文件存储方案'
-        }
-      }
+      redirect: { path: '/file', query: { filepath: '/', filetype: 0 } }
     }, {
       path: '/login',
       name: 'Login',
