@@ -14,7 +14,7 @@ export default new Vuex.Store({
     operaColumnExpand: Number(sessionStorage.getItem('operaColumnExpand')), //  操作列是否展开，0不展开，1展开
     isFolder: Number(sessionStorage.getItem('isFolder')), //  左侧栏是否折叠，0不折叠，1折叠
     selectedColumnList: sessionStorage.getItem('selectedColumnList') ? sessionStorage.getItem('selectedColumnList').split(",") : ['extendname','filesize','uploadtime'],  //  列显隐
-    isImageGrid: Number(sessionStorage.getItem('isImageGrid'))  //  图片类型页面是否展示为网格模式，0不是，1是
+    imageModel: Number(sessionStorage.getItem('imageModel'))  //  图片类型页面是否展示为网格模式，0不是，1是
   },
   mutations: {
     changeLogin(state, data) { // 改变state中的状态值
@@ -52,9 +52,9 @@ export default new Vuex.Store({
       sessionStorage.setItem('selectedColumnList', data)
       state.selectedColumnList = data
     },
-    changeIsImageGrid(state,data) {
-      sessionStorage.setItem('isImageGrid', data)
-      state.isImageGrid = data
+    changeImageModel(state,data) {
+      sessionStorage.setItem('imageModel', data)
+      state.imageModel = data
     }
   },
   actions: {

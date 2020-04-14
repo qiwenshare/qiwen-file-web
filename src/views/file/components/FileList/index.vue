@@ -15,14 +15,13 @@
     <div class="middle-wrapper">
       <!-- 面包屑导航栏 -->
       <BreadCrumb class="breadcrumb"></BreadCrumb>
-      <!-- 图片是否切换为网格预览图 -->
-      <div class="change-image-grid" v-show="filetype === 1">
-        <i
-          class="el-icon-s-grid"
-          :class="{'active': isImageGrid}"
-          :title="isImageGrid ? '切换为列表模式' : '切换为网格模式'"
-          @click="$store.commit('changeIsImageGrid', isImageGrid ? 0 : 1)"
-        ></i>
+      <!-- 图片展示模式 -->
+      <div class="change-image-model" v-show="filetype === 1">
+        <el-radio-group v-model="imageGroupLable" size="mini" @change="changeImageDisplayModel">
+          <el-radio-button :label="0">列表</el-radio-button>
+          <el-radio-button :label="1">网格</el-radio-button>
+          <el-radio-button :label="2">时间线</el-radio-button>
+        </el-radio-group>
       </div>
       <!-- 选择表格列 -->
       <SelectColumn class="select-column"></SelectColumn>
@@ -31,7 +30,7 @@
     <FileTable
       :fileList="fileList"
       :loading="loading"
-      v-show="!isImageGrid || filetype !== 1"
+      v-show="!imageModel || filetype !== 1"
       @setMoveFileDialogData="setMoveFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
@@ -40,7 +39,12 @@
       @getImgReviewData="getImgReviewData"
     ></FileTable>
     <!-- 图片网格模式 -->
-    <ImageGrid class="image-grid" v-if="isImageGrid && filetype === 1" :fileList="fileList" @getImgReviewData="getImgReviewData"></ImageGrid>
+    <ImageModel
+      class="image-model"
+      v-if="imageModel && filetype === 1"
+      :fileList="fileList"
+      @getImgReviewData="getImgReviewData"
+    ></ImageModel>
     <!-- 移动文件模态框 -->
     <MoveFileDialog
       :dialogMoveFile="dialogMoveFile"
@@ -59,7 +63,7 @@ import OperationMenu from './components/OperationMenu'
 import BreadCrumb from './components/BreadCrumb'
 import SelectColumn from './components/SelectColumn'
 import FileTable from './components/FileTable'
-import ImageGrid from './components/ImageGrid'
+import ImageModel from './components/ImageModel'
 import MoveFileDialog from './components/MoveFileDialog'
 import {
   getfilelist,
@@ -77,7 +81,7 @@ export default {
     BreadCrumb,
     SelectColumn,
     FileTable,
-    ImageGrid,
+    ImageModel,
     MoveFileDialog
   },
   data() {
@@ -172,7 +176,8 @@ export default {
       imgReview: {
         visible: false,
         url: ''
-      }
+      },
+      imageGroupLable: 0
     }
   },
   computed: {
@@ -193,13 +198,16 @@ export default {
         return 0
       }
     },
-    isImageGrid() {
-      return this.$store.state.isImageGrid
+    imageModel() {
+      return this.$store.state.imageModel
     }
   },
   created() {
     this.getTableDataByType()
     this.showStorage()
+  },
+  mounted() {
+    this.imageGroupLable = this.imageModel
   },
   methods: {
     /**
@@ -376,6 +384,11 @@ export default {
       })
     },
 
+    //  切换图片查看模式
+    changeImageDisplayModel(label) {
+      this.$store.commit('changeImageModel', label)
+    },
+
     //  获取查看大图的数据
     getImgReviewData(fileurl, visible) {
       this.imgReview.url = 'api' + fileurl
@@ -396,16 +409,10 @@ export default {
     display flex
     .breadcrumb
       flex 1
-    .change-image-grid
-      margin-right 10px
+    .change-image-model
+      margin-right 20px
       height 30px
-      .el-icon-s-grid
-        line-height 30px
-        font-size 22px
-        color $Info
-        cursor pointer
-      .active
-        color $Primary
+      line-height 30px
   .img-review-wrapper
     position fixed
     top 0

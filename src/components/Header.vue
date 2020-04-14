@@ -59,7 +59,6 @@ export default {
           Login: 4,
           Register: 5
         }
-        console.log(routerName, ROUTERMAP[routerName])
         return ROUTERMAP[routerName]
       },
       set() {
@@ -86,7 +85,7 @@ export default {
             sessionStorage.removeItem('operaColumnExpand')
             sessionStorage.removeItem('isFolder')
             sessionStorage.removeItem('selectedColumnList')
-            sessionStorage.removeItem('isImageGrid')
+            sessionStorage.removeItem('imageModel')
             this.$router.push({ path: '/login' })
           })
         } else {
