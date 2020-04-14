@@ -66,6 +66,14 @@
 ![输入图片说明](https://images.gitee.com/uploads/images/2019/1022/210106_d4b619f3_947714.png "屏幕截图.png")
  **文件在线解压缩**  :green_heart: 
 ![输入图片说明](https://images.gitee.com/uploads/images/2019/1022/210214_c00f5600_947714.png "屏幕截图.png")
+ **图片提供多种查看模式，列表、网格、时间线试图。可在线预览、保存、旋转、放大、缩小**  :green_heart: 
+![列表](https://images.gitee.com/uploads/images/2020/0414/191341_33c094b3_1837873.png "屏幕截图.png")
+
+![网格](https://images.gitee.com/uploads/images/2020/0414/191318_1976cf24_1837873.png "屏幕截图.png")
+
+![时间线](https://images.gitee.com/uploads/images/2020/0414/191402_b327f036_1837873.png "屏幕截图.png")
+
+![图片预览及操作](https://images.gitee.com/uploads/images/2020/0414/191524_f5283b57_1837873.png "屏幕截图.png")
 
 ## 联系我
 各种问题可扫描加入QQ群进行咨询
