@@ -73,7 +73,7 @@
 
 ![时间线](https://images.gitee.com/uploads/images/2020/0414/191402_b327f036_1837873.png "屏幕截图.png")
 
-![图片预览及操作](https://images.gitee.com/uploads/images/2020/0414/191524_f5283b57_1837873.png "屏幕截图.png")
+![图片预览及操作按钮组](https://images.gitee.com/uploads/images/2020/0415/002932_c59a0baa_1837873.png "readme.png")
 
 ## 联系我
 各种问题可扫描加入QQ群进行咨询
