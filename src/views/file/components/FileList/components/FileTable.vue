@@ -147,10 +147,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 查看图片 -->
-    <!-- <div class="img-review-wrapper" v-show="imgReview.visible" @click="imgReview.visible = false">
-      <img class="img-large" :src="imgReview.url" alt />
-    </div> -->
   </div>
 </template>
 
@@ -357,9 +353,7 @@ export default {
         //  若当前点击项是图片
         const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
         if (PIC.includes(row.extendname)) {
-          this.$emit('getImgReviewData', row.fileurl, true)
-          // this.imgReview.url = 'api' + row.fileurl
-          // this.imgReview.visible = true
+          this.$emit('getImgReviewData', row, true)
         }
         //  若当前点击项是pdf
         if (row.extendname === 'pdf') {
@@ -465,6 +459,7 @@ export default {
 @import '~@/assets/styles/varibles.styl'
 @import '~@/assets/styles/mixins.styl'
 .file-table-wrapper
+  margin-top 2px
   .file-table
     width 100% !important 
     height calc(100vh - 180px)

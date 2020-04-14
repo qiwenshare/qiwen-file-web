@@ -51,10 +51,8 @@
       @setSelectFilePath="setSelectFilePath"
       @confirmMoveFile="confirmMoveFile"
     ></MoveFileDialog>
-    <!-- 查看图片 -->
-    <div class="img-review-wrapper" v-show="imgReview.visible" @click="imgReview.visible = false">
-      <img class="img-large" :src="imgReview.url" alt />
-    </div>
+    <!-- 查看大图 -->
+    <ImgReview :imgReview="imgReview" @getImgReviewData="getImgReviewData"></ImgReview>
   </div>
 </template>
 
@@ -65,6 +63,7 @@ import SelectColumn from './components/SelectColumn'
 import FileTable from './components/FileTable'
 import ImageModel from './components/ImageModel'
 import MoveFileDialog from './components/MoveFileDialog'
+import ImgReview from './components/ImgReview'
 import {
   getfilelist,
   selectFileByFileType,
@@ -82,7 +81,8 @@ export default {
     SelectColumn,
     FileTable,
     ImageModel,
-    MoveFileDialog
+    MoveFileDialog,
+    ImgReview
   },
   data() {
     return {
@@ -175,7 +175,9 @@ export default {
       //  查看图片模态框数据
       imgReview: {
         visible: false,
-        url: ''
+        fileurl: '',
+        filename: '',
+        extendname: ''
       },
       imageGroupLable: 0
     }
@@ -390,8 +392,12 @@ export default {
     },
 
     //  获取查看大图的数据
-    getImgReviewData(fileurl, visible) {
-      this.imgReview.url = 'api' + fileurl
+    getImgReviewData(row, visible) {
+      if(row) {
+        this.imgReview.fileurl = row.fileurl
+        this.imgReview.filename = row.filename
+        this.imgReview.extendname = row.extendname
+      }
       this.imgReview.visible = visible
     }
   }
@@ -413,37 +419,4 @@ export default {
       margin-right 20px
       height 30px
       line-height 30px
-  .img-review-wrapper
-    position fixed
-    top 0
-    right 0
-    bottom 0
-    left 0
-    overflow auto
-    width 100%
-    height 100%
-    z-index 2010
-    text-align center
-    display flex
-    align-items center
-    animation imgReviewAnimation 0.3s
-    -webkit-animation imgReviewAnimation 0.3s /* Safari and Chrome */
-    animation-iteration-count 0.3
-    -webkit-animation-iteration-count 0.3
-    animation-fill-mode forwards
-    -webkit-animation-fill-mode forwards /* Safari 和 Chrome */
-    @keyframes imgReviewAnimation
-      0%
-        background transparent
-      100%
-        background rgba(0, 0, 0, 0.8)
-    @keyframes imgReviewAnimation
-      0%
-        background transparent
-      100%
-        background rgba(0, 0, 0, 0.8)
-    .img-large
-      margin 0 auto
-      max-width 80%
-      max-height 100%
 </style>

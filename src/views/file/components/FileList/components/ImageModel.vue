@@ -5,7 +5,7 @@
         class="image-item"
         v-for="(item, index) in fileList"
         :key="index"
-        @click="$emit('getImgReviewData', item.fileurl, true)"
+        @click="$emit('getImgReviewData', item, true)"
       >
         <img class="image" :src="'api' + item.fileurl" :alt="item.filename + item.extendname" />
         <div class="image-name">{{item.filename + '.' + item.extendname}}</div>
@@ -33,7 +33,7 @@
             :key="image.fileid"
             :src="'api' + image.fileurl"
             :alt="image.filename + image.extendname"
-            @click="$emit('getImgReviewData', image.fileurl, true)"
+            @click="$emit('getImgReviewData', image, true)"
           />
         </el-timeline-item>
       </el-timeline>
@@ -99,6 +99,7 @@ export default {
         height 150px
       .image-name
         padding-top 4px
+        font-size 12px
         text-align center
   .image-timeline
     margin-top 10px
