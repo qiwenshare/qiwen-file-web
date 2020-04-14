@@ -7,7 +7,7 @@
         :key="index"
         @click="$emit('getImgReviewData', item, true)"
       >
-        <img class="image" :src="'api' + item.fileurl" :alt="item.filename + item.extendname" />
+        <img class="image" :src="'api' + downloadImgMin(item.fileurl)" :alt="item.filename + item.extendname" />
         <div class="image-name">{{item.filename + '.' + item.extendname}}</div>
       </li>
     </ul>
@@ -31,7 +31,7 @@
             class="image"
             v-for="image in item.imageList"
             :key="image.fileid"
-            :src="'api' + image.fileurl"
+            :src="'api' + downloadImgMin(image.fileurl)"
             :alt="image.filename + image.extendname"
             @click="$emit('getImgReviewData', image, true)"
           />
@@ -107,4 +107,5 @@ export default {
       margin 0 10px 10px 0
       width 150px
       height 150px
+      cursor pointer
 </style>

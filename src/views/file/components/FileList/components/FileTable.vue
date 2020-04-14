@@ -35,10 +35,9 @@
           />
         </template>
         <template slot-scope="scope">
-          <div style="cursor:pointer" @click="clickFileName(scope.row)">
-            {{scope.row.filename}}
-            <span v-if="!scope.row.isdir && scope.row.extendname !== null">.</span>
-            {{scope.row.extendname}}
+          <div style="cursor:pointer;" @click="clickFileName(scope.row)">
+            <span>{{scope.row.filename}}</span>
+            <span v-if="!scope.row.isdir && scope.row.extendname !== null">.{{scope.row.extendname}}</span>
           </div>
         </template>
       </el-table-column>
@@ -49,7 +48,11 @@
         v-if="Number($route.query.filetype)"
       >
         <template slot-scope="scope">
-          {{scope.row.filepath}}
+          <span 
+            style="cursor: pointer;"
+            title="点击跳转"
+            @click="$router.push({ query: { filepath:scope.row.filepath, filetype: 0 } })"
+          >{{scope.row.filepath}}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -244,7 +247,7 @@ export default {
         gif: require('@/assets/images/file/file_gif.png'),
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
-      },
+      }
       // //  查看图片模态框数据
       // imgReview: {
       //   visible: false,
@@ -461,7 +464,7 @@ export default {
 .file-table-wrapper
   margin-top 2px
   .file-table
-    width 100% !important 
+    width 100% !important
     height calc(100vh - 180px)
     >>> .el-table__header-wrapper
       .el-icon-circle-plus, .el-icon-remove

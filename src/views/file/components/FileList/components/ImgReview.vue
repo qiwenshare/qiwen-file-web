@@ -4,7 +4,7 @@
     v-show="imgReview.visible"
     @click.self="closeImgReview"
   >
-    <img class="img-large" ref="rotate" :src="'api' + imgReview.fileurl" alt />
+    <img class="img-large" ref="rotate" v-if="imgReview.fileurl" :src="'api' + imgReview.fileurl" alt />
     <div class="opera-btn-group">
       <a
         class="download-link"
@@ -15,6 +15,7 @@
         <i class="opera-icon el-icon-download" title="保存到本地"></i>
       </a>
       <i class="opera-icon el-icon-refresh-right" title="向右旋转" @click="rotateImg"></i>
+      <i class="opera-icon el-icon-aim" title="恢复" @click="restore"></i>
       <i class="opera-icon el-icon-zoom-in" title="放大" @click="zoomIn"></i>
       <i class="opera-icon el-icon-zoom-out" title="缩小" @click="zoomOut"></i>
     </div>
@@ -48,6 +49,13 @@ export default {
       this.rotate += 90
       this.$refs.rotate.style.transform = `rotate(${this.rotate}deg) scale(${this.zoomX}, ${this.zoomY})`
     },
+    //  重置图片
+    restore() {
+      this.rotate = 0
+      this.zoomX = 1
+      this.zoomY = 1
+      this.$refs.rotate.style.transform = `rotate(${this.rotate}deg) scale(${this.zoomX}, ${this.zoomY})`
+    },
     //  放大图片
     zoomIn() {
       this.zoomX += 0.2
@@ -56,9 +64,11 @@ export default {
     },
     //  缩小图片
     zoomOut() {
-      this.zoomX -= 0.2
-      this.zoomY -= 0.2
-      this.$refs.rotate.style.transform = `rotate(${this.rotate}deg) scale(${this.zoomX}, ${this.zoomY})`
+      if(this.zoomX > 0.3) {
+        this.zoomX -= 0.2
+        this.zoomY -= 0.2
+        this.$refs.rotate.style.transform = `rotate(${this.rotate}deg) scale(${this.zoomX}, ${this.zoomY})`
+      }
     }
   }
 }
