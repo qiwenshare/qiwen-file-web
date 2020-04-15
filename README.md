@@ -20,7 +20,8 @@
 3. 支持对zip文件的在线解压缩 
 4. 支持文件和目录的移动和复制 
 5. 多文件格式分类查看 
-6. ...
+6. 图片预览支持放大、缩小、旋转，提供列表视图、网格视图、时间线视图三种查看模式
+7. ...
 
 ## 软件架构
 该项目采用前后端分离的方式进行开发和部署,主要用到以下关键技术
@@ -34,7 +35,7 @@
 
 ## 安装教程
 
-1. 拉取代码: git clone https://gitee.com/qiwen-cloud/qiwen-file-web.git 或下载zip包
+1. 拉取代码: git clone https://gitee.com/qiwen-cloud/qiwen-file-web.git 或下载 zip 包
 2. 依赖安装：npm install
 3. 运行: npm run serve
 4. 打包: npm run build
