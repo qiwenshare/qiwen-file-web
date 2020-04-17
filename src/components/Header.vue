@@ -11,6 +11,12 @@
         :index="1"
         :route="{ name: 'File', query: { filepath: '/', filetype: 0 } }"
       >网盘</el-menu-item>
+      <el-menu-item
+        class="shareItem"
+      ><a href="https://www.qiwenshare.com/" target="_blank">
+          社区
+        </a>
+        </el-menu-item>
       <el-menu-item class="headerItem userDisplay right-menu-item" index="2" v-show="loginState">
         <el-avatar :size="34" :src="userImgUrl" fit="cover">
           <img :src="userImgDefault" />
@@ -120,6 +126,9 @@ export default {
       .logo
         height 40px
         vertical-align baseline
+    .shareItem
+      a
+        display block
     .right-menu-item
       position absolute
     .userDisplay
