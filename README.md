@@ -37,8 +37,9 @@
 
 1. 拉取代码: git clone https://gitee.com/qiwen-cloud/qiwen-file-web.git 或下载 zip 包
 2. 依赖安装：npm install
-3. 运行: npm run serve
-4. 打包: npm run build
+3. 运行: npm run serve 浏览器中输入localhost: 8080(端口若已被占用，自动加1，即8081)即可看到界面了
+4. 打包: 打开 /public/config.json，修改 baseUrl 为后台服务器的IP+端口，保存，执行 npm run build
+5. 部署: 打包后会生成文件夹 dist，将 dist 文件夹下的文件放置于 nginx/html 目录下，并配置 nginx/conf/nginx.conf
 
 
 ## 使用说明
