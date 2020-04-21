@@ -14,17 +14,17 @@ export default new Router({
     }, {
       path: '/login',
       name: 'Login',
-      component: () => import('@/views/Login.vue'),
+      component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
       meta: { title: '登录 - 奇文网盘' },
     }, {
       path: '/register',
       name: 'Register',
-      component: () => import('@/views/Register.vue'),
+      component: () => import(/* webpackChunkName: "register" */ '@/views/Register.vue'),
       meta: { title: '注册 - 奇文网盘' },
     }, {
       path: '/file',
       name: 'File',
-      component: () => import('@/views/file/File.vue'),
+      component: () => import(/* webpackChunkName: "file" */ '@/views/file/File.vue'),
       meta: {
         requireAuth: true,
         title: '奇文网盘',
@@ -35,17 +35,17 @@ export default new Router({
     }, {
       path: '/500',
       name: 'Error_500',
-      component: () => import('@/views/ErrorPage/500.vue'),
+      component: () => import(/* webpackChunkName: "error_500" */ '@/views/ErrorPage/500.vue'),
       meta: { title: '500 - 奇文网盘' },
     }, {
       path: '/401',
       name: 'Error_401',
-      component: () => import('@/views/ErrorPage/401.vue'),
+      component: () => import(/* webpackChunkName: "error_401" */ '@/views/ErrorPage/401.vue'),
       meta: { title: '401 - 奇文网盘' },
     }, {
       path: '*',
       name: 'Error_404',
-      component: () => import('@/views/ErrorPage/404.vue'),
+      component: () => import(/* webpackChunkName: "error_404" */ '@/views/ErrorPage/404.vue'),
       meta: { title: '404 - 奇文网盘' },
     }
   ]
