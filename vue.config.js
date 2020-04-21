@@ -22,6 +22,8 @@ module.exports = {
     }
   },
 
+  productionSourceMap: false,
+
   pluginOptions: {
     'style-resources-loader': {
       preProcessor: 'stylus',
