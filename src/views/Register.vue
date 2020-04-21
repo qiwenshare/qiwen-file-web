@@ -33,11 +33,24 @@
             show-password
           ></el-input>
         </el-form-item>
-        
+        <el-form-item style="user-select: none;">
+          <drag-verify
+            ref="dragVerifyRef"
+            text="请按住滑块拖动解锁"
+            successText="验证通过"
+            handlerIcon="el-icon-d-arrow-right"
+            successIcon="el-icon-circle-check"
+            width="375"
+            handlerBg="#F5F7FA"
+            :isPassing.sync="isPassing"
+            @update:isPassing="updateIsPassing"
+          ></drag-verify>
+        </el-form-item>
         <el-form-item class="registerButtonWrapper">
           <el-button
             class="registerButton"
             type="primary"
+            :disabled="submitDisabled"
             @click="submitForm('ruleForm')"
             >注册</el-button
           >
@@ -49,7 +62,8 @@
 
 <script>
 import CanvasNest from 'canvas-nest.js'
-import { addUser, sendVerCode } from '@/request/user.js'
+import DragVerify from '@/components/DragVerify.vue'
+import { addUser } from '@/request/user.js'
 
 // 配置
 const config = {
@@ -62,18 +76,15 @@ const config = {
 
 export default {
   name: 'Register',
-  components: {},
+  components: { DragVerify },
   data() {
     return {
       registerTitle: '注册',
       registerSystem: '奇文网盘',
-      codeIsShow: false,
-      codeSecond: 5,
       ruleForm: {
         telephone: '',
         userName: '',
-        password: '',
-        verificationCode: ''
+        password: ''
       },
       rules: {
         userName: [
@@ -92,7 +103,9 @@ export default {
           { required: true, message: '请输入手机号', trigger: 'blur' },
           { min: 11, max: 11, message: '请输入11位手机号', trigger: 'blur' }
         ]
-      }
+      },
+      isPassing: false,
+      submitDisabled: true
     }
   },
   computed: {
@@ -107,6 +120,21 @@ export default {
       }
     }
   },
+  watch: {
+    //  已验证通过时，若重新输入手机号、用户名或密码，滑动解锁恢复原样
+    'ruleForm.telephone'() {
+      this.isPassing = false
+      this.$refs.dragVerifyRef.reset()
+    },
+    'ruleForm.userName'() {
+      this.isPassing = false
+      this.$refs.dragVerifyRef.reset()
+    },
+    'ruleForm.password'() {
+      this.isPassing = false
+      this.$refs.dragVerifyRef.reset()
+    }
+  },
   created() {
     this.$nextTick(() => {
       let element = document.getElementById('registerBackground')
@@ -114,36 +142,22 @@ export default {
     })
   },
   methods: {
-    sendVerificationCode() {
-      if (this.ruleForm.telephone === '') {
-        this.$message.error('请输入手机号！')
-      } else {
-        let data = {
-          telephone: this.ruleForm.telephone
-        }
-        sendVerCode(data).then(res => {
-          if (res.success) {
-            //判断手机号是否被注册
-            let sendResult = JSON.parse(res)
-            if (sendResult.Code === 'OK') {
-              this.$message.success('发送成功！')
-              this.codeIsShow = true
-              let codeSecondTimer = setInterval(function() {
-                this.codeSecond--
-                if (this.codeSecond === 0) {
-                  clearInterval(codeSecondTimer)
-                  this.codeIsShow = false
-                }
-              }, 1000)
-            } else {
-              this.$message.error(sendResult.Message)
-            }
+    //  滑动解锁完成
+    updateIsPassing(isPassing) {
+      if (isPassing) {
+        //  校验手机号
+        this.$refs.ruleForm.validateField('telephone', telephoneError => {
+          if (telephoneError) {
+            this.submitDisabled = true
           } else {
-            this.$message.error(res.errorMessage)
+            this.submitDisabled = false
           }
         })
+      } else {
+        this.submitDisabled = true
       }
     },
+    //  注册按钮
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -163,6 +177,7 @@ export default {
                 message: '注册成功！已跳转到登录页面',
                 type: 'success'
               })
+              this.$refs[formName].resetFields();
               this.$router.replace({ path: '/login' })
             }
           })
@@ -180,7 +195,7 @@ export default {
   height: 500px !important
   min-height: 500px !important
   width: 100% !important
-  padding-top: 100px
+  padding-top: 50px
   .formWrapper
     width: 375px
     margin: 0 auto

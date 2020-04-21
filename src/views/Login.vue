@@ -12,10 +12,7 @@
         hide-required-asterisk
       >
         <el-form-item>
-          <el-alert
-            type="success"
-            description="线上演示环境使用奇文社区账号进行登录，网址：www.qiwenshare.com">
-          </el-alert>
+          <el-alert type="success" description="线上演示环境使用奇文社区账号进行登录，网址：www.qiwenshare.com"></el-alert>
         </el-form-item>
         <el-form-item prop="userName">
           <el-input
@@ -32,15 +29,22 @@
             show-password
           ></el-input>
         </el-form-item>
-        <el-form-item></el-form-item>
+        <el-form-item>
+          <drag-verify
+            ref="dragVerifyRef"
+            text="请按住滑块拖动解锁"
+            successText="验证通过"
+            handlerIcon="el-icon-d-arrow-right"
+            successIcon="el-icon-circle-check"
+            width="375"
+            handlerBg="#F5F7FA"
+            :isPassing.sync="isPassing"
+            @update:isPassing="updateIsPassing"
+          ></drag-verify>
+        </el-form-item>
         <!-- <el-form-item class="forgetPassword">忘记密码</el-form-item> -->
         <el-form-item class="loginButtonWrapper">
-          <el-button
-            class="loginButton"
-            type="primary"
-            @click="submitForm('ruleForm')"
-            >登录</el-button
-          >
+          <el-button class="loginButton" type="primary" :disabled="submitDisabled" @click="submitForm('ruleForm')">登录</el-button>
         </el-form-item>
         <el-form-item style="text-align:left;">
           其他账号登录：
@@ -55,6 +59,7 @@
 
 <script>
 import CanvasNest from 'canvas-nest.js'
+import DragVerify from '@/components/DragVerify.vue'
 import { login } from '@/request/user.js'
 
 // 配置
@@ -68,7 +73,7 @@ const config = {
 
 export default {
   name: 'Login',
-  components: {},
+  components: { DragVerify },
   data() {
     return {
       loginTitle: '登录',
@@ -86,7 +91,8 @@ export default {
           { min: 5, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' }
         ]
       },
-      loginState: false,
+      isPassing: false,
+      submitDisabled: true,
       qqIcon: require('@/assets/images/login/qqIcon.png')
     }
   },
@@ -102,7 +108,27 @@ export default {
       }
     }
   },
+  watch: {
+    //  已验证通过时，若重新输入用户名或密码，滑动解锁恢复原样
+    'ruleForm.userName'() {
+      this.isPassing = false
+      this.$refs.dragVerifyRef.reset()
+    },
+    'ruleForm.password'() {
+      this.isPassing = false
+      this.$refs.dragVerifyRef.reset()
+    }
+  },
   methods: {
+    //  滑动解锁完成
+    updateIsPassing(isPassing) {
+      if (isPassing) {
+        this.submitDisabled = false
+      } else {
+        this.submitDisabled = true
+      }
+    },
+    //  登录按钮
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -113,11 +139,14 @@ export default {
           }
           login(data, true).then(res => {
             if (res.success) {
+              this.$refs[formName].resetFields();
               this.$store.dispatch('getUserInfo').then(() => {
                 this.$router.replace({ path: this.url })
               })
             } else {
               this.$message.error('手机号或密码错误！')
+              this.isPassing = false
+              this.$refs.dragVerifyRef.reset()
             }
           })
         } else {
@@ -147,38 +176,38 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .loginWrapper
-  height: 550px !important
-  min-height: 550px !important
-  padding-top: 100px
+  height 550px !important
+  min-height 550px !important
+  padding-top 50px
   .formWrapper
-    width: 375px
-    margin: 0 auto
-    text-align: center
+    width 375px
+    margin 0 auto
+    text-align center
     .loginTitle
-      margin-bottom: 10px
-      font-weight: 300
-      font-size: 30px
-      color: #000
+      margin-bottom 10px
+      font-weight 300
+      font-size 30px
+      color #000
     .loginSystem
-      font-weight: 300
-      color: #999
+      font-weight 300
+      color #999
     .demo-ruleForm
-      width: 100%
-      margin-top: 20px
+      width 100%
+      margin-top 20px
       >>> .el-form-item__content
-        margin-left: 0 !important
+        margin-left 0 !important
       &>>> .el-input__inner
-        font-size: 16px
+        font-size 16px
       .forgetPassword
-        text-align: right
-        margin: -22px 0 0 0
+        text-align right
+        margin -22px 0 0 0
       .loginButtonWrapper
         .loginButton
-          width: 100%
+          width 100%
         &>>> .el-button
-          padding: 10px 90px
-          font-size: 16px
+          padding 10px 90px
+          font-size 16px
     .tip
-      width: 70%
-      margin-left: 86px
+      width 70%
+      margin-left 86px
 </style>
