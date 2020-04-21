@@ -15,12 +15,7 @@ import { get,post } from './http'
 export const login = p => post('/user/userlogin', p); //登录 
 export const checkUserLoginInfo = p => get('/user/checkuserlogininfo', p); //登录状态及个人信息
 export const logout = p => post('/user/userlogout', p); //退出登录
-export const getAttentionCountByUserId = p => get('/user/getattentioncountbyuserid', p); //获取关注用户数量
-export const getAttentionListByUserId = p => get('/user/getattentionlistbyuserid', p); //获取关注用户列表
-export const getFansListByUserId = p => get('/user/getfanslistbyuserid', p); //获取关注粉丝列表
-export const getUserInfoById = p => get('/user/getuserinfobyid', p); //获取用户信息
 export const authorize = p => post('/user/authorize/qq', p); //qq登录接口
 
 /* 用户注册 */
 export const addUser = p => post('/user/adduser', p); //注册 
-export const sendVerCode = p => post('/user/sendverificationcode', p); //发送验证码
