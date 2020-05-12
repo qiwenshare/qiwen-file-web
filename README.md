@@ -39,8 +39,38 @@
 2. 依赖安装：npm install
 3. 运行: npm run serve 浏览器中输入localhost: 8080(端口若已被占用，自动加1，即8081)即可看到界面了
 4. 打包: 打开 /public/config.json，修改 baseUrl 为后台服务器的IP+端口，保存，执行 npm run build
-5. 部署: 打包后会生成文件夹 dist，将 dist 文件夹下的文件放置于 nginx/html 目录下，并配置 nginx/conf/nginx.conf
+5. 部署: 打包后会生成文件夹 dist，将 dist 文件夹下的文件放置于 nginx/html 目录下，并配置 nginx/conf/nginx.conf，具体配置如下（不明白的小伙伴可以加入  **奇文社区QQ群：586207287**  共同探讨）：
 
+```
+ server {
+        listen       80;
+		server_name localhost;   #将localhost修改为您证书绑定的域名，例如：www.example.com。
+
+        location / {
+            root   html;
+            index  index.html index.htm;
+			try_files	$uri $uri/ /index.html; #可以防止页面刷新404
+        }
+
+		location /api/{
+			#proxy_set_hearder host                $host;
+			#proxy_set_header X-forwarded-for $proxy_add_x_forwarded_for;
+			#proxy_set_header X-real-ip           $remote_addr;
+			
+			# 配置此处用于获取客户端的真实IP
+			proxy_set_header Host $http_host;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_set_header X-Forwarded-Proto $scheme;
+			proxy_pass	http://localhost:8080/;
+		}
+       
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+```
 
 ## 使用说明
 
