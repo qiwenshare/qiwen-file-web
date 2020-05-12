@@ -444,8 +444,6 @@ export default {
     },
     //  删除文件模态框-确定按钮
     confirmDeleteFile(fileInfo) {
-      let filename = fileInfo.filename
-      fileInfo.filename = escape(filename)
       deleteFile(fileInfo).then(res => {
         if (res.success) {
           this.$emit('getTableDataByType')
