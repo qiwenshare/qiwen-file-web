@@ -50,6 +50,7 @@
       :dialogMoveFile="dialogMoveFile"
       @setSelectFilePath="setSelectFilePath"
       @confirmMoveFile="confirmMoveFile"
+      @setMoveFileDialogData="setMoveFileDialogData"
     ></MoveFileDialog>
     <!-- 查看大图 -->
     <ImgReview :imgReview="imgReview" @getImgReviewData="getImgReviewData"></ImgReview>
