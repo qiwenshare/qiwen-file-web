@@ -5,7 +5,7 @@ import store from '@/store'
 router.beforeEach((to, from, next) => {
   store.dispatch("getUserInfo").then(() => {
     if (to.matched.some(m => m.meta.requireAuth)) {
-      if (!store.state.isLogin) { // 没有登录    
+      if (!store.getters.isLogin) { // 没有登录    
         next({ 
           path: '/login', 
           query: { Rurl: to.fullPath } 

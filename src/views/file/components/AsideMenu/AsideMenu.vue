@@ -74,7 +74,7 @@ export default {
     },
     //  判断当前用户设置的左侧栏是否折叠
     isFolder() {
-      return this.$store.state.isFolder
+      return this.$store.getters.isFolder
     }
   },
   methods: {

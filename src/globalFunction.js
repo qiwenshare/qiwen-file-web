@@ -10,7 +10,7 @@ export default function install (Vue) {
    */
   //  检测用户登录状态并做相应的跳转
   Vue.prototype.checkIsLogin = function (params) {
-    if (this.$store.state.isLogin == false) { // 未登录时自动跳转到登录页面，并将当前页面的路由作为query传递给登陆页面
+    if (this.$store.getters.isLogin == false) { // 未登录时自动跳转到登录页面，并将当前页面的路由作为query传递给登陆页面
       this.$router.push({ path: '/login', query: { Rurl: params } });
     } else {
       return true

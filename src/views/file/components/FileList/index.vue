@@ -202,10 +202,11 @@ export default {
       }
     },
     imageModel() {
-      return this.$store.state.imageModel
+      return this.$store.getters.imageModel
     }
   },
   created() {
+    console.log("index 209")
     this.getTableDataByType()
     this.showStorage()
   },

@@ -157,9 +157,9 @@ export default {
     }
   },
   created() {
-    if (this.$store.state.isLogin) {
+    if (this.$store.getters.isLogin) {
       // 用户若已登录，自动跳转到首页
-      let username = this.$store.state.username
+      let username = this.$store.getters.username
       this.$message({
         message: username + ' 您已登录！已跳转到首页',
         center: true,

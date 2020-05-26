@@ -11,7 +11,7 @@
         :index="1"
         :route="{ name: 'File', query: { filepath: '/', filetype: 0 } }"
       >网盘</el-menu-item>
-      <el-menu-item class="headerItem userDisplay right-menu-item" index="2" v-show="loginState">
+      <el-menu-item class="headerItem userDisplay right-menu-item" index="2" v-show="isLogin">
         <el-avatar :size="34" :src="userImgUrl" fit="cover">
           <img :src="userImgDefault" />
         </el-avatar>
@@ -19,19 +19,19 @@
       </el-menu-item>
       <el-menu-item
         class="headerItem exit right-menu-item"
-        v-show="loginState"
+        v-show="isLogin"
         :index="3"
         @click="exitButton()"
       >退出</el-menu-item>
       <el-menu-item
         class="headerItem login right-menu-item"
-        v-show="!loginState"
+        v-show="!isLogin"
         :index="4"
         :route="{ name: 'Login' }"
       >登录</el-menu-item>
       <el-menu-item
         class="headerItem register right-menu-item"
-        v-show="!loginState"
+        v-show="!isLogin"
         :index="5"
         :route="{ name: 'Register' }"
       >注册</el-menu-item>
@@ -41,6 +41,7 @@
 
 <script>
 import { logout } from '@/request/user.js'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Header',
@@ -51,6 +52,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isLogin','userImgUrl','username']),
     activeIndex: {
       get() {
         let routerName = this.$route.name
@@ -64,15 +66,6 @@ export default {
       set() {
         return 1
       }
-    },
-    loginState() {
-      return this.$store.state.isLogin
-    },
-    userImgUrl() {
-      return this.$store.state.userImgUrl
-    },
-    username() {
-      return this.$store.state.username
     }
   },
   methods: {

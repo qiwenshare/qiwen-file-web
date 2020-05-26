@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     imageModel() {
-      return this.$store.state.imageModel
+      return this.$store.getters.imageModel
     },
     //  按年-月-日分组排序
     imageTimelineData() {

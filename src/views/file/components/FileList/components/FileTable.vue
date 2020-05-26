@@ -155,6 +155,7 @@
 
 <script>
 import { unzipfile, deleteFile } from '@/request/file.js'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'FileTable',
@@ -255,7 +256,14 @@ export default {
       // }
     }
   },
+  watch: {
+    operaColumnExpand(newValue) {
+      console.log(newValue)
+    }
+  },
   computed: {
+    //  selectedColumnList:判断当前用户设置的左侧栏是否折叠, operaColumnExpand:判断当前用户设置的操作列是否展开
+    ...mapGetters(['selectedColumnList','operaColumnExpand']),
     //  当前查看的文件路径
     filepath: {
       get() {
@@ -274,14 +282,6 @@ export default {
             .toLowerCase()
             .includes(this.fileNameSearch.toLowerCase())
       )
-    },
-    //  判断当前用户设置的左侧栏是否折叠
-    selectedColumnList() {
-      return this.$store.state.selectedColumnList
-    },
-    //  判断当前用户设置的操作列是否展开
-    operaColumnExpand() {
-      return this.$store.state.operaColumnExpand
     },
     //  判断当前路径下是否有普通文件
     isIncludeNormalFile() {

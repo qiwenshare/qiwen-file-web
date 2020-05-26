@@ -41,9 +41,9 @@ export default {
   },
   computed: {
     selectedColumnList() {
-      return this.$store.state.selectedColumnList
+      return this.$store.getters.selectedColumnList
     }
-  },  
+  },
   methods: {
     //  选择器值改变时触发
     changeColumn(tagValueList) {
