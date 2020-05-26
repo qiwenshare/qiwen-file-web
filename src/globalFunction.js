@@ -18,7 +18,8 @@ export default function install (Vue) {
   };
   //  加载缩略图
   Vue.prototype.downloadImgMin = function (params) {
-    return params.split(".")[0] + "_min." + params.split(".")[1]
+    let index = params.lastIndexOf(".");
+    return params.substr(0, index) + "_min" + params.substr(index);
   };
   /**
    * 当然，你还可以在这里封装并挂载更多的全局函数在这里，示例同上
