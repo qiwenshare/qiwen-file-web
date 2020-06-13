@@ -35,7 +35,7 @@
 
 ## 安装教程
 
-1. 拉取代码: git clone https://gitee.com/qiwen-cloud/qiwen-file-web.git 或下载 zip 包，master 分支现在功能可用（lombok分支现为开发阶段，尚不可用）
+1. 拉取代码: git clone https://gitee.com/qiwen-cloud/qiwen-file-web.git 或下载 zip 包，master 分支现在功能可用（lombok-web 分支现为开发阶段，尚不可用）
 2. 依赖安装：npm install
 3. 运行: npm run serve 浏览器中输入localhost: 8080(端口若已被占用，自动加1，即8081)即可看到界面了
 4. 打包: 打开 /public/config.json，修改 baseUrl 为后台服务器的IP+端口，保存，执行 npm run build
@@ -71,7 +71,7 @@
         }
     }
 ```
-6. 文件默认保存位置：如果你是用IDEA启动的，默认保存位置在target下的upload；如果是打包成jar部署在服务器，默认保存位置在根目录的release/static/upload 下
+6. 文件默认保存位置：如果你是用IDEA启动的，默认保存位置在 target 下的 upload；如果是打包成jar部署在服务器，默认保存位置在根目录的release/static/upload 下
 
 ## 使用说明
 
