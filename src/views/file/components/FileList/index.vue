@@ -87,7 +87,7 @@ export default {
   },
   data() {
     return {
-      storageValue: 0,
+      storageValue: '0KB',
       fileNameSearch: '',
       loading: true, //  表格数据-loading
       fileList: [], //  表格数据-文件列表
@@ -206,7 +206,7 @@ export default {
     }
   },
   created() {
-    console.log("index 209")
+    console.log(this.filepath)
     this.getTableDataByType()
     this.showStorage()
   },

@@ -47,7 +47,7 @@ export default {
   props: {
     selectionFile: Array,
     operationFile: Object,
-    storageValue: Number
+    storageValue: String
   },
   data() {
     return {

@@ -66,10 +66,10 @@ export default {
     //  当前活跃菜单项index，也是当前被选中的文件类型
     activeIndex: {
       get() {
-        return Number(this.$route.query.filetype)
+        return this.$route.query.filetype
       },
       set() {
-        return 0
+        return '0'
       }
     },
     //  判断当前用户设置的左侧栏是否折叠

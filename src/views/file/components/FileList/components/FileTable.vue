@@ -256,11 +256,6 @@ export default {
       // }
     }
   },
-  watch: {
-    operaColumnExpand(newValue) {
-      console.log(newValue)
-    }
-  },
   computed: {
     //  selectedColumnList:判断当前用户设置的左侧栏是否折叠, operaColumnExpand:判断当前用户设置的操作列是否展开
     ...mapGetters(['selectedColumnList','operaColumnExpand']),
