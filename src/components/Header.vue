@@ -1,14 +1,14 @@
 <template>
   <div class="headerWrapper">
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router>
-      <el-menu-item class="headerLogo" :index="0" disabled>
+      <el-menu-item class="headerLogo" index="0" disabled>
         <a href="https://www.qiwenshare.com/" target="_blank">
           <img class="logo" :src="logoUrl" />
         </a>
       </el-menu-item>
       <el-menu-item
         class="headerItem"
-        :index="1"
+        index="1"
         :route="{ name: 'File', query: { filepath: '/', filetype: 0 } }"
       >网盘</el-menu-item>
       <el-menu-item class="headerItem userDisplay right-menu-item" index="2" v-show="isLogin">
@@ -20,19 +20,19 @@
       <el-menu-item
         class="headerItem exit right-menu-item"
         v-show="isLogin"
-        :index="3"
+        index="3"
         @click="exitButton()"
       >退出</el-menu-item>
       <el-menu-item
         class="headerItem login right-menu-item"
         v-show="!isLogin"
-        :index="4"
+        index="4"
         :route="{ name: 'Login' }"
       >登录</el-menu-item>
       <el-menu-item
         class="headerItem register right-menu-item"
         v-show="!isLogin"
-        :index="5"
+        index="5"
         :route="{ name: 'Register' }"
       >注册</el-menu-item>
     </el-menu>
@@ -57,14 +57,14 @@ export default {
       get() {
         let routerName = this.$route.name
         const ROUTERMAP = {
-          File: 1,
-          Login: 4,
-          Register: 5
+          File: '1',
+          Login: '4',
+          Register: '5'
         }
         return ROUTERMAP[routerName]
       },
       set() {
-        return 1
+        return '1'
       }
     }
   },

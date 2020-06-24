@@ -195,7 +195,7 @@ export default {
     },
     filetype: {
       get() {
-        return Number(this.$route.query.filetype)
+        return this.$route.query.filetype
       },
       set() {
         return 0
@@ -206,7 +206,6 @@ export default {
     }
   },
   created() {
-    console.log(this.filepath)
     this.getTableDataByType()
     this.showStorage()
   },

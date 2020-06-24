@@ -40,7 +40,7 @@
             successText="验证通过"
             handlerIcon="el-icon-d-arrow-right"
             successIcon="el-icon-circle-check"
-            width="375"
+            :width="375"
             handlerBg="#F5F7FA"
             :isPassing.sync="isPassing"
             @update:isPassing="updateIsPassing"
