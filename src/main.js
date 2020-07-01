@@ -15,8 +15,6 @@ Vue.config.productionTip = false;
 Vue.use(all);
 Vue.use(element);
 
-Vue.config.devtools = true
-
 new Vue({
   router,
   store,
