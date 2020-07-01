@@ -217,7 +217,7 @@ export default {
      * 表格数据获取相关事件
      */
     getTableDataByType() {
-      if (this.filetype !== '0') {
+      if (Number(this.filetype)) {
         //  分类型
         this.showFileListByType()
       } else {
