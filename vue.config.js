@@ -29,13 +29,5 @@ module.exports = {
       preProcessor: 'stylus',
       patterns: []
     }
-  },
-  
-  //  打包配置
-  configureWebpack: {
-    externals: {
-      "vue": 'Vue',
-      "element-ui": 'Element'
-    }
-  }
+  }  
 }

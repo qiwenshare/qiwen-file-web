@@ -40,8 +40,13 @@ export default {
     }
   },
   computed: {
-    selectedColumnList() {
-      return this.$store.getters.selectedColumnList
+    selectedColumnList: {
+      get() {
+        return this.$store.getters.selectedColumnList
+      },
+      set() {
+        return []
+      }
     }
   },
   methods: {

@@ -195,7 +195,7 @@ export default {
     },
     filetype: {
       get() {
-        return this.$route.query.filetype
+        return Number(this.$route.query.filetype)
       },
       set() {
         return 0
