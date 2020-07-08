@@ -46,12 +46,12 @@
         <el-form-item class="loginButtonWrapper">
           <el-button class="loginButton" type="primary" :disabled="submitDisabled" @click="submitForm('ruleForm')">登录</el-button>
         </el-form-item>
-        <el-form-item style="text-align:left;">
+        <!-- <el-form-item style="text-align:left;">
           其他账号登录：
           <a href="/api/user/login/qq">
             <img :src="qqIcon" style="width: 30px;" />
           </a>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
     </div>
   </div>
