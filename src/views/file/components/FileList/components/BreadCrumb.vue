@@ -1,14 +1,14 @@
 <template>
   <div class="breadcrumb-wrapper">
     <div class="title">当前位置：</div>
-    <el-breadcrumb v-if="filetype" separator="/">
-      <el-breadcrumb-item>全部{{filetypeMap[filetype]}}</el-breadcrumb-item>
+    <el-breadcrumb v-if="fileType" separator="/">
+      <el-breadcrumb-item>全部{{fileTypeMap[fileType]}}</el-breadcrumb-item>
     </el-breadcrumb>
     <el-breadcrumb v-else separator="/">
       <el-breadcrumb-item
         v-for="(item, index) in breadCrumbList"
         :key="index"
-        :to="{ query: { filepath: item.path, filetype: 0 } }"
+        :to="{ query: { filePath: item.path, fileType: 0 } }"
       >{{item.name}}</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
@@ -19,7 +19,7 @@ export default {
   name: 'BreadCrumb',
   data() {
     return {
-      filetypeMap: {
+      fileTypeMap: {
         1: '图片',
         2: '文档',
         3: '视频',
@@ -32,21 +32,21 @@ export default {
     //  面包屑导航栏数组
     breadCrumbList: {
       get() {
-        let filepath = this.$route.query.filepath
-        let filepathList = filepath ? filepath.split('/') : []
+        let filePath = this.$route.query.filePath
+        let filePathList = filePath ? filePath.split('/') : []
         let res = [] //  返回结果数组
         let _path = [] //  存放祖先路径
-        for (let i = 0; i < filepathList.length; i++) {
-          if (filepathList[i]) {
-            _path.push(filepathList[i] + '/')
+        for (let i = 0; i < filePathList.length; i++) {
+          if (filePathList[i]) {
+            _path.push(filePathList[i] + '/')
             res.push({
               path: _path.join(''),
-              name: filepathList[i]
+              name: filePathList[i]
             })
           } else if (i === 0) {
             //  根目录
-            filepathList[i] = '/'
-            _path.push(filepathList[i])
+            filePathList[i] = '/'
+            _path.push(filePathList[i])
             res.push({
               path: '/',
               name: '全部文件'
@@ -60,9 +60,9 @@ export default {
       }
     },
     //  文件类型索引
-    filetype: {
+    fileType: {
       get() {
-        return Number(this.$route.query.filetype)
+        return Number(this.$route.query.fileType)
       },
       set() {
         return 0

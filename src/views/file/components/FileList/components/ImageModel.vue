@@ -7,8 +7,8 @@
         :key="index"
         @click="$emit('getImgReviewData', item, true)"
       >
-        <img class="image" :src="'api' + downloadImgMin(item.fileurl)" :alt="item.filename + item.extendname" />
-        <div class="image-name">{{item.filename + '.' + item.extendname}}</div>
+        <img class="image" :src="'api' + downloadImgMin(item.fileUrl)" :alt="item.fileName + item.extendName" />
+        <div class="image-name">{{item.fileName + '.' + item.extendName}}</div>
       </li>
     </ul>
     <div v-show="imageModel === 2">
@@ -31,8 +31,8 @@
             class="image"
             v-for="image in item.imageList"
             :key="image.fileid"
-            :src="'api' + downloadImgMin(image.fileurl)"
-            :alt="image.filename + image.extendname"
+            :src="'api' + downloadImgMin(image.fileUrl)"
+            :alt="image.fileName + image.extendName"
             @click="$emit('getImgReviewData', image, true)"
           />
         </el-timeline-item>
@@ -60,16 +60,16 @@ export default {
     imageTimelineData() {
       let res = []
       //  去重，获取返回的所有日期年-月-日
-      let uploadtimeSet = new Set(
-        this.fileList.map(item => item.uploadtime.split(' ')[0])
+      let uploadTimeSet = new Set(
+        this.fileList.map(item => item.uploadTime.split(' ')[0])
       )
-      let uploadDate = [...uploadtimeSet]
+      let uploadDate = [...uploadTimeSet]
       //  分组
       uploadDate.forEach(element => {
         res.push({
           uploadDate: element,
           imageList: this.fileList.filter(
-            item => item.uploadtime.split(' ')[0] === element
+            item => item.uploadTime.split(' ')[0] === element
           ) //  过滤
         })
       })

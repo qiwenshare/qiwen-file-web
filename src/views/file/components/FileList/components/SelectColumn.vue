@@ -28,13 +28,13 @@ export default {
   data() {
     return {
       columnOptions: [{
-        value: 'extendname',
+        value: 'extendName',
         label: '类型'
       }, {
-        value: 'filesize',
+        value: 'fileSize',
         label: '大小'
       }, {
-        value: 'uploadtime',
+        value: 'uploadTime',
         label: '修改日期'
       }]
     }

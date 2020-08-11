@@ -4,13 +4,13 @@
     v-show="imgReview.visible"
     @click.self="closeImgReview"
   >
-    <img class="img-large" ref="rotate" v-if="imgReview.fileurl" :src="'api' + imgReview.fileurl" alt />
+    <img class="img-large" ref="rotate" v-if="imgReview.fileUrl" :src="'api' + imgReview.fileUrl" alt />
     <div class="opera-btn-group">
       <a
         class="download-link"
         target="_blank"
-        :href="'api' + imgReview.fileurl"
-        :download="imgReview.filename + '.' + imgReview.extendname"
+        :href="'api' + imgReview.fileUrl"
+        :download="imgReview.fileName + '.' + imgReview.extendName"
       >
         <i class="opera-icon el-icon-download" title="保存到本地"></i>
       </a>

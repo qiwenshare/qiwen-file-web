@@ -10,7 +10,7 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      redirect: { path: '/file', query: { filepath: '/', filetype: 0 } }
+      redirect: { path: '/file', query: { filePath: '/', fileType: 0 } }
     }, {
       path: '/login',
       name: 'Login',

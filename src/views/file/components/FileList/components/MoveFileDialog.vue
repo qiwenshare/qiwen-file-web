@@ -35,8 +35,8 @@ export default {
   methods: {
     //  移动文件模态框：选择目录事件
     selectNodeClick(data) {
-      let selectFilePath = data.attributes.filepath
-        ? data.attributes.filepath
+      let selectFilePath = data.attributes.filePath
+        ? data.attributes.filePath
         : '/'
       this.$emit('setSelectFilePath', selectFilePath)
     }

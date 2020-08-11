@@ -66,7 +66,7 @@ export default {
     //  当前活跃菜单项index，也是当前被选中的文件类型
     activeIndex: {
       get() {
-        return String(this.$route.query.filetype)
+        return String(this.$route.query.fileType)
       },
       set() {
         return '0'
@@ -82,7 +82,7 @@ export default {
     handleSelect(index) {
       this.$router.push({
         path: '/file',
-        query: { filepath: '/', filetype: index }
+        query: { filePath: '/', fileType: index }
       })
     }
   }

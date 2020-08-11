@@ -11,11 +11,11 @@
       <el-button size="medium" type="primary" icon="el-icon-upload2" id="uploadFileId">上传</el-button>
     </el-upload>
 
-    <el-button size="medium" @click="addFolder()" v-if="!filetype">新建文件夹</el-button>
+    <el-button size="medium" @click="addFolder()" v-if="!fileType">新建文件夹</el-button>
 
     <div style="display: inline-block;" v-if="selectionFile.length !== 0">
       <el-button size="medium" icon="el-icon-delete" @click="deleteSelectedFile()">删除</el-button>
-      <el-button size="medium" icon="el-icon-edit" @click="moveSelectedFile()" v-if="!filetype">移动</el-button>
+      <el-button size="medium" icon="el-icon-edit" @click="moveSelectedFile()" v-if="!fileType">移动</el-button>
       <!-- <el-button size="medium" icon="el-icon-document-copy">拷贝</el-button> -->
       <el-button size="medium" icon="el-icon-download" @click="downloadSelectedFile()">下载</el-button>
     </div>
@@ -25,8 +25,8 @@
       target="_blank"
       v-for="(item,index) in selectionFile"
       :key="index"
-      :href="'api' + item.fileurl"
-      :download="item.filename+'.' + item.extendname"
+      :href="'api' + item.fileUrl"
+      :download="item.fileName+'.' + item.extendName"
       :title="'downloadLink' + index"
       :ref="'downloadLink' + index"
     ></a>
@@ -57,18 +57,18 @@ export default {
   },
   computed: {
     //  当前查看的文件路径
-    filepath: {
+    filePath: {
       get() {
-        return this.$route.query.filepath
+        return this.$route.query.filePath
       },
       set() {
         return ''
       }
     },
     //  文件类型索引
-    filetype: {
+    fileType: {
       get() {
-        return Number(this.$route.query.filetype)
+        return Number(this.$route.query.fileType)
       },
       set() {
         return 0
@@ -78,15 +78,15 @@ export default {
     uploadFileData: {
       get() {
         let res = {
-          filepath: this.filepath,
-          isdir: 0
+          filePath: this.filePath,
+          isDir: 0
         }
         return res
       },
       set() {
         return {
-          filepath: '/',
-          isdir: 0
+          filePath: '/',
+          isDir: 0
         }
       }
     }
@@ -163,9 +163,9 @@ export default {
     //  新建文件夹模态框-确定按钮
     createFile(fileName) {
       let data = {
-        filename: fileName,
-        filepath: this.filepath,
-        isdir: 1
+        fileName: fileName,
+        filePath: this.filePath,
+        isDir: 1
       }
       createFile(data).then(res => {
         if (res.success) {

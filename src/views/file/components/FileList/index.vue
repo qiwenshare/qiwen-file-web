@@ -5,7 +5,7 @@
       <OperationMenu
         :operationFile="operationFile"
         :selectionFile="selectionFile"
-        :filepath="filepath"
+        :filePath="filePath"
         :storageValue="storageValue"
         @showStorage="showStorage"
         @getTableDataByType="getTableDataByType"
@@ -16,7 +16,7 @@
       <!-- 面包屑导航栏 -->
       <BreadCrumb class="breadcrumb"></BreadCrumb>
       <!-- 图片展示模式 -->
-      <div class="change-image-model" v-show="filetype === 1">
+      <div class="change-image-model" v-show="fileType === 1">
         <el-radio-group v-model="imageGroupLable" size="mini" @change="changeImageDisplayModel">
           <el-radio-button :label="0">列表</el-radio-button>
           <el-radio-button :label="1">网格</el-radio-button>
@@ -30,7 +30,7 @@
     <FileTable
       :fileList="fileList"
       :loading="loading"
-      v-show="!imageModel || filetype !== 1"
+      v-show="!imageModel || fileType !== 1"
       @setMoveFileDialogData="setMoveFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
@@ -41,7 +41,7 @@
     <!-- 图片网格模式 -->
     <ImageModel
       class="image-model"
-      v-if="imageModel && filetype === 1"
+      v-if="imageModel && fileType === 1"
       :fileList="fileList"
       @getImgReviewData="getImgReviewData"
     ></ImageModel>
@@ -100,7 +100,7 @@ export default {
       selectFilePath: '', //  移动文件路径
       operationFile: {}, // 当前操作行
       selectionFile: [], // 勾选的文件
-      // filetype: '', //  文件类型
+      // fileType: '', //  文件类型
       //  可以识别的文件类型
       fileImgTypeList: [
         'png',
@@ -176,26 +176,26 @@ export default {
       //  查看图片模态框数据
       imgReview: {
         visible: false,
-        fileurl: '',
-        filename: '',
-        extendname: ''
+        fileUrl: '',
+        fileName: '',
+        extendName: ''
       },
       imageGroupLable: 0
     }
   },
   computed: {
     //  当前查看的文件路径
-    filepath: {
+    filePath: {
       get() {
-        return this.$route.query.filepath
+        return this.$route.query.filePath
       },
       set() {
         return ''
       }
     },
-    filetype: {
+    fileType: {
       get() {
-        return Number(this.$route.query.filetype)
+        return Number(this.$route.query.fileType)
       },
       set() {
         return 0
@@ -217,7 +217,7 @@ export default {
      * 表格数据获取相关事件
      */
     getTableDataByType() {
-      if (Number(this.filetype)) {
+      if (Number(this.fileType)) {
         //  分类型
         this.showFileListByType()
       } else {
@@ -228,7 +228,7 @@ export default {
     //  获取当前路径下的文件列表
     showFileList() {
       let data = {
-        filepath: this.filepath
+        filePath: this.filePath
       }
       getfilelist(data).then(res => {
         if (res.success) {
@@ -243,7 +243,7 @@ export default {
     showFileListByType() {
       //  分类型
       let data = {
-        filetype: this.filetype
+        fileType: this.fileType
       }
       selectFileByFileType(data).then(res => {
         if (res.success) {
@@ -255,16 +255,16 @@ export default {
       })
     },
     //  根据文件扩展名设置文件图片
-    setFileImg(extendname) {
-      if (extendname === null) {
+    setFileImg(extendName) {
+      if (extendName === null) {
         //  文件夹
         return this.fileImgMap.dir
-      } else if (!this.fileImgTypeList.includes(extendname)) {
+      } else if (!this.fileImgTypeList.includes(extendName)) {
         //  无法识别文件类型的文件
         return this.fileImgMap.unknown
       } else {
         //  可以识别文件类型的文件
-        return this.fileImgMap[extendname]
+        return this.fileImgMap[extendName]
       }
     },
     //  计算文件大小
@@ -328,7 +328,7 @@ export default {
       if (this.dialogMoveFile.isBatchMove) {
         //  批量移动
         let data = {
-          newfilepath: this.selectFilePath,
+          newFilePath: this.selectFilePath,
           files: JSON.stringify(this.selectionFile)
         }
         batchMoveFile(data).then(res => {
@@ -344,10 +344,10 @@ export default {
       } else {
         //  单文件移动
         let data = {
-          oldfilepath: this.operationFile.filepath,
-          newfilepath: this.selectFilePath,
-          filename: this.operationFile.filename,
-          extendname: this.operationFile.extendname
+          oldFilePath: this.operationFile.filePath,
+          newFilePath: this.selectFilePath,
+          fileName: this.operationFile.fileName,
+          extendName: this.operationFile.extendName
         }
         moveFile(data).then(res => {
           if (res.success) {
@@ -395,9 +395,9 @@ export default {
     //  获取查看大图的数据
     getImgReviewData(row, visible) {
       if(row) {
-        this.imgReview.fileurl = row.fileurl
-        this.imgReview.filename = row.filename
-        this.imgReview.extendname = row.extendname
+        this.imgReview.fileUrl = row.fileUrl
+        this.imgReview.fileName = row.fileName
+        this.imgReview.extendName = row.extendName
       }
       this.imgReview.visible = visible
     }

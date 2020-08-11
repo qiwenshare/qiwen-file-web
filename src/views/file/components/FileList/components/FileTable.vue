@@ -9,19 +9,19 @@
       element-loading-text="数据加载中"
       tooltip-effect="dark"
       :data="tableData"
-      :default-sort="{ prop: 'isdir', order: 'descending'}"
+      :default-sort="{ prop: 'isDir', order: 'descending'}"
       @select-all="selectAllFileRow"
       @select="selectFileRow"
     >
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column label prop="isdir" width="60">
+      <el-table-column label prop="isDir" width="60">
         <template slot-scope="scope">
-          <img :src="setFileImg(scope.row.extendname)" style="width: 30px;" />
+          <img :src="setFileImg(scope.row.extendName)" style="width: 30px;" />
         </template>
       </el-table-column>
       <el-table-column
-        prop="filename"
-        :sort-by="['isdir','filename']"
+        prop="fileName"
+        :sort-by="['isDir','fileName']"
         sortable
         show-overflow-tooltip
       >
@@ -36,61 +36,61 @@
         </template>
         <template slot-scope="scope">
           <div style="cursor:pointer;" @click="clickFileName(scope.row)">
-            <span>{{scope.row.filename}}</span>
-            <span v-if="!scope.row.isdir && scope.row.extendname !== null">.{{scope.row.extendname}}</span>
+            <span>{{scope.row.fileName}}</span>
+            <span v-if="!scope.row.isDir && scope.row.extendName !== null">.{{scope.row.extendName}}</span>
           </div>
         </template>
       </el-table-column>
       <el-table-column
         label="路径"
-        prop="filepath"
+        prop="filePath"
         show-overflow-tooltip
-        v-if="Number($route.query.filetype)"
+        v-if="Number($route.query.fileType)"
       >
         <template slot-scope="scope">
           <span 
             style="cursor: pointer;"
             title="点击跳转"
-            @click="$router.push({ query: { filepath:scope.row.filepath, filetype: 0 } })"
-          >{{scope.row.filepath}}</span>
+            @click="$router.push({ query: { filePath:scope.row.filePath, fileType: 0 } })"
+          >{{scope.row.filePath}}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="类型"
         width="80"
-        prop="extendname"
-        :sort-by="['isdir','extendname']"
+        prop="extendName"
+        :sort-by="['isDir','extendName']"
         sortable
         show-overflow-tooltip
-        v-if="selectedColumnList.includes('extendname')"
+        v-if="selectedColumnList.includes('extendName')"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.extendname">{{scope.row.extendname}}</span>
+          <span v-if="scope.row.extendName">{{scope.row.extendName}}</span>
           <span v-else>文件夹</span>
         </template>
       </el-table-column>
       <el-table-column
         label="大小"
         width="80"
-        prop="filesize"
-        :sort-by="['isdir','filesize']"
+        prop="fileSize"
+        :sort-by="['isDir','fileSize']"
         sortable
         show-overflow-tooltip
         align="right"
-        v-if="selectedColumnList.includes('filesize')"
+        v-if="selectedColumnList.includes('fileSize')"
       >
         <template slot-scope="scope">
-          <div style="padding: 0 10px;">{{calculateFileSize(scope.row.filesize)}}</div>
+          <div style="padding: 0 10px;">{{calculateFileSize(scope.row.fileSize)}}</div>
         </template>
       </el-table-column>
       <el-table-column
         label="修改日期"
-        prop="uploadtime"
+        prop="uploadTime"
         width="180"
-        :sort-by="['isdir','uploadtime']"
+        :sort-by="['isDir','uploadTime']"
         show-overflow-tooltip
         sortable
-        v-if="selectedColumnList.includes('uploadtime')"
+        v-if="selectedColumnList.includes('uploadTime')"
       ></el-table-column>
       <el-table-column :width="operaColumnWidth">
         <template slot="header">
@@ -110,19 +110,19 @@
           <div v-if="operaColumnExpand">
             <el-button type="danger" size="mini" @click.native="deleteFile(scope.row)">删除</el-button>
             <el-button type="primary" size="mini" @click.native="showMoveFileDialog(scope.row)">移动</el-button>
-            <el-button type="success" size="mini" v-if="scope.row.isdir === 0">
+            <el-button type="success" size="mini" v-if="scope.row.isDir === 0">
               <a
                 target="_blank"
                 style="display: block;color: inherit;"
-                :href="'api' + scope.row.fileurl"
-                :download="scope.row.filename+'.'+scope.row.extendname"
+                :href="'api' + scope.row.fileUrl"
+                :download="scope.row.fileName+'.'+scope.row.extendName"
               >下载</a>
             </el-button>
             <el-button
               type="warning"
               size="mini"
               @click.native="unzipFile(scope.row)"
-              v-if="scope.row.extendname=='zip'"
+              v-if="scope.row.extendName=='zip' || scope.row.extendName=='rar' "
             >解压缩</el-button>
           </div>
           <el-dropdown trigger="click" v-else>
@@ -134,15 +134,15 @@
               <el-dropdown-item @click.native="deleteFile(scope.row)">删除</el-dropdown-item>
               <el-dropdown-item @click.native="showMoveFileDialog(scope.row)">移动</el-dropdown-item>
               <el-dropdown-item
-                v-if="scope.row.extendname === 'zip'"
+                v-if="scope.row.extendName === 'zip'"
                 @click.native="unzipFile(scope.row)"
               >解压缩</el-dropdown-item>
-              <el-dropdown-item v-if="scope.row.isdir === 0">
+              <el-dropdown-item v-if="scope.row.isDir === 0">
                 <a
                   target="_blank"
                   style="display: block;color: inherit;"
-                  :href="'api' + scope.row.fileurl"
-                  :download="scope.row.filename+'.'+scope.row.extendname"
+                  :href="'api' + scope.row.fileUrl"
+                  :download="scope.row.fileName+'.'+scope.row.extendName"
                 >下载</a>
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -260,9 +260,9 @@ export default {
     //  selectedColumnList:判断当前用户设置的左侧栏是否折叠, operaColumnExpand:判断当前用户设置的操作列是否展开
     ...mapGetters(['selectedColumnList','operaColumnExpand']),
     //  当前查看的文件路径
-    filepath: {
+    filePath: {
       get() {
-        return this.$route.query.filepath
+        return this.$route.query.filePath
       },
       set() {
         return ''
@@ -273,20 +273,20 @@ export default {
       return this.fileList.filter(
         data =>
           !this.fileNameSearch ||
-          data.filename
+          data.fileName
             .toLowerCase()
             .includes(this.fileNameSearch.toLowerCase())
       )
     },
     //  判断当前路径下是否有普通文件
     isIncludeNormalFile() {
-      return this.fileList.map(data => data.isdir).includes(0)
+      return this.fileList.map(data => data.isDir).includes(0)
     },
     //  判断当前路径下是否有压缩文件
     isIncludeZipRarFile() {
       return (
-        this.fileList.map(data => data.extendname).includes('zip') ||
-        this.fileList.map(data => data.extendname).includes('rar')
+        this.fileList.map(data => data.extendName).includes('zip') ||
+        this.fileList.map(data => data.extendName).includes('rar')
       )
     },
     operaColumnWidth() {
@@ -304,16 +304,16 @@ export default {
      * 表格数据获取相关事件
      */
     //  根据文件扩展名设置文件图片
-    setFileImg(extendname) {
-      if (extendname === null) {
+    setFileImg(extendName) {
+      if (extendName === null) {
         //  文件夹
         return this.fileImgMap.dir
-      } else if (!this.fileImgTypeList.includes(extendname)) {
+      } else if (!this.fileImgTypeList.includes(extendName)) {
         //  无法识别文件类型的文件
         return this.fileImgMap.unknown
       } else {
         //  可以识别文件类型的文件
-        return this.fileImgMap[extendname]
+        return this.fileImgMap[extendName]
       }
     },
     //  计算文件大小
@@ -338,11 +338,11 @@ export default {
     //  点击文件名
     clickFileName(row) {
       //  若是目录则进入目录
-      if (row.isdir) {
+      if (row.isDir) {
         this.$router.push({
           query: {
-            filepath: row.filepath + row.filename + '/',
-            filetype: 0
+            filePath: row.filePath + row.fileName + '/',
+            fileType: 0
           }
         })
       }
@@ -350,27 +350,27 @@ export default {
       else {
         //  若当前点击项是图片
         const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
-        if (PIC.includes(row.extendname)) {
+        if (PIC.includes(row.extendName)) {
           this.$emit('getImgReviewData', row, true)
         }
         //  若当前点击项是pdf
-        if (row.extendname === 'pdf') {
-          window.open('api' + row.fileurl, '_blank')
+        if (row.extendName === 'pdf') {
+          window.open('api' + row.fileUrl, '_blank')
         }
         //  若当前点击项是html、js、css、json
         const CODE = ['html', 'js', 'css', 'json']
-        if (CODE.includes(row.extendname)) {
-          window.open('api' + row.fileurl, '_blank')
+        if (CODE.includes(row.extendName)) {
+          window.open('api' + row.fileUrl, '_blank')
         }
         //  若当前点击项是视频mp4格式
         const VIDEO = ['mp4']
-        if (VIDEO.includes(row.extendname)) {
-          window.open('api' + row.fileurl, '_blank')
+        if (VIDEO.includes(row.extendName)) {
+          window.open('api' + row.fileUrl, '_blank')
         }
         //  若当前点击项是视频mp3格式
         const AUDIO = ['mp3']
-        if (AUDIO.includes(row.extendname)) {
-          window.open('api' + row.fileurl, '_blank')
+        if (AUDIO.includes(row.extendName)) {
+          window.open('api' + row.fileUrl, '_blank')
         }
       }
     },
