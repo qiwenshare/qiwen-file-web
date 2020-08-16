@@ -32,7 +32,7 @@ export default new Vuex.Store({
     selectedColumnList: (state) =>
       state.selectedColumnList
         ? state.selectedColumnList.split(",")
-        : ["extendname", "filesize", "uploadtime"], //  列显隐
+        : ["extendName", "fileSize", "uploadTime"], //  列显隐
     imageModel: (state) => Number(state.imageModel), //  图片类型页面是否展示为网格模式，0不是，1是
   },
   mutations: {
