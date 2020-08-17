@@ -365,7 +365,7 @@ export default {
     showStorage() {
       getstorage().then(res => {
         if (res.success) {
-          let size = res.data ? res.data.storagesize : 0
+          let size = res.data ? res.data.storageSize : 0
           const B = 1024
           const KB = Math.pow(1024, 2)
           const MB = Math.pow(1024, 3)
