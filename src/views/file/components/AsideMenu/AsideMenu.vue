@@ -1,18 +1,19 @@
 <template>
   <div class="aside-menu-wrapper" :class="{'expand': !isFolder}">
     <div class="aside-title">
-      <i class="el-icon-share" v-show="!isFolder"></i>
-      <span v-show="!isFolder">共享网盘(Beta)</span>
+      <!-- <i class="el-icon-share" v-show="!isFolder"></i> -->
+      <span v-show="!isFolder">点击右侧收缩分类栏</span>
       <el-tooltip class="item" effect="dark" content="收起分类栏" placement="bottom-end">
+        
         <i
-          class="el-icon-d-arrow-left"
+          class="el-icon-s-fold"
           v-show="!isFolder"
           @click="$store.commit('changeIsFolder', 1)"
         ></i>
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="展开分类栏" placement="bottom-start">
         <i
-          class="el-icon-d-arrow-right"
+          class="el-icon-s-unfold"
           v-show="isFolder"
           @click="$store.commit('changeIsFolder', 0)"
         ></i>
@@ -96,20 +97,22 @@ export default {
   transition width 0.5s
   -webkit-transition width 0.5s
   .aside-title
-    background-color $Primary
+    background-color #C0C4CC;
     color #fff
-    height 80px
-    line-height 80px
-    font-size 18px
+    height 40px
+    line-height 40px
+    font-size 14px
     text-align center
     position relative
-    .el-icon-d-arrow-left
+    .el-icon-s-fold
       position absolute
       right 6px
-      top 32px
+      top 10px
       cursor pointer
-    .el-icon-d-arrow-right
+      font-size 20px
+    .el-icon-s-unfold
       cursor pointer
+      font-size 20px
   >>> .el-menu
     border none
     .el-menu-item.is-active

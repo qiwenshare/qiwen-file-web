@@ -297,7 +297,7 @@ export default {
           ? this.isIncludeZipRarFile
             ? 380
             : 300
-          : 150
+          : 230
         : 150
     }
   },
