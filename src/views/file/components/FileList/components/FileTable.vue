@@ -110,6 +110,7 @@
           <div v-if="operaColumnExpand">
             <el-button type="danger" size="mini" @click.native="deleteFile(scope.row)">删除</el-button>
             <el-button type="primary" size="mini" @click.native="showMoveFileDialog(scope.row)">移动</el-button>
+            <el-button type="primary" size="mini" @click.native="renameFile(scope.row)">重命名</el-button>
             <el-button type="success" size="mini" v-if="scope.row.isDir === 0">
               <a
                 target="_blank"
@@ -133,6 +134,7 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="deleteFile(scope.row)">删除</el-dropdown-item>
               <el-dropdown-item @click.native="showMoveFileDialog(scope.row)">移动</el-dropdown-item>
+              <el-dropdown-item @click.native="renameFile(scope.row)">重命名</el-dropdown-item>
               <el-dropdown-item
                 v-if="scope.row.extendName === 'zip'"
                 @click.native="unzipFile(scope.row)"
@@ -154,7 +156,7 @@
 </template>
 
 <script>
-import { unzipfile, deleteFile } from '@/request/file.js'
+import { unzipfile, deleteFile, renameFile } from '@/request/file.js'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -293,8 +295,8 @@ export default {
       return this.operaColumnExpand
         ? this.isIncludeNormalFile
           ? this.isIncludeZipRarFile
-            ? 300
-            : 220
+            ? 380
+            : 300
           : 150
         : 150
     }
@@ -436,6 +438,36 @@ export default {
             message: '已取消删除'
           })
         })
+    },
+    // 文件重命名
+    renameFile(fileInfo){
+      var fileName = fileInfo.fileName;
+      this.$prompt('请输入文件名', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputValue: fileName
+        }).then(({value}) => {
+          fileInfo.oldFileName = fileInfo.fileName;
+          fileInfo.fileName = value;
+          this.confirmRenameFile(fileInfo);
+        }).catch(() => {
+          this.$message({ 
+            type: 'info',
+            message: '取消输入'
+          });       
+        });
+    },
+    confirmRenameFile(fileInfo) {
+      renameFile(fileInfo).then(res => {
+        if (res.success) {
+          this.$emit('getTableDataByType')
+          this.$emit('showStorage')
+          this.$message.success('重命名成功')
+        } else {
+          fileInfo.fileName = fileInfo.oldFileName;
+          this.$message.error(res.errorMessage)
+        }
+      });
     },
     //  删除文件模态框-确定按钮
     confirmDeleteFile(fileInfo) {

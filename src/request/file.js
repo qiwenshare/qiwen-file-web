@@ -11,3 +11,4 @@ export const moveFile = p => post('/file/movefile', p); //移动文件
 export const createFile = p => post('/file/createfile', p); //创建文件
 export const batchDeleteFile = p => post('/file/batchdeletefile', p); //批量删除文件
 export const batchMoveFile = p => post('/file/batchmovefile', p); //批量移动文件
+export const renameFile = p => post('/file/renamefile', p); //重命名文件

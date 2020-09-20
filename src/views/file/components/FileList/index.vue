@@ -328,7 +328,7 @@ export default {
       if (this.dialogMoveFile.isBatchMove) {
         //  批量移动
         let data = {
-          newFilePath: this.selectFilePath,
+          filePath: this.selectFilePath,
           files: JSON.stringify(this.selectionFile)
         }
         batchMoveFile(data).then(res => {
@@ -345,7 +345,7 @@ export default {
         //  单文件移动
         let data = {
           oldFilePath: this.operationFile.filePath,
-          newFilePath: this.selectFilePath,
+          filePath: this.selectFilePath,
           fileName: this.operationFile.fileName,
           extendName: this.operationFile.extendName
         }
