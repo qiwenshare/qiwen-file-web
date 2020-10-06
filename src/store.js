@@ -86,7 +86,7 @@ export default new Vuex.Store({
           context.commit("changeUsername", res.data.username);
           context.commit("changeUserId", res.data.userId);
           context.commit("changeUserImgUrl", res.data.imageurl);
-          context.commit("changeUserInfoObj", res.data);
+          context.commit("changeUserInfoObj", res.data); 
         } else {
           context.commit("changeLogin", res.success);
         }

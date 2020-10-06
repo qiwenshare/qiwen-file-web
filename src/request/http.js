@@ -9,6 +9,8 @@ axios.defaults.baseURL = '/api';
 
 // post请求头
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+let token = sessionStorage.getItem("token");
+axios.defaults.headers.common['token'] = token;
 
 // 响应拦截器
 axios.interceptors.response.use(

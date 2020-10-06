@@ -139,6 +139,7 @@ export default {
           }
           login(data, true).then(res => {
             if (res.success) {
+              sessionStorage.setItem("token",res.data.token)
               this.$refs[formName].resetFields();
               this.$store.dispatch('getUserInfo').then(() => {
                 this.$router.replace({ path: this.url })

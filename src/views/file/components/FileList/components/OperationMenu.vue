@@ -7,6 +7,7 @@
       :show-file-list="false"
       :data="uploadFileData"
       :on-success="uploadFileSuccess"
+      :headers="headers"
     >
       <el-button size="medium" type="primary" icon="el-icon-upload2" id="uploadFileId">上传</el-button>
     </el-upload>
@@ -52,6 +53,7 @@ export default {
   data() {
     return {
       fileTree: [],
+      headers: {},
       batchDeleteFileDialog: false
     }
   },
@@ -92,6 +94,8 @@ export default {
     }
   },
   created() {
+    let token = sessionStorage.getItem("token");
+    this.headers.token = token
     this.handleEnterDown()
   },
   methods: {
