@@ -94,7 +94,7 @@ export default {
     }
   },
   created() {
-    let token = sessionStorage.getItem("token");
+    let token = localStorage.getItem("token");
     this.headers.token = token
     this.handleEnterDown()
   },
