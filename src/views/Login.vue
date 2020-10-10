@@ -61,6 +61,7 @@
 import CanvasNest from 'canvas-nest.js'
 import DragVerify from '@/components/DragVerify.vue'
 import { login } from '@/request/user.js'
+import Cookies from 'js-cookie'
 
 // 配置
 const config = {
@@ -139,7 +140,8 @@ export default {
           }
           login(data, true).then(res => {
             if (res.success) {
-              localStorage.setItem("token",res.data.token)
+              localStorage.setItem("token",res.data.token);
+              Cookies.set('token', res.data.token, { domain: '.qiwenshare.com' });
               this.$refs[formName].resetFields();
               this.$store.dispatch('getUserInfo').then(() => {
                 this.$router.replace({ path: this.url })

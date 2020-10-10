@@ -11,6 +11,7 @@ axios.defaults.baseURL = '/api';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 let token = localStorage.getItem("token");
 axios.defaults.headers.common['token'] = token;
+axios.defaults.withCredentials = true;
 
 // 响应拦截器
 axios.interceptors.response.use(

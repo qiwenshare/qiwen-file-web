@@ -11,6 +11,7 @@
     "canvas-nest.js": "^2.0.4",
     "core-js": "^2.6.5",
     "element-ui": "^2.13.2",
+    "js-cookie": "^2.2.1",
     "qs": "^6.8.0",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
