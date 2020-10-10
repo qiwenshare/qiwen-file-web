@@ -140,7 +140,6 @@ export default {
           }
           login(data, true).then(res => {
             if (res.success) {
-              localStorage.setItem("token",res.data.token);
               Cookies.set('token', res.data.token, { domain: '.qiwenshare.com' });
               this.$refs[formName].resetFields();
               this.$store.dispatch('getUserInfo').then(() => {

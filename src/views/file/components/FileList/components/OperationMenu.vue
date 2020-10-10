@@ -42,6 +42,7 @@ import {
   batchDeleteFile,
   createFile
 } from '@/request/file.js'
+import Cookies from 'js-cookie'
 
 export default {
   name: 'OperationMenu',
@@ -94,8 +95,6 @@ export default {
     }
   },
   created() {
-    let token = localStorage.getItem("token");
-    this.headers.token = token
     this.handleEnterDown()
   },
   methods: {

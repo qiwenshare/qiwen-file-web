@@ -1,5 +1,6 @@
 import axios from "axios"
 import router from '@/router/router.js'
+import Cookies from 'js-cookie'
 
 // 请求超时时间
 axios.defaults.timeout = 10000 * 5;
@@ -9,9 +10,12 @@ axios.defaults.baseURL = '/api';
 
 // post请求头
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-let token = localStorage.getItem("token");
-axios.defaults.headers.common['token'] = token;
+
+// 请求携带cookie
 axios.defaults.withCredentials = true;
+
+// 设置cookie中的domain
+axios.defaults.headers.common['token'] = Cookies.get('token', { domain: '.qiwenshare.com' });
 
 // 响应拦截器
 axios.interceptors.response.use(
