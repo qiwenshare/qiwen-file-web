@@ -95,6 +95,8 @@ export default {
     }
   },
   created() {
+    let token = Cookies.get('token', { domain: '.qiwenshare.com' });;
+    this.headers.token = token
     this.handleEnterDown()
   },
   methods: {
