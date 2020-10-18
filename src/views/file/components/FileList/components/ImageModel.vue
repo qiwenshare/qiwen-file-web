@@ -7,7 +7,7 @@
         :key="index"
         @click="$emit('getImgReviewData', item, true)"
       >
-        <img class="image" :src="'api' + downloadImgMin(item.fileUrl)" :alt="item.fileName + item.extendName" />
+        <img class="image" :src="getViewFilePath(item)" :alt="item.fileName + item.extendName" />
         <div class="image-name">{{item.fileName + '.' + item.extendName}}</div>
       </li>
     </ul>
@@ -31,7 +31,7 @@
             class="image"
             v-for="image in item.imageList"
             :key="image.fileid"
-            :src="'api' + downloadImgMin(image.fileUrl)"
+            :src="getViewFilePath(image)"
             :alt="image.fileName + image.extendName"
             @click="$emit('getImgReviewData', image, true)"
           />

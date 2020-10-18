@@ -115,7 +115,7 @@
               <a
                 target="_blank"
                 style="display: block;color: inherit;"
-                :href="'api' + scope.row.fileUrl"
+                :href="getDownloadFilePath(scope.row)"
                 :download="scope.row.fileName+'.'+scope.row.extendName"
               >下载</a>
             </el-button>
@@ -250,7 +250,9 @@ export default {
         gif: require('@/assets/images/file/file_gif.png'),
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
-      }
+      },
+      downloadFilePath: "",
+      viewFilePath: ""
       // //  查看图片模态框数据
       // imgReview: {
       //   visible: false,
@@ -357,22 +359,22 @@ export default {
         }
         //  若当前点击项是pdf
         if (row.extendName === 'pdf') {
-          window.open('api' + row.fileUrl, '_blank')
+          window.open(this.getViewFilePath(row), '_blank')
         }
         //  若当前点击项是html、js、css、json
         const CODE = ['html', 'js', 'css', 'json']
         if (CODE.includes(row.extendName)) {
-          window.open('api' + row.fileUrl, '_blank')
+          window.open(this.getViewFilePath(row), '_blank')
         }
         //  若当前点击项是视频mp4格式
         const VIDEO = ['mp4']
         if (VIDEO.includes(row.extendName)) {
-          window.open('api' + row.fileUrl, '_blank')
+          window.open(this.getViewFilePath(row), '_blank')
         }
         //  若当前点击项是视频mp3格式
         const AUDIO = ['mp3']
         if (AUDIO.includes(row.extendName)) {
-          window.open('api' + row.fileUrl, '_blank')
+          window.open(this.getViewFilePath(row), '_blank')
         }
       }
     },

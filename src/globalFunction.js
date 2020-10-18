@@ -24,4 +24,24 @@ export default function install (Vue) {
   /**
    * 当然，你还可以在这里封装并挂载更多的全局函数在这里，示例同上
    */
+  Vue.prototype.getDownloadFilePath = function (row) {
+    let fileUrl = row.fileUrl
+    let isOSS = row.isOSS
+    if (isOSS == 1) { //阿里云OSS对象存储
+      fileUrl = "https://" + sessionStorage.getItem("downloadDomain") + fileUrl;
+    } else { //本地磁盘存储
+      fileUrl = "api" + fileUrl;
+    }
+    return fileUrl
+  };
+  Vue.prototype.getViewFilePath = function (row) {
+    let fileUrl = row.fileUrl
+    let isOSS = row.isOSS
+    if (isOSS == 1) { //阿里云OSS对象存储
+      fileUrl = "http://" + sessionStorage.getItem("viewDomain") + fileUrl;
+    } else { //本地磁盘存储
+      fileUrl = "api" + fileUrl;
+    }
+    return fileUrl
+  };
 }

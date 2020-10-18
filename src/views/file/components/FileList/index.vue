@@ -398,6 +398,7 @@ export default {
         this.imgReview.fileUrl = row.fileUrl
         this.imgReview.fileName = row.fileName
         this.imgReview.extendName = row.extendName
+        this.imgReview.isOSS = row.isOSS
       }
       this.imgReview.visible = visible
     }
