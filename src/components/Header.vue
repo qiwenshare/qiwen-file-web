@@ -73,8 +73,13 @@ export default {
     //  退出登录
     exitButton() {
       this.$message.success("退出登录成功！")
-      Cookies.set('token', '', { domain: '.qiwenshare.com' });
-      Cookies.set('token', '');
+      if (document.location.host.indexOf(".qiwenshare.com")  != -1) {
+        Cookies.set('token', '', { domain: '.qiwenshare.com' });
+      } else {
+        Cookies.set('token', '');
+      }
+      
+      
       this.$store.dispatch('getUserInfo').then(() => {
             sessionStorage.removeItem('operaColumnExpand')
             sessionStorage.removeItem('isFolder')

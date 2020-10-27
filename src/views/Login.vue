@@ -140,8 +140,12 @@ export default {
           }
           login(data, true).then(res => {
             if (res.success) {
-              Cookies.set('token', res.data.token, { domain: '.qiwenshare.com' });
-              Cookies.set('token', res.data.token);
+              if (document.location.host.indexOf(".qiwenshare.com")  != -1) {
+                Cookies.set('token', res.data.token, { domain: '.qiwenshare.com' });
+              } else {
+                Cookies.set('token', res.data.token);
+              }
+              
               this.$refs[formName].resetFields();
               this.$store.dispatch('getUserInfo').then(() => {
                 this.$router.replace({ path: this.url })
