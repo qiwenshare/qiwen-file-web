@@ -14,8 +14,23 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 // 请求携带cookie
 axios.defaults.withCredentials = true;
 
-// 设置cookie中的domain
-axios.defaults.headers.common['token'] = Cookies.get('token', { domain: '.qiwenshare.com' });
+
+// 请求拦截器
+axios.interceptors.request.use(
+  config => {
+    if (Cookies.get('token', { domain: 'qiwenshare.com' })) {
+      config.headers['token'] = Cookies.get('token', { domain: 'qiwenshare.com' })
+    } else {
+      config.headers['token'] = Cookies.get('token')
+    }
+    return config
+  },
+  error => {
+    console.log(error)
+    return Promise.reject(error)
+  }
+)
+
 
 // 响应拦截器
 axios.interceptors.response.use(

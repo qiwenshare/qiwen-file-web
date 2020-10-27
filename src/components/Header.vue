@@ -42,6 +42,7 @@
 <script>
 import { logout } from '@/request/user.js'
 import { mapGetters } from 'vuex'
+import Cookies from 'js-cookie'
 
 export default {
   name: 'Header',
@@ -71,20 +72,30 @@ export default {
   methods: {
     //  退出登录
     exitButton() {
-      logout().then(res => {
-        if (res.success) {
-          this.$message.success(res.data)
-          this.$store.dispatch('getUserInfo').then(() => {
+      this.$message.success("退出登录成功！")
+      Cookies.set('token', '', { domain: '.qiwenshare.com' });
+      Cookies.set('token', '');
+      this.$store.dispatch('getUserInfo').then(() => {
             sessionStorage.removeItem('operaColumnExpand')
             sessionStorage.removeItem('isFolder')
             sessionStorage.removeItem('selectedColumnList')
             sessionStorage.removeItem('imageModel')
             this.$router.push({ path: '/login' })
           })
-        } else {
-          this.$message.error(res.errorMessage)
-        }
-      })
+      // logout().then(res => {
+      //   if (res.success) {
+      //     this.$message.success(res.data)
+      //     this.$store.dispatch('getUserInfo').then(() => {
+      //       sessionStorage.removeItem('operaColumnExpand')
+      //       sessionStorage.removeItem('isFolder')
+      //       sessionStorage.removeItem('selectedColumnList')
+      //       sessionStorage.removeItem('imageModel')
+      //       this.$router.push({ path: '/login' })
+      //     })
+      //   } else {
+      //     this.$message.error(res.errorMessage)
+      //   }
+      // })
     }
   }
 }

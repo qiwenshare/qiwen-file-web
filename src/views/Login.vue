@@ -141,10 +141,10 @@ export default {
           login(data, true).then(res => {
             if (res.success) {
               Cookies.set('token', res.data.token, { domain: '.qiwenshare.com' });
+              Cookies.set('token', res.data.token);
               this.$refs[formName].resetFields();
               this.$store.dispatch('getUserInfo').then(() => {
                 this.$router.replace({ path: this.url })
-                location.reload()
               })
             } else {
               this.$message.error('手机号或密码错误！')
