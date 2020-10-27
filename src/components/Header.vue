@@ -19,18 +19,18 @@
       <el-menu-item class="headerItem login right-menu-item" v-show="!isLogin" index="4" :route="{ name: 'Login' }"
         >登录</el-menu-item
       >
+      <!-- 生产环境 -->
+      <el-menu-item v-if="isProductEnv" class="headerItem register right-menu-item" v-show="!isLogin" @click.native="goQiwenshare()">
+        注册
+      </el-menu-item>
       <!-- 开发环境 -->
       <el-menu-item
-        v-if="isProductEnv"
+        v-else
         class="headerItem register right-menu-item"
         v-show="!isLogin"
         index="5"
         :route="{ name: 'Register' }"
       >注册</el-menu-item>
-      <!-- 生产环境 -->
-      <el-menu-item v-else class="headerItem register right-menu-item" v-show="!isLogin" index="5" @click.native="goQiwenshare()"
-        >注册</el-menu-item
-      >
     </el-menu>
   </div>
 </template>
@@ -65,13 +65,13 @@ export default {
       }
     },
     isProductEnv() {
-      return process.env.NODE_ENV === 'development'
+      return process.env.NODE_ENV !== 'development' && location.origin === 'http://pan.qiwenshare.com'
     }
   },
   methods: {
     // 跳转到奇文社区注册页面
     goQiwenshare() {
-      location.href = 'https://www.qiwenshare.com/register'
+      window.open('https://www.qiwenshare.com/register')
     },
     //  退出登录
     exitButton() {
