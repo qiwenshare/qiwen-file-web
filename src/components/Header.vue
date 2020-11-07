@@ -65,7 +65,7 @@ export default {
       }
     },
     isProductEnv() {
-      return process.env.NODE_ENV !== 'development' && location.origin === 'http://pan.qiwenshare.com'
+      return process.env.NODE_ENV !== 'development' && location.origin === 'https://pan.qiwenshare.com'
     }
   },
   methods: {
