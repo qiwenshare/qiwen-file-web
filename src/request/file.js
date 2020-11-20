@@ -3,6 +3,7 @@ import { get,post } from './http'
 
 export const getfilelist = p => get('/file/getfilelist', p); //获取文件列表
 export const getstorage = p => get('/filetransfer/getstorage', p); //获取存储占用
+export const speedUploadFile = p => post('/filetransfer/speeduploadfile', p);
 export const unzipfile = p => post('/file/unzipfile', p); //解压文件
 export const deleteFile = p => post('/file/deletefile', p); //删除文件
 export const selectFileByFileType = p => get('/file/selectfilebyfiletype', p); // 通过文件类型选择文件

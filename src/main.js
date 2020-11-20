@@ -10,10 +10,14 @@ import '@/assets/styles/css/mediaScreen.styl'
 import '@/router/before.js'
 import 'element-ui/lib/theme-chalk/index.css'
 import element from './element.js'
+import uploader from 'vue-simple-uploader'
+
 
 Vue.config.productionTip = false;
 Vue.use(all);
 Vue.use(element);
+Vue.use(uploader);
+Vue.prototype.$EventBus = new Vue()
 
 new Vue({
   router,

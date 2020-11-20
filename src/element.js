@@ -41,7 +41,8 @@ import {
   Timeline,
   TimelineItem,
   Alert,
-  Tree
+  Tree,
+  Progress
 } from "element-ui";
 const element = {
   install: function (Vue) {
@@ -84,6 +85,7 @@ const element = {
     Vue.use(TimelineItem);
     Vue.use(Alert);
     Vue.use(Tree);
+    Vue.use(Progress);
 
     Vue.prototype.$loading = Loading.service;
     Vue.prototype.$msgbox = MessageBox;
