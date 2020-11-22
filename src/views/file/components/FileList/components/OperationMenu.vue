@@ -45,46 +45,18 @@ export default {
   data() {
     return {
       fileTree: [],
-      headers: {},
-      batchDeleteFileDialog: false,
-      objectMd5: {},
-      uploadTotleCount:0,
-      completeCount:0,
-      percentage: 0,
-      options: {
-          target: 'api/filetransfer/uploadfile', // 目标上传 URL
-          testChunks: true,  //是否开启服务器分片校验
-          chunkSize: '2048000',   //分片大小
-          fileParameterName: 'file', //上传文件时文件的参数名，默认file
-          maxChunkRetries: 3,  //最大自动失败重试上传次数
-          // 服务器分片校验函数，秒传及断点续传基础
-          checkChunkUploadedByResponse: function (chunk, message) {
-            let objMessage = JSON.parse(message);
-            let data = objMessage.data;
-            if (data.skipUpload) {
-                return true;
-            }
-            return (data.uploaded || []).indexOf(chunk.offset + 1) >= 0
-          },
-          headers: {
-        // 在header中添加的验证，请根据实际业务来
-              token: Cookies.get('token', { domain: '.qiwenshare.com' })
-          },
-          query: this.uploadFileData
-      },
-      attrs: {
-          accept: '*' //接受所有文件类型
-      },
-      panelShow: true,   //选择文件后，展示上传pan
-      uploader_key: new Date().getTime(),
+      batchDeleteFileDialog: false
     }
   },
   mounted() {
     this.$EventBus.$on('refreshList', query => {
-                console.log("收到消息了")
                 this.$emit('getTableDataByType')
                 
             });
+    this.$EventBus.$on('refreshStorage', query => {
+                this.$emit('showStorage')
+                
+            });            
   },
   computed: {
     //  当前查看的文件路径
@@ -123,10 +95,7 @@ export default {
     }
   },
   created() {
-    let token = Cookies.get('token', { domain: '.qiwenshare.com' });;
-    this.headers.token = token
     this.handleEnterDown()
-    this.options.query = this.uploadFileData
   },
   methods: {
     upload() {
@@ -235,107 +204,8 @@ export default {
         let name = 'downloadLink' + i
         this.$refs[name][0].click()
       }
-    },
-    onPreview() {
-      console.log("onPreview")
-    },
-    computeMD5(file) {
-     
-      
-      let time = new Date().getTime();
-      let blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
-      let currentChunk = 0;
-      console.log("文件大小：" + file.size)
-      const chunkSize = 10 * 1024 * 1000;
-      console.log("块大小："+ chunkSize);
-      let chunks = Math.ceil(file.size / chunkSize);
-      console.log("块数量：" + chunks);
-      let fileReader = new FileReader();
-      // this.uploadFileData.fileName = fileObj.raw.name;
-      //console.log("文件名：" + fileObj.raw.name);
-      loadNext();
-      //fileReader.readAsArrayBuffer(blobSlice(file))
-      let spark = new SparkMD5.ArrayBuffer();
-      
-      let _this = this
-      fileReader.onload = (e => {
-        spark.append(e.target.result);
-        if (currentChunk < chunks) {
-          currentChunk++;
-          loadNext();
-          console.log('校验MD5 ' + ((currentChunk / chunks) * 100).toFixed(0) + '%')
-        } else {
-          let md5 = spark.end();
-          console.log(`MD5计算完毕：${file.name} \nMD5：${md5} \n分片：${chunks} 大小:${file.size} 用时：${new Date().getTime() - time} ms`);
-          this.computeMD5Success(md5, file);
-        }
-        // var md5 = spark.end()
-        // console.log(md5)
-        //_this.objectMd5[fileObj.raw.name] = md5
-        // _this.completeCount++
-        // let percentage = (_this.completeCount/_this.uploadTotleCount * 100).toFixed(0)
-        // _this.format(percentage * 1)
-        // _this.percentage = percentage * 1
-        // console.log(_this.percentage)
-        
-      });
-      function loadNext() {
-          let start = currentChunk * chunkSize;
-          let end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
-          fileReader.readAsArrayBuffer(blobSlice.call(file.file, start, end));
-        }
-      
-       
-    },
-    computeMD5Success(md5, file) {
-      console.log(md5)
-      console.log(file)
-      file.uniqueIdentifier = md5;//把md5值作为文件的识别码
-      this.options.fileName = file.name;
-      // file.fileName = file.  
-      file.resume();//开始上传
-      console.log('开始上传')
-    },
-    // 添加文件的回调
-    filesAdded(file, event) {
-      console.log(file)
-      //大小判断
-      //const isLt100M = file.size / 1024 / 1024 < 10;
-      // if (!isLt100M) {
-      //   this.$message.error(this.$t("error.error_upload_file_max"));
-      // } else {
-      //   this.computeMD5(file)
-      // }
-      this.computeMD5(file)
-    },
-    // 文件上传过程中进度的回调
-    onFileProgress(rootFile, file, chunk) {
-        console.log(`上传中 ${file.name}，chunk：${chunk.startByte / 1024 / 1024} ~ ${chunk.endByte / 1024 / 1024}`)
-    },
-    // 文件上传成功的回调
-    onFileSuccess(rootFile, file, response, chunk){
-      console.log(rootFile)
-      console.log(file)
-      console.log(response)
-      let data = response.data
-      let result = JSON.parse(response)
-      // let timeStampName = response.data.timeStampName;
-      // // debugger;
-      // this.uploadFileData.timeStampName = timeStampName
-      if (result.success) {
-        this.$message.success('上传成功')
-        this.$emit('getTableDataByType')
-        this.$emit('showStorage')
-      } else {
-        this.$message.error(result.errorMessage)
-      }
-      console.log(chunk)
-    },
-    // 上传文件出错回调
-    onFileError(rootFile, file, response, chunk) {
-      let result = JSON.parse(response)
-      this.$message.error(result.errorMessage)
     }
+    
   }
 }
 </script>

@@ -44,12 +44,6 @@
 </template>
 
 <script>
-    /**
-     *   全局上传插件
-     *   调用方法：Bus.$emit('openUploader', {}) 打开文件选择框，参数为需要传递的额外参数
-     *   监听函数：Bus.$on('fileAdded', fn); 文件选择后的回调
-     *            Bus.$on('fileSuccess', fn); 文件上传成功的回调
-     */
     import SparkMD5 from 'spark-md5'
     import Cookies from 'js-cookie'
     
@@ -84,18 +78,13 @@
             }
         },   
         mounted() {
-            // debugger
+
             this.$EventBus.$on('openUploader', query => {
-                console.log("收到消息了")
                 this.params = query || {};
                 // this.$refs.uploadBtn.click()
                 var e = document.createEvent('MouseEvent');
                 e.initEvent('click', false, false);
                 this.$refs.uploadBtn.$el.dispatchEvent(e);
-                // if (this.$refs.uploadBtn) {
-                    
-                //     $('#global-uploader-btn').click();
-                // }
             });
         },
         computed: {
@@ -125,50 +114,18 @@
                 let data = response.data
                 
                 let result = JSON.parse(response)
-                // let timeStampName = response.data.timeStampName;
-                // // debugger;
-                // this.uploadFileData.timeStampName = timeStampName
                 if (result.success) {
-                   // this.statusSet(file.id, 'merging');
                     this.$message.success('上传成功')
+                    
                     this.statusRemove(file.id);
-                    //this.$emit('getTableDataByType')
                     this.$EventBus.$emit('refreshList', "")
-                    this.$emit('showStorage')
+                    this.$EventBus.$emit('refreshStorage', "")
                 } else {
                     this.$message.error(result.errorMessage)
                     this.statusSet(file.id, 'failed');
                 }
                 console.log(chunk)
             },
-            // onFileSuccess(rootFile, file, response, chunk) {
-            //     let res = JSON.parse(response);
-            //     // 服务器自定义的错误（即虽返回200，但是是错误的情况），这种错误是Uploader无法拦截的
-            //     if (!res.result) {
-            //         this.$message({ message: res.message, type: 'error' });
-            //         // 文件状态设为“失败”
-            //         this.statusSet(file.id, 'failed');
-            //         return
-            //     }
-            //     // 如果服务端返回需要合并
-            //     if (res.needMerge) {
-            //         // 文件状态设为“合并中”
-            //         this.statusSet(file.id, 'merging');
-            //         api.mergeSimpleUpload({
-            //             tempName: res.tempName,
-            //             fileName: file.name,
-            //             ...this.params,
-            //         }).then(res => {
-            //             // 文件合并成功
-            //             this.$emit('fileSuccess');
-            //             this.statusRemove(file.id);
-            //         }).catch(e => {});
-            //     // 不需要合并
-            //     } else {
-            //         this.$emit('fileSuccess');
-            //         console.log('上传成功');
-            //     }
-            // },
             onFileError(rootFile, file, response, chunk) {
                 this.$message({
                     message: response,
