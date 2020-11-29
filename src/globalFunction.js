@@ -21,7 +21,7 @@ export default function install (Vue) {
     let fileUrl = row.fileUrl
     let isOSS = row.isOSS
     if (isOSS == 1) { //阿里云OSS对象存储
-      fileUrl = "http://" + sessionStorage.getItem("viewDomain") + fileUrl + "?x-oss-process=image/resize,m_fill,h_120,w_120/rotate,0";
+      fileUrl = "http://" + sessionStorage.getItem("viewDomain") + fileUrl + "?x-oss-process=image/resize,m_fill,h_150,w_150/rotate,0";
     } else { //本地磁盘存储
       let index = fileUrl.lastIndexOf(".");
       fileUrl = "api" + fileUrl.substr(0, index) + "_min" + fileUrl.substr(index);
