@@ -45,10 +45,10 @@
         <i class="el-icon-headset"></i>
         <span slot="title" v-show="!isFolder">音乐</span>
       </el-menu-item>
-      <!-- <el-menu-item index="5" title="其他">
+      <el-menu-item index="5" title="其他">
         <i class="el-icon-takeaway-box"></i>
         <span slot="title" v-show="!isFolder">其他</span>
-      </el-menu-item> -->
+      </el-menu-item>
     </el-menu>
   </div>
 </template>
