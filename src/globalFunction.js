@@ -17,13 +17,22 @@ export default function install (Vue) {
     }
   };
   //  加载缩略图
-  Vue.prototype.downloadImgMin = function (params) {
-    let index = params.lastIndexOf(".");
-    return params.substr(0, index) + "_min" + params.substr(index);
+  Vue.prototype.downloadImgMin = function (row) {
+    let fileUrl = row.fileUrl
+    let isOSS = row.isOSS
+    if (isOSS == 1) { //阿里云OSS对象存储
+      fileUrl = "http://" + sessionStorage.getItem("viewDomain") + fileUrl + "?x-oss-process=image/resize,m_fill,h_120,w_120/rotate,0";
+    } else { //本地磁盘存储
+      let index = fileUrl.lastIndexOf(".");
+      fileUrl = "api" + fileUrl.substr(0, index) + "_min" + fileUrl.substr(index);
+    }    
+     return fileUrl
+
   };
   /**
    * 当然，你还可以在这里封装并挂载更多的全局函数在这里，示例同上
    */
+  //获取文件下载路径
   Vue.prototype.getDownloadFilePath = function (row) {
     let fileUrl = row.fileUrl
     let isOSS = row.isOSS
@@ -34,6 +43,7 @@ export default function install (Vue) {
     }
     return fileUrl
   };
+  //文件查看大图
   Vue.prototype.getViewFilePath = function (row) {
     let fileUrl = row.fileUrl
     let isOSS = row.isOSS
