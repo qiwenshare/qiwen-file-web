@@ -1,5 +1,5 @@
 import router from '@/router/router'
-import store from '@/store'
+import store from '@/store/index.js'
 
 // 路由全局前置守卫
 router.beforeEach((to, from, next) => {

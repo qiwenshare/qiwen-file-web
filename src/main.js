@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router/router'
-import store from '@/store'
+import store from '@/store/index.js'
 import all from '@/globalFunction.js'
 import '@/assets/styles/css/base.css'
 import '@/assets/styles/css/border.css'
