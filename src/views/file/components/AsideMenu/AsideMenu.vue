@@ -1,24 +1,11 @@
 <template>
   <div class="aside-menu-wrapper" :class="{'expand': !isFolder}">
-    <div class="aside-title">
-      <!-- <i class="el-icon-share" v-show="!isFolder"></i> -->
-      <span v-show="!isFolder">点击右侧收缩分类栏</span>
-      <el-tooltip class="item" effect="dark" content="收起分类栏" placement="bottom-end">
-        
-        <i
-          class="el-icon-s-fold"
-          v-show="!isFolder"
-          @click="$store.commit('changeIsFolder', 1)"
-        ></i>
-      </el-tooltip>
-      <el-tooltip class="item" effect="dark" content="展开分类栏" placement="bottom-start">
-        <i
-          class="el-icon-s-unfold"
-          v-show="isFolder"
-          @click="$store.commit('changeIsFolder', 0)"
-        ></i>
-      </el-tooltip>
-    </div>
+    <el-tooltip effect="dark" :content="isFolder ? '展开分类栏' : '收起分类栏'" placement="right">
+      <div class="aside-title" @click="$store.commit('changeIsFolder', isFolder ? 0 : 1)">
+        <i class="el-icon-caret-left" v-show="!isFolder"></i>
+        <i class="el-icon-caret-right" v-show="isFolder"></i>
+      </div>
+    </el-tooltip>
     <el-menu
       class="aside-menu"
       :default-openeds="[0]"
@@ -54,8 +41,6 @@
 </template>
 
 <script>
-// import { selectFileByFileType } from '@/request/file.js'
-
 export default {
   name: 'AsideMenu',
   data() {
@@ -93,26 +78,27 @@ export default {
 <style lang="stylus" scoped>
 @import '~@/assets/styles/varibles.styl'
 .aside-menu-wrapper
+  position relative
   width 69px
   transition width 0.5s
   -webkit-transition width 0.5s
   .aside-title
-    background-color #C0C4CC;
+    position absolute
+    top 300px
+    right 0
+    z-index 2
+    border-radius 12px 0 0 12px
+    background $BorderLight
     color #fff
-    height 40px
-    line-height 40px
-    font-size 14px
-    text-align center
-    position relative
-    .el-icon-s-fold
-      position absolute
-      right 6px
-      top 10px
-      cursor pointer
-      font-size 20px
-    .el-icon-s-unfold
-      cursor pointer
-      font-size 20px
+    width 12px
+    height 100px
+    line-height 100px
+    cursor pointer
+    &:hover
+      opacity 0.7
+    i {
+      font-size 12px
+    }
   >>> .el-menu
     border none
     .el-menu-item.is-active
