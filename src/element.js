@@ -9,6 +9,7 @@ import {
   MenuItem,
   MenuItemGroup,
   Input,
+  InputNumber,
   Radio,
   RadioGroup,
   RadioButton,
@@ -42,7 +43,8 @@ import {
   TimelineItem,
   Alert,
   Tree,
-  Progress
+  Progress,
+  Slider
 } from "element-ui";
 const element = {
   install: function (Vue) {
@@ -55,6 +57,7 @@ const element = {
     Vue.use(MenuItem);
     Vue.use(MenuItemGroup);
     Vue.use(Input);
+    Vue.use(InputNumber);
     Vue.use(Radio);
     Vue.use(RadioGroup);
     Vue.use(RadioButton);
@@ -86,6 +89,7 @@ const element = {
     Vue.use(Alert);
     Vue.use(Tree);
     Vue.use(Progress);
+    Vue.use(Slider);
 
     Vue.prototype.$loading = Loading.service;
     Vue.prototype.$msgbox = MessageBox;

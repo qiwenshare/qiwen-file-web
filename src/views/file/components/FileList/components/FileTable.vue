@@ -253,11 +253,6 @@ export default {
       },
       downloadFilePath: "",
       viewFilePath: ""
-      // //  查看图片模态框数据
-      // imgReview: {
-      //   visible: false,
-      //   url: ''
-      // }
     }
   },
   computed: {
@@ -356,11 +351,14 @@ export default {
         const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
         if (PIC.includes(row.extendName)) {
           let data = {
-            visible: true,
-            fileUrl: row.fileUrl,
-            fileName:  row.fileName,
-            extendName: row.extendName,
-            isOSS: row.isOSS
+            imgReviewVisible: true,
+            imgReviewList: [{
+              fileUrl: this.getViewFilePath(row),
+              downloadLink: this.getDownloadFilePath(row),
+              fileName:  row.fileName,
+              extendName: row.extendName
+            }],
+            activeIndex: 0,
           }
           this.$store.commit('setImgReviewData', data)
         }

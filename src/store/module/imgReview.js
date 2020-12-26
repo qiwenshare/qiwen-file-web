@@ -1,25 +1,19 @@
 export default {
   state: {
-    visible: false,
-    fileUrl: '',
-    fileName: '',
-    extendName: '',
-    isOSS: 0
+    imgReviewVisible: false,
+    imgReviewList: [], //  预览图片列表
+    defaultActiveIndex: 0 //  默认当前打开的图片的索引
   },
   mutations: {
     setImgReviewData(state, data) {
-      if(data.visible) {
-        state.visible = data.visible
-        state.fileUrl = data.fileUrl
-        state.fileName = data.fileName
-        state.extendName = data.extendName
-        state.isOSS = data.isOSS
+      if(data.imgReviewVisible) {
+        state.imgReviewVisible = data.imgReviewVisible
+        state.imgReviewList = data.imgReviewList
+        state.defaultActiveIndex = data.activeIndex
       } else {
-        state.visible = data.false
-        state.fileUrl = ''
-        state.fileName = ''
-        state.extendName = ''
-        state.isOSS = 0
+        state.imgReviewVisible = data.false
+        state.imgReviewList = []
+        state.defaultActiveIndex = 0
       }
     }
   },

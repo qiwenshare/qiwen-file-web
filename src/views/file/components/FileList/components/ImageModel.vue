@@ -1,16 +1,18 @@
 <template>
   <div class="image-model-wrapper">
+    <!-- 网格模式 -->
     <ul class="image-model" v-show="imageModel === 1">
       <li
         class="image-item"
         v-for="(item, index) in fileList"
         :key="index"
-        @click="getImgReviewData(item)"
+        @click="getImgReviewData(fileList, index)"
       >
         <img class="image" :src="downloadImgMin(item)" :alt="item.fileName + item.extendName" />
         <div class="image-name">{{item.fileName + '.' + item.extendName}}</div>
       </li>
     </ul>
+    <!-- 时间线模式 -->
     <div v-show="imageModel === 2">
       <div class="radio">
         排序：
@@ -29,11 +31,11 @@
         >
           <img
             class="image"
-            v-for="image in item.imageList"
+            v-for="(image, index) in item.imageList"
             :key="image.fileid"
             :src="downloadImgMin(image)"
             :alt="image.fileName + image.extendName"
-            @click="getImgReviewData(image)"
+            @click="getImgReviewData(item.imageList, index)"
           />
         </el-timeline-item>
       </el-timeline>
@@ -77,13 +79,18 @@ export default {
     }
   },
   methods: {
-    getImgReviewData(item) {
+    getImgReviewData(imgList, index) {
       let data = {
-        visible: true,
-        fileUrl: item.fileUrl,
-        fileName:  item.fileName,
-        extendName: item.extendName,
-        isOSS: item.isOSS
+        imgReviewVisible: true,
+        imgReviewList: imgList.map(item => {
+          return {
+            fileUrl: this.getViewFilePath(item),
+            downloadLink: this.getDownloadFilePath(item),
+            fileName:  item.fileName,
+            extendName: item.extendName
+          }
+        }),
+        activeIndex: index,
       }
       this.$store.commit('setImgReviewData', data)
     }
