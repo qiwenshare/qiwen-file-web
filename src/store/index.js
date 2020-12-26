@@ -4,6 +4,7 @@ import Vuex from "vuex";
 import user from './module/user'
 import fileList from './module/fileList'
 import sideMenu from './module/sideMenu'
+import imgReview from './module/imgReview'
 
 Vue.use(Vuex)
 
@@ -39,6 +40,7 @@ export default new Vuex.Store({
   modules: {
     user,
     fileList,
-    sideMenu
+    sideMenu,
+    imgReview
   }
 })

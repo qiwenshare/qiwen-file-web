@@ -5,7 +5,7 @@
         class="image-item"
         v-for="(item, index) in fileList"
         :key="index"
-        @click="$emit('getImgReviewData', item, true)"
+        @click="getImgReviewData(item)"
       >
         <img class="image" :src="downloadImgMin(item)" :alt="item.fileName + item.extendName" />
         <div class="image-name">{{item.fileName + '.' + item.extendName}}</div>
@@ -33,7 +33,7 @@
             :key="image.fileid"
             :src="downloadImgMin(image)"
             :alt="image.fileName + image.extendName"
-            @click="$emit('getImgReviewData', image, true)"
+            @click="getImgReviewData(image)"
           />
         </el-timeline-item>
       </el-timeline>
@@ -74,6 +74,18 @@ export default {
         })
       })
       return res
+    }
+  },
+  methods: {
+    getImgReviewData(item) {
+      let data = {
+        visible: true,
+        fileUrl: item.fileUrl,
+        fileName:  item.fileName,
+        extendName: item.extendName,
+        isOSS: item.isOSS
+      }
+      this.$store.commit('setImgReviewData', data)
     }
   }
 }

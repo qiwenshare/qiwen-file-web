@@ -36,14 +36,12 @@
       @setSelectionFile="setSelectionFile"
       @showStorage="showStorage"
       @getTableDataByType="getTableDataByType"
-      @getImgReviewData="getImgReviewData"
     ></FileTable>
     <!-- 图片网格模式 -->
     <ImageModel
       class="image-model"
       v-if="imageModel && fileType === 1"
       :fileList="fileList"
-      @getImgReviewData="getImgReviewData"
     ></ImageModel>
     <!-- 移动文件模态框 -->
     <MoveFileDialog
@@ -52,8 +50,6 @@
       @confirmMoveFile="confirmMoveFile"
       @setMoveFileDialogData="setMoveFileDialogData"
     ></MoveFileDialog>
-    <!-- 查看大图 -->
-    <ImgReview :imgReview="imgReview" @getImgReviewData="getImgReviewData"></ImgReview>
   </div>
 </template>
 
@@ -64,7 +60,7 @@ import SelectColumn from './components/SelectColumn'
 import FileTable from './components/FileTable'
 import ImageModel from './components/ImageModel'
 import MoveFileDialog from './components/MoveFileDialog'
-import ImgReview from './components/ImgReview'
+
 import {
   getfilelist,
   selectFileByFileType,
@@ -82,8 +78,7 @@ export default {
     SelectColumn,
     FileTable,
     ImageModel,
-    MoveFileDialog,
-    ImgReview
+    MoveFileDialog
   },
   data() {
     return {
@@ -390,17 +385,6 @@ export default {
     //  切换图片查看模式
     changeImageDisplayModel(label) {
       this.$store.commit('changeImageModel', label)
-    },
-
-    //  获取查看大图的数据
-    getImgReviewData(row, visible) {
-      if(row) {
-        this.imgReview.fileUrl = row.fileUrl
-        this.imgReview.fileName = row.fileName
-        this.imgReview.extendName = row.extendName
-        this.imgReview.isOSS = row.isOSS
-      }
-      this.imgReview.visible = visible
     }
   }
 }

@@ -355,7 +355,14 @@ export default {
         //  若当前点击项是图片
         const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
         if (PIC.includes(row.extendName)) {
-          this.$emit('getImgReviewData', row, true)
+          let data = {
+            visible: true,
+            fileUrl: row.fileUrl,
+            fileName:  row.fileName,
+            extendName: row.extendName,
+            isOSS: row.isOSS
+          }
+          this.$store.commit('setImgReviewData', data)
         }
         //  若当前点击项是pdf
         if (row.extendName === 'pdf') {

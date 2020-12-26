@@ -8,6 +8,8 @@
     <el-backtop class="backtop" target="#app" title="快点我，带你上天！"></el-backtop>
     <!-- 将上传组件全局注册 -->
     <global-uploader></global-uploader>
+    <!-- 查看大图 -->
+    <ImgReview></ImgReview>
   </div>
 </template>
 
@@ -15,13 +17,15 @@
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import globalUploader from '@/components/GlobalUploader.vue'
+import ImgReview from '@/components/ImgReview'
 
 export default {
   name: 'App',
   components: {
     Header,
     Footer,
-    globalUploader
+    globalUploader,
+    ImgReview
   },
   computed: {
     //  头部是否显示

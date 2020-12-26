@@ -25,9 +25,6 @@
 <script>
 export default {
   name: 'ImgReview',
-  props: {
-    imgReview: Object
-  },
   data() {
     return {
       rotate: 0,
@@ -35,10 +32,15 @@ export default {
       zoomY: 1
     }
   },
+  computed: {
+    imgReview() {
+      return this.$store.state.imgReview
+    }
+  },
   methods: {
     //  关闭图片预览
     closeImgReview() {
-      this.$emit('getImgReviewData', null, false)
+      this.$store.commit('setImgReviewData', { visible: false })
       this.rotate = 0
       this.zoomX = 1
       this.zoomY = 1
