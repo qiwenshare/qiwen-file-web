@@ -2,7 +2,7 @@ export default {
   state: {
     operaColumnExpand: sessionStorage.getItem("operaColumnExpand"), //  操作列是否展开，0不展开，1展开
     selectedColumnList: sessionStorage.getItem("selectedColumnList"), //  列显隐
-    imageModel: sessionStorage.getItem("imageModel"), //  图片类型页面是否展示为网格模式，0不是，1是
+    imageModel: sessionStorage.getItem("imageModel"), //  图片类型页面展示模式，0列表模式，1网格模式 2 时间线模式
   },
   mutations: {
     changeOperaColumnExpand(state, data) {

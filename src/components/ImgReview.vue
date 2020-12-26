@@ -43,7 +43,6 @@
       v-for="(item, index) in imgReviewList"
       :key="index"
       :src="item.fileUrl"
-      :style="styleObj"
       v-show="index === activeIndex"
     />
     <!-- 左右切换图标 -->
@@ -73,38 +72,35 @@ export default {
   name: 'ImgReview',
   data() {
     return {
-      rotate: 0,
-      activeIndex: 0,
-      imgZoom: 100,
-      imgZoomMin: 1,
-      imgZoomMax: 200,
-      // 拖拽相关数据
-      styleObj: null, // 拖拽时修改图片的样式
-      isDrag: false, // 是否开始拖拽
-      startX: 0, // 鼠标的点击X轴
-      startY: 0, // 鼠标的点击Y轴
-      moveX: 0, // 鼠标移动的X轴
-      moveY: 0, // 鼠标移动的Y轴
-      endX: 0,
-      endY: 0
+      rotate: 0,  //  旋转角度
+      activeIndex: 0, //  当前图片索引 从 0 开始
+      imgZoom: 100, //  图片缩放比例
+      imgZoomMin: 1,  //  图片缩放最小比例
+      imgZoomMax: 200 //  图片缩放最大比例
     }
   },
   computed: {
+    // 图片查看组件是否显示
     imgReviewVisible() {
       return this.$store.state.imgReview.imgReviewVisible
     },
+    // 图片列表
     imgReviewList() {
       return this.$store.state.imgReview.imgReviewList
     },
+    // 默认显示的图片索引 从 0 开始
     defaultActiveIndex() {
       return this.$store.state.imgReview.defaultActiveIndex
     },
+    // 当前显示的图片名称
     activeFileName() {
       return this.imgReviewList[this.activeIndex].fileName
     },
+    // 当前显示的图片扩展名
     activeExtendName() {
       return this.imgReviewList[this.activeIndex].extendName
     },
+    // 对用户而言 显示的图片索引 从 1 开始 顶部栏输入框控制此值变化
     inputActiveIndex: {
       get() {
         return this.activeIndex + 1
@@ -113,11 +109,13 @@ export default {
         this.activeIndex = value - 1
       }
     },
+    // 当前显示的图片下载链接
     activeDownloadLink() {
       return this.imgReviewList[this.activeIndex].downloadLink
     }
   },
   watch: {
+    // 监听 图片查看组件 显隐状态变化
     imgReviewVisible(val) {
       let body = document.querySelector('body')
       if (val) {
@@ -153,7 +151,7 @@ export default {
       this.rotate = 0
       this.$refs.imgLarge[this.activeIndex].style.transform = `rotate(${this.rotate}rotate)`
     },
-    // 格式化缩放数字
+    // 格式化缩放数字 显示图片缩放比例
     formatZoom(value) {
       return value + '%'
     },

@@ -1,7 +1,7 @@
 export default {
   state: {
-    imgReviewVisible: false,
-    imgReviewList: [], //  预览图片列表
+    imgReviewVisible: false,  //  图片查看组件显隐状态
+    imgReviewList: [], //  图片列表
     defaultActiveIndex: 0 //  默认当前打开的图片的索引
   },
   mutations: {
