@@ -89,8 +89,6 @@
 时间线
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/0415/000833_ee93793e_947714.png "屏幕截图.png")
 
-支持图片点击查看大图（放大、缩小、旋转、切换上一张、切换下一张、下载）
-![大图查看](https://images.gitee.com/uploads/images/2020/1226/202252_916aeac5_1837873.png "屏幕截图.png")
 
  **创建文件夹**  :blue_heart: 
 ![输入图片说明](https://images.gitee.com/uploads/images/2019/1022/205531_b3bf3380_947714.png "屏幕截图.png")
