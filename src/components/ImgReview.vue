@@ -72,10 +72,10 @@ export default {
   name: 'ImgReview',
   data() {
     return {
-      rotate: 0,  //  旋转角度
+      rotate: 0, //  旋转角度
       activeIndex: 0, //  当前图片索引 从 0 开始
       imgZoom: 100, //  图片缩放比例
-      imgZoomMin: 1,  //  图片缩放最小比例
+      imgZoomMin: 1, //  图片缩放最小比例
       imgZoomMax: 200 //  图片缩放最大比例
     }
   },
@@ -142,6 +142,18 @@ export default {
           }
         })
       }
+    },
+    // 监听 图片索引变化
+    activeIndex(newValue) {
+      this.rotate = 0
+      this.$nextTick(() => {
+        if (this.$refs.imgLarge[newValue].style.zoom) {
+          this.imgZoom = Number(this.$refs.imgLarge[newValue].style.zoom.split('%')[0])
+        } else {
+          this.$refs.imgLarge[newValue].style.zoom = '100%'
+          this.imgZoom = 100
+        }
+      })
     }
   },
   methods: {
@@ -149,7 +161,7 @@ export default {
     closeImgReview() {
       this.$store.commit('setImgReviewData', { imgReviewVisible: false })
       this.rotate = 0
-      this.$refs.imgLarge[this.activeIndex].style.transform = `rotate(${this.rotate}rotate)`
+      this.$refs.imgLarge[this.activeIndex].style.transform = `rotate(${this.rotate}deg)`
     },
     // 格式化缩放数字 显示图片缩放比例
     formatZoom(value) {
@@ -174,7 +186,7 @@ export default {
     //  旋转图片
     rotateImg() {
       this.rotate += 90
-      this.$refs.imgLarge[this.activeIndex].style.transform = `rotate(${this.rotate}rotate)`
+      this.$refs.imgLarge[this.activeIndex].style.transform = `rotate(${this.rotate}deg)`
     }
   }
 }

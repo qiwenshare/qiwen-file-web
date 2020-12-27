@@ -6,8 +6,6 @@
         :operationFile="operationFile"
         :selectionFile="selectionFile"
         :filePath="filePath"
-        :storageValue="storageValue"
-        @showStorage="showStorage"
         @getTableDataByType="getTableDataByType"
         @setMoveFileDialogData="setMoveFileDialogData"
       ></OperationMenu>
@@ -34,7 +32,6 @@
       @setMoveFileDialogData="setMoveFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
-      @showStorage="showStorage"
       @getTableDataByType="getTableDataByType"
     ></FileTable>
     <!-- 图片网格模式 -->
@@ -65,7 +62,6 @@ import {
   getfilelist,
   selectFileByFileType,
   getFileTree,
-  getstorage,
   moveFile,
   batchMoveFile
 } from '@/request/file.js'
@@ -82,7 +78,6 @@ export default {
   },
   data() {
     return {
-      storageValue: '0KB',
       fileNameSearch: '',
       loading: true, //  表格数据-loading
       fileList: [], //  表格数据-文件列表
@@ -202,7 +197,6 @@ export default {
   },
   created() {
     this.getTableDataByType()
-    this.showStorage()
   },
   mounted() {
     this.imageGroupLable = this.imageModel
@@ -356,31 +350,7 @@ export default {
       }
     },
 
-    //  获取已占用内存
-    showStorage() {
-      getstorage().then(res => {
-        if (res.success) {
-          let size = res.data ? res.data.storageSize : 0
-          const B = 1024
-          const KB = Math.pow(1024, 2)
-          const MB = Math.pow(1024, 3)
-          const GB = Math.pow(1024, 4)
-          if (!size) {
-            this.storageValue = 0 + 'KB'
-          } else if (size < KB) {
-            this.storageValue = (size / B).toFixed(0) + 'KB'
-          } else if (size < MB) {
-            this.storageValue = (size / KB).toFixed(2) + 'MB'
-          } else if (size < GB) {
-            this.storageValue = (size / MB).toFixed(3) + 'GB'
-          } else {
-            this.storageValue = (size / GB).toFixed(4) + 'TB'
-          }
-        } else {
-          this.$message.error(res.errorMessage)
-        }
-      })
-    },
+    
 
     //  切换图片查看模式
     changeImageDisplayModel(label) {

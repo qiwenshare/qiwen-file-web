@@ -44,7 +44,8 @@ import {
   Alert,
   Tree,
   Progress,
-  Slider
+  Slider,
+  divider
 } from "element-ui";
 const element = {
   install: function (Vue) {
@@ -90,7 +91,7 @@ const element = {
     Vue.use(Tree);
     Vue.use(Progress);
     Vue.use(Slider);
-
+    Vue.use(divider);
     Vue.prototype.$loading = Loading.service;
     Vue.prototype.$msgbox = MessageBox;
     Vue.prototype.$alert = MessageBox.alert;

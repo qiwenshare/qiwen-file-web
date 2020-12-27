@@ -167,7 +167,6 @@ export default {
   },
   data() {
     return {
-      storageValue: 0,
       fileNameSearch: '',
       //  移动文件模态框数据
       dialogMoveFile: {
@@ -417,7 +416,7 @@ export default {
       unzipfile(fileInfo).then(res => {
         if (res.success) {
           this.$emit('getTableDataByType')
-          this.$emit('showStorage')
+          this.$store.dispatch('showStorage')
           this.$message.success('解压成功')
           loading.close()
         } else {
@@ -468,7 +467,7 @@ export default {
       renameFile(fileInfo).then(res => {
         if (res.success) {
           this.$emit('getTableDataByType')
-          this.$emit('showStorage')
+          this.$store.dispatch('showStorage')
           this.$message.success('重命名成功')
         } else {
           fileInfo.fileName = fileInfo.oldFileName;
@@ -481,7 +480,7 @@ export default {
       deleteFile(fileInfo).then(res => {
         if (res.success) {
           this.$emit('getTableDataByType')
-          this.$emit('showStorage')
+          this.$store.dispatch('showStorage')
           this.$message.success('删除成功')
         } else {
           this.$message.error(res.errorMessage)
