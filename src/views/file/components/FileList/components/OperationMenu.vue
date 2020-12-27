@@ -24,7 +24,6 @@
 
 <script>
 import {
-  // deleteFile,
   batchDeleteFile,
   createFile
   // speedUploadFile
@@ -109,7 +108,6 @@ export default {
           })
         })
     },
-
     //  新建文件夹模态框-确定按钮
     createFile(fileName) {
       let data = {
@@ -165,8 +163,4 @@ export default {
 .operation-menu-wrapper
   height 60px
   line-height 60px
-  // .upload-demo
-  //   display inline-block
-  // .el-button--medium
-  //   margin-left 10px
 </style>

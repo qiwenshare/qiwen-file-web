@@ -74,7 +74,7 @@ export default {
 
 <style lang="stylus" scoped>
 .breadcrumb-wrapper
-  padding 0 20px
+  padding 0
   height 30px
   line-height 30px
   display flex

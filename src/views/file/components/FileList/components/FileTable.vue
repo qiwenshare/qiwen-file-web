@@ -3,28 +3,24 @@
     <!-- 文件表格 -->
     <el-table
       class="file-table"
+      :class="'file-type-' + fileType"
       ref="multipleTable"
       fit
       v-loading="loading"
       element-loading-text="数据加载中"
       tooltip-effect="dark"
       :data="tableData"
-      :default-sort="{ prop: 'isDir', order: 'descending'}"
+      :default-sort="{ prop: 'isDir', order: 'descending' }"
       @select-all="selectAllFileRow"
       @select="selectFileRow"
     >
-      <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column type="selection" width="55" v-if="fileType !== 6"></el-table-column>
       <el-table-column label prop="isDir" width="60">
         <template slot-scope="scope">
           <img :src="setFileImg(scope.row.extendName)" style="width: 30px;" />
         </template>
       </el-table-column>
-      <el-table-column
-        prop="fileName"
-        :sort-by="['isDir','fileName']"
-        sortable
-        show-overflow-tooltip
-      >
+      <el-table-column prop="fileName" :sort-by="['isDir', 'fileName']" sortable show-overflow-tooltip>
         <template slot="header">
           <span>文件名</span>
           <el-input
@@ -36,36 +32,32 @@
         </template>
         <template slot-scope="scope">
           <div style="cursor:pointer;" @click="clickFileName(scope.row)">
-            <span>{{scope.row.fileName}}</span>
-            <span v-if="!scope.row.isDir && scope.row.extendName !== null">.{{scope.row.extendName}}</span>
+            <span>{{ scope.row.fileName }}</span>
+            <span v-if="!scope.row.isDir && scope.row.extendName !== null">.{{ scope.row.extendName }}</span>
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        label="路径"
-        prop="filePath"
-        show-overflow-tooltip
-        v-if="Number($route.query.fileType)"
-      >
+      <el-table-column :label="fileType === 6 ? '原路径' : '路径'" prop="filePath" show-overflow-tooltip v-if="Number($route.query.fileType)">
         <template slot-scope="scope">
-          <span 
+          <span
             style="cursor: pointer;"
             title="点击跳转"
-            @click="$router.push({ query: { filePath:scope.row.filePath, fileType: 0 } })"
-          >{{scope.row.filePath}}</span>
+            @click="$router.push({ query: { filePath: scope.row.filePath, fileType: 0 } })"
+            >{{ scope.row.filePath }}</span
+          >
         </template>
       </el-table-column>
       <el-table-column
         label="类型"
         width="80"
         prop="extendName"
-        :sort-by="['isDir','extendName']"
+        :sort-by="['isDir', 'extendName']"
         sortable
         show-overflow-tooltip
         v-if="selectedColumnList.includes('extendName')"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.extendName">{{scope.row.extendName}}</span>
+          <span v-if="scope.row.extendName">{{ scope.row.extendName }}</span>
           <span v-else>文件夹</span>
         </template>
       </el-table-column>
@@ -73,24 +65,33 @@
         label="大小"
         width="80"
         prop="fileSize"
-        :sort-by="['isDir','fileSize']"
+        :sort-by="['isDir', 'fileSize']"
         sortable
         show-overflow-tooltip
         align="right"
         v-if="selectedColumnList.includes('fileSize')"
       >
         <template slot-scope="scope">
-          <div style="padding: 0 10px;">{{calculateFileSize(scope.row.fileSize)}}</div>
+          <div style="padding: 0 10px;">{{ calculateFileSize(scope.row.fileSize) }}</div>
         </template>
       </el-table-column>
       <el-table-column
         label="修改日期"
         prop="uploadTime"
         width="180"
-        :sort-by="['isDir','uploadTime']"
+        :sort-by="['isDir', 'uploadTime']"
         show-overflow-tooltip
         sortable
         v-if="selectedColumnList.includes('uploadTime')"
+      ></el-table-column>
+      <el-table-column
+        label="删除日期"
+        prop="deleteTime"
+        width="180"
+        :sort-by="['isDir', 'deleteTime']"
+        show-overflow-tooltip
+        sortable
+        v-if="fileType === 6"
       ></el-table-column>
       <el-table-column :width="operaColumnWidth">
         <template slot="header">
@@ -100,31 +101,33 @@
             title="展开操作列按钮"
             @click="$store.commit('changeOperaColumnExpand', 1)"
           ></i>
-          <i
-            class="el-icon-remove"
-            title="收起操作列按钮"
-            @click="$store.commit('changeOperaColumnExpand', 0)"
-          ></i>
+          <i class="el-icon-remove" title="收起操作列按钮" @click="$store.commit('changeOperaColumnExpand', 0)"></i>
         </template>
         <template slot-scope="scope">
           <div v-if="operaColumnExpand">
-            <el-button type="danger" size="mini" @click.native="deleteFile(scope.row)">删除</el-button>
-            <el-button type="primary" size="mini" @click.native="showMoveFileDialog(scope.row)">移动</el-button>
-            <el-button type="primary" size="mini" @click.native="renameFile(scope.row)">重命名</el-button>
-            <el-button type="success" size="mini" v-if="scope.row.isDir === 0">
+            <el-button type="danger" size="mini" @click.native="deleteFileBtn(scope.row)">删除</el-button>
+            <el-button type="primary" size="mini" @click.native="showMoveFileDialog(scope.row)" v-if="fileType !== 6"
+              >移动</el-button
+            >
+            <el-button type="primary" size="mini" @click.native="renameFile(scope.row)" v-if="fileType !== 6"
+              >重命名</el-button
+            >
+            <el-button type="success" size="mini" v-if="scope.row.isDir === 0 && fileType !== 6">
               <a
                 target="_blank"
                 style="display: block;color: inherit;"
                 :href="getDownloadFilePath(scope.row)"
-                :download="scope.row.fileName+'.'+scope.row.extendName"
-              >下载</a>
+                :download="scope.row.fileName + '.' + scope.row.extendName"
+                >下载</a
+              >
             </el-button>
             <el-button
               type="warning"
               size="mini"
               @click.native="unzipFile(scope.row)"
-              v-if="scope.row.extendName=='zip' || scope.row.extendName=='rar' "
-            >解压缩</el-button>
+              v-if="fileType !== 6 && (scope.row.extendName == 'zip' || scope.row.extendName == 'rar')"
+              >解压缩</el-button
+            >
           </div>
           <el-dropdown trigger="click" v-else>
             <el-button size="mini">
@@ -132,20 +135,24 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="deleteFile(scope.row)">删除</el-dropdown-item>
-              <el-dropdown-item @click.native="showMoveFileDialog(scope.row)">移动</el-dropdown-item>
-              <el-dropdown-item @click.native="renameFile(scope.row)">重命名</el-dropdown-item>
+              <el-dropdown-item @click.native="deleteFileBtn(scope.row)">删除</el-dropdown-item>
+              <el-dropdown-item @click.native="showMoveFileDialog(scope.row)" v-if="fileType !== 6"
+                >移动</el-dropdown-item
+              >
+              <el-dropdown-item @click.native="renameFile(scope.row)" v-if="fileType !== 6">重命名</el-dropdown-item>
               <el-dropdown-item
-                v-if="scope.row.extendName === 'zip'"
+                v-if="scope.row.extendName === 'zip' && fileType !== 6"
                 @click.native="unzipFile(scope.row)"
-              >解压缩</el-dropdown-item>
-              <el-dropdown-item v-if="scope.row.isDir === 0">
+                >解压缩</el-dropdown-item
+              >
+              <el-dropdown-item v-if="scope.row.isDir === 0 && fileType !== 6">
                 <a
                   target="_blank"
                   style="display: block;color: inherit;"
                   :href="'api' + scope.row.fileUrl"
-                  :download="scope.row.fileName+'.'+scope.row.extendName"
-                >下载</a>
+                  :download="scope.row.fileName + '.' + scope.row.extendName"
+                  >下载</a
+                >
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -156,7 +163,7 @@
 </template>
 
 <script>
-import { unzipfile, deleteFile, renameFile } from '@/request/file.js'
+import { unzipfile, deleteFile, renameFile, deleteRecoveryFile } from '@/request/file.js'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -250,13 +257,13 @@ export default {
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
       },
-      downloadFilePath: "",
-      viewFilePath: ""
+      downloadFilePath: '',
+      viewFilePath: ''
     }
   },
   computed: {
     //  selectedColumnList:判断当前用户设置的左侧栏是否折叠, operaColumnExpand:判断当前用户设置的操作列是否展开
-    ...mapGetters(['selectedColumnList','operaColumnExpand']),
+    ...mapGetters(['selectedColumnList', 'operaColumnExpand']),
     //  当前查看的文件路径
     filePath: {
       get() {
@@ -266,29 +273,36 @@ export default {
         return ''
       }
     },
+    // 文件类型
+    fileType: {
+      get() {
+        return Number(this.$route.query.fileType)
+      },
+      set() {
+        return 0
+      }
+    },
     //  过滤后的表格数据
     tableData() {
       return this.fileList.filter(
-        data =>
-          !this.fileNameSearch ||
-          data.fileName
-            .toLowerCase()
-            .includes(this.fileNameSearch.toLowerCase())
+        (data) => !this.fileNameSearch || data.fileName.toLowerCase().includes(this.fileNameSearch.toLowerCase())
       )
     },
     //  判断当前路径下是否有普通文件
     isIncludeNormalFile() {
-      return this.fileList.map(data => data.isDir).includes(0)
+      return this.fileList.map((data) => data.isDir).includes(0)
     },
     //  判断当前路径下是否有压缩文件
     isIncludeZipRarFile() {
       return (
-        this.fileList.map(data => data.extendName).includes('zip') ||
-        this.fileList.map(data => data.extendName).includes('rar')
+        this.fileList.map((data) => data.extendName).includes('zip') ||
+        this.fileList.map((data) => data.extendName).includes('rar')
       )
     },
     operaColumnWidth() {
-      return this.operaColumnExpand
+      return this.fileType === 6
+        ? 100
+        : this.operaColumnExpand
         ? this.isIncludeNormalFile
           ? this.isIncludeZipRarFile
             ? 380
@@ -303,7 +317,7 @@ export default {
      */
     //  根据文件扩展名设置文件图片
     setFileImg(extendName) {
-      if (extendName === null) {
+      if (!extendName) {
         //  文件夹
         return this.fileImgMap.dir
       } else if (!this.fileImgTypeList.includes(extendName)) {
@@ -351,13 +365,15 @@ export default {
         if (PIC.includes(row.extendName)) {
           let data = {
             imgReviewVisible: true,
-            imgReviewList: [{
-              fileUrl: this.getViewFilePath(row),
-              downloadLink: this.getDownloadFilePath(row),
-              fileName:  row.fileName,
-              extendName: row.extendName
-            }],
-            activeIndex: 0,
+            imgReviewList: [
+              {
+                fileUrl: this.getViewFilePath(row),
+                downloadLink: this.getDownloadFilePath(row),
+                fileName: row.fileName,
+                extendName: row.extendName
+              }
+            ],
+            activeIndex: 0
           }
           this.$store.commit('setImgReviewData', data)
         }
@@ -413,7 +429,7 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      unzipfile(fileInfo).then(res => {
+      unzipfile(fileInfo).then((res) => {
         if (res.success) {
           this.$emit('getTableDataByType')
           this.$store.dispatch('showStorage')
@@ -429,60 +445,90 @@ export default {
      * 删除按钮相关事件
      */
     //  操作列-删除按钮
-    deleteFile(fileInfo) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          this.confirmDeleteFile(fileInfo)
-        })
-        .catch(() => {
+    deleteFileBtn(fileInfo) {
+      if(this.fileType === 6) { //  回收站里 - 彻底删除
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.confirmDeleteFile(fileInfo, true)
+        }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
           })
         })
-    },
-    // 文件重命名
-    renameFile(fileInfo){
-      var fileName = fileInfo.fileName;
-      this.$prompt('请输入文件名', '提示', {
+      } else {  //  非回收站
+        this.$confirm('删除后可在回收站查看, 是否继续删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          inputValue: fileName
-        }).then(({value}) => {
-          fileInfo.oldFileName = fileInfo.fileName;
-          fileInfo.fileName = value;
-          this.confirmRenameFile(fileInfo);
+          type: 'warning'
+        }).then(() => {
+          this.confirmDeleteFile(fileInfo, false)
         }).catch(() => {
-          this.$message({ 
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      }
+    },
+    //  删除文件模态框-确定按钮
+    confirmDeleteFile(fileInfo, type) {
+      if(type) {  //  回收站中删除
+        deleteRecoveryFile({
+          recoveryFileId: fileInfo.recoveryFileId
+        }).then((res) => {
+          if (res.success) {
+            this.$emit('getTableDataByType')
+            this.$store.dispatch('showStorage')
+            this.$message.success('删除成功')
+          } else {
+            this.$message.error(res.errorMessage)
+          }
+        })
+      } else {  //  非回收站删除
+        deleteFile(fileInfo).then((res) => {
+          if (res.success) {
+            this.$emit('getTableDataByType')
+            this.$store.dispatch('showStorage')
+            this.$message.success('删除成功')
+          } else {
+            this.$message.error(res.errorMessage)
+          }
+        })
+      }
+    },
+    // 文件重命名
+    renameFile(fileInfo) {
+      var fileName = fileInfo.fileName
+      this.$prompt('请输入文件名', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputValue: fileName
+      })
+        .then(({ value }) => {
+          fileInfo.oldFileName = fileInfo.fileName
+          fileInfo.fileName = value
+          this.confirmRenameFile(fileInfo)
+        })
+        .catch(() => {
+          this.$message({
             type: 'info',
             message: '取消输入'
-          });       
-        });
+          })
+        })
     },
+    // 文件重命名模态框 确定按钮
     confirmRenameFile(fileInfo) {
-      renameFile(fileInfo).then(res => {
+      renameFile(fileInfo).then((res) => {
         if (res.success) {
           this.$emit('getTableDataByType')
           this.$store.dispatch('showStorage')
           this.$message.success('重命名成功')
         } else {
-          fileInfo.fileName = fileInfo.oldFileName;
-          this.$message.error(res.errorMessage)
-        }
-      });
-    },
-    //  删除文件模态框-确定按钮
-    confirmDeleteFile(fileInfo) {
-      deleteFile(fileInfo).then(res => {
-        if (res.success) {
-          this.$emit('getTableDataByType')
-          this.$store.dispatch('showStorage')
-          this.$message.success('删除成功')
-        } else {
+          fileInfo.fileName = fileInfo.oldFileName
           this.$message.error(res.errorMessage)
         }
       })
@@ -496,10 +542,21 @@ export default {
 @import '~@/assets/styles/mixins.styl'
 .file-table-wrapper
   margin-top 2px
+  .file-type-0
+    height calc(100vh - 220px) !important
+    >>> .el-table__body-wrapper
+      height calc(100vh - 272px) !important
+  .file-type-6
+    height calc(100vh - 128px) !important
+    >>> .el-table__body-wrapper
+      height calc(100vh - 182px) !important
   .file-table
     width 100% !important
     height calc(100vh - 180px)
     >>> .el-table__header-wrapper
+      th
+        background $tabBackColor
+        padding 8px 0
       .el-icon-circle-plus, .el-icon-remove
         margin-left 6px
         cursor pointer
@@ -510,6 +567,8 @@ export default {
       height calc(100vh - 228px)
       overflow-y auto
       setScrollbar(10px)
+      td
+        padding 8px 0
   .img-review-wrapper
     position fixed
     top 0

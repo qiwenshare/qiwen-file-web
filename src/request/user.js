@@ -12,10 +12,10 @@
 import { get,post } from './http'
 
 /* 用户登录 */
-export const login = p => post('/user/userlogin', p); //登录 
+export const login = p => get('/user/login', p); //登录 
 export const checkUserLoginInfo = p => get('/user/checkuserlogininfo', p); //登录状态及个人信息
 export const logout = p => post('/user/userlogout', p); //退出登录
 export const authorize = p => post('/user/authorize/qq', p); //qq登录接口
 
 /* 用户注册 */
-export const addUser = p => post('/user/adduser', p); //注册 
+export const addUser = p => post('/user/register', p); //注册 

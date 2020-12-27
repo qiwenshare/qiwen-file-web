@@ -41,6 +41,10 @@
         <i class="el-icon-takeaway-box"></i>
         <span slot="title" v-show="!isFolder">其他</span>
       </el-menu-item>
+      <el-menu-item index="6" title="回收站">
+        <i class="el-icon-box"></i>
+        <span slot="title" v-show="!isFolder">回收站</span>
+      </el-menu-item>
     </el-menu>
     <div class="store-wrapper" v-show="!isFolder">
       <el-progress :percentage="storagePercentage" :color="storageColor" :show-text="false"></el-progress>

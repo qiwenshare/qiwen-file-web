@@ -1,7 +1,7 @@
 <template>
   <div class="file-list-wrapper">
     <!-- 操作按钮 -->
-    <el-header class="file-list-header">
+    <el-header class="file-list-header" v-if="fileType !== 6">
       <OperationMenu
         :operationFile="operationFile"
         :selectionFile="selectionFile"
@@ -10,9 +10,9 @@
         @setMoveFileDialogData="setMoveFileDialogData"
       ></OperationMenu>
     </el-header>
-    <div class="middle-wrapper">
+    <div class="middle-wrapper" :class="'file-type-' + fileType">
       <!-- 面包屑导航栏 -->
-      <BreadCrumb class="breadcrumb"></BreadCrumb>
+      <BreadCrumb class="breadcrumb"  v-if="fileType !== 6"></BreadCrumb>
       <!-- 图片展示模式 -->
       <div class="change-image-model" v-show="fileType === 1">
         <el-radio-group v-model="imageGroupLable" size="mini" @change="changeImageDisplayModel">
@@ -34,6 +34,17 @@
       @setSelectionFile="setSelectionFile"
       @getTableDataByType="getTableDataByType"
     ></FileTable>
+    <el-pagination
+      v-if="fileType === 0"
+      :current-page="pageData.currentPage"
+      :page-sizes="[5, 10, 15, 20]"
+      :page-size="pageData.pageCount"
+      :total="pageData.total"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    >
+    </el-pagination>
     <!-- 图片网格模式 -->
     <ImageModel
       class="image-model"
@@ -61,6 +72,7 @@ import MoveFileDialog from './components/MoveFileDialog'
 import {
   getfilelist,
   selectFileByFileType,
+  getRecoveryFile,
   getFileTree,
   moveFile,
   batchMoveFile
@@ -81,6 +93,11 @@ export default {
       fileNameSearch: '',
       loading: true, //  表格数据-loading
       fileList: [], //  表格数据-文件列表
+      pageData: {
+        currentPage: 1,
+        pageCount: 10,
+        total: 0
+      },
       //  移动文件模态框数据
       dialogMoveFile: {
         isBatchMove: false,
@@ -163,13 +180,6 @@ export default {
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
       },
-      //  查看图片模态框数据
-      imgReview: {
-        visible: false,
-        fileUrl: '',
-        fileName: '',
-        extendName: ''
-      },
       imageGroupLable: 0
     }
   },
@@ -206,21 +216,50 @@ export default {
      * 表格数据获取相关事件
      */
     getTableDataByType() {
+      // 分类型
       if (Number(this.fileType)) {
-        //  分类型
-        this.showFileListByType()
+        if(Number(this.fileType) === 6) {
+          this.shwoFileRecovery() //  回收站
+        } else {
+          this.showFileListByType()
+        }
       } else {
-        //  全部文件
+        // 全部文件
         this.showFileList()
       }
     },
-    //  获取当前路径下的文件列表
+    // 获取当前路径下的文件列表
     showFileList() {
       let data = {
-        filePath: this.filePath
+        filePath: this.filePath,
+        currentPage: this.pageData.currentPage,
+        pageCount: this.pageData.pageCount,
       }
       getfilelist(data).then(res => {
         if (res.success) {
+          this.fileList = res.data
+          this.pageData.total = res.total
+          this.loading = false
+        } else {
+          this.$message.error(res.errorMessage)
+        }
+      })
+    },
+    // 分页组件 当前页展示文件数改变
+    handleSizeChange(pageCount) {
+      this.pageData.currentPage = 1
+      this.pageData.pageCount = pageCount
+      this.showFileList()
+    },
+    // 分页组件 当前页码改变
+    handleCurrentChange(currentPage) {
+      this.pageData.currentPage = currentPage
+      this.showFileList()
+    },
+    // 获取回收站文件列表
+    shwoFileRecovery() {
+      getRecoveryFile().then(res => {
+        if(res.success) {
           this.fileList = res.data
           this.loading = false
         } else {
@@ -228,7 +267,7 @@ export default {
         }
       })
     },
-    //  根据文件类型展示文件列表
+    // 根据文件类型展示文件列表
     showFileListByType() {
       //  分类型
       let data = {
@@ -349,9 +388,6 @@ export default {
         })
       }
     },
-
-    
-
     //  切换图片查看模式
     changeImageDisplayModel(label) {
       this.$store.commit('changeImageModel', label)
@@ -364,15 +400,23 @@ export default {
 @import '~@/assets/styles/varibles.styl'
 .file-list-wrapper
   .file-list-header
+    padding 0
     .el-dialog-div
       height 200px
       overflow auto
+  .middle-wrapper.file-type-6
+    margin 8px 0
+    justify-content flex-end
   .middle-wrapper
     display flex
+    justify-content space-between
     .breadcrumb
       flex 1
     .change-image-model
       margin-right 20px
       height 30px
       line-height 30px
+  .el-pagination
+    padding 16px 8px 0 8px
+    text-align right
 </style>

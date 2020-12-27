@@ -104,9 +104,6 @@
             },
             // 文件上传成功的回调
             onFileSuccess(rootFile, file, response, chunk){
-                console.log(rootFile)
-                console.log(file)
-                console.log(response)
                 if (response == "") {
                     this.statusSet(file.id, 'failed');
                     return

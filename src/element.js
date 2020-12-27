@@ -45,7 +45,8 @@ import {
   Tree,
   Progress,
   Slider,
-  divider
+  Divider,
+  Pagination
 } from "element-ui";
 const element = {
   install: function (Vue) {
@@ -91,7 +92,8 @@ const element = {
     Vue.use(Tree);
     Vue.use(Progress);
     Vue.use(Slider);
-    Vue.use(divider);
+    Vue.use(Divider);
+    Vue.use(Pagination);
     Vue.prototype.$loading = Loading.service;
     Vue.prototype.$msgbox = MessageBox;
     Vue.prototype.$alert = MessageBox.alert;
