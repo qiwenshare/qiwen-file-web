@@ -12,13 +12,19 @@
     </el-header>
     <div class="middle-wrapper" :class="'file-type-' + fileType">
       <!-- 面包屑导航栏 -->
-      <BreadCrumb class="breadcrumb"  v-if="fileType !== 6"></BreadCrumb>
+      <BreadCrumb class="breadcrumb"></BreadCrumb>
       <!-- 图片展示模式 -->
       <div class="change-image-model" v-show="fileType === 1">
         <el-radio-group v-model="imageGroupLable" size="mini" @change="changeImageDisplayModel">
-          <el-radio-button :label="0">列表</el-radio-button>
-          <el-radio-button :label="1">网格</el-radio-button>
-          <el-radio-button :label="2">时间线</el-radio-button>
+          <el-radio-button :label="0">
+            <i class="el-icon-tickets"></i> 列表
+          </el-radio-button>
+          <el-radio-button :label="1">
+            <i class="el-icon-s-grid"></i> 网格
+          </el-radio-button>
+          <el-radio-button :label="2">
+            <i class="el-icon-date"></i> 时间线
+          </el-radio-button>
         </el-radio-group>
       </div>
       <!-- 选择表格列 -->
@@ -408,6 +414,7 @@ export default {
     margin 8px 0
     justify-content flex-end
   .middle-wrapper
+    margin-bottom 8px
     display flex
     justify-content space-between
     .breadcrumb

@@ -26,9 +26,9 @@ export default new Vuex.Store({
           ? 1
           : 0, //  操作列是否展开，0不展开，1展开
     selectedColumnList: (state) =>
-      state.fileList.selectedColumnList
-        ? state.fileList.selectedColumnList.split(",")
-        : ["extendName", "fileSize", "uploadTime"], //  列显隐
+      state.fileList.selectedColumnList === null
+        ? ["extendName", "fileSize", "uploadTime", "deleteTime"]
+        : state.fileList.selectedColumnList.split(","), //  列显隐
     imageModel: (state) => Number(state.fileList.imageModel), //  图片类型页面是否展示为网格模式，0不是，1是
   },
   mutations: {

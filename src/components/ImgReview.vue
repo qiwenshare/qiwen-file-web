@@ -74,7 +74,7 @@ export default {
     return {
       rotate: 0, //  旋转角度
       activeIndex: 0, //  当前图片索引 从 0 开始
-      imgZoom: 100, //  图片缩放比例
+      imgZoom: 40, //  图片缩放比例
       imgZoomMin: 1, //  图片缩放最小比例
       imgZoomMax: 200 //  图片缩放最大比例
     }
@@ -132,7 +132,7 @@ export default {
           })
         })
         this.$nextTick(() => {
-          this.$refs.imgLarge[this.activeIndex].style.zoom = '100%'
+          this.$refs.imgLarge[this.activeIndex].style.zoom = '40%'
         })
       } else {
         body.style.overflow = 'auto'
@@ -150,8 +150,8 @@ export default {
         if (this.$refs.imgLarge[newValue].style.zoom) {
           this.imgZoom = Number(this.$refs.imgLarge[newValue].style.zoom.split('%')[0])
         } else {
-          this.$refs.imgLarge[newValue].style.zoom = '100%'
-          this.imgZoom = 100
+          this.$refs.imgLarge[newValue].style.zoom = '40%'
+          this.imgZoom = 40
         }
       })
     }

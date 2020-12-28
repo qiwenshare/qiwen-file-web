@@ -46,7 +46,9 @@ import {
   Progress,
   Slider,
   Divider,
-  Pagination
+  Pagination,
+  CheckboxGroup,
+  Checkbox
 } from "element-ui";
 const element = {
   install: function (Vue) {
@@ -94,6 +96,8 @@ const element = {
     Vue.use(Slider);
     Vue.use(Divider);
     Vue.use(Pagination);
+    Vue.use(CheckboxGroup);
+    Vue.use(Checkbox);
     Vue.prototype.$loading = Loading.service;
     Vue.prototype.$msgbox = MessageBox;
     Vue.prototype.$alert = MessageBox.alert;

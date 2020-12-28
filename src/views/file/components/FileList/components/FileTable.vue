@@ -9,7 +9,7 @@
       v-loading="loading"
       element-loading-text="数据加载中"
       tooltip-effect="dark"
-      :data="tableData"
+      :data="fileList"
       :default-sort="{ prop: 'isDir', order: 'descending' }"
       @select-all="selectAllFileRow"
       @select="selectFileRow"
@@ -23,12 +23,6 @@
       <el-table-column prop="fileName" :sort-by="['isDir', 'fileName']" sortable show-overflow-tooltip>
         <template slot="header">
           <span>文件名</span>
-          <el-input
-            v-model="fileNameSearch"
-            size="mini"
-            style="width: 200px;display: inline-block;float:right;margin-right: calc(100% - 294px);"
-            placeholder="输入文件名搜索"
-          />
         </template>
         <template slot-scope="scope">
           <div style="cursor:pointer;" @click="clickFileName(scope.row)">
@@ -91,7 +85,7 @@
         :sort-by="['isDir', 'deleteTime']"
         show-overflow-tooltip
         sortable
-        v-if="fileType === 6"
+        v-if="fileType === 6 && selectedColumnList.includes('deleteTime')"
       ></el-table-column>
       <el-table-column :width="operaColumnWidth">
         <template slot="header">
@@ -169,12 +163,11 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'FileTable',
   props: {
-    fileList: Array,
+    fileList: Array,  //  文件列表
     loading: Boolean
   },
   data() {
     return {
-      fileNameSearch: '',
       //  移动文件模态框数据
       dialogMoveFile: {
         isBatchMove: false,
@@ -281,12 +274,6 @@ export default {
       set() {
         return 0
       }
-    },
-    //  过滤后的表格数据
-    tableData() {
-      return this.fileList.filter(
-        (data) => !this.fileNameSearch || data.fileName.toLowerCase().includes(this.fileNameSearch.toLowerCase())
-      )
     },
     //  判断当前路径下是否有普通文件
     isIncludeNormalFile() {
@@ -543,16 +530,16 @@ export default {
 .file-table-wrapper
   margin-top 2px
   .file-type-0
-    height calc(100vh - 220px) !important
+    height calc(100vh - 228px) !important
     >>> .el-table__body-wrapper
-      height calc(100vh - 272px) !important
+      height calc(100vh - 280px) !important
   .file-type-6
-    height calc(100vh - 128px) !important
+    height calc(100vh - 130px) !important
     >>> .el-table__body-wrapper
       height calc(100vh - 182px) !important
   .file-table
     width 100% !important
-    height calc(100vh - 180px)
+    height calc(100vh - 182px)
     >>> .el-table__header-wrapper
       th
         background $tabBackColor
@@ -564,7 +551,7 @@ export default {
         &:hover
           color $Primary
     >>> .el-table__body-wrapper
-      height calc(100vh - 228px)
+      height calc(100vh - 234px)
       overflow-y auto
       setScrollbar(10px)
       td
