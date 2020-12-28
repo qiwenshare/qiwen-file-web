@@ -13,3 +13,5 @@ export const createFile = p => post('/file/createfile', p); //创建文件
 export const batchDeleteFile = p => post('/file/batchdeletefile', p); //批量删除文件
 export const batchMoveFile = p => post('/file/batchmovefile', p); //批量移动文件
 export const renameFile = p => post('/file/renamefile', p); //重命名文件
+export const getRecoveryFile = p => post('/recoveryfile/list', p); // 获取回收站文件列表
+export const deleteRecoveryFile = p => post('/recoveryfile/deleterecoveryfile', p); // 回收站文件删除

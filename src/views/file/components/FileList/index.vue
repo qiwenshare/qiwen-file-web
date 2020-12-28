@@ -1,26 +1,30 @@
 <template>
   <div class="file-list-wrapper">
     <!-- 操作按钮 -->
-    <el-header class="file-list-header">
+    <el-header class="file-list-header" v-if="fileType !== 6">
       <OperationMenu
         :operationFile="operationFile"
         :selectionFile="selectionFile"
         :filePath="filePath"
-        :storageValue="storageValue"
-        @showStorage="showStorage"
         @getTableDataByType="getTableDataByType"
         @setMoveFileDialogData="setMoveFileDialogData"
       ></OperationMenu>
     </el-header>
-    <div class="middle-wrapper">
+    <div class="middle-wrapper" :class="'file-type-' + fileType">
       <!-- 面包屑导航栏 -->
       <BreadCrumb class="breadcrumb"></BreadCrumb>
       <!-- 图片展示模式 -->
       <div class="change-image-model" v-show="fileType === 1">
         <el-radio-group v-model="imageGroupLable" size="mini" @change="changeImageDisplayModel">
-          <el-radio-button :label="0">列表</el-radio-button>
-          <el-radio-button :label="1">网格</el-radio-button>
-          <el-radio-button :label="2">时间线</el-radio-button>
+          <el-radio-button :label="0">
+            <i class="el-icon-tickets"></i> 列表
+          </el-radio-button>
+          <el-radio-button :label="1">
+            <i class="el-icon-s-grid"></i> 网格
+          </el-radio-button>
+          <el-radio-button :label="2">
+            <i class="el-icon-date"></i> 时间线
+          </el-radio-button>
         </el-radio-group>
       </div>
       <!-- 选择表格列 -->
@@ -34,9 +38,19 @@
       @setMoveFileDialogData="setMoveFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
-      @showStorage="showStorage"
       @getTableDataByType="getTableDataByType"
     ></FileTable>
+    <el-pagination
+      v-if="fileType === 0"
+      :current-page="pageData.currentPage"
+      :page-sizes="[5, 10, 15, 20]"
+      :page-size="pageData.pageCount"
+      :total="pageData.total"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    >
+    </el-pagination>
     <!-- 图片网格模式 -->
     <ImageModel
       class="image-model"
@@ -64,8 +78,8 @@ import MoveFileDialog from './components/MoveFileDialog'
 import {
   getfilelist,
   selectFileByFileType,
+  getRecoveryFile,
   getFileTree,
-  getstorage,
   moveFile,
   batchMoveFile
 } from '@/request/file.js'
@@ -82,10 +96,14 @@ export default {
   },
   data() {
     return {
-      storageValue: '0KB',
       fileNameSearch: '',
       loading: true, //  表格数据-loading
       fileList: [], //  表格数据-文件列表
+      pageData: {
+        currentPage: 1,
+        pageCount: 10,
+        total: 0
+      },
       //  移动文件模态框数据
       dialogMoveFile: {
         isBatchMove: false,
@@ -168,13 +186,6 @@ export default {
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
       },
-      //  查看图片模态框数据
-      imgReview: {
-        visible: false,
-        fileUrl: '',
-        fileName: '',
-        extendName: ''
-      },
       imageGroupLable: 0
     }
   },
@@ -202,7 +213,6 @@ export default {
   },
   created() {
     this.getTableDataByType()
-    this.showStorage()
   },
   mounted() {
     this.imageGroupLable = this.imageModel
@@ -212,21 +222,50 @@ export default {
      * 表格数据获取相关事件
      */
     getTableDataByType() {
+      // 分类型
       if (Number(this.fileType)) {
-        //  分类型
-        this.showFileListByType()
+        if(Number(this.fileType) === 6) {
+          this.shwoFileRecovery() //  回收站
+        } else {
+          this.showFileListByType()
+        }
       } else {
-        //  全部文件
+        // 全部文件
         this.showFileList()
       }
     },
-    //  获取当前路径下的文件列表
+    // 获取当前路径下的文件列表
     showFileList() {
       let data = {
-        filePath: this.filePath
+        filePath: this.filePath,
+        currentPage: this.pageData.currentPage,
+        pageCount: this.pageData.pageCount,
       }
       getfilelist(data).then(res => {
         if (res.success) {
+          this.fileList = res.data
+          this.pageData.total = res.total
+          this.loading = false
+        } else {
+          this.$message.error(res.errorMessage)
+        }
+      })
+    },
+    // 分页组件 当前页展示文件数改变
+    handleSizeChange(pageCount) {
+      this.pageData.currentPage = 1
+      this.pageData.pageCount = pageCount
+      this.showFileList()
+    },
+    // 分页组件 当前页码改变
+    handleCurrentChange(currentPage) {
+      this.pageData.currentPage = currentPage
+      this.showFileList()
+    },
+    // 获取回收站文件列表
+    shwoFileRecovery() {
+      getRecoveryFile().then(res => {
+        if(res.success) {
           this.fileList = res.data
           this.loading = false
         } else {
@@ -234,7 +273,7 @@ export default {
         }
       })
     },
-    //  根据文件类型展示文件列表
+    // 根据文件类型展示文件列表
     showFileListByType() {
       //  分类型
       let data = {
@@ -355,33 +394,6 @@ export default {
         })
       }
     },
-
-    //  获取已占用内存
-    showStorage() {
-      getstorage().then(res => {
-        if (res.success) {
-          let size = res.data ? res.data.storageSize : 0
-          const B = 1024
-          const KB = Math.pow(1024, 2)
-          const MB = Math.pow(1024, 3)
-          const GB = Math.pow(1024, 4)
-          if (!size) {
-            this.storageValue = 0 + 'KB'
-          } else if (size < KB) {
-            this.storageValue = (size / B).toFixed(0) + 'KB'
-          } else if (size < MB) {
-            this.storageValue = (size / KB).toFixed(2) + 'MB'
-          } else if (size < GB) {
-            this.storageValue = (size / MB).toFixed(3) + 'GB'
-          } else {
-            this.storageValue = (size / GB).toFixed(4) + 'TB'
-          }
-        } else {
-          this.$message.error(res.errorMessage)
-        }
-      })
-    },
-
     //  切换图片查看模式
     changeImageDisplayModel(label) {
       this.$store.commit('changeImageModel', label)
@@ -394,15 +406,24 @@ export default {
 @import '~@/assets/styles/varibles.styl'
 .file-list-wrapper
   .file-list-header
+    padding 0
     .el-dialog-div
       height 200px
       overflow auto
+  .middle-wrapper.file-type-6
+    margin 8px 0
+    justify-content flex-end
   .middle-wrapper
+    margin-bottom 8px
     display flex
+    justify-content space-between
     .breadcrumb
       flex 1
     .change-image-model
       margin-right 20px
       height 30px
       line-height 30px
+  .el-pagination
+    padding 16px 8px 0 8px
+    text-align right
 </style>

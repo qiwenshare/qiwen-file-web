@@ -1,35 +1,31 @@
 <template>
   <div class="operation-menu-wrapper">
-    <el-button size="medium" type="primary" icon="el-icon-upload2" id="uploadFileId" @click="upload()">上传</el-button>
-    <el-button size="medium" @click="addFolder()" v-if="!fileType">新建文件夹</el-button>
-
-    <div style="display: inline-block;" v-if="selectionFile.length !== 0">
-      <el-button size="medium" icon="el-icon-delete" @click="deleteSelectedFile()">删除</el-button>
-      <el-button size="medium" icon="el-icon-edit" @click="moveSelectedFile()" v-if="!fileType">移动</el-button>
+    <el-button-group>
+      <el-button size="medium" type="primary" icon="el-icon-upload2" id="uploadFileId" @click="upload()">上传</el-button>
+      <el-button size="medium" type="primary" icon="el-icon-plus" @click="addFolder()" v-if="!fileType">新建文件夹</el-button>
+      <el-button size="medium" type="primary" :disabled="!selectionFile.length" icon="el-icon-delete" @click="deleteSelectedFile()">删除</el-button>
+      <el-button size="medium" type="primary" :disabled="!selectionFile.length" icon="el-icon-rank" @click="moveSelectedFile()" v-if="!fileType">移动</el-button>
       <!-- <el-button size="medium" icon="el-icon-document-copy">拷贝</el-button> -->
-      <el-button size="medium" icon="el-icon-download" @click="downloadSelectedFile()">下载</el-button>
-    </div>
+      <el-button size="medium" type="primary" :disabled="!selectionFile.length" icon="el-icon-download" @click="downloadSelectedFile()">下载</el-button>
+    </el-button-group>
 
     <!-- 多选文件下载，页面隐藏 -->
     <a
       target="_blank"
-      v-for="(item,index) in selectionFile"
+      v-for="(item, index) in selectionFile"
       :key="index"
       :href="'api' + item.fileUrl"
-      :download="item.fileName+'.' + item.extendName"
+      :download="item.fileName + '.' + item.extendName"
       :title="'downloadLink' + index"
       :ref="'downloadLink' + index"
     ></a>
-
-    <div class="storeDisWrapper" style="float:right;">已使用 {{storageValue}} 容量</div>
   </div>
 </template>
 
 <script>
 import {
-  // deleteFile,
   batchDeleteFile,
-  createFile,
+  createFile
   // speedUploadFile
 } from '@/request/file.js'
 // import Cookies from 'js-cookie'
@@ -39,8 +35,7 @@ export default {
   name: 'OperationMenu',
   props: {
     selectionFile: Array,
-    operationFile: Object,
-    storageValue: String
+    operationFile: Object
   },
   data() {
     return {
@@ -49,14 +44,12 @@ export default {
     }
   },
   mounted() {
-    this.$EventBus.$on('refreshList', query => {
-                this.$emit('getTableDataByType')
-                
-            });
-    this.$EventBus.$on('refreshStorage', query => {
-                this.$emit('showStorage')
-                
-            });            
+    this.$EventBus.$on('refreshList', () => {
+      this.$emit('getTableDataByType')
+    })
+    this.$EventBus.$on('refreshStorage', () => {
+      this.$store.dispatch('showStorage')
+    })
   },
   computed: {
     //  当前查看的文件路径
@@ -96,8 +89,8 @@ export default {
   },
   methods: {
     upload() {
-        // 打开文件选择框
-        this.$EventBus.$emit('openUploader', this.uploadFileData)
+      // 打开文件选择框
+      this.$EventBus.$emit('openUploader', this.uploadFileData)
     },
     //  新建文件夹按钮：打开模态框
     addFolder() {
@@ -115,7 +108,6 @@ export default {
           })
         })
     },
-    
     //  新建文件夹模态框-确定按钮
     createFile(fileName) {
       let data = {
@@ -123,7 +115,7 @@ export default {
         filePath: this.filePath,
         isDir: 1
       }
-      createFile(data).then(res => {
+      createFile(data).then((res) => {
         if (res.success) {
           this.$message.success('添加成功')
           this.$emit('getTableDataByType')
@@ -139,14 +131,14 @@ export default {
         files: JSON.stringify(this.selectionFile)
       }
       //  批量删除接口
-      batchDeleteFile(data).then(res => {
+      batchDeleteFile(data).then((res) => {
         if (res.success) {
           this.$message({
             message: res.data,
             type: 'success'
           })
           this.$emit('getTableDataByType')
-          this.$emit('showStorage')
+          this.$store.dispatch('showStorage')
         } else {
           this.$message.error('失败' + res.errorMessage)
         }
@@ -163,7 +155,6 @@ export default {
         this.$refs[name][0].click()
       }
     }
-    
   }
 }
 </script>
@@ -172,8 +163,4 @@ export default {
 .operation-menu-wrapper
   height 60px
   line-height 60px
-  .upload-demo
-    display inline-block
-  .el-button--medium
-    margin-left 10px
 </style>

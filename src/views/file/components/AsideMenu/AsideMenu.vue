@@ -1,15 +1,20 @@
 <template>
-  <div class="aside-menu-wrapper" :class="{'expand': !isFolder}">
+  <div class="aside-menu-wrapper" :class="{ expand: !isFolder }">
+    <!-- 展开 & 收缩分类栏 -->
     <el-tooltip effect="dark" :content="isFolder ? '展开分类栏' : '收起分类栏'" placement="right">
       <div class="aside-title" @click="$store.commit('changeIsFolder', isFolder ? 0 : 1)">
         <i class="el-icon-caret-left" v-show="!isFolder"></i>
         <i class="el-icon-caret-right" v-show="isFolder"></i>
       </div>
     </el-tooltip>
+    <!-- 分类栏 -->
     <el-menu
       class="aside-menu"
       :default-openeds="[0]"
       :default-active="activeIndex"
+      background-color="#909399"
+      text-color="#fff"
+      active-text-color="#ffd04b"
       @select="handleSelect"
     >
       <el-menu-item index="0">
@@ -36,7 +41,18 @@
         <i class="el-icon-takeaway-box"></i>
         <span slot="title" v-show="!isFolder">其他</span>
       </el-menu-item>
+      <el-menu-item index="6" title="回收站">
+        <i class="el-icon-box"></i>
+        <span slot="title" v-show="!isFolder">回收站</span>
+      </el-menu-item>
     </el-menu>
+    <div class="store-wrapper" v-show="!isFolder">
+      <el-progress :percentage="storagePercentage" :color="storageColor" :show-text="false"></el-progress>
+      <div class="text">
+        <span>存储</span>
+        <span>{{ storageValue | storageTrans }} / {{ storageMaxValue | storageTrans(true) }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -45,7 +61,12 @@ export default {
   name: 'AsideMenu',
   data() {
     return {
-      fileListByFiletype: []
+      fileListByFiletype: [],
+      storageColor: [
+        { color: '#67C23A', percentage: 50 },
+        { color: '#E6A23C', percentage: 80 },
+        { color: '#F56C6C', percentage: 100 }
+      ]
     }
   },
   computed: {
@@ -61,7 +82,22 @@ export default {
     //  判断当前用户设置的左侧栏是否折叠
     isFolder() {
       return this.$store.getters.isFolder
+    },
+    // 存储容量
+    storageValue() {
+      return this.$store.state.sideMenu.storageValue
+    },
+    // 最大存储容量
+    storageMaxValue() {
+      return this.$store.state.sideMenu.storageMaxValue
+    },
+    // 存储百分比
+    storagePercentage() {
+      return (this.storageValue / this.storageMaxValue) * 100
     }
+  },
+  created() {
+    this.$store.dispatch('showStorage')
   },
   methods: {
     //  导航菜单项点击事件
@@ -79,7 +115,8 @@ export default {
 @import '~@/assets/styles/varibles.styl'
 .aside-menu-wrapper
   position relative
-  width 69px
+  width 64px
+  height 100%
   transition width 0.5s
   -webkit-transition width 0.5s
   .aside-title
@@ -89,7 +126,7 @@ export default {
     z-index 2
     border-radius 12px 0 0 12px
     background $BorderLight
-    color #fff
+    color $Info
     width 12px
     height 100px
     line-height 100px
@@ -101,8 +138,22 @@ export default {
     }
   >>> .el-menu
     border none
+    .el-menu-item
+      i
+        color inherit
     .el-menu-item.is-active
-      background $PrimaryHover
+      background #545c64 !important
+  .store-wrapper
+    position absolute
+    bottom 16px
+    left 16px
+    width calc(100% - 32px)
+    color #fff
+    .text {
+      margin-top 8px
+      display flex
+      justify-content space-between
+    }
 .expand
   width 220px
   >>> .el-menu

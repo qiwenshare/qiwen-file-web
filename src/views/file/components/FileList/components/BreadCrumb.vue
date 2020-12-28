@@ -2,7 +2,7 @@
   <div class="breadcrumb-wrapper">
     <div class="title">当前位置：</div>
     <el-breadcrumb v-if="fileType" separator="/">
-      <el-breadcrumb-item>全部{{fileTypeMap[fileType]}}</el-breadcrumb-item>
+      <el-breadcrumb-item>{{fileTypeMap[fileType]}}</el-breadcrumb-item>
     </el-breadcrumb>
     <el-breadcrumb v-else separator="/">
       <el-breadcrumb-item
@@ -20,11 +20,12 @@ export default {
   data() {
     return {
       fileTypeMap: {
-        1: '图片',
-        2: '文档',
-        3: '视频',
-        4: '音乐',
-        5: '其他'
+        1: '全部图片',
+        2: '全部文档',
+        3: '全部视频',
+        4: '全部音乐',
+        5: '其他',
+        6: '回收站'
       }
     }
   },
@@ -74,7 +75,7 @@ export default {
 
 <style lang="stylus" scoped>
 .breadcrumb-wrapper
-  padding 0 20px
+  padding 0
   height 30px
   line-height 30px
   display flex
