@@ -103,11 +103,6 @@ import {
   batchMoveFile
 } from '@/request/file.js'
 
-import infiniteScroll from "vue-infinite-scroll";
-import Vue from 'vue'
-Vue.use(infiniteScroll);
-
-
 export default {
   name: 'FileList',
   components: {
