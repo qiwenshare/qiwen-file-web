@@ -29,7 +29,8 @@ export default new Vuex.Store({
       state.fileList.selectedColumnList === null
         ? ["extendName", "fileSize", "uploadTime", "deleteTime"]
         : state.fileList.selectedColumnList.split(","), //  列显隐
-    imageModel: (state) => Number(state.fileList.imageModel), //  图片类型页面是否展示为网格模式，0不是，1是
+    imageModel: (state) => Number(state.fileList.imageModel), //  图片类型页面展示为网格模式，0列表模式，1网格模式 2 时间线模式
+    fileModel: (state) => state.fileList.fileModel === null ? 0 : Number(state.fileList.fileModel), //  文件展示模式，0列表模式，1网格模式
   },
   mutations: {
     //

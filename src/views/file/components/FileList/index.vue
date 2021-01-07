@@ -27,27 +27,45 @@
           </el-radio-button>
         </el-radio-group>
       </div>
+      <div class="change-file-model" v-show="fileType !== 1">
+        <el-radio-group v-model="fileGroupLable" size="mini" @change="changeFileDisplayModel">
+          <el-radio-button :label="0">
+            <i class="el-icon-tickets"></i> 列表
+          </el-radio-button>
+          <el-radio-button :label="1">
+            <i class="el-icon-s-grid"></i> 网格
+          </el-radio-button>
+        </el-radio-group>
+      </div>
       <!-- 选择表格列 -->
       <SelectColumn class="select-column"></SelectColumn>
     </div>
-    <!-- 文件列表表格 -->
+    <!-- 文件列表-表格模式 -->
     <FileTable
       :fileList="fileList"
       :loading="loading"
-      v-show="!imageModel || fileType !== 1"
+      v-if="fileModel === 0 && fileType !== 1 || fileType === 1 && !imageModel"
       @setMoveFileDialogData="setMoveFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
       @getTableDataByType="getTableDataByType"
     ></FileTable>
+    <!-- 文件列表-网格模式 -->
+    <FileGrid
+      :fileList="fileList"
+      :loading="loading"
+      v-if="fileModel === 1 && fileType !== 1"
+      @setMoveFileDialogData="setMoveFileDialogData"
+      @setOperationFile="setOperationFile"
+      @setSelectionFile="setSelectionFile"
+      @getTableDataByType="getTableDataByType"
+    ></FileGrid>
     <el-pagination
       v-if="fileType === 0"
       :current-page="pageData.currentPage"
-      :page-sizes="[5, 10, 15, 20]"
       :page-size="pageData.pageCount"
       :total="pageData.total"
-      layout="total, sizes, prev, pager, next, jumper"
-      @size-change="handleSizeChange"
+      layout="total, prev, pager, next"
       @current-change="handleCurrentChange"
     >
     </el-pagination>
@@ -72,6 +90,7 @@ import OperationMenu from './components/OperationMenu'
 import BreadCrumb from './components/BreadCrumb'
 import SelectColumn from './components/SelectColumn'
 import FileTable from './components/FileTable'
+import FileGrid from './components/FileGrid'
 import ImageModel from './components/ImageModel'
 import MoveFileDialog from './components/MoveFileDialog'
 
@@ -84,6 +103,11 @@ import {
   batchMoveFile
 } from '@/request/file.js'
 
+import infiniteScroll from "vue-infinite-scroll";
+import Vue from 'vue'
+Vue.use(infiniteScroll);
+
+
 export default {
   name: 'FileList',
   components: {
@@ -91,6 +115,7 @@ export default {
     BreadCrumb,
     SelectColumn,
     FileTable,
+    FileGrid,
     ImageModel,
     MoveFileDialog
   },
@@ -113,7 +138,6 @@ export default {
       selectFilePath: '', //  移动文件路径
       operationFile: {}, // 当前操作行
       selectionFile: [], // 勾选的文件
-      // fileType: '', //  文件类型
       //  可以识别的文件类型
       fileImgTypeList: [
         'png',
@@ -186,7 +210,8 @@ export default {
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
       },
-      imageGroupLable: 0
+      imageGroupLable: 0,  //  图片展示模式
+      fileGroupLable: 0  //  文件展示模式
     }
   },
   computed: {
@@ -199,6 +224,7 @@ export default {
         return ''
       }
     },
+    // 文件类型
     fileType: {
       get() {
         return Number(this.$route.query.fileType)
@@ -207,20 +233,45 @@ export default {
         return 0
       }
     },
+    // 图片查看模式 0列表模式 1网格模式 2 时间线模式
     imageModel() {
       return this.$store.getters.imageModel
+    },
+    // 文件查看模式 0列表模式 1网格模式
+    fileModel() {
+      return this.$store.getters.fileModel
+    }
+  },
+  watch: {
+    // 监听文件查看模式
+    fileModel() {
+      this.setPageCount()
+      this.getTableDataByType()
     }
   },
   created() {
+    this.setPageCount()
     this.getTableDataByType()
   },
   mounted() {
     this.imageGroupLable = this.imageModel
+    this.fileGroupLable = this.fileModel
   },
   methods: {
     /**
      * 表格数据获取相关事件
      */
+    // 调整分页大小
+    setPageCount() {
+      this.pageData.currentPage = 1
+      if(this.fileModel === 0) {
+        this.pageData.pageCount = 10
+      }
+      if(this.fileModel === 1) {
+        this.pageData.pageCount = 40
+      }
+    },
+    // 获取文件列表数据
     getTableDataByType() {
       // 分类型
       if (Number(this.fileType)) {
@@ -239,7 +290,7 @@ export default {
       let data = {
         filePath: this.filePath,
         currentPage: this.pageData.currentPage,
-        pageCount: this.pageData.pageCount,
+        pageCount: this.pageData.pageCount
       }
       getfilelist(data).then(res => {
         if (res.success) {
@@ -251,11 +302,10 @@ export default {
         }
       })
     },
-    // 分页组件 当前页展示文件数改变
-    handleSizeChange(pageCount) {
-      this.pageData.currentPage = 1
-      this.pageData.pageCount = pageCount
-      this.showFileList()
+    // 获取文件平铺数据
+    getFileList() {
+      this.pageData.currentPage++
+      this.getTableDataByType()
     },
     // 分页组件 当前页码改变
     handleCurrentChange(currentPage) {
@@ -394,9 +444,16 @@ export default {
         })
       }
     },
+    /**
+     * 操作按钮组相关事件
+     */
     //  切换图片查看模式
     changeImageDisplayModel(label) {
       this.$store.commit('changeImageModel', label)
+    },
+    // 切换文件查看模式
+    changeFileDisplayModel(label) {
+      this.$store.commit('changeFileModel', label)
     }
   }
 }
@@ -419,11 +476,13 @@ export default {
     justify-content space-between
     .breadcrumb
       flex 1
-    .change-image-model
+    .change-image-model,
+    .change-file-model
       margin-right 20px
       height 30px
       line-height 30px
   .el-pagination
-    padding 16px 8px 0 8px
-    text-align right
+    border-top 1px solid $BorderBase
+    padding 8px
+    text-align center
 </style>

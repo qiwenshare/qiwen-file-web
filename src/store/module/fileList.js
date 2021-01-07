@@ -3,6 +3,7 @@ export default {
     operaColumnExpand: sessionStorage.getItem("operaColumnExpand"), //  操作列是否展开，0不展开，1展开
     selectedColumnList: sessionStorage.getItem("selectedColumnList"), //  列显隐
     imageModel: sessionStorage.getItem("imageModel"), //  图片类型页面展示模式，0列表模式，1网格模式 2 时间线模式
+    fileModel: sessionStorage.getItem("fileModel"), //  文件展示模式，0列表模式，1网格模式
   },
   mutations: {
     changeOperaColumnExpand(state, data) {
@@ -17,6 +18,10 @@ export default {
       sessionStorage.setItem("imageModel", data);
       state.imageModel = data;
     },
+    changeFileModel(state, data) {
+      sessionStorage.setItem("fileModel", data);
+      state.fileModel = data;
+    }
   },
   actions: {
   }

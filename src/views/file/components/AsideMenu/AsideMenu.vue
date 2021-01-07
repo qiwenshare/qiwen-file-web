@@ -3,8 +3,10 @@
     <!-- 展开 & 收缩分类栏 -->
     <el-tooltip effect="dark" :content="isFolder ? '展开分类栏' : '收起分类栏'" placement="right">
       <div class="aside-title" @click="$store.commit('changeIsFolder', isFolder ? 0 : 1)">
-        <i class="el-icon-caret-left" v-show="!isFolder"></i>
-        <i class="el-icon-caret-right" v-show="isFolder"></i>
+        <div class="top"></div>
+        <i class="el-icon-caret-right" v-show="!isFolder"></i>
+        <i class="el-icon-caret-left" v-show="isFolder"></i>
+        <div class="bottom"></div>
       </div>
     </el-tooltip>
     <!-- 分类栏 -->
@@ -113,31 +115,56 @@ export default {
 
 <style lang="stylus" scoped>
 @import '~@/assets/styles/varibles.styl'
+@import '~@/assets/styles/mixins.styl'
+
 .aside-menu-wrapper
   position relative
-  width 64px
+  width 76px
   height 100%
   transition width 0.5s
   -webkit-transition width 0.5s
   .aside-title
     position absolute
-    top 300px
-    right 0
+    top 50%
+    left 65px
     z-index 2
-    border-radius 12px 0 0 12px
-    background $BorderLight
-    color $Info
+    background $Info
+    color $BorderLight
     width 12px
     height 100px
     line-height 100px
     cursor pointer
+    z-index 3
+    // transition left 0.5s
+    // -webkit-transition left 0.5s
     &:hover
       opacity 0.7
     i {
       font-size 12px
     }
+    .top
+      position absolute
+      top calc(50% - 50px)
+      right 0px
+      width: 0;
+      height: 0;
+      border-bottom: 12px solid transparent;
+      border-right: 12px solid #fff;
+    .bottom
+      position absolute
+      top calc(50% + 38px)
+      right 0px
+      width: 0;
+      height: 0;
+      border-top: 12px solid transparent;
+      border-right: 12px solid #fff;
   >>> .el-menu
     border none
+    border-right solid 1px $BorderLight
+    width 64px
+    height: calc(100vh - 60px);
+    overflow: auto;
+    setScrollbar(4px, #909399, #EBEEF5)
     .el-menu-item
       i
         color inherit
@@ -145,18 +172,26 @@ export default {
       background #545c64 !important
   .store-wrapper
     position absolute
-    bottom 16px
-    left 16px
-    width calc(100% - 32px)
+    bottom 0
+    left 0
+    background $RegularText
+    padding: 16px;
+    width 220px
+    z-index: 2;
     color #fff
+    opacity 0.8
     .text {
       margin-top 8px
       display flex
       justify-content space-between
     }
 .expand
-  width 220px
+  width 232px
+  .aside-title
+    left 221px
   >>> .el-menu
+    width 220px
+    height: calc(100% - 60px);
     .el-menu-item
       padding-left 40px !important
 </style>
