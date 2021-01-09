@@ -1,40 +1,15 @@
 <template>
   <div class="file-list-wrapper">
     <!-- 操作按钮 -->
-    <el-header class="file-list-header" v-if="fileType !== 6" :class="'file-type-' + fileType">
+    <el-header v-if="fileType !== 6">
       <OperationMenu
         :operationFile="operationFile"
         :selectionFile="selectionFile"
         :filePath="filePath"
+        :batchOperate.sync="batchOperate"
         @getTableDataByType="getTableDataByType"
         @setMoveFileDialogData="setMoveFileDialogData"
       ></OperationMenu>
-      <!-- 图片展示模式 -->
-      <div class="change-image-model" v-show="fileType === 1">
-        <el-radio-group v-model="imageGroupLable" size="mini" @change="changeImageDisplayModel">
-          <el-radio-button :label="0"> <i class="el-icon-tickets"></i> 列表 </el-radio-button>
-          <el-radio-button :label="1"> <i class="el-icon-s-grid"></i> 网格 </el-radio-button>
-          <el-radio-button :label="2"> <i class="el-icon-date"></i> 时间线 </el-radio-button>
-        </el-radio-group>
-      </div>
-      <div class="change-file-model" v-show="fileType !== 1">
-        <el-radio-group v-model="fileGroupLable" size="mini" @change="changeFileDisplayModel">
-          <el-radio-button :label="0"> <i class="el-icon-tickets"></i> 列表 </el-radio-button>
-          <el-radio-button :label="1"> <i class="el-icon-s-grid"></i> 网格 </el-radio-button>
-        </el-radio-group>
-      </div>
-      <el-button
-        class="batch-opera-btn"
-        :type="batchOperate ? 'primary' : ''"
-        icon="el-icon-finished"
-        size="mini"
-        v-if="fileModel === 1 && fileType !== 1"
-        @click="batchOperate = !batchOperate"
-      >
-        {{ batchOperate ? '取消批量操作' : '批量操作' }}
-      </el-button>
-      <!-- 选择表格列 -->
-      <SelectColumn class="select-column"></SelectColumn>
     </el-header>
     <div class="middle-wrapper">
       <!-- 面包屑导航栏 -->
@@ -61,17 +36,20 @@
       @setSelectionFile="setSelectionFile"
       @getTableDataByType="getTableDataByType"
     ></FileGrid>
-    <el-pagination
-      v-if="fileType === 0"
-      :current-page="pageData.currentPage"
-      :page-size="pageData.pageCount"
-      :total="pageData.total"
-      layout="total, prev, pager, next"
-      @current-change="handleCurrentChange"
-    >
-    </el-pagination>
     <!-- 图片网格模式 -->
     <ImageModel class="image-model" v-if="imageModel && fileType === 1" :fileList="fileList"></ImageModel>
+    <div class="pagination-wrapper">
+      <div class="current-page-count">当前页{{ fileList.length }}条</div>
+      <el-pagination
+        v-if="fileType === 0"
+        :current-page="pageData.currentPage"
+        :page-size="pageData.pageCount"
+        :total="pageData.total"
+        layout="total, prev, pager, next"
+        @current-change="handleCurrentChange"
+      >
+      </el-pagination>
+    </div>
     <!-- 移动文件模态框 -->
     <MoveFileDialog
       :dialogMoveFile="dialogMoveFile"
@@ -85,7 +63,6 @@
 <script>
 import OperationMenu from './components/OperationMenu'
 import BreadCrumb from './components/BreadCrumb'
-import SelectColumn from './components/SelectColumn'
 import FileTable from './components/FileTable'
 import FileGrid from './components/FileGrid'
 import ImageModel from './components/ImageModel'
@@ -105,7 +82,6 @@ export default {
   components: {
     OperationMenu,
     BreadCrumb,
-    SelectColumn,
     FileTable,
     FileGrid,
     ImageModel,
@@ -202,8 +178,6 @@ export default {
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
       },
-      imageGroupLable: 0, //  图片展示模式
-      fileGroupLable: 0, //  文件展示模式
       batchOperate: false //  批量操作模式
     }
   },
@@ -245,10 +219,6 @@ export default {
   created() {
     this.setPageCount()
     this.getTableDataByType()
-  },
-  mounted() {
-    this.imageGroupLable = this.imageModel
-    this.fileGroupLable = this.fileModel
   },
   methods: {
     /**
@@ -436,17 +406,7 @@ export default {
         })
       }
     },
-    /**
-     * 操作按钮组相关事件
-     */
-    //  切换图片查看模式
-    changeImageDisplayModel(label) {
-      this.$store.commit('changeImageModel', label)
-    },
-    // 切换文件查看模式
-    changeFileDisplayModel(label) {
-      this.$store.commit('changeFileModel', label)
-    }
+    
   }
 }
 </script>
@@ -454,27 +414,21 @@ export default {
 <style lang="stylus" scoped>
 @import '~@/assets/styles/varibles.styl'
 .file-list-wrapper
-  .file-list-header.file-type-6
-    margin 8px 0
-    justify-content flex-end
-  .file-list-header
+  >>> .el-header
     padding 0
-    display flex
-    justify-content space-between
-    align-items: center;
-    >>> .operation-menu-wrapper
-      flex 1
-    .change-image-model,
-    .change-file-model
-      margin-right 20px
-      height 30px
-      line-height 30px
-    .batch-opera-btn
-      margin-right 8px
   .middle-wrapper
     margin-bottom 8px
-  .el-pagination
+  .pagination-wrapper
+    position relative
     border-top 1px solid $BorderBase
-    padding 8px
+    height 44px
+    line-height 44px
     text-align center
+    .current-page-count
+      position absolute
+      left 16px
+      height 32px
+      line-height 32px
+      font-size 13px
+      color $RegularText
 </style>

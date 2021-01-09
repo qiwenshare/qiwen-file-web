@@ -1,13 +1,43 @@
 <template>
-  <div class="operation-menu-wrapper">
-    <el-button-group>
-      <el-button size="medium" type="primary" icon="el-icon-upload2" id="uploadFileId" @click="upload()">上传</el-button>
-      <el-button size="medium" type="primary" icon="el-icon-plus" @click="addFolder()" v-if="!fileType">新建文件夹</el-button>
-      <el-button size="medium" type="primary" :disabled="!selectionFile.length" icon="el-icon-delete" @click="deleteSelectedFile()">删除</el-button>
-      <el-button size="medium" type="primary" :disabled="!selectionFile.length" icon="el-icon-rank" @click="moveSelectedFile()" v-if="!fileType">移动</el-button>
-      <!-- <el-button size="medium" icon="el-icon-document-copy">拷贝</el-button> -->
-      <el-button size="medium" type="primary" :disabled="!selectionFile.length" icon="el-icon-download" @click="downloadSelectedFile()">下载</el-button>
+  <div class="operation-menu-wrapper" :class="'file-type-' + fileType">
+    <el-button-group class="operate-group">
+      <el-button size="mini" type="primary" icon="el-icon-upload2" id="uploadFileId" @click="upload()">上传</el-button>
+      <el-button size="mini" type="primary" icon="el-icon-plus" @click="addFolder()" v-if="!fileType">新建文件夹</el-button>
+      <el-button size="mini" type="primary" :disabled="!selectionFile.length" icon="el-icon-delete" @click="deleteSelectedFile()">删除</el-button>
+      <el-button size="mini" type="primary" :disabled="!selectionFile.length" icon="el-icon-rank" @click="moveSelectedFile()" v-if="!fileType">移动</el-button>
+      <!-- <el-button size="mini" icon="el-icon-document-copy">拷贝</el-button> -->
+      <el-button size="mini" type="primary" :disabled="!selectionFile.length" icon="el-icon-download" @click="downloadSelectedFile()">下载</el-button>
     </el-button-group>
+
+    <!-- 批量操作 -->
+    <el-button
+      class="batch-opera-btn"
+      :type="batchOperate ? 'primary' : ''"
+      icon="el-icon-finished"
+      size="mini"
+      v-if="fileModel === 1 && fileType !== 1"
+      @click="changeBatchOperate()"
+    >
+      {{ batchOperate ? '取消批量操作' : '批量操作' }}
+    </el-button>
+
+    <!-- 图片展示模式 -->
+    <div class="change-image-model" v-show="fileType === 1">
+      <el-radio-group v-model="imageGroupLable" size="mini" @change="changeImageDisplayModel">
+        <el-radio-button :label="0"> <i class="el-icon-tickets"></i> 列表 </el-radio-button>
+        <el-radio-button :label="1"> <i class="el-icon-s-grid"></i> 网格 </el-radio-button>
+        <el-radio-button :label="2"> <i class="el-icon-date"></i> 时间线 </el-radio-button>
+      </el-radio-group>
+    </div>
+    <div class="change-file-model" v-show="fileType !== 1">
+      <el-radio-group v-model="fileGroupLable" size="mini" @change="changeFileDisplayModel">
+        <el-radio-button :label="0"> <i class="el-icon-tickets"></i> 列表 </el-radio-button>
+        <el-radio-button :label="1"> <i class="el-icon-s-grid"></i> 网格 </el-radio-button>
+      </el-radio-group>
+    </div>
+
+    <!-- 选择表格列 -->
+    <SelectColumn class="select-column"></SelectColumn>
 
     <!-- 多选文件下载，页面隐藏 -->
     <a
@@ -26,24 +56,30 @@
 import {
   batchDeleteFile,
   createFile
-  // speedUploadFile
 } from '@/request/file.js'
-// import Cookies from 'js-cookie'
-// import SparkMD5 from 'spark-md5'
+import SelectColumn from './SelectColumn'
 
 export default {
   name: 'OperationMenu',
   props: {
     selectionFile: Array,
-    operationFile: Object
+    operationFile: Object,
+    batchOperate: Boolean
+  },
+  components: {
+    SelectColumn
   },
   data() {
     return {
       fileTree: [],
-      batchDeleteFileDialog: false
+      batchDeleteFileDialog: false,
+      imageGroupLable: 0, //  图片展示模式
+      fileGroupLable: 0, //  文件展示模式
     }
   },
   mounted() {
+    this.imageGroupLable = this.imageModel
+    this.fileGroupLable = this.fileModel
     this.$EventBus.$on('refreshList', () => {
       this.$emit('getTableDataByType')
     })
@@ -85,6 +121,14 @@ export default {
           isDir: 0
         }
       }
+    },
+    // 图片查看模式 0列表模式 1网格模式 2 时间线模式
+    imageModel() {
+      return this.$store.getters.imageModel
+    },
+    // 文件查看模式 0列表模式 1网格模式
+    fileModel() {
+      return this.$store.getters.fileModel
     }
   },
   methods: {
@@ -154,13 +198,38 @@ export default {
         let name = 'downloadLink' + i
         this.$refs[name][0].click()
       }
+    },
+
+    // 图片网格模式下 - 批量操作切换
+    changeBatchOperate() {
+      this.$emit('update:batchOperate', !this.batchOperate)
+    },
+    //  切换图片查看模式
+    changeImageDisplayModel(label) {
+      this.$store.commit('changeImageModel', label)
+    },
+    // 切换文件查看模式
+    changeFileDisplayModel(label) {
+      this.$store.commit('changeFileModel', label)
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
+.operation-menu-wrapper.file-type-6
+  margin 8px 0
+  justify-content flex-end
 .operation-menu-wrapper
-  height 60px
-  line-height 60px
+  padding 16px 0
+  display flex
+  justify-content space-between
+  align-items: center;
+  .operate-group
+    flex 1
+  .change-image-model,
+  .change-file-model
+    margin-right 8px
+  .batch-opera-btn
+    margin-right 8px
 </style>

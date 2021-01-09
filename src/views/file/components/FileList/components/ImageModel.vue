@@ -103,7 +103,7 @@ export default {
 .image-model-wrapper
   margin-top 20px
   padding 0 20px
-  height calc(100vh - 200px)
+  height calc(100vh - 215px)
   overflow-y auto
   setScrollbar(10px)
   .image-model

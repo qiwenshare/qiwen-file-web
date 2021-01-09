@@ -26,8 +26,7 @@
         </template>
         <template slot-scope="scope">
           <div style="cursor:pointer;" @click="clickFileName(scope.row)">
-            <span>{{ scope.row.fileName }}</span>
-            <span v-if="!scope.row.isDir && scope.row.extendName !== null">.{{ scope.row.extendName }}</span>
+            {{ scope.row | fileNameComplete }}
           </div>
         </template>
       </el-table-column>
@@ -542,7 +541,7 @@ export default {
       height calc(100vh - 182px) !important
   .file-table
     width 100% !important
-    height calc(100vh - 182px)
+    height calc(100vh - 203px)
     >>> .el-table__header-wrapper
       th
         background $tabBackColor
@@ -554,7 +553,7 @@ export default {
         &:hover
           color $Primary
     >>> .el-table__body-wrapper
-      height calc(100vh - 234px)
+      height calc(100vh - 255px)
       overflow-y auto
       setScrollbar(10px)
       td

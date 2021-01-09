@@ -30,7 +30,11 @@ const storageTrans = (size, status) => {
 		}
 	}
 }
+const fileNameComplete = (item) => {
+	return item.fileName + (!item.isDir && item.extendName !== null ? `.${item.extendName}` : '')
+}
 
 export {
-	storageTrans
+	storageTrans,
+	fileNameComplete
 }

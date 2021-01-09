@@ -14,3 +14,10 @@ setScrollbar(scrollbarWidth, trackColor = #EBEEF5, thumbColor = #909399)
 		-webkit-border-radius 2em
 		-moz-border-radius 2em
 		border-radius 2em
+setEllipsis(line)
+	display: -webkit-box;
+	overflow: hidden;
+	white-space: wrap;
+	text-overflow: ellipsis;
+	-webkit-box-orient: vertical; /*  -webkit-box-orient 必须结合的属性 ，设置或检索伸缩盒对象的子元素的排列方式  */
+	-webkit-line-clamp: line; /*  -webkit-line-clamp用来限制在一个块元素显示的文本的行数 */

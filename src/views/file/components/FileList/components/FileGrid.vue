@@ -6,13 +6,12 @@
         class="file-item"
         v-for="(item, index) in fileListSorted"
         :key="index"
+        :title="item | fileNameComplete"
         @click="clickFileName(item)"
         @contextmenu.prevent="rightClickFile(item, index, $event)"
       >
         <img class="file-img" :src="setFileImg(item)" />
-        <div class="file-name">
-          {{ item.fileName }}{{ !item.isDir && item.extendName !== null ? `.${item.extendName}` : '' }}
-        </div>
+        <div class="file-name">{{ item | fileNameComplete }}</div>
         <div class="file-checked-wrapper" :class="{ checked: item.checked }" v-show="batchOperate" @click.stop.self="item.checked = !item.checked">
           <el-checkbox class="file-checked" v-model="item.checked" @click.stop="item.checked = !item.checked"></el-checkbox>
         </div>
@@ -485,8 +484,10 @@ export default {
     display flex
     flex-wrap wrap
     align-items flex-start
+    align-content flex-start
     setScrollbar(10px)
     .file-item
+      margin-bottom 16px
       position relative
       width 120px
       padding 8px
@@ -494,13 +495,18 @@ export default {
       cursor pointer
       &:hover
         background $tabBackColor
+        .file-name
+          font-weight 550
       .file-img
         width 80px
         height 80px
       .file-name
         margin-top 8px
-        font-size 14px
+        height 44px
+        line-height 22px
+        font-size 12px
         word-break break-all
+        setEllipsis(2)
       .file-checked-wrapper
         position absolute
         top 0
