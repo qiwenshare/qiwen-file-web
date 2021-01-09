@@ -45,20 +45,26 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+@import '~@/assets/styles/mixins.styl'
+
 .move-dialog-wrapper
   >>> .el-dialog
     .el-dialog__header
       display flex
     .el-dialog__body
       padding 10px 30px
-      .el-tree
-        .el-tree-node__content
-          height 34px
-          font-size 16px
-          .el-icon-caret-right
-            font-size 18px
-        .el-tree-node.is-current>.el-tree-node__content
-          color $Primary
-          .el-tree-node__expand-icon
-            color inherit
+      .el-dialog-div
+        height 300px
+        overflow auto
+        setScrollbar(6px)
+        .el-tree
+          .el-tree-node__content
+            height 34px
+            font-size 16px
+            .el-icon-caret-right
+              font-size 18px
+          .el-tree-node.is-current>.el-tree-node__content
+            color $Primary
+            .el-tree-node__expand-icon
+              color inherit
 </style>

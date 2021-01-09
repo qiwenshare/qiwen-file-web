@@ -13,18 +13,21 @@
         <div class="file-name">
           {{ item.fileName }}{{ !item.isDir && item.extendName !== null ? `.${item.extendName}` : '' }}
         </div>
+        <div class="file-checked-wrapper" :class="{ checked: item.checked }" v-show="batchOperate" @click.stop.self="item.checked = !item.checked">
+          <el-checkbox class="file-checked" v-model="item.checked" @click.stop="item.checked = !item.checked"></el-checkbox>
+        </div>
       </li>
     </ul>
     <transition name="el-fade-in-linear">
       <div class="right-menu" v-show="rightMenu.isShow" :style="`top: ${rightMenu.top}px; left: ${rightMenu.left}px;`">
-        <el-button type="info" size="medium" plain @click.native="deleteFileBtn(selectedFile)">删除</el-button>
-        <el-button type="info" size="medium" plain @click.native="showMoveFileDialog(selectedFile)" v-if="fileType !== 6"
+        <el-button type="info" size="small" plain @click.native="deleteFileBtn(selectedFile)">删除</el-button>
+        <el-button type="info" size="small" plain @click.native="showMoveFileDialog(selectedFile)" v-if="fileType !== 6"
           >移动</el-button
         >
-        <el-button type="info" size="medium" plain @click.native="renameFile(selectedFile)" v-if="fileType !== 6"
+        <el-button type="info" size="small" plain @click.native="renameFile(selectedFile)" v-if="fileType !== 6"
           >重命名</el-button
         >
-        <el-button type="info" size="medium" plain v-if="selectedFile.isDir === 0 && fileType !== 6" @click.native="rightMenu.isShow = false">
+        <el-button type="info" size="small" plain v-if="selectedFile.isDir === 0 && fileType !== 6" @click.native="rightMenu.isShow = false">
           <a
             target="_blank"
             style="display: block;color: inherit;"
@@ -35,7 +38,7 @@
         </el-button>
         <el-button
           type="info"
-          size="medium"
+          size="small"
           plain
           @click.native="unzipFile(selectedFile)"
           v-if="fileType !== 6 && (selectedFile.extendName == 'zip' || selectedFile.extendName == 'rar')"
@@ -49,21 +52,18 @@
 <script>
 import { unzipfile, deleteFile, renameFile, deleteRecoveryFile } from '@/request/file.js'
 import { mapGetters } from 'vuex'
-// collapse 展开折叠
 import 'element-ui/lib/theme-chalk/base.css';
-// import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
-// import Vue from 'vue'
-
-// Vue.component(CollapseTransition.name, CollapseTransition)
 
 export default {
   name: 'FileGrid',
   props: {
     fileList: Array, //  文件列表
-    loading: Boolean
+    loading: Boolean,
+    batchOperate: Boolean
   },
   data() {
     return {
+      fileListSorted: [],
       //  移动文件模态框数据
       dialogMoveFile: {
         isBatchMove: false,
@@ -189,22 +189,52 @@ export default {
         this.fileList.map((data) => data.extendName).includes('rar')
       )
     },
+    // 批量操作模式 - 被选中的文件
+    selectedFileList() {
+      let res = this.fileListSorted.filter(item => item.checked)
+      return res
+    }
+  },
+  watch: {
     // 文件平铺模式 排序-文件夹在前
-    fileListSorted() {
-      return [ ...this.fileList ].sort((pre, next) => {
+    fileList(newValue) {
+      this.fileListSorted = [ ...newValue ].sort((pre, next) => {
         return next.isDir - pre.isDir
+      }).map(item => {
+        return {
+          ...item,
+          checked: false
+        }
       })
+    },
+    // 批量操作模式 - 被选中的文件
+    selectedFileList(newValue) {
+      if(newValue.length) {
+        this.selectAllFileRow(newValue)
+      }
+    },
+    // 批量操作
+    batchOperate(newValue) {
+      if(newValue) {
+        this.rightMenu.isShow = false
+      }
     }
   },
   methods: {
+    /**
+     * 文件操作相关书事件
+     */
+    // 文件右键事件
     rightClickFile(item, index, mouseEvent) {
-      this.rightMenu.isShow = false
-      setTimeout(()=> {
-        this.selectedFile = item
-        this.rightMenu.top = mouseEvent.clientY - 64
-        this.rightMenu.left = mouseEvent.clientX + 18
-        this.rightMenu.isShow = true
-      }, 100)
+      if(!this.batchOperate) {
+        this.rightMenu.isShow = false
+        setTimeout(()=> {
+          this.selectedFile = item
+          this.rightMenu.top = mouseEvent.clientY - 64
+          this.rightMenu.left = mouseEvent.clientX + 18
+          this.rightMenu.isShow = true
+        }, 100)
+      }
     },
     /**
      * 表格数据获取相关事件
@@ -457,6 +487,7 @@ export default {
     align-items flex-start
     setScrollbar(10px)
     .file-item
+      position relative
       width 120px
       padding 8px
       text-align center
@@ -470,6 +501,20 @@ export default {
         margin-top 8px
         font-size 14px
         word-break break-all
+      .file-checked-wrapper
+        position absolute
+        top 0
+        left 0
+        z-index 2
+        background rgba(245, 247, 250, 0.5)
+        width 100%
+        height 100%
+        .file-checked
+          position absolute
+          top 16px
+          left 24px
+      .file-checked-wrapper.checked
+        background rgba(245, 247, 250, 0)
   .right-menu
     position fixed
     display flex

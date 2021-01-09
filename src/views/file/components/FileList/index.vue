@@ -1,7 +1,7 @@
 <template>
   <div class="file-list-wrapper">
     <!-- 操作按钮 -->
-    <el-header class="file-list-header" v-if="fileType !== 6">
+    <el-header class="file-list-header" v-if="fileType !== 6" :class="'file-type-' + fileType">
       <OperationMenu
         :operationFile="operationFile"
         :selectionFile="selectionFile"
@@ -9,42 +9,42 @@
         @getTableDataByType="getTableDataByType"
         @setMoveFileDialogData="setMoveFileDialogData"
       ></OperationMenu>
-    </el-header>
-    <div class="middle-wrapper" :class="'file-type-' + fileType">
-      <!-- 面包屑导航栏 -->
-      <BreadCrumb class="breadcrumb"></BreadCrumb>
       <!-- 图片展示模式 -->
       <div class="change-image-model" v-show="fileType === 1">
         <el-radio-group v-model="imageGroupLable" size="mini" @change="changeImageDisplayModel">
-          <el-radio-button :label="0">
-            <i class="el-icon-tickets"></i> 列表
-          </el-radio-button>
-          <el-radio-button :label="1">
-            <i class="el-icon-s-grid"></i> 网格
-          </el-radio-button>
-          <el-radio-button :label="2">
-            <i class="el-icon-date"></i> 时间线
-          </el-radio-button>
+          <el-radio-button :label="0"> <i class="el-icon-tickets"></i> 列表 </el-radio-button>
+          <el-radio-button :label="1"> <i class="el-icon-s-grid"></i> 网格 </el-radio-button>
+          <el-radio-button :label="2"> <i class="el-icon-date"></i> 时间线 </el-radio-button>
         </el-radio-group>
       </div>
       <div class="change-file-model" v-show="fileType !== 1">
         <el-radio-group v-model="fileGroupLable" size="mini" @change="changeFileDisplayModel">
-          <el-radio-button :label="0">
-            <i class="el-icon-tickets"></i> 列表
-          </el-radio-button>
-          <el-radio-button :label="1">
-            <i class="el-icon-s-grid"></i> 网格
-          </el-radio-button>
+          <el-radio-button :label="0"> <i class="el-icon-tickets"></i> 列表 </el-radio-button>
+          <el-radio-button :label="1"> <i class="el-icon-s-grid"></i> 网格 </el-radio-button>
         </el-radio-group>
       </div>
+      <el-button
+        class="batch-opera-btn"
+        :type="batchOperate ? 'primary' : ''"
+        icon="el-icon-finished"
+        size="mini"
+        v-if="fileModel === 1 && fileType !== 1"
+        @click="batchOperate = !batchOperate"
+      >
+        {{ batchOperate ? '取消批量操作' : '批量操作' }}
+      </el-button>
       <!-- 选择表格列 -->
       <SelectColumn class="select-column"></SelectColumn>
+    </el-header>
+    <div class="middle-wrapper">
+      <!-- 面包屑导航栏 -->
+      <BreadCrumb class="breadcrumb"></BreadCrumb>
     </div>
     <!-- 文件列表-表格模式 -->
     <FileTable
       :fileList="fileList"
       :loading="loading"
-      v-if="fileModel === 0 && fileType !== 1 || fileType === 1 && !imageModel"
+      v-if="(fileModel === 0 && fileType !== 1) || (fileType === 1 && !imageModel)"
       @setMoveFileDialogData="setMoveFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
@@ -54,6 +54,7 @@
     <FileGrid
       :fileList="fileList"
       :loading="loading"
+      :batchOperate="batchOperate"
       v-if="fileModel === 1 && fileType !== 1"
       @setMoveFileDialogData="setMoveFileDialogData"
       @setOperationFile="setOperationFile"
@@ -70,11 +71,7 @@
     >
     </el-pagination>
     <!-- 图片网格模式 -->
-    <ImageModel
-      class="image-model"
-      v-if="imageModel && fileType === 1"
-      :fileList="fileList"
-    ></ImageModel>
+    <ImageModel class="image-model" v-if="imageModel && fileType === 1" :fileList="fileList"></ImageModel>
     <!-- 移动文件模态框 -->
     <MoveFileDialog
       :dialogMoveFile="dialogMoveFile"
@@ -205,8 +202,9 @@ export default {
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
       },
-      imageGroupLable: 0,  //  图片展示模式
-      fileGroupLable: 0  //  文件展示模式
+      imageGroupLable: 0, //  图片展示模式
+      fileGroupLable: 0, //  文件展示模式
+      batchOperate: false //  批量操作模式
     }
   },
   computed: {
@@ -259,18 +257,19 @@ export default {
     // 调整分页大小
     setPageCount() {
       this.pageData.currentPage = 1
-      if(this.fileModel === 0) {
+      if (this.fileModel === 0) {
         this.pageData.pageCount = 10
       }
-      if(this.fileModel === 1) {
+      if (this.fileModel === 1) {
         this.pageData.pageCount = 40
       }
     },
     // 获取文件列表数据
     getTableDataByType() {
+      this.batchOperate = false
       // 分类型
       if (Number(this.fileType)) {
-        if(Number(this.fileType) === 6) {
+        if (Number(this.fileType) === 6) {
           this.shwoFileRecovery() //  回收站
         } else {
           this.showFileListByType()
@@ -287,7 +286,7 @@ export default {
         currentPage: this.pageData.currentPage,
         pageCount: this.pageData.pageCount
       }
-      getfilelist(data).then(res => {
+      getfilelist(data).then((res) => {
         if (res.success) {
           this.fileList = res.data
           this.pageData.total = res.total
@@ -309,8 +308,8 @@ export default {
     },
     // 获取回收站文件列表
     shwoFileRecovery() {
-      getRecoveryFile().then(res => {
-        if(res.success) {
+      getRecoveryFile().then((res) => {
+        if (res.success) {
           this.fileList = res.data
           this.loading = false
         } else {
@@ -324,7 +323,7 @@ export default {
       let data = {
         fileType: this.fileType
       }
-      selectFileByFileType(data).then(res => {
+      selectFileByFileType(data).then((res) => {
         if (res.success) {
           this.fileList = res.data
           this.loading = false
@@ -383,14 +382,12 @@ export default {
     //  设置移动文件模态框相关数据，isBatchMove为null时是确认移动，值由之前的值而定
     setMoveFileDialogData(isBatchMove, visible) {
       this.initFileTree()
-      this.dialogMoveFile.isBatchMove = isBatchMove
-        ? isBatchMove
-        : this.dialogMoveFile.isBatchMove
+      this.dialogMoveFile.isBatchMove = isBatchMove ? isBatchMove : this.dialogMoveFile.isBatchMove
       this.dialogMoveFile.visible = visible
     },
     //  移动文件模态框：初始化文件目录树
     initFileTree() {
-      getFileTree().then(res => {
+      getFileTree().then((res) => {
         if (res.success) {
           this.dialogMoveFile.fileTree = [res.data]
         } else {
@@ -410,7 +407,7 @@ export default {
           filePath: this.selectFilePath,
           files: JSON.stringify(this.selectionFile)
         }
-        batchMoveFile(data).then(res => {
+        batchMoveFile(data).then((res) => {
           if (res.success) {
             this.$message.success(res.data)
             this.getTableDataByType()
@@ -428,7 +425,7 @@ export default {
           fileName: this.operationFile.fileName,
           extendName: this.operationFile.extendName
         }
-        moveFile(data).then(res => {
+        moveFile(data).then((res) => {
           if (res.success) {
             this.$message.success('移动文件成功')
             this.getTableDataByType()
@@ -457,25 +454,25 @@ export default {
 <style lang="stylus" scoped>
 @import '~@/assets/styles/varibles.styl'
 .file-list-wrapper
-  .file-list-header
-    padding 0
-    .el-dialog-div
-      height 200px
-      overflow auto
-  .middle-wrapper.file-type-6
+  .file-list-header.file-type-6
     margin 8px 0
     justify-content flex-end
-  .middle-wrapper
-    margin-bottom 8px
+  .file-list-header
+    padding 0
     display flex
     justify-content space-between
-    .breadcrumb
+    align-items: center;
+    >>> .operation-menu-wrapper
       flex 1
     .change-image-model,
     .change-file-model
       margin-right 20px
       height 30px
       line-height 30px
+    .batch-opera-btn
+      margin-right 8px
+  .middle-wrapper
+    margin-bottom 8px
   .el-pagination
     border-top 1px solid $BorderBase
     padding 8px
