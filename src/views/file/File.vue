@@ -33,8 +33,6 @@ export default {
   width 100% !important
 .el-container
   .el-aside
-    // border-right solid 1px $BorderLight
-    // background  $Info
     height calc(100vh - 61px)
     overflow hidden
 .el-main

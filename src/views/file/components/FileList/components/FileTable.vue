@@ -17,7 +17,7 @@
       <el-table-column type="selection" width="55" v-if="fileType !== 6"></el-table-column>
       <el-table-column label prop="isDir" width="60">
         <template slot-scope="scope">
-          <img :src="setFileImg(scope.row.extendName)" style="width: 30px;" />
+          <img :src="setFileImg(scope.row)" style="width: 30px;" />
         </template>
       </el-table-column>
       <el-table-column prop="fileName" :sort-by="['isDir', 'fileName']" sortable show-overflow-tooltip>
@@ -303,16 +303,19 @@ export default {
      * 表格数据获取相关事件
      */
     //  根据文件扩展名设置文件图片
-    setFileImg(extendName) {
-      if (!extendName) {
+    setFileImg(row) {
+      if (!row.extendName) {
         //  文件夹
         return this.fileImgMap.dir
-      } else if (!this.fileImgTypeList.includes(extendName)) {
+      } else if (!this.fileImgTypeList.includes(row.extendName)) {
         //  无法识别文件类型的文件
         return this.fileImgMap.unknown
+      } else if (['jpg', 'png', 'jpeg', 'gif'].includes(row.extendName)) {
+        // 图片类型，直接显示缩略图
+        return this.downloadImgMin(row)
       } else {
         //  可以识别文件类型的文件
-        return this.fileImgMap[extendName]
+        return this.fileImgMap[row.extendName]
       }
     },
     //  计算文件大小

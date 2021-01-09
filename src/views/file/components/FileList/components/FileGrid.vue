@@ -1,23 +1,60 @@
 <template>
   <!-- 文件平铺 -->
-  <ul class="file-list">
-    <li
-      class="file-item"
-      v-for="(item, index) in fileListSorted"
-      :key="index"
-      @click="clickFileName(item)"
-    >
-      <img class="file-img" :src="setFileImg(item)" />
-      <div class="file-name">
-        {{ item.fileName }}{{ !item.isDir && item.extendName !== null ? `.${item.extendName}` : '' }}
+  <div class="file-grid-wrapper">
+    <ul class="file-list" @click.self="rightMenu.isShow = false" @scroll="rightMenu.isShow = false">
+      <li
+        class="file-item"
+        v-for="(item, index) in fileListSorted"
+        :key="index"
+        @click="clickFileName(item)"
+        @contextmenu.prevent="rightClickFile(item, index, $event)"
+      >
+        <img class="file-img" :src="setFileImg(item)" />
+        <div class="file-name">
+          {{ item.fileName }}{{ !item.isDir && item.extendName !== null ? `.${item.extendName}` : '' }}
+        </div>
+      </li>
+    </ul>
+    <transition name="el-fade-in-linear">
+      <div class="right-menu" v-show="rightMenu.isShow" :style="`top: ${rightMenu.top}px; left: ${rightMenu.left}px;`">
+        <el-button type="info" size="medium" plain @click.native="deleteFileBtn(selectedFile)">删除</el-button>
+        <el-button type="info" size="medium" plain @click.native="showMoveFileDialog(selectedFile)" v-if="fileType !== 6"
+          >移动</el-button
+        >
+        <el-button type="info" size="medium" plain @click.native="renameFile(selectedFile)" v-if="fileType !== 6"
+          >重命名</el-button
+        >
+        <el-button type="info" size="medium" plain v-if="selectedFile.isDir === 0 && fileType !== 6" @click.native="rightMenu.isShow = false">
+          <a
+            target="_blank"
+            style="display: block;color: inherit;"
+            :href="getDownloadFilePath(selectedFile)"
+            :download="selectedFile.fileName + '.' + selectedFile.extendName"
+            >下载</a
+          >
+        </el-button>
+        <el-button
+          type="info"
+          size="medium"
+          plain
+          @click.native="unzipFile(selectedFile)"
+          v-if="fileType !== 6 && (selectedFile.extendName == 'zip' || selectedFile.extendName == 'rar')"
+          >解压缩</el-button
+        >
       </div>
-    </li>
-  </ul>
+    </transition>
+  </div>
 </template>
 
 <script>
 import { unzipfile, deleteFile, renameFile, deleteRecoveryFile } from '@/request/file.js'
 import { mapGetters } from 'vuex'
+// collapse 展开折叠
+import 'element-ui/lib/theme-chalk/base.css';
+// import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
+// import Vue from 'vue'
+
+// Vue.component(CollapseTransition.name, CollapseTransition)
 
 export default {
   name: 'FileGrid',
@@ -106,7 +143,14 @@ export default {
         exe: require('@/assets/images/file/file_exe.png')
       },
       downloadFilePath: '',
-      viewFilePath: ''
+      viewFilePath: '',
+      // 右键菜单
+      rightMenu: {
+        isShow: false,
+        top: 0,
+        left: 0
+      },
+      selectedFile: {}
     }
   },
   computed: {
@@ -153,6 +197,15 @@ export default {
     }
   },
   methods: {
+    rightClickFile(item, index, mouseEvent) {
+      this.rightMenu.isShow = false
+      setTimeout(()=> {
+        this.selectedFile = item
+        this.rightMenu.top = mouseEvent.clientY - 64
+        this.rightMenu.left = mouseEvent.clientX + 18
+        this.rightMenu.isShow = true
+      }, 100)
+    },
     /**
      * 表格数据获取相关事件
      */
@@ -193,6 +246,7 @@ export default {
 
     //  点击文件名
     clickFileName(row) {
+      this.rightMenu.isShow = false
       //  若是目录则进入目录
       if (row.isDir) {
         this.$router.push({
@@ -201,9 +255,7 @@ export default {
             fileType: 0
           }
         })
-      }
-      //  若是文件，则进行相应的预览
-      else {
+      } else {  //  若是文件，则进行相应的预览
         //  若当前点击项是图片
         const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
         if (PIC.includes(row.extendName)) {
@@ -260,12 +312,14 @@ export default {
      */
     //  操作列-移动按钮：打开移动文件模态框
     showMoveFileDialog(file) {
+      this.rightMenu.isShow = false
       //  第一个参数: 是否批量移动；第二个参数：打开/关闭移动文件模态框
       this.$emit('setOperationFile', file)
       this.$emit('setMoveFileDialogData', false, true)
     },
     //  操作列-解压缩按钮
     unzipFile(fileInfo) {
+      this.rightMenu.isShow = false
       const loading = this.$loading({
         lock: true,
         text: '正在解压缩，请稍等片刻...',
@@ -289,6 +343,7 @@ export default {
      */
     //  操作列-删除按钮
     deleteFileBtn(fileInfo) {
+      this.rightMenu.isShow = false
       if (this.fileType === 6) {
         //  回收站里 - 彻底删除
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -353,6 +408,7 @@ export default {
     },
     // 文件重命名
     renameFile(fileInfo) {
+      this.rightMenu.isShow = false
       var fileName = fileInfo.fileName
       this.$prompt('请输入文件名', '提示', {
         confirmButtonText: '确定',
@@ -392,25 +448,33 @@ export default {
 @import '~@/assets/styles/varibles.styl'
 @import '~@/assets/styles/mixins.styl'
 
-.file-list
-  height calc(100vh - 206px)
-  overflow-y auto
-  display flex
-  flex-wrap wrap
-  align-items flex-start
-  setScrollbar(10px)
-  .file-item
-    width 120px
-    padding 8px
-    text-align center
-    cursor pointer
-    &:hover
-      background $tabBackColor
-    .file-img
-      width 80px
-      height 80px
-    .file-name
-      margin-top 8px
-      font-size 14px
-      word-break break-all
+.file-grid-wrapper
+  .file-list
+    height calc(100vh - 206px)
+    overflow-y auto
+    display flex
+    flex-wrap wrap
+    align-items flex-start
+    setScrollbar(10px)
+    .file-item
+      width 120px
+      padding 8px
+      text-align center
+      cursor pointer
+      &:hover
+        background $tabBackColor
+      .file-img
+        width 80px
+        height 80px
+      .file-name
+        margin-top 8px
+        font-size 14px
+        word-break break-all
+  .right-menu
+    position fixed
+    display flex
+    flex-direction column
+    >>> .el-button
+      margin 0
+      border-radius 0
 </style>
