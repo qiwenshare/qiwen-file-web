@@ -1,7 +1,7 @@
 <template>
   <div class="file-list-wrapper">
     <!-- 操作按钮 -->
-    <el-header v-if="fileType !== 6">
+    <el-header>
       <OperationMenu
         :operationFile="operationFile"
         :selectionFile="selectionFile"
@@ -19,7 +19,7 @@
     <FileTable
       :fileList="fileList"
       :loading="loading"
-      v-if="(fileModel === 0 && fileType !== 1) || (fileType === 1 && !imageModel)"
+      v-if="fileModel === 0"
       @setMoveFileDialogData="setMoveFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
@@ -30,14 +30,14 @@
       :fileList="fileList"
       :loading="loading"
       :batchOperate="batchOperate"
-      v-if="fileModel === 1 && fileType !== 1"
+      v-if="fileModel === 1"
       @setMoveFileDialogData="setMoveFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
       @getTableDataByType="getTableDataByType"
     ></FileGrid>
-    <!-- 图片网格模式 -->
-    <ImageModel class="image-model" v-if="imageModel && fileType === 1" :fileList="fileList"></ImageModel>
+    <!-- 图片-时间线模式 -->
+    <ImageModel class="image-model" v-if="fileModel === 2" :fileList="fileList"></ImageModel>
     <div class="pagination-wrapper">
       <div class="current-page-count">当前页{{ fileList.length }}条</div>
       <el-pagination
@@ -200,16 +200,16 @@ export default {
         return 0
       }
     },
-    // 图片查看模式 0列表模式 1网格模式 2 时间线模式
-    imageModel() {
-      return this.$store.getters.imageModel
-    },
-    // 文件查看模式 0列表模式 1网格模式
+    // 文件查看模式 0列表模式 1网格模式 2 时间线模式
     fileModel() {
       return this.$store.getters.fileModel
     }
   },
   watch: {
+    fileType() {
+      this.setPageCount()
+      this.getTableDataByType()
+    },
     // 监听文件查看模式
     fileModel() {
       this.setPageCount()

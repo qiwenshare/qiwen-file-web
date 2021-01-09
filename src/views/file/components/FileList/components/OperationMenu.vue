@@ -1,6 +1,6 @@
 <template>
   <div class="operation-menu-wrapper" :class="'file-type-' + fileType">
-    <el-button-group class="operate-group">
+    <el-button-group class="operate-group" v-if="fileType !== 6">
       <el-button size="mini" type="primary" icon="el-icon-upload2" id="uploadFileId" @click="upload()">上传</el-button>
       <el-button size="mini" type="primary" icon="el-icon-plus" @click="addFolder()" v-if="!fileType">新建文件夹</el-button>
       <el-button size="mini" type="primary" :disabled="!selectionFile.length" icon="el-icon-delete" @click="deleteSelectedFile()">删除</el-button>
@@ -15,24 +15,17 @@
       :type="batchOperate ? 'primary' : ''"
       icon="el-icon-finished"
       size="mini"
-      v-if="fileModel === 1 && fileType !== 1"
+      v-if="fileModel === 1"
       @click="changeBatchOperate()"
     >
       {{ batchOperate ? '取消批量操作' : '批量操作' }}
     </el-button>
-
-    <!-- 图片展示模式 -->
-    <div class="change-image-model" v-show="fileType === 1">
-      <el-radio-group v-model="imageGroupLable" size="mini" @change="changeImageDisplayModel">
-        <el-radio-button :label="0"> <i class="el-icon-tickets"></i> 列表 </el-radio-button>
-        <el-radio-button :label="1"> <i class="el-icon-s-grid"></i> 网格 </el-radio-button>
-        <el-radio-button :label="2"> <i class="el-icon-date"></i> 时间线 </el-radio-button>
-      </el-radio-group>
-    </div>
-    <div class="change-file-model" v-show="fileType !== 1">
+    <!-- 文件展示模式 -->
+    <div class="change-file-model">
       <el-radio-group v-model="fileGroupLable" size="mini" @change="changeFileDisplayModel">
         <el-radio-button :label="0"> <i class="el-icon-tickets"></i> 列表 </el-radio-button>
         <el-radio-button :label="1"> <i class="el-icon-s-grid"></i> 网格 </el-radio-button>
+        <el-radio-button :label="2" v-if="fileType === 1"> <i class="el-icon-date"></i> 时间线 </el-radio-button>
       </el-radio-group>
     </div>
 
@@ -73,19 +66,8 @@ export default {
     return {
       fileTree: [],
       batchDeleteFileDialog: false,
-      imageGroupLable: 0, //  图片展示模式
       fileGroupLable: 0, //  文件展示模式
     }
-  },
-  mounted() {
-    this.imageGroupLable = this.imageModel
-    this.fileGroupLable = this.fileModel
-    this.$EventBus.$on('refreshList', () => {
-      this.$emit('getTableDataByType')
-    })
-    this.$EventBus.$on('refreshStorage', () => {
-      this.$store.dispatch('showStorage')
-    })
   },
   computed: {
     //  当前查看的文件路径
@@ -122,14 +104,27 @@ export default {
         }
       }
     },
-    // 图片查看模式 0列表模式 1网格模式 2 时间线模式
-    imageModel() {
-      return this.$store.getters.imageModel
-    },
-    // 文件查看模式 0列表模式 1网格模式
+    // 文件查看模式 0列表模式 1网格模式 2 时间线模式
     fileModel() {
       return this.$store.getters.fileModel
     }
+  },
+  watch: {
+    fileType(newValue, oldValue) {
+      if(oldValue === 1 && this.fileModel === 2) {
+        this.$store.commit('changeFileModel', 0)
+        this.fileGroupLable = 0
+      }
+    }
+  },
+  mounted() {
+    this.fileGroupLable = this.fileModel
+    this.$EventBus.$on('refreshList', () => {
+      this.$emit('getTableDataByType')
+    })
+    this.$EventBus.$on('refreshStorage', () => {
+      this.$store.dispatch('showStorage')
+    })
   },
   methods: {
     upload() {
@@ -203,10 +198,6 @@ export default {
     // 图片网格模式下 - 批量操作切换
     changeBatchOperate() {
       this.$emit('update:batchOperate', !this.batchOperate)
-    },
-    //  切换图片查看模式
-    changeImageDisplayModel(label) {
-      this.$store.commit('changeImageModel', label)
     },
     // 切换文件查看模式
     changeFileDisplayModel(label) {

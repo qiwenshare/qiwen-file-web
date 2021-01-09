@@ -15,7 +15,7 @@
       @select="selectFileRow"
     >
       <el-table-column type="selection" width="55" v-if="fileType !== 6"></el-table-column>
-      <el-table-column label prop="isDir" width="60">
+      <el-table-column label prop="isDir" width="60" align="center">
         <template slot-scope="scope">
           <img :src="setFileImg(scope.row)" style="width: 30px;" />
         </template>
@@ -536,9 +536,9 @@ export default {
     >>> .el-table__body-wrapper
       height calc(100vh - 264px) !important
   .file-type-6
-    height calc(100vh - 130px) !important
+    height calc(100vh - 211px) !important
     >>> .el-table__body-wrapper
-      height calc(100vh - 182px) !important
+      height calc(100vh - 263px) !important
   .file-table
     width 100% !important
     height calc(100vh - 203px)

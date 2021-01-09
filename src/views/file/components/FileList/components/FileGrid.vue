@@ -7,13 +7,22 @@
         v-for="(item, index) in fileListSorted"
         :key="index"
         :title="item | fileNameComplete"
-        @click="clickFileName(item)"
+        @click="clickFileName(item, index, fileListSorted)"
         @contextmenu.prevent="rightClickFile(item, index, $event)"
       >
         <img class="file-img" :src="setFileImg(item)" />
         <div class="file-name">{{ item | fileNameComplete }}</div>
-        <div class="file-checked-wrapper" :class="{ checked: item.checked }" v-show="batchOperate" @click.stop.self="item.checked = !item.checked">
-          <el-checkbox class="file-checked" v-model="item.checked" @click.stop="item.checked = !item.checked"></el-checkbox>
+        <div
+          class="file-checked-wrapper"
+          :class="{ checked: item.checked }"
+          v-show="batchOperate"
+          @click.stop.self="item.checked = !item.checked"
+        >
+          <el-checkbox
+            class="file-checked"
+            v-model="item.checked"
+            @click.stop="item.checked = !item.checked"
+          ></el-checkbox>
         </div>
       </li>
     </ul>
@@ -26,7 +35,13 @@
         <el-button type="info" size="small" plain @click.native="renameFile(selectedFile)" v-if="fileType !== 6"
           >重命名</el-button
         >
-        <el-button type="info" size="small" plain v-if="selectedFile.isDir === 0 && fileType !== 6" @click.native="rightMenu.isShow = false">
+        <el-button
+          type="info"
+          size="small"
+          plain
+          v-if="selectedFile.isDir === 0 && fileType !== 6"
+          @click.native="rightMenu.isShow = false"
+        >
           <a
             target="_blank"
             style="display: block;color: inherit;"
@@ -51,7 +66,7 @@
 <script>
 import { unzipfile, deleteFile, renameFile, deleteRecoveryFile } from '@/request/file.js'
 import { mapGetters } from 'vuex'
-import 'element-ui/lib/theme-chalk/base.css';
+import 'element-ui/lib/theme-chalk/base.css'
 
 export default {
   name: 'FileGrid',
@@ -190,31 +205,33 @@ export default {
     },
     // 批量操作模式 - 被选中的文件
     selectedFileList() {
-      let res = this.fileListSorted.filter(item => item.checked)
+      let res = this.fileListSorted.filter((item) => item.checked)
       return res
     }
   },
   watch: {
     // 文件平铺模式 排序-文件夹在前
     fileList(newValue) {
-      this.fileListSorted = [ ...newValue ].sort((pre, next) => {
-        return next.isDir - pre.isDir
-      }).map(item => {
-        return {
-          ...item,
-          checked: false
-        }
-      })
+      this.fileListSorted = [...newValue]
+        .sort((pre, next) => {
+          return next.isDir - pre.isDir
+        })
+        .map((item) => {
+          return {
+            ...item,
+            checked: false
+          }
+        })
     },
     // 批量操作模式 - 被选中的文件
     selectedFileList(newValue) {
-      if(newValue.length) {
+      if (newValue.length) {
         this.selectAllFileRow(newValue)
       }
     },
     // 批量操作
     batchOperate(newValue) {
-      if(newValue) {
+      if (newValue) {
         this.rightMenu.isShow = false
       }
     }
@@ -225,9 +242,9 @@ export default {
      */
     // 文件右键事件
     rightClickFile(item, index, mouseEvent) {
-      if(!this.batchOperate) {
+      if (!this.batchOperate) {
         this.rightMenu.isShow = false
-        setTimeout(()=> {
+        setTimeout(() => {
           this.selectedFile = item
           this.rightMenu.top = mouseEvent.clientY - 64
           this.rightMenu.left = mouseEvent.clientX + 18
@@ -274,7 +291,7 @@ export default {
     },
 
     //  点击文件名
-    clickFileName(row) {
+    clickFileName(row, activeIndex, imgList) {
       this.rightMenu.isShow = false
       //  若是目录则进入目录
       if (row.isDir) {
@@ -284,23 +301,40 @@ export default {
             fileType: 0
           }
         })
-      } else {  //  若是文件，则进行相应的预览
+      } else {
+        //  若是文件，则进行相应的预览
         //  若当前点击项是图片
         const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
         if (PIC.includes(row.extendName)) {
-          let data = {
-            imgReviewVisible: true,
-            imgReviewList: [
-              {
-                fileUrl: this.getViewFilePath(row),
-                downloadLink: this.getDownloadFilePath(row),
-                fileName: row.fileName,
-                extendName: row.extendName
-              }
-            ],
-            activeIndex: 0
+          if (this.fileType === 1) {  //  图片分类下 - 大图查看
+            let data = {
+              imgReviewVisible: true,
+              imgReviewList: imgList.map((item) => {
+                return {
+                  fileUrl: this.getViewFilePath(item),
+                  downloadLink: this.getDownloadFilePath(item),
+                  fileName: item.fileName,
+                  extendName: item.extendName
+                }
+              }),
+              activeIndex: activeIndex
+            }
+            this.$store.commit('setImgReviewData', data)
+          } else {  //  非图片分类下 - 大图查看
+            let data = {
+              imgReviewVisible: true,
+              imgReviewList: [
+                {
+                  fileUrl: this.getViewFilePath(row),
+                  downloadLink: this.getDownloadFilePath(row),
+                  fileName: row.fileName,
+                  extendName: row.extendName
+                }
+              ],
+              activeIndex: 0
+            }
+            this.$store.commit('setImgReviewData', data)
           }
-          this.$store.commit('setImgReviewData', data)
         }
         //  若当前点击项是pdf
         if (row.extendName === 'pdf') {
