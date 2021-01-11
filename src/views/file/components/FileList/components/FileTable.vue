@@ -14,7 +14,7 @@
       @select-all="selectAllFileRow"
       @select="selectFileRow"
     >
-      <el-table-column type="selection" width="55" v-if="fileType !== 6"></el-table-column>
+      <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label prop="isDir" width="60" align="center">
         <template slot-scope="scope">
           <img :src="setFileImg(scope.row)" style="width: 30px;" />
