@@ -1,7 +1,7 @@
 <template>
   <!-- 文件平铺 -->
   <div class="file-grid-wrapper">
-    <ul class="file-list" @click.self="rightMenu.isShow = false" @scroll="rightMenu.isShow = false">
+    <ul class="file-list" v-loading="loading" element-loading-text="文件加载中……" @click.self="rightMenu.isShow = false" @scroll="rightMenu.isShow = false">
       <li
         class="file-item"
         v-for="(item, index) in fileListSorted"
@@ -226,13 +226,7 @@ export default {
     // 批量操作模式 - 被选中的文件
     selectedFileList(newValue) {
       if (newValue.length) {
-        this.selectAllFileRow(newValue)
-      }
-    },
-    // 批量操作
-    batchOperate(newValue) {
-      if (newValue) {
-        this.rightMenu.isShow = false
+        this.$emit('setSelectionFile', newValue)
       }
     }
   },
@@ -356,18 +350,6 @@ export default {
           window.open(this.getViewFilePath(row), '_blank')
         }
       }
-    },
-
-    /**
-     * 表格勾选框事件
-     */
-    //  表格-全选事件, selectoin 勾选的行数据
-    selectAllFileRow(selection) {
-      this.$emit('setSelectionFile', selection)
-    },
-    //  表格-选中一行事件, selectoin 勾选的行数据
-    selectFileRow(selection) {
-      this.$emit('setSelectionFile', selection)
     },
 
     /**
@@ -521,7 +503,7 @@ export default {
     align-content flex-start
     setScrollbar(10px)
     .file-item
-      margin-bottom 16px
+      margin 0 16px 16px 0
       position relative
       width 120px
       padding 8px
