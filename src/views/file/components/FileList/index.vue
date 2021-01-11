@@ -206,6 +206,10 @@ export default {
     }
   },
   watch: {
+    filePath() {
+      this.setPageCount()
+      this.getTableDataByType()
+    },
     fileType() {
       this.setPageCount()
       this.getTableDataByType()
