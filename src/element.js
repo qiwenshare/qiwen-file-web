@@ -48,7 +48,8 @@ import {
   Divider,
   Pagination,
   CheckboxGroup,
-  Checkbox
+  Checkbox,
+  Popover
 } from "element-ui";
 const element = {
   install: function (Vue) {
@@ -98,6 +99,7 @@ const element = {
     Vue.use(Pagination);
     Vue.use(CheckboxGroup);
     Vue.use(Checkbox);
+    Vue.use(Popover);
     Vue.prototype.$loading = Loading.service;
     Vue.prototype.$msgbox = MessageBox;
     Vue.prototype.$alert = MessageBox.alert;

@@ -1,6 +1,6 @@
 <template>
   <div class="select-column-wrapper">
-    <el-button type="info" size="small" plain icon="el-icon-s-operation" @click="selectColumnBtn">设置显示列</el-button>
+    <el-button type="info" size="mini" plain icon="el-icon-s-operation" @click="selectColumnBtn">设置显示列</el-button>
     <el-dialog
       title="筛选列"
       width="700px"

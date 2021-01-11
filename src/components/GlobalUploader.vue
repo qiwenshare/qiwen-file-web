@@ -112,7 +112,7 @@
                 
                 let result = JSON.parse(response)
                 if (result.success) {
-                    this.$message.success('上传成功')
+                    this.$message.success(`${file.name} - 上传完毕`)
                     
                     this.statusRemove(file.id);
                     this.$EventBus.$emit('refreshList', "")

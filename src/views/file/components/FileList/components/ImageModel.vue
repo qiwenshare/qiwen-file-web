@@ -1,19 +1,7 @@
 <template>
   <div class="image-model-wrapper">
-    <!-- 网格模式 -->
-    <ul class="image-model" v-show="imageModel === 1">
-      <li
-        class="image-item"
-        v-for="(item, index) in fileList"
-        :key="index"
-        @click="getImgReviewData(fileList, index)"
-      >
-        <img class="image" :src="downloadImgMin(item)" :alt="item.fileName + item.extendName" />
-        <div class="image-name">{{item.fileName + '.' + item.extendName}}</div>
-      </li>
-    </ul>
     <!-- 时间线模式 -->
-    <div v-show="imageModel === 2">
+    <div>
       <div class="radio">
         排序：
         <el-radio-group v-model="reverse">
@@ -55,9 +43,6 @@ export default {
     }
   },
   computed: {
-    imageModel() {
-      return this.$store.getters.imageModel
-    },
     //  按年-月-日分组排序
     imageTimelineData() {
       let res = []
@@ -103,7 +88,7 @@ export default {
 .image-model-wrapper
   margin-top 20px
   padding 0 20px
-  height calc(100vh - 200px)
+  height calc(100vh - 215px)
   overflow-y auto
   setScrollbar(10px)
   .image-model

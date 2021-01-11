@@ -85,7 +85,6 @@ export default {
         sessionStorage.removeItem('operaColumnExpand')
         sessionStorage.removeItem('isFolder')
         sessionStorage.removeItem('selectedColumnList')
-        sessionStorage.removeItem('imageModel')
         this.$router.push({ path: '/login' })
       })
       // logout().then(res => {
@@ -95,7 +94,6 @@ export default {
       //       sessionStorage.removeItem('operaColumnExpand')
       //       sessionStorage.removeItem('isFolder')
       //       sessionStorage.removeItem('selectedColumnList')
-      //       sessionStorage.removeItem('imageModel')
       //       this.$router.push({ path: '/login' })
       //     })
       //   } else {

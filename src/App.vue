@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <Header v-if="isHeaderShow" id="headWrapper"></Header>
-    <keep-alive exclude="File">
-      <router-view class="mainContent" :key="$route.fullPath"></router-view>
+    <keep-alive>
+      <router-view class="mainContent"></router-view>
     </keep-alive>
     <Footer v-if="isFooterShow"></Footer>
     <el-backtop class="backtop" target="#app" title="快点我，带你上天！"></el-backtop>

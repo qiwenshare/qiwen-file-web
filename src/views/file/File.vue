@@ -33,11 +33,9 @@ export default {
   width 100% !important
 .el-container
   .el-aside
-    border-right solid 1px $BorderLight
-    background  $Info
-    height calc(100vh - 70px)
-    setScrollbar(4px)
+    height calc(100vh - 61px)
+    overflow hidden
 .el-main
-  padding-top 0px !important
+  padding 0px 16px !important
   overflow hidden
 </style>

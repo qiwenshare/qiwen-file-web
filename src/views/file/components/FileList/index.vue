@@ -1,62 +1,55 @@
 <template>
   <div class="file-list-wrapper">
     <!-- 操作按钮 -->
-    <el-header class="file-list-header" v-if="fileType !== 6">
+    <el-header>
       <OperationMenu
         :operationFile="operationFile"
         :selectionFile="selectionFile"
         :filePath="filePath"
+        :batchOperate.sync="batchOperate"
         @getTableDataByType="getTableDataByType"
         @setMoveFileDialogData="setMoveFileDialogData"
       ></OperationMenu>
     </el-header>
-    <div class="middle-wrapper" :class="'file-type-' + fileType">
+    <div class="middle-wrapper">
       <!-- 面包屑导航栏 -->
       <BreadCrumb class="breadcrumb"></BreadCrumb>
-      <!-- 图片展示模式 -->
-      <div class="change-image-model" v-show="fileType === 1">
-        <el-radio-group v-model="imageGroupLable" size="mini" @change="changeImageDisplayModel">
-          <el-radio-button :label="0">
-            <i class="el-icon-tickets"></i> 列表
-          </el-radio-button>
-          <el-radio-button :label="1">
-            <i class="el-icon-s-grid"></i> 网格
-          </el-radio-button>
-          <el-radio-button :label="2">
-            <i class="el-icon-date"></i> 时间线
-          </el-radio-button>
-        </el-radio-group>
-      </div>
-      <!-- 选择表格列 -->
-      <SelectColumn class="select-column"></SelectColumn>
     </div>
-    <!-- 文件列表表格 -->
+    <!-- 文件列表-表格模式 -->
     <FileTable
       :fileList="fileList"
       :loading="loading"
-      v-show="!imageModel || fileType !== 1"
+      v-if="fileModel === 0"
       @setMoveFileDialogData="setMoveFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
       @getTableDataByType="getTableDataByType"
     ></FileTable>
-    <el-pagination
-      v-if="fileType === 0"
-      :current-page="pageData.currentPage"
-      :page-sizes="[5, 10, 15, 20]"
-      :page-size="pageData.pageCount"
-      :total="pageData.total"
-      layout="total, sizes, prev, pager, next, jumper"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    >
-    </el-pagination>
-    <!-- 图片网格模式 -->
-    <ImageModel
-      class="image-model"
-      v-if="imageModel && fileType === 1"
+    <!-- 文件列表-网格模式 -->
+    <FileGrid
       :fileList="fileList"
-    ></ImageModel>
+      :loading="loading"
+      :batchOperate="batchOperate"
+      v-if="fileModel === 1"
+      @setMoveFileDialogData="setMoveFileDialogData"
+      @setOperationFile="setOperationFile"
+      @setSelectionFile="setSelectionFile"
+      @getTableDataByType="getTableDataByType"
+    ></FileGrid>
+    <!-- 图片-时间线模式 -->
+    <ImageModel class="image-model" v-if="fileModel === 2" :fileList="fileList"></ImageModel>
+    <div class="pagination-wrapper">
+      <div class="current-page-count">当前页{{ fileList.length }}条</div>
+      <el-pagination
+        v-if="fileType === 0"
+        :current-page="pageData.currentPage"
+        :page-size="pageData.pageCount"
+        :total="pageData.total"
+        layout="total, prev, pager, next"
+        @current-change="handleCurrentChange"
+      >
+      </el-pagination>
+    </div>
     <!-- 移动文件模态框 -->
     <MoveFileDialog
       :dialogMoveFile="dialogMoveFile"
@@ -70,8 +63,8 @@
 <script>
 import OperationMenu from './components/OperationMenu'
 import BreadCrumb from './components/BreadCrumb'
-import SelectColumn from './components/SelectColumn'
 import FileTable from './components/FileTable'
+import FileGrid from './components/FileGrid'
 import ImageModel from './components/ImageModel'
 import MoveFileDialog from './components/MoveFileDialog'
 
@@ -89,8 +82,8 @@ export default {
   components: {
     OperationMenu,
     BreadCrumb,
-    SelectColumn,
     FileTable,
+    FileGrid,
     ImageModel,
     MoveFileDialog
   },
@@ -113,7 +106,6 @@ export default {
       selectFilePath: '', //  移动文件路径
       operationFile: {}, // 当前操作行
       selectionFile: [], // 勾选的文件
-      // fileType: '', //  文件类型
       //  可以识别的文件类型
       fileImgTypeList: [
         'png',
@@ -186,7 +178,7 @@ export default {
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
       },
-      imageGroupLable: 0
+      batchOperate: false //  批量操作模式
     }
   },
   computed: {
@@ -199,6 +191,7 @@ export default {
         return ''
       }
     },
+    // 文件类型
     fileType: {
       get() {
         return Number(this.$route.query.fileType)
@@ -207,24 +200,46 @@ export default {
         return 0
       }
     },
-    imageModel() {
-      return this.$store.getters.imageModel
+    // 文件查看模式 0列表模式 1网格模式 2 时间线模式
+    fileModel() {
+      return this.$store.getters.fileModel
+    }
+  },
+  watch: {
+    fileType() {
+      this.setPageCount()
+      this.getTableDataByType()
+    },
+    // 监听文件查看模式
+    fileModel() {
+      this.setPageCount()
+      this.getTableDataByType()
     }
   },
   created() {
+    this.setPageCount()
     this.getTableDataByType()
-  },
-  mounted() {
-    this.imageGroupLable = this.imageModel
   },
   methods: {
     /**
      * 表格数据获取相关事件
      */
+    // 调整分页大小
+    setPageCount() {
+      this.pageData.currentPage = 1
+      if (this.fileModel === 0) {
+        this.pageData.pageCount = 10
+      }
+      if (this.fileModel === 1) {
+        this.pageData.pageCount = 40
+      }
+    },
+    // 获取文件列表数据
     getTableDataByType() {
+      this.batchOperate = false
       // 分类型
       if (Number(this.fileType)) {
-        if(Number(this.fileType) === 6) {
+        if (Number(this.fileType) === 6) {
           this.shwoFileRecovery() //  回收站
         } else {
           this.showFileListByType()
@@ -239,9 +254,9 @@ export default {
       let data = {
         filePath: this.filePath,
         currentPage: this.pageData.currentPage,
-        pageCount: this.pageData.pageCount,
+        pageCount: this.pageData.pageCount
       }
-      getfilelist(data).then(res => {
+      getfilelist(data).then((res) => {
         if (res.success) {
           this.fileList = res.data
           this.pageData.total = res.total
@@ -251,11 +266,10 @@ export default {
         }
       })
     },
-    // 分页组件 当前页展示文件数改变
-    handleSizeChange(pageCount) {
-      this.pageData.currentPage = 1
-      this.pageData.pageCount = pageCount
-      this.showFileList()
+    // 获取文件平铺数据
+    getFileList() {
+      this.pageData.currentPage++
+      this.getTableDataByType()
     },
     // 分页组件 当前页码改变
     handleCurrentChange(currentPage) {
@@ -264,8 +278,8 @@ export default {
     },
     // 获取回收站文件列表
     shwoFileRecovery() {
-      getRecoveryFile().then(res => {
-        if(res.success) {
+      getRecoveryFile().then((res) => {
+        if (res.success) {
           this.fileList = res.data
           this.loading = false
         } else {
@@ -279,7 +293,7 @@ export default {
       let data = {
         fileType: this.fileType
       }
-      selectFileByFileType(data).then(res => {
+      selectFileByFileType(data).then((res) => {
         if (res.success) {
           this.fileList = res.data
           this.loading = false
@@ -338,14 +352,12 @@ export default {
     //  设置移动文件模态框相关数据，isBatchMove为null时是确认移动，值由之前的值而定
     setMoveFileDialogData(isBatchMove, visible) {
       this.initFileTree()
-      this.dialogMoveFile.isBatchMove = isBatchMove
-        ? isBatchMove
-        : this.dialogMoveFile.isBatchMove
+      this.dialogMoveFile.isBatchMove = isBatchMove ? isBatchMove : this.dialogMoveFile.isBatchMove
       this.dialogMoveFile.visible = visible
     },
     //  移动文件模态框：初始化文件目录树
     initFileTree() {
-      getFileTree().then(res => {
+      getFileTree().then((res) => {
         if (res.success) {
           this.dialogMoveFile.fileTree = [res.data]
         } else {
@@ -365,7 +377,7 @@ export default {
           filePath: this.selectFilePath,
           files: JSON.stringify(this.selectionFile)
         }
-        batchMoveFile(data).then(res => {
+        batchMoveFile(data).then((res) => {
           if (res.success) {
             this.$message.success(res.data)
             this.getTableDataByType()
@@ -383,7 +395,7 @@ export default {
           fileName: this.operationFile.fileName,
           extendName: this.operationFile.extendName
         }
-        moveFile(data).then(res => {
+        moveFile(data).then((res) => {
           if (res.success) {
             this.$message.success('移动文件成功')
             this.getTableDataByType()
@@ -394,10 +406,7 @@ export default {
         })
       }
     },
-    //  切换图片查看模式
-    changeImageDisplayModel(label) {
-      this.$store.commit('changeImageModel', label)
-    }
+    
   }
 }
 </script>
@@ -405,25 +414,21 @@ export default {
 <style lang="stylus" scoped>
 @import '~@/assets/styles/varibles.styl'
 .file-list-wrapper
-  .file-list-header
+  >>> .el-header
     padding 0
-    .el-dialog-div
-      height 200px
-      overflow auto
-  .middle-wrapper.file-type-6
-    margin 8px 0
-    justify-content flex-end
   .middle-wrapper
     margin-bottom 8px
-    display flex
-    justify-content space-between
-    .breadcrumb
-      flex 1
-    .change-image-model
-      margin-right 20px
-      height 30px
-      line-height 30px
-  .el-pagination
-    padding 16px 8px 0 8px
-    text-align right
+  .pagination-wrapper
+    position relative
+    border-top 1px solid $BorderBase
+    height 44px
+    line-height 44px
+    text-align center
+    .current-page-count
+      position absolute
+      left 16px
+      height 32px
+      line-height 32px
+      font-size 13px
+      color $RegularText
 </style>
