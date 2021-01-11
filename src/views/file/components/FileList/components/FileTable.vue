@@ -7,7 +7,7 @@
       ref="multipleTable"
       fit
       v-loading="loading"
-      element-loading-text="数据加载中"
+      element-loading-text="文件加载中……"
       tooltip-effect="dark"
       :data="fileList"
       :default-sort="{ prop: 'isDir', order: 'descending' }"

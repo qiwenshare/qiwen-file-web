@@ -37,7 +37,7 @@
       @getTableDataByType="getTableDataByType"
     ></FileGrid>
     <!-- 图片-时间线模式 -->
-    <ImageModel class="image-model" v-if="fileModel === 2" :fileList="fileList"></ImageModel>
+    <FileTimeLine class="image-model" v-if="fileModel === 2" :fileList="fileList"></FileTimeLine>
     <div class="pagination-wrapper">
       <div class="current-page-count">当前页{{ fileList.length }}条</div>
       <el-pagination
@@ -65,7 +65,7 @@ import OperationMenu from './components/OperationMenu'
 import BreadCrumb from './components/BreadCrumb'
 import FileTable from './components/FileTable'
 import FileGrid from './components/FileGrid'
-import ImageModel from './components/ImageModel'
+import FileTimeLine from './components/FileTimeLine'
 import MoveFileDialog from './components/MoveFileDialog'
 
 import {
@@ -84,7 +84,7 @@ export default {
     BreadCrumb,
     FileTable,
     FileGrid,
-    ImageModel,
+    FileTimeLine,
     MoveFileDialog
   },
   data() {
@@ -241,6 +241,7 @@ export default {
     // 获取文件列表数据
     getTableDataByType() {
       this.batchOperate = false
+      this.loading = true
       // 分类型
       if (Number(this.fileType)) {
         if (Number(this.fileType) === 6) {
