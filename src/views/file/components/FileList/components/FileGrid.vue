@@ -129,6 +129,9 @@ export default {
         chm: require('@/assets/images/file/file_chm.png'),
         css: require('@/assets/images/file/file_css.png'),
         csv: require('@/assets/images/file/file_csv.png'),
+        png: require('@/assets/images/file/file_pic.png'),
+        jpg: require('@/assets/images/file/file_pic.png'),
+        jpeg: require('@/assets/images/file/file_pic.png'),
         docx: require('@/assets/images/file/file_word.png'),
         doc: require('@/assets/images/file/file_word.png'),
         ppt: require('@/assets/images/file/file_ppt.png'),
@@ -257,7 +260,7 @@ export default {
       } else if (!this.fileImgTypeList.includes(row.extendName)) {
         //  无法识别文件类型的文件
         return this.fileImgMap.unknown
-      } else if (['jpg', 'png', 'jpeg', 'gif'].includes(row.extendName)) {
+      } else if (this.fileType !== 6 && ['jpg', 'png', 'jpeg', 'gif'].includes(row.extendName)) {
         // 图片类型，直接显示缩略图
         return this.downloadImgMin(row)
       } else {

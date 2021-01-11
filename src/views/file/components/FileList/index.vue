@@ -307,37 +307,6 @@ export default {
         }
       })
     },
-    //  根据文件扩展名设置文件图片
-    setFileImg(extendName) {
-      if (extendName === null) {
-        //  文件夹
-        return this.fileImgMap.dir
-      } else if (!this.fileImgTypeList.includes(extendName)) {
-        //  无法识别文件类型的文件
-        return this.fileImgMap.unknown
-      } else {
-        //  可以识别文件类型的文件
-        return this.fileImgMap[extendName]
-      }
-    },
-    //  计算文件大小
-    calculateFileSize(size) {
-      const B = 1024
-      const KB = Math.pow(1024, 2)
-      const MB = Math.pow(1024, 3)
-      const GB = Math.pow(1024, 4)
-      if (!size) {
-        return '_'
-      } else if (size < KB) {
-        return (size / B).toFixed(0) + 'KB'
-      } else if (size < MB) {
-        return (size / KB).toFixed(1) + 'MB'
-      } else if (size < GB) {
-        return (size / MB).toFixed(2) + 'GB'
-      } else {
-        return (size / GB).toFixed(3) + 'TB'
-      }
-    },
 
     /**
      * 表格勾选框事件
