@@ -159,7 +159,7 @@ export default {
           this.$message.success('添加成功')
           this.$emit('getTableDataByType')
         } else {
-          this.$message.warning(res.errorMessage)
+          this.$message.warning(res.message)
         }
       })
     },
@@ -179,7 +179,7 @@ export default {
           this.$emit('getTableDataByType')
           this.$store.dispatch('showStorage')
         } else {
-          this.$message.error('失败' + res.errorMessage)
+          this.$message.error('失败' + res.message)
         }
       })
     },

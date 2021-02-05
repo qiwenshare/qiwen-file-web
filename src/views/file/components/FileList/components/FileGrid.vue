@@ -381,7 +381,7 @@ export default {
           this.$message.success('解压成功')
           loading.close()
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -438,7 +438,7 @@ export default {
             this.$store.dispatch('showStorage')
             this.$message.success('删除成功')
           } else {
-            this.$message.error(res.errorMessage)
+            this.$message.error(res.message)
           }
         })
       } else {
@@ -449,7 +449,7 @@ export default {
             this.$store.dispatch('showStorage')
             this.$message.success('删除成功')
           } else {
-            this.$message.error(res.errorMessage)
+            this.$message.error(res.message)
           }
         })
       }
@@ -484,7 +484,7 @@ export default {
           this.$message.success('重命名成功')
         } else {
           fileInfo.fileName = fileInfo.oldFileName
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     }

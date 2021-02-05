@@ -97,7 +97,7 @@ export default {
       //       this.$router.push({ path: '/login' })
       //     })
       //   } else {
-      //     this.$message.error(res.errorMessage)
+      //     this.$message.error(res.message)
       //   }
       // })
     }

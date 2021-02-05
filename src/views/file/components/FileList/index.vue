@@ -263,11 +263,11 @@ export default {
       }
       getfilelist(data).then((res) => {
         if (res.success) {
-          this.fileList = res.data
-          this.pageData.total = res.total
+          this.fileList = res.data.list
+          this.pageData.total = res.data.total
           this.loading = false
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -288,7 +288,7 @@ export default {
           this.fileList = res.data
           this.loading = false
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -300,10 +300,10 @@ export default {
       }
       selectFileByFileType(data).then((res) => {
         if (res.success) {
-          this.fileList = res.data
+          this.fileList = res.data.list
           this.loading = false
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -335,7 +335,7 @@ export default {
         if (res.success) {
           this.dialogMoveFile.fileTree = [res.data]
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -358,7 +358,7 @@ export default {
             this.dialogMoveFile.visible = false
             this.selectionFile = []
           } else {
-            this.$message.error(res.errorMessage)
+            this.$message.error(res.message)
           }
         })
       } else {
@@ -375,7 +375,7 @@ export default {
             this.getTableDataByType()
             this.dialogMoveFile.visible = false
           } else {
-            this.$message.error(res.errorMessage)
+            this.$message.error(res.message)
           }
         })
       }
