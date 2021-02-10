@@ -1,6 +1,6 @@
 <template>
   <div class="function-wrapper">
-    <div class="function-title">特色功能</div>
+    <div class="function-title">功能介绍</div>
     <ul class="function-list">
       <li class="function-item" v-for="(item, index) in functionList" :key="index">
         <div class="img-wrapper">
