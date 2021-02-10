@@ -1,12 +1,45 @@
 <template>
   <div class="operation-menu-wrapper" :class="'file-type-' + fileType">
-    <el-button-group class="operate-group" v-if="fileType !== 6">
-      <el-button size="mini" type="primary" icon="el-icon-upload2" id="uploadFileId" @click="upload()">上传</el-button>
-      <el-button size="mini" type="primary" icon="el-icon-plus" @click="addFolder()" v-if="!fileType">新建文件夹</el-button>
-      <el-button size="mini" type="primary" :disabled="!selectionFile.length" icon="el-icon-delete" @click="deleteSelectedFile()">删除</el-button>
-      <el-button size="mini" type="primary" :disabled="!selectionFile.length" icon="el-icon-rank" @click="moveSelectedFile()" v-if="!fileType">移动</el-button>
+    <el-button-group class="operate-group">
+      <el-button
+        size="mini"
+        type="primary"
+        icon="el-icon-upload2"
+        id="uploadFileId"
+        @click="upload()"
+        v-if="fileType !== 6"
+        >上传</el-button
+      >
+      <el-button size="mini" type="primary" icon="el-icon-plus" @click="addFolder()" v-if="!fileType && fileType !== 6"
+        >新建文件夹</el-button
+      >
+      <el-button
+        size="mini"
+        type="primary"
+        :disabled="!selectionFile.length"
+        icon="el-icon-delete"
+        @click="deleteSelectedFile()"
+        >删除</el-button
+      >
+      <el-button
+        size="mini"
+        type="primary"
+        :disabled="!selectionFile.length"
+        icon="el-icon-rank"
+        @click="moveSelectedFile()"
+        v-if="!fileType && fileType !== 6"
+        >移动</el-button
+      >
       <!-- <el-button size="mini" icon="el-icon-document-copy">拷贝</el-button> -->
-      <el-button size="mini" type="primary" :disabled="!selectionFile.length" icon="el-icon-download" @click="downloadSelectedFile()">下载</el-button>
+      <el-button
+        size="mini"
+        type="primary"
+        :disabled="!selectionFile.length"
+        icon="el-icon-download"
+        @click="downloadSelectedFile()"
+        v-if="fileType !== 6"
+        >下载</el-button
+      >
     </el-button-group>
 
     <!-- 批量操作 -->
@@ -46,10 +79,7 @@
 </template>
 
 <script>
-import {
-  batchDeleteFile,
-  createFile
-} from '@/request/file.js'
+import { batchDeleteFile, createFile, batchDeleteRecoveryFile } from '@/request/file.js'
 import SelectColumn from './SelectColumn'
 
 export default {
@@ -66,7 +96,7 @@ export default {
     return {
       fileTree: [],
       batchDeleteFileDialog: false,
-      fileGroupLable: 0, //  文件展示模式
+      fileGroupLable: 0 //  文件展示模式
     }
   },
   computed: {
@@ -111,7 +141,7 @@ export default {
   },
   watch: {
     fileType(newValue, oldValue) {
-      if(oldValue === 1 && this.fileModel === 2) {
+      if (oldValue === 1 && this.fileModel === 2) {
         this.$store.commit('changeFileModel', 0)
         this.fileGroupLable = 0
       }
@@ -159,29 +189,74 @@ export default {
           this.$message.success('添加成功')
           this.$emit('getTableDataByType')
         } else {
-          this.$message.warning(res.errorMessage)
+          this.$message.warning(res.message)
         }
       })
     },
 
     //  批量操作-删除按钮
     deleteSelectedFile() {
-      let data = {
-        files: JSON.stringify(this.selectionFile)
-      }
-      //  批量删除接口
-      batchDeleteFile(data).then((res) => {
-        if (res.success) {
+      if(this.fileType === 6) { //  回收站里 - 彻底删除
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.confirmDeleteFile(true)
+        }).catch(() => {
           this.$message({
-            message: res.data,
-            type: 'success'
+            type: 'info',
+            message: '已取消删除'
           })
-          this.$emit('getTableDataByType')
-          this.$store.dispatch('showStorage')
-        } else {
-          this.$message.error('失败' + res.errorMessage)
-        }
-      })
+        })
+      } else {  //  非回收站
+        this.$confirm('删除后可在回收站查看, 是否继续删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.confirmDeleteFile(false)
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      }
+    },
+    //  删除文件模态框-确定按钮
+    confirmDeleteFile(type) {
+      if(type) {  //  回收站中删除
+        batchDeleteRecoveryFile({
+          recoveryFileIds: JSON.stringify(this.selectionFile)
+        }).then((res) => {
+          if (res.success) {
+            this.$message({
+              message: res.data,
+              type: 'success'
+            })
+            this.$emit('getTableDataByType')
+            this.$store.dispatch('showStorage')
+          } else {
+            this.$message.error('失败' + res.message)
+          }
+        })
+      } else {  //  非回收站删除
+        batchDeleteFile({
+          files: JSON.stringify(this.selectionFile)
+        }).then((res) => {
+          if (res.success) {
+            this.$message({
+              message: res.data,
+              type: 'success'
+            })
+            this.$emit('getTableDataByType')
+            this.$store.dispatch('showStorage')
+          } else {
+            this.$message.error('失败' + res.message)
+          }
+        })
+      }
     },
     //  批量操作-移动按钮
     moveSelectedFile() {

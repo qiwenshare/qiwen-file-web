@@ -118,7 +118,7 @@
                     this.$EventBus.$emit('refreshList', "")
                     this.$EventBus.$emit('refreshStorage', "")
                 } else {
-                    this.$message.error(result.errorMessage)
+                    this.$message.error(result.message)
                     this.statusSet(file.id, 'failed');
                 }
                 console.log(chunk)

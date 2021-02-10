@@ -1,5 +1,5 @@
 //  文件模块接口
-import { get,post } from './http'
+import { get, post } from './http'
 
 export const getfilelist = p => get('/file/getfilelist', p); //获取文件列表
 export const getstorage = p => get('/filetransfer/getstorage', p); //获取存储占用
@@ -15,3 +15,5 @@ export const batchMoveFile = p => post('/file/batchmovefile', p); //批量移动
 export const renameFile = p => post('/file/renamefile', p); //重命名文件
 export const getRecoveryFile = p => post('/recoveryfile/list', p); // 获取回收站文件列表
 export const deleteRecoveryFile = p => post('/recoveryfile/deleterecoveryfile', p); // 回收站文件删除
+export const restoreRecoveryFile = p => post('/recoveryfile/restorefile', p); // 回收站文件还原
+export const batchDeleteRecoveryFile = p => post('/recoveryfile/batchdelete', p); // 回收站文件批量删除

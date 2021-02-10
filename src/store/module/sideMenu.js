@@ -21,7 +21,7 @@ export default {
         if (res.success) {
           context.commit('setStorageValue', res.data ? Number(res.data.storageSize) : 0)
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       });
     }

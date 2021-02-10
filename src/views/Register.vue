@@ -169,7 +169,7 @@ export default {
           }
           addUser(info).then(res => {
             if (res.success == false) {
-              this.$message.error(res.errorMessage)
+              this.$message.error(res.message)
             } else {
               //	这里的返回字段需要和后台重新商议
               this.$notify({

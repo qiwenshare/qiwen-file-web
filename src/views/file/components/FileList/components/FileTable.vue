@@ -99,6 +99,7 @@
         <template slot-scope="scope">
           <div v-if="operaColumnExpand">
             <el-button type="danger" size="mini" @click.native="deleteFileBtn(scope.row)">删除</el-button>
+            <el-button type="warning" size="mini" @click.native="restoreFileBtn(scope.row)" v-if="fileType === 6">还原</el-button>
             <el-button type="primary" size="mini" @click.native="showMoveFileDialog(scope.row)" v-if="fileType !== 6"
               >移动</el-button
             >
@@ -129,6 +130,7 @@
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="deleteFileBtn(scope.row)">删除</el-dropdown-item>
+              <el-dropdown-item @click.native="restoreFileBtn(scope.row)" v-if="fileType === 6">还原</el-dropdown-item>
               <el-dropdown-item @click.native="showMoveFileDialog(scope.row)" v-if="fileType !== 6"
                 >移动</el-dropdown-item
               >
@@ -156,7 +158,7 @@
 </template>
 
 <script>
-import { unzipfile, deleteFile, renameFile, deleteRecoveryFile } from '@/request/file.js'
+import { unzipfile, deleteFile, renameFile, deleteRecoveryFile, restoreRecoveryFile } from '@/request/file.js'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -287,7 +289,7 @@ export default {
     },
     operaColumnWidth() {
       return this.fileType === 6
-        ? 100
+        ? 150
         : this.operaColumnExpand
         ? this.isIncludeNormalFile
           ? this.isIncludeZipRarFile
@@ -295,6 +297,23 @@ export default {
             : 300
           : 230
         : 150
+    }
+  },
+  watch: {
+    /**
+     * 监听文件路径、文件类型、文件列表变化，变化时清空表格已选行
+     */
+    filePath() {
+      this.$refs.multipleTable.clearSelection();
+      this.$emit('setSelectionFile', [])
+    },
+    fileType(){
+      this.$refs.multipleTable.clearSelection();
+      this.$emit('setSelectionFile', [])
+    },
+    fileList() {
+      this.$refs.multipleTable.clearSelection();
+      this.$emit('setSelectionFile', [])
     }
   },
   methods: {
@@ -425,7 +444,7 @@ export default {
           this.$message.success('解压成功')
           loading.close()
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -474,7 +493,7 @@ export default {
             this.$store.dispatch('showStorage')
             this.$message.success('删除成功')
           } else {
-            this.$message.error(res.errorMessage)
+            this.$message.error(res.message)
           }
         })
       } else {  //  非回收站删除
@@ -484,11 +503,31 @@ export default {
             this.$store.dispatch('showStorage')
             this.$message.success('删除成功')
           } else {
-            this.$message.error(res.errorMessage)
+            this.$message.error(res.message)
           }
         })
       }
     },
+    /**
+     * 回收站文件还原相关事件
+     */
+    restoreFileBtn(fileInfo) {
+      restoreRecoveryFile({
+        deleteBatchNum: fileInfo.deleteBatchNum,
+        filePath: fileInfo.filePath
+      }).then(res => {
+        if (res.success) {
+          this.$emit('getTableDataByType')
+          this.$store.dispatch('showStorage')
+          this.$message.success('已还原')
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    /**
+     * 文件重命名相关事件
+     */
     // 文件重命名
     renameFile(fileInfo) {
       var fileName = fileInfo.fileName
@@ -518,7 +557,7 @@ export default {
           this.$message.success('重命名成功')
         } else {
           fileInfo.fileName = fileInfo.oldFileName
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     }

@@ -1,5 +1,5 @@
 //全局函数 ，挂载到Vue实例上
-export default function install (Vue) {
+export default function install(Vue) {
   /**
    * checkIsLogin(params) 页面内某些功能需要用户登录时调用,调用示例如下
    * let res = this.checkIsLogin(this.$route.fullPath);
@@ -20,13 +20,15 @@ export default function install (Vue) {
   Vue.prototype.downloadImgMin = function (row) {
     let fileUrl = row.fileUrl
     let isOSS = row.isOSS
-    if (isOSS == 1) { //阿里云OSS对象存储
-      fileUrl = "https://" + sessionStorage.getItem("viewDomain") + fileUrl + "?x-oss-process=image/resize,m_fill,h_150,w_150/rotate,0";
-    } else { //本地磁盘存储
-      let index = fileUrl.lastIndexOf(".");
-      fileUrl = "api" + fileUrl.substr(0, index) + "_min" + fileUrl.substr(index);
-    }    
-     return fileUrl
+    if (fileUrl) {
+      if (isOSS == 1) { //阿里云OSS对象存储
+        fileUrl = "https://" + sessionStorage.getItem("viewDomain") + fileUrl + "?x-oss-process=image/resize,m_fill,h_150,w_150/rotate,0";
+      } else { //本地磁盘存储
+        let index = fileUrl.lastIndexOf(".");
+        fileUrl = "api" + fileUrl.substr(0, index) + "_min" + fileUrl.substr(index);
+      }
+    }
+    return fileUrl
 
   };
   /**
