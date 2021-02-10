@@ -10,7 +10,7 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: () => import(/* webpackChunkName: "login" */ '@/views/Home.vue'),
+      component: () => import(/* webpackChunkName: "home" */ '@/views/Home'),
       meta: { title: '首页 - 奇文网盘' },
     }, {
       path: '/login',

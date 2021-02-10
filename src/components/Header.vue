@@ -1,32 +1,33 @@
 <template>
   <div class="headerWrapper">
+    <img class="logo" :src="logoUrl" @click="$router.push({ name: 'Home' })" />
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router>
-      <el-menu-item class="headerLogo" index="0" disabled>
-        <a href="https://www.qiwenshare.com/" target="_blank">
-          <img class="logo" :src="logoUrl" />
-        </a>
-      </el-menu-item>
-      <el-menu-item class="headerItem" index="1" :route="{ name: 'Home' }"
-        >首页</el-menu-item
-      >
+      <el-menu-item class="headerItem" index="1" :route="{ name: 'Home' }">首页</el-menu-item>
       <el-menu-item class="headerItem" index="2" :route="{ name: 'File', query: { filePath: '/', fileType: 0 } }"
         >网盘</el-menu-item
       >
-      <el-menu-item class="headerItem" index="3" :route="{ name: 'File', query: { filePath: '/', fileType: 0 } }"
-        >社区</el-menu-item
-      >
-      <el-menu-item class="headerItem userDisplay right-menu-item" index="2" v-show="isLogin">
+      <el-menu-item class="headerItem" @click="goQiwenshareHome">
+        社区
+      </el-menu-item>
+      <el-menu-item class="headerItem userDisplay right-menu-item" index="4" v-show="isLogin">
         <el-avatar :size="34" :src="userImgUrl" fit="cover">
           <img :src="userImgDefault" />
         </el-avatar>
         <span class="username-header">{{ username }}</span>
       </el-menu-item>
-      <el-menu-item class="headerItem exit right-menu-item" v-show="isLogin" index="3" @click="exitButton()">退出</el-menu-item>
-      <el-menu-item class="headerItem login right-menu-item" v-show="!isLogin" index="4" :route="{ name: 'Login' }"
+      <el-menu-item class="headerItem exit right-menu-item" v-show="isLogin" index="5" @click="exitButton()"
+        >退出</el-menu-item
+      >
+      <el-menu-item class="headerItem login right-menu-item" v-show="!isLogin" index="6" :route="{ name: 'Login' }"
         >登录</el-menu-item
       >
       <!-- 生产环境 -->
-      <el-menu-item v-if="isProductEnv" class="headerItem register right-menu-item" v-show="!isLogin" @click.native="goQiwenshare()">
+      <el-menu-item
+        v-if="isProductEnv"
+        class="headerItem register right-menu-item"
+        v-show="!isLogin"
+        @click.native="goQiwenshare()"
+      >
         注册
       </el-menu-item>
       <!-- 开发环境 -->
@@ -34,9 +35,10 @@
         v-else
         class="headerItem register right-menu-item"
         v-show="!isLogin"
-        index="5"
+        index="7"
         :route="{ name: 'Register' }"
-      >注册</el-menu-item>
+        >注册</el-menu-item
+      >
     </el-menu>
   </div>
 </template>
@@ -60,9 +62,10 @@ export default {
       get() {
         let routerName = this.$route.name
         const ROUTERMAP = {
-          File: '1',
-          Login: '4',
-          Register: '5'
+          Home: '1',
+          File: '2',
+          Login: '6',
+          Register: '7'
         }
         return ROUTERMAP[routerName]
       },
@@ -78,6 +81,10 @@ export default {
     // 跳转到奇文社区注册页面
     goQiwenshare() {
       window.open('https://www.qiwenshare.com/register')
+    },
+    // 跳转到奇文社区首页
+    goQiwenshareHome() {
+      window.open('https://www.qiwenshare.com/')
     },
     //  退出登录
     exitButton() {
@@ -117,11 +124,18 @@ export default {
   width 100%
   padding 0 20px
   box-shadow $tabBoxShadow
+  display flex
   >>> .el-menu--horizontal
     .el-menu-item:not(.is-disabled):hover
       border-bottom-color $Primary !important
       background $tabBackColor
+  .logo
+    margin 14px 24px 0 24px
+    display inline-block
+    height 40px
+    cursor: pointer;
   .el-menu-demo
+    flex: 1;
     display flex
     position relative
     .headerLogo

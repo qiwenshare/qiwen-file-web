@@ -208,12 +208,16 @@ export default {
   },
   watch: {
     filePath() {
-      this.setPageCount()
-      this.getTableDataByType()
+      if(this.$route.name === 'File') {
+        this.setPageCount()
+        this.getTableDataByType()
+      }
     },
     fileType() {
-      this.setPageCount()
-      this.getTableDataByType()
+      if(this.$route.name === 'File') {
+        this.setPageCount()
+        this.getTableDataByType()
+      }
     },
     // 监听文件查看模式
     fileModel() {
