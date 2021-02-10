@@ -1,7 +1,13 @@
 <template>
   <!-- 文件平铺 -->
   <div class="file-grid-wrapper">
-    <ul class="file-list" v-loading="loading" element-loading-text="文件加载中……" @click.self="rightMenu.isShow = false" @scroll="rightMenu.isShow = false">
+    <ul
+      class="file-list"
+      v-loading="loading"
+      element-loading-text="文件加载中……"
+      @click.self="rightMenu.isShow = false"
+      @scroll="rightMenu.isShow = false"
+    >
       <li
         class="file-item"
         v-for="(item, index) in fileListSorted"
@@ -228,9 +234,7 @@ export default {
     },
     // 批量操作模式 - 被选中的文件
     selectedFileList(newValue) {
-      if (newValue.length) {
-        this.$emit('setSelectionFile', newValue)
-      }
+      this.$emit('setSelectionFile', newValue)
     }
   },
   methods: {
@@ -303,7 +307,8 @@ export default {
         //  若当前点击项是图片
         const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
         if (PIC.includes(row.extendName)) {
-          if (this.fileType === 1) {  //  图片分类下 - 大图查看
+          if (this.fileType === 1) {
+            //  图片分类下 - 大图查看
             let data = {
               imgReviewVisible: true,
               imgReviewList: imgList.map((item) => {
@@ -317,7 +322,8 @@ export default {
               activeIndex: activeIndex
             }
             this.$store.commit('setImgReviewData', data)
-          } else {  //  非图片分类下 - 大图查看
+          } else {
+            //  非图片分类下 - 大图查看
             let data = {
               imgReviewVisible: true,
               imgReviewList: [

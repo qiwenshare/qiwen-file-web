@@ -41,12 +41,13 @@
     <div class="pagination-wrapper">
       <div class="current-page-count">当前页{{ fileList.length }}条</div>
       <el-pagination
-        v-if="fileType === 0"
         :current-page="pageData.currentPage"
         :page-size="pageData.pageCount"
         :total="pageData.total"
-        layout="total, prev, pager, next"
+        :page-sizes="[10, 50, 100, 200]"
+        layout="sizes, total, prev, pager, next"
         @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
       >
       </el-pagination>
     </div>
@@ -94,7 +95,7 @@ export default {
       fileList: [], //  表格数据-文件列表
       pageData: {
         currentPage: 1,
-        pageCount: 10,
+        pageCount: 50,
         total: 0
       },
       //  移动文件模态框数据
@@ -232,10 +233,10 @@ export default {
     setPageCount() {
       this.pageData.currentPage = 1
       if (this.fileModel === 0) {
-        this.pageData.pageCount = 10
+        this.pageData.pageCount = 50
       }
       if (this.fileModel === 1) {
-        this.pageData.pageCount = 40
+        this.pageData.pageCount = 100
       }
     },
     // 获取文件列表数据
@@ -281,6 +282,10 @@ export default {
       this.pageData.currentPage = currentPage
       this.showFileList()
     },
+    handleSizeChange(pageCount) {
+      this.pageData.pageCount = pageCount
+      this.showFileList()
+    },
     // 获取回收站文件列表
     shwoFileRecovery() {
       getRecoveryFile().then((res) => {
@@ -296,11 +301,14 @@ export default {
     showFileListByType() {
       //  分类型
       let data = {
-        fileType: this.fileType
+        fileType: this.fileType,
+        currentPage: this.pageData.currentPage,
+        pageCount: this.pageData.pageCount
       }
       selectFileByFileType(data).then((res) => {
         if (res.success) {
           this.fileList = res.data.list
+          this.pageData.total = res.data.total
           this.loading = false
         } else {
           this.$message.error(res.message)
