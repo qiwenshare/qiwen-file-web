@@ -49,7 +49,9 @@ import {
   Pagination,
   CheckboxGroup,
   Checkbox,
-  Popover
+  Popover,
+  Carousel,
+  CarouselItem,
 } from "element-ui";
 const element = {
   install: function (Vue) {
@@ -100,6 +102,8 @@ const element = {
     Vue.use(CheckboxGroup);
     Vue.use(Checkbox);
     Vue.use(Popover);
+    Vue.use(Carousel);
+    Vue.use(CarouselItem);
     Vue.prototype.$loading = Loading.service;
     Vue.prototype.$msgbox = MessageBox;
     Vue.prototype.$alert = MessageBox.alert;

@@ -6,8 +6,14 @@
           <img class="logo" :src="logoUrl" />
         </a>
       </el-menu-item>
-      <el-menu-item class="headerItem" index="1" :route="{ name: 'File', query: { filePath: '/', fileType: 0 } }"
+      <el-menu-item class="headerItem" index="1" :route="{ name: 'Home' }"
+        >首页</el-menu-item
+      >
+      <el-menu-item class="headerItem" index="2" :route="{ name: 'File', query: { filePath: '/', fileType: 0 } }"
         >网盘</el-menu-item
+      >
+      <el-menu-item class="headerItem" index="3" :route="{ name: 'File', query: { filePath: '/', fileType: 0 } }"
+        >社区</el-menu-item
       >
       <el-menu-item class="headerItem userDisplay right-menu-item" index="2" v-show="isLogin">
         <el-avatar :size="34" :src="userImgUrl" fit="cover">

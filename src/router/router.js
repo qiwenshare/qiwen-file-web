@@ -10,7 +10,8 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      redirect: { path: '/file', query: { filePath: '/', fileType: 0 } }
+      component: () => import(/* webpackChunkName: "login" */ '@/views/Home.vue'),
+      meta: { title: '首页 - 奇文网盘' },
     }, {
       path: '/login',
       name: 'Login',
