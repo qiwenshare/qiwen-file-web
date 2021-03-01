@@ -50,9 +50,9 @@ export default function install(Vue) {
     let fileUrl = row.fileUrl
     let isOSS = row.isOSS
     if (isOSS == 1) { //阿里云OSS对象存储
-      fileUrl = "https://" + sessionStorage.getItem("viewDomain") + fileUrl;
+      fileUrl = `https://${sessionStorage.getItem("viewDomain")}${fileUrl}`
     } else { //本地磁盘存储
-      fileUrl = "api" + fileUrl;
+      fileUrl = `/api${fileUrl}`
     }
     return fileUrl
   };
@@ -60,11 +60,13 @@ export default function install(Vue) {
   Vue.prototype.viewOnlineOffice = function (row) {
     let fileUrl = row.fileUrl
     let isOSS = row.isOSS
-    if (isOSS == 1) { //阿里云OSS对象存储
-      fileUrl = "https://" + sessionStorage.getItem("viewDomain") + fileUrl;
-    } else { //本地磁盘存储
-      fileUrl = "api" + fileUrl;
+    if (isOSS == 1) { 
+      // 阿里云OSS对象存储
+      fileUrl = `https://${sessionStorage.getItem("viewDomain")}${fileUrl}`
+    } else {
+      // 本地磁盘存储 - 在本地开发环境中，本地磁盘存储的文件是无法预览的，因为office要求文件可以在Internet访问
+      fileUrl = `${location.protocol}//${location.host}/api${fileUrl}`
     }
-    return  `https://view.officeapps.live.com/op/embed.aspx?src=${fileUrl}`
+    return `https://view.officeapps.live.com/op/embed.aspx?src=${fileUrl}`
   };
 }
