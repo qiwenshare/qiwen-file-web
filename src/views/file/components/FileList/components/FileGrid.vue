@@ -340,7 +340,7 @@ export default {
           }
         }
         //  若当前点击项是可以使用office在线预览的
-        if (['pptx','doc','docx','xls','xlsx'].includes(row.extendName)) {
+        if (['ppt','pptx','doc','docx','xls','xlsx'].includes(row.extendName)) {
           window.open(this.viewOnlineOffice(row), '_blank')
         }
         //  若当前点击项是pdf
