@@ -56,4 +56,15 @@ export default function install(Vue) {
     }
     return fileUrl
   };
+  // office文件在线预览
+  Vue.prototype.viewOnlineOffice = function (row) {
+    let fileUrl = row.fileUrl
+    let isOSS = row.isOSS
+    if (isOSS == 1) { //阿里云OSS对象存储
+      fileUrl = "https://" + sessionStorage.getItem("viewDomain") + fileUrl;
+    } else { //本地磁盘存储
+      fileUrl = "api" + fileUrl;
+    }
+    return  `https://view.officeapps.live.com/op/embed.aspx?src=${fileUrl}`
+  };
 }

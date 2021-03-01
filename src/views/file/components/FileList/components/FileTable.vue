@@ -385,6 +385,10 @@ export default {
           }
           this.$store.commit('setImgReviewData', data)
         }
+        //  若当前点击项是可以使用office在线预览的
+        if (['pptx','doc','docx','xls','xlsx'].includes(row.extendName)) {
+          window.open(this.viewOnlineOffice(row), '_blank')
+        }
         //  若当前点击项是pdf
         if (row.extendName === 'pdf') {
           window.open(this.getViewFilePath(row), '_blank')
