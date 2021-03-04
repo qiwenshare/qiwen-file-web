@@ -2,29 +2,26 @@
   <div class="headerWrapper">
     <img class="logo" :src="logoUrl" @click="$router.push({ name: 'Home' })" />
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router>
-      <el-menu-item class="headerItem" index="1" :route="{ name: 'Home' }">首页</el-menu-item>
-      <el-menu-item class="headerItem" index="2" :route="{ name: 'File', query: { filePath: '/', fileType: 0 } }"
+      <el-menu-item index="1" :route="{ name: 'Home' }">首页</el-menu-item>
+      <el-menu-item index="2" :route="{ name: 'File', query: { filePath: '/', fileType: 0 } }"
         >网盘</el-menu-item
       >
-      <el-menu-item class="headerItem" @click="goQiwenshareHome">
+      <el-menu-item @click="goQiwenshareHome">
         社区
       </el-menu-item>
-      <el-menu-item class="headerItem userDisplay right-menu-item" index="4" v-show="isLogin">
-        <el-avatar :size="34" :src="userImgUrl" fit="cover">
-          <img :src="userImgDefault" />
-        </el-avatar>
-        <span class="username-header">{{ username }}</span>
-      </el-menu-item>
-      <el-menu-item class="headerItem exit right-menu-item" v-show="isLogin" index="5" @click="exitButton()"
+      <el-menu-item class="right-menu-item" v-show="isLogin" index="5" @click="exitButton()"
         >退出</el-menu-item
       >
-      <el-menu-item class="headerItem login right-menu-item" v-show="!isLogin" index="6" :route="{ name: 'Login' }"
+      <div class="el-menu-item right-menu-item" v-show="isLogin">
+        <i class="el-icon-user-solid"></i>{{ username }}
+      </div>
+      <el-menu-item class="right-menu-item" v-show="!isLogin" index="6" :route="{ name: 'Login' }"
         >登录</el-menu-item
       >
       <!-- 生产环境 -->
       <el-menu-item
         v-if="isProductEnv"
-        class="headerItem register right-menu-item"
+        class="right-menu-item"
         v-show="!isLogin"
         @click.native="goQiwenshare()"
       >
@@ -33,7 +30,7 @@
       <!-- 开发环境 -->
       <el-menu-item
         v-else
-        class="headerItem register right-menu-item"
+        class="right-menu-item"
         v-show="!isLogin"
         index="7"
         :route="{ name: 'Register' }"
@@ -136,8 +133,6 @@ export default {
     cursor: pointer;
   .el-menu-demo
     flex: 1;
-    display flex
-    position relative
     .headerLogo
       color $Primary
       font-size 60px
@@ -149,19 +144,5 @@ export default {
         height 40px
         vertical-align baseline
     .right-menu-item
-      position absolute
-    .userDisplay
-      right 70px
-      width 180px
-      .username-header
-        margin-left 6px
-        min-width 60px
-        display inline-block
-        text-align center
-    .exit
-      right 0
-    .login
-      right 70px
-    .register
-      right 0px
+      float right 
 </style>

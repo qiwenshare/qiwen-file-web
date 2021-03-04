@@ -98,15 +98,15 @@
         </template>
         <template slot-scope="scope">
           <div v-if="operaColumnExpand">
-            <el-button type="danger" size="mini" @click.native="deleteFileBtn(scope.row)">删除</el-button>
-            <el-button type="warning" size="mini" @click.native="restoreFileBtn(scope.row)" v-if="fileType === 6">还原</el-button>
-            <el-button type="primary" size="mini" @click.native="showMoveFileDialog(scope.row)" v-if="fileType !== 6"
+            <el-button type="text" size="mini" @click.native="deleteFileBtn(scope.row)">删除</el-button>
+            <el-button type="text" size="mini" @click.native="restoreFileBtn(scope.row)" v-if="fileType === 6">还原</el-button>
+            <el-button type="text" size="mini" @click.native="showMoveFileDialog(scope.row)" v-if="fileType !== 6"
               >移动</el-button
             >
-            <el-button type="primary" size="mini" @click.native="renameFile(scope.row)" v-if="fileType !== 6"
+            <el-button type="text" size="mini" @click.native="renameFile(scope.row)" v-if="fileType !== 6"
               >重命名</el-button
             >
-            <el-button type="success" size="mini" v-if="scope.row.isDir === 0 && fileType !== 6">
+            <el-button type="text" size="mini" v-if="scope.row.isDir === 0 && fileType !== 6">
               <a
                 target="_blank"
                 style="display: block;color: inherit;"
@@ -116,7 +116,7 @@
               >
             </el-button>
             <el-button
-              type="warning"
+              type="text"
               size="mini"
               @click.native="unzipFile(scope.row)"
               v-if="fileType !== 6 && (scope.row.extendName == 'zip' || scope.row.extendName == 'rar')"
@@ -289,13 +289,13 @@ export default {
     },
     operaColumnWidth() {
       return this.fileType === 6
-        ? 150
+        ? 120
         : this.operaColumnExpand
         ? this.isIncludeNormalFile
           ? this.isIncludeZipRarFile
-            ? 380
-            : 300
-          : 230
+            ? 230
+            : 190
+          : 160
         : 150
     }
   },
