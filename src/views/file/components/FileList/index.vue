@@ -284,11 +284,11 @@ export default {
     // 分页组件 当前页码改变
     handleCurrentChange(currentPage) {
       this.pageData.currentPage = currentPage
-      this.showFileList()
+      this.getTableDataByType()
     },
     handleSizeChange(pageCount) {
       this.pageData.pageCount = pageCount
-      this.showFileList()
+      this.getTableDataByType()
     },
     // 获取回收站文件列表
     shwoFileRecovery() {
