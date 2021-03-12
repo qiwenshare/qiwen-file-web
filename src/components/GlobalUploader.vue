@@ -20,11 +20,9 @@
                     <div class="file-title">
                         <span class="title-span">上传列表</span>
                         <div class="operate">
-                            <el-button @click="fileListShow" type="text" :title="collapse ? '展开':'折叠' ">
-                                <i class="iconfont" :class="collapse ? 'el-icon-full-screen': 'el-icon-minus'"></i>
+                            <el-button @click="fileListShow" type="text" :title="collapse ? '展开':'折叠' " :icon="collapse ? 'el-icon-full-screen': 'el-icon-minus'">
                             </el-button>
-                            <el-button @click="close" type="text" title="关闭">
-                                <i class="iconfont el-icon-close"></i>
+                            <el-button @click="close" type="text" title="关闭" icon="el-icon-close">
                             </el-button>
                         </div>
                     </div>
@@ -33,7 +31,7 @@
                         <li v-for="file in props.fileList" :key="file.id">
                             <uploader-file :class="'file_' + file.id" ref="files" :file="file" :list="true"></uploader-file>
                         </li>
-                        <div class="no-file" v-if="!props.fileList.length"><i class="iconfont icon-empty-file"></i> 暂无待上传文件</div>
+                        <div class="no-file" v-if="!props.fileList.length"><i class="icon-empty-file"></i> 暂无待上传文件</div>
                     </ul>
                 </div>
             </uploader-list>
