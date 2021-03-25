@@ -136,7 +136,7 @@ File viewing supports three presentation modes (list, grid, and timeline)
 ### 7. File upload
 
 文件采用**分片上传**，集成了[simiple-uplader](https://github.com/simple-uploader/Uploader/blob/develop/README_zh-CN.md#uploader)的文件**秒传**、**断点续传**功能。
-![文件上传](https://images.gitee.com/uploads/images/2020/1127/211713_87fb01b2_947714.png '屏幕截图.png')
+![文件上传](https://images.gitee.com/uploads/images/2021/0325/144103_08f4902b_1837873.png)
 
 ### 8. Document Recycle Bin
 
