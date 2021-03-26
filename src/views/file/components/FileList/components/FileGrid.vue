@@ -179,10 +179,9 @@ export default {
   computed: {
     /**
      * selectedColumnList: 列显隐
-     * operaColumnExpand: 判断当前用户设置的操作列是否展开 0不展开 1展开
      * fileModel: 文件查看模式 0列表模式 1网格模式
      *  */
-    ...mapGetters(['selectedColumnList', 'operaColumnExpand', 'fileModel']),
+    ...mapGetters(['selectedColumnList', 'fileModel']),
     //  当前查看的文件路径
     filePath: {
       get() {
@@ -266,7 +265,7 @@ export default {
         return this.fileImgMap.unknown
       } else if (this.fileType !== 6 && ['jpg', 'png', 'jpeg', 'gif'].includes(row.extendName)) {
         // 图片类型，直接显示缩略图
-        return this.downloadImgMin(row)
+        return this.getImgMinPath(row)
       } else {
         //  可以识别文件类型的文件
         return this.fileImgMap[row.extendName]
@@ -341,7 +340,7 @@ export default {
         }
         //  若当前点击项是可以使用office在线预览的
         if (['ppt','pptx','doc','docx','xls','xlsx'].includes(row.extendName)) {
-          window.open(this.viewOnlineOffice(row), '_blank')
+          window.open(this.getFileOnlineViewPathByOffice(row), '_blank')
         }
         //  若当前点击项是pdf
         if (row.extendName === 'pdf') {

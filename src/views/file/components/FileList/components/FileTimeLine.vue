@@ -25,7 +25,7 @@
           >
             <img
               class="image"
-              :src="downloadImgMin(image)"
+              :src="getImgMinPath(image)"
               :alt="item | fileNameComplete"
               @click="getImgReviewData(item.imageList, imageIndex)"
             />

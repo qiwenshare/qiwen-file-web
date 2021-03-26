@@ -30,7 +30,12 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="fileType === 6 ? '原路径' : '路径'" prop="filePath" show-overflow-tooltip v-if="Number($route.query.fileType)">
+      <el-table-column
+        :label="fileType === 6 ? '原路径' : '路径'"
+        prop="filePath"
+        show-overflow-tooltip
+        v-if="Number($route.query.fileType)"
+      >
         <template slot-scope="scope">
           <span
             style="cursor: pointer;"
@@ -89,17 +94,15 @@
       <el-table-column :width="operaColumnWidth">
         <template slot="header">
           <span>操作</span>
-          <i
-            class="el-icon-circle-plus"
-            title="展开操作列按钮"
-            @click="$store.commit('changeOperaColumnExpand', 1)"
-          ></i>
-          <i class="el-icon-remove" title="收起操作列按钮" @click="$store.commit('changeOperaColumnExpand', 0)"></i>
+          <i class="el-icon-circle-plus" title="展开" @click="operaColumnExpand = true"></i>
+          <i class="el-icon-remove" title="折叠" @click="operaColumnExpand = false"></i>
         </template>
         <template slot-scope="scope">
           <div v-if="operaColumnExpand">
             <el-button type="text" size="mini" @click.native="deleteFileBtn(scope.row)">删除</el-button>
-            <el-button type="text" size="mini" @click.native="restoreFileBtn(scope.row)" v-if="fileType === 6">还原</el-button>
+            <el-button type="text" size="mini" @click.native="restoreFileBtn(scope.row)" v-if="fileType === 6"
+              >还原</el-button
+            >
             <el-button type="text" size="mini" @click.native="showMoveFileDialog(scope.row)" v-if="fileType !== 6"
               >移动</el-button
             >
@@ -111,7 +114,6 @@
                 target="_blank"
                 style="display: block;color: inherit;"
                 :href="getDownloadFilePath(scope.row)"
-                :download="scope.row.fileName + '.' + scope.row.extendName"
                 >下载</a
               >
             </el-button>
@@ -164,11 +166,12 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'FileTable',
   props: {
-    fileList: Array,  //  文件列表
+    fileList: Array, //  文件列表
     loading: Boolean
   },
   data() {
     return {
+      operaColumnExpand: this.getCookies('operaColumnExpand') || false, //  表格操作列-是否收缩
       //  移动文件模态框数据
       dialogMoveFile: {
         isBatchMove: false,
@@ -256,8 +259,8 @@ export default {
     }
   },
   computed: {
-    //  selectedColumnList:判断当前用户设置的左侧栏是否折叠, operaColumnExpand:判断当前用户设置的操作列是否展开
-    ...mapGetters(['selectedColumnList', 'operaColumnExpand']),
+    //  selectedColumnList:判断当前用户设置的左侧栏是否折叠
+    ...mapGetters(['selectedColumnList']),
     //  当前查看的文件路径
     filePath: {
       get() {
@@ -304,17 +307,24 @@ export default {
      * 监听文件路径、文件类型、文件列表变化，变化时清空表格已选行
      */
     filePath() {
-      this.$refs.multipleTable.clearSelection();
+      this.$refs.multipleTable.clearSelection()
       this.$emit('setSelectionFile', [])
     },
-    fileType(){
-      this.$refs.multipleTable.clearSelection();
+    fileType() {
+      this.$refs.multipleTable.clearSelection()
       this.$emit('setSelectionFile', [])
     },
     fileList() {
-      this.$refs.multipleTable.clearSelection();
+      this.$refs.multipleTable.clearSelection()
       this.$emit('setSelectionFile', [])
+    },
+    // 监听收缩状态变化，存储在sessionStorage中，保证页面刷新时仍然保存设置的状态
+    operaColumnExpand(newValue) {
+      this.setCookies('operaColumnExpand', newValue)
     }
+  },
+  created() {
+    this.operaColumnExpand = this.getCookies('operaColumnExpand') === 'true' //  读取保存的状态
   },
   methods: {
     /**
@@ -330,7 +340,7 @@ export default {
         return this.fileImgMap.unknown
       } else if (this.fileType !== 6 && ['jpg', 'png', 'jpeg', 'gif'].includes(row.extendName)) {
         // 图片类型，直接显示缩略图
-        return this.downloadImgMin(row)
+        return this.getImgMinPath(row)
       } else {
         //  可以识别文件类型的文件
         return this.fileImgMap[row.extendName]
@@ -386,8 +396,8 @@ export default {
           this.$store.commit('setImgReviewData', data)
         }
         //  若当前点击项是可以使用office在线预览的
-        if (['ppt','pptx','doc','docx','xls','xlsx'].includes(row.extendName)) {
-          window.open(this.viewOnlineOffice(row), '_blank')
+        if (['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'].includes(row.extendName)) {
+          window.open(this.getFileOnlineViewPathByOffice(row), '_blank')
         }
         //  若当前点击项是pdf
         if (row.extendName === 'pdf') {
@@ -458,37 +468,44 @@ export default {
      */
     //  操作列-删除按钮
     deleteFileBtn(fileInfo) {
-      if(this.fileType === 6) { //  回收站里 - 彻底删除
+      if (this.fileType === 6) {
+        //  回收站里 - 彻底删除
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          this.confirmDeleteFile(fileInfo, true)
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
         })
-      } else {  //  非回收站
+          .then(() => {
+            this.confirmDeleteFile(fileInfo, true)
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
+      } else {
+        //  非回收站
         this.$confirm('删除后可在回收站查看, 是否继续删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          this.confirmDeleteFile(fileInfo, false)
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
         })
+          .then(() => {
+            this.confirmDeleteFile(fileInfo, false)
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
       }
     },
     //  删除文件模态框-确定按钮
     confirmDeleteFile(fileInfo, type) {
-      if(type) {  //  回收站中删除
+      if (type) {
+        //  回收站中删除
         deleteRecoveryFile({
           recoveryFileId: fileInfo.recoveryFileId
         }).then((res) => {
@@ -500,7 +517,8 @@ export default {
             this.$message.error(res.message)
           }
         })
-      } else {  //  非回收站删除
+      } else {
+        //  非回收站删除
         deleteFile(fileInfo).then((res) => {
           if (res.success) {
             this.$emit('getTableDataByType')
@@ -519,7 +537,7 @@ export default {
       restoreRecoveryFile({
         deleteBatchNum: fileInfo.deleteBatchNum,
         filePath: fileInfo.filePath
-      }).then(res => {
+      }).then((res) => {
         if (res.success) {
           this.$emit('getTableDataByType')
           this.$store.dispatch('showStorage')

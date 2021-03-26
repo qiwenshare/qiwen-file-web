@@ -1,72 +1,96 @@
-//全局函数 ，挂载到Vue实例上
-export default function install(Vue) {
+import Cookies from 'js-cookie'
+import config from '@/config'
+
+// 全局函数
+const globalFunction = {
   /**
-   * checkIsLogin(params) 页面内某些功能需要用户登录时调用,调用示例如下
-   * let res = this.checkIsLogin(this.$route.fullPath);
-   * if(res === true) {
-   *  // 做些什么......
-   * }
-   * 其中，参数为当前页面的全部路由fullPath（即包括query等参数）
+   * 获取图片缩略图路径
+   * @param {Object} row 文件信息
+   * @returns {String} 图片缩略图路径
    */
-  //  检测用户登录状态并做相应的跳转
-  Vue.prototype.checkIsLogin = function (params) {
-    if (this.$store.getters.isLogin == false) { // 未登录时自动跳转到登录页面，并将当前页面的路由作为query传递给登陆页面
-      this.$router.push({ path: '/login', query: { Rurl: params } });
-    } else {
-      return true
-    }
-  };
-  //  加载缩略图
-  Vue.prototype.downloadImgMin = function (row) {
-    let fileUrl = row.fileUrl
-    let isOSS = row.isOSS
-    if (fileUrl) {
-      if (isOSS == 1) { //阿里云OSS对象存储
-        fileUrl = "https://" + sessionStorage.getItem("viewDomain") + fileUrl + "?x-oss-process=image/resize,m_fill,h_150,w_150/rotate,0";
-      } else { //本地磁盘存储
-        let index = fileUrl.lastIndexOf(".");
-        fileUrl = "api" + fileUrl.substr(0, index) + "_min" + fileUrl.substr(index);
+  getImgMinPath: function (row) {
+    let fileUrl = ''
+    if (row.fileUrl) {
+      if (row.isOSS == 1) { 
+        // 阿里云OSS对象存储
+        fileUrl = `https://${Cookies.get('viewDomain')}${row.fileUrl}?x-oss-process=image/resize,m_fill,h_150,w_150/rotate,0`
+      } else {  
+        // 本地磁盘存储
+        let index = row.fileUrl.lastIndexOf('.')
+        fileUrl = 'api' + row.fileUrl.substr(0, index) + '_min' + row.fileUrl.substr(index)
       }
     }
     return fileUrl
-
-  };
+  },
   /**
-   * 当然，你还可以在这里封装并挂载更多的全局函数在这里，示例同上
+   * 获取文件查看路径
+   * @param {Object} row 文件信息
+   * @returns {String} 文件路径
    */
-  //获取文件下载路径
-  Vue.prototype.getDownloadFilePath = function (row) {
-    let fileUrl = row.fileUrl
-    let isOSS = row.isOSS
-    if (isOSS == 1) { //阿里云OSS对象存储
-      fileUrl = "https://" + sessionStorage.getItem("downloadDomain") + fileUrl;
-    } else { //本地磁盘存储
-      fileUrl = "api" + fileUrl;
-    }
-    return fileUrl
-  };
-  //文件查看大图
-  Vue.prototype.getViewFilePath = function (row) {
-    let fileUrl = row.fileUrl
-    let isOSS = row.isOSS
-    if (isOSS == 1) { //阿里云OSS对象存储
-      fileUrl = `https://${sessionStorage.getItem("viewDomain")}${fileUrl}`
-    } else { //本地磁盘存储
-      fileUrl = `/api${fileUrl}`
-    }
-    return fileUrl
-  };
-  // office文件在线预览
-  Vue.prototype.viewOnlineOffice = function (row) {
-    let fileUrl = row.fileUrl
-    let isOSS = row.isOSS
-    if (isOSS == 1) { 
-      // 阿里云OSS对象存储
-      fileUrl = `https://${sessionStorage.getItem("viewDomain")}${fileUrl}`
+   getViewFilePath: function (row) {
+    let fileUrl = ''
+    if (Number(row.isOSS) === 1) {
+      fileUrl = `https://${Cookies.get('viewDomain')}${row.fileUrl}`  // 阿里云OSS对象存储
     } else {
-      // 本地磁盘存储 - 在本地开发环境中，本地磁盘存储的文件是无法预览的，因为office要求文件可以在Internet访问
-      fileUrl = `${location.protocol}//${location.host}/api${fileUrl}`
+      fileUrl = `/api${row.fileUrl}`  // 本地磁盘存储
+    }
+    return fileUrl
+  },
+  /**
+   * 获取文件下载路径
+   * @param {Object} row 文件信息
+   * @returns {String}  文件下载路径
+   */
+  getDownloadFilePath: function (row) {
+    let fileUrl = ''
+    if (Number(row.isOSS) === 1) {
+      fileUrl = `https://${Cookies.get('viewDomain')}/filetransfer/downloadfile?userFileId=${row.userFileId}`  // 阿里云OSS对象存储
+    } else {
+      fileUrl = `/api/filetransfer/downloadfile?userFileId=${row.userFileId}` // 本地磁盘存储
+    }
+    return fileUrl
+  },
+  /**
+   * 获取 office 文件在线预览路径
+   * @param {Object} row 
+   * @returns {String} office 文件在线预览路径
+   */
+  getFileOnlineViewPathByOffice: function (row) {
+    let fileUrl = ''
+    if (row.isOSS == 1) {
+      fileUrl = `https://${Cookies.get('viewDomain')}${row.fileUrl}`  // 阿里云OSS对象存储
+    } else {
+      // 本地磁盘存储 - 在本地开发环境中，本地磁盘存储的文件是无法预览的，因为 office 要求文件可以在 Internet 访问
+      fileUrl = `${location.protocol}//${location.host}/api${row.fileUrl}`
     }
     return `https://view.officeapps.live.com/op/embed.aspx?src=${fileUrl}`
-  };
+  },
+  /**
+   * 设置 Cookies
+   * @param {String} name 名称
+   * @param {String} value 值
+   * @param {Object} others 域名、路径、有效期等，封装到对象中
+   */
+  setCookies: function (name, value, others = null) {
+    Cookies.set(name, value, { domain: config.domain, ...others })
+  },
+  /**
+   * 获取 Cookies
+   * @param {String} name 名称
+   * @param {object} others 域名、路径等，封装到对象中
+   * @returns {String} Cookies 值
+   */
+  getCookies: function (name, others = null) {
+    return Cookies.get(name, { domain: config.domain, ...others })
+  },
+  /**
+   * 移除 Cookies
+   * @param {String} name 名称
+   * @param {object} others 域名、路径等，封装到对象中
+   */
+  removeCookies: function (name, others = null) {
+    Cookies.remove(name, { domain: config.domain, ...others})
+  }
 }
+
+export default globalFunction

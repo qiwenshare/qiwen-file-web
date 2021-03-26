@@ -1,69 +1,85 @@
 <template>
-  <div class="aside-menu-wrapper" :class="{ expand: !isFolder }">
-    <!-- 展开 & 收缩分类栏 -->
-    <el-tooltip effect="dark" :content="isFolder ? '展开分类栏' : '收起分类栏'" placement="right">
-      <div class="aside-title" @click="$store.commit('changeIsFolder', isFolder ? 0 : 1)">
-        <div class="top"></div>
-        <i class="el-icon-caret-right" v-show="!isFolder"></i>
-        <i class="el-icon-caret-left" v-show="isFolder"></i>
-        <div class="bottom"></div>
-      </div>
-    </el-tooltip>
-    <!-- 分类栏 -->
+  <div class="side-menu-wrapper">
+    <!-- collapse 属性：控制菜单收缩展开 -->
     <el-menu
-      class="aside-menu"
-      :default-openeds="[0]"
+      class="side-menu"
       :default-active="activeIndex"
-      background-color="#909399"
+      :router="true"
+      :collapse="isCollapse"
+      background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b"
-      @select="handleSelect"
     >
-      <el-menu-item index="0">
-        <i class="el-icon-menu" title="全部"></i>
-        <span slot="title" v-show="!isFolder">全部</span>
+      <el-menu-item index="0" :route="{ name: 'File', query: { fileType: 0, filePath: '/' } }">
+        <!-- 图标均来自 Element UI 官方图标库 https://element.eleme.cn/#/zh-CN/component/icon -->
+        <i class="el-icon-menu"></i>
+        <span slot="title">全部</span>
       </el-menu-item>
-      <el-menu-item index="1" title="图片">
+      <el-menu-item index="1" :route="{ name: 'File', query: { fileType: 1 } }">
         <i class="el-icon-picture"></i>
-        <span slot="title" v-show="!isFolder">图片</span>
+        <span slot="title">图片</span>
       </el-menu-item>
-      <el-menu-item index="2" title="文档">
+      <el-menu-item index="2" :route="{ name: 'File', query: { fileType: 2 } }">
         <i class="el-icon-document"></i>
-        <span slot="title" v-show="!isFolder">文档</span>
+        <span slot="title">文档</span>
       </el-menu-item>
-      <el-menu-item index="3" title="视频">
+      <el-menu-item index="3" :route="{ name: 'File', query: { fileType: 3 } }">
         <i class="el-icon-video-camera-solid"></i>
-        <span slot="title" v-show="!isFolder">视频</span>
+        <span slot="title">视频</span>
       </el-menu-item>
-      <el-menu-item index="4" title="音乐">
+      <el-menu-item index="4" :route="{ name: 'File', query: { fileType: 4 } }">
         <i class="el-icon-headset"></i>
-        <span slot="title" v-show="!isFolder">音乐</span>
+        <span slot="title">音乐</span>
       </el-menu-item>
-      <el-menu-item index="5" title="其他">
+      <el-menu-item index="5" :route="{ name: 'File', query: { fileType: 5 } }">
         <i class="el-icon-takeaway-box"></i>
-        <span slot="title" v-show="!isFolder">其他</span>
+        <span slot="title">其他</span>
       </el-menu-item>
-      <el-menu-item index="6" title="回收站">
+      <el-menu-item index="6" :route="{ name: 'File', query: { fileType: 6 } }">
         <i class="el-icon-box"></i>
-        <span slot="title" v-show="!isFolder">回收站</span>
+        <span slot="title">回收站</span>
       </el-menu-item>
     </el-menu>
-    <div class="store-wrapper" v-show="!isFolder">
-      <el-progress :percentage="storagePercentage" :color="storageColor" :show-text="false"></el-progress>
-      <div class="text">
+    <!-- 存储信息显示 -->
+    <!-- v-show="!isCollapse" -->
+    <div class="storage-wrapper" :class="{ fold: isCollapse }">
+      <el-progress
+        :percentage="storagePercentage"
+        :color="storageColor"
+        :show-text="false"
+        :type="isCollapse ? 'circle' : 'line'"
+        :width="32"
+        :stroke-width="isCollapse ? 4 : 6"
+        stroke-linecap="square"
+      ></el-progress>
+      <div class="text" v-show="!isCollapse">
         <span>存储</span>
         <span>{{ storageValue | storageTrans }} / {{ storageMaxValue | storageTrans(true) }}</span>
       </div>
+      <div class="text" v-show="isCollapse">
+        <span>{{ storageValue | storageTrans }}</span>
+      </div>
     </div>
+    <!-- 展开 & 收缩分类栏 -->
+    <el-tooltip effect="dark" :content="isCollapse ? '展开' : '收起'" placement="right">
+      <div class="aside-title" @click="isCollapse ? (isCollapse = false) : (isCollapse = true)">
+        <div class="top"></div>
+        <i class="icon el-icon-d-arrow-right" v-if="isCollapse" title="展开"></i>
+        <i class="icon el-icon-d-arrow-left" v-else title="收起"></i>
+        <div class="bottom"></div>
+      </div>
+    </el-tooltip>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'AsideMenu',
+  name: 'SideMenu',
   data() {
     return {
-      fileListByFiletype: [],
+      isCollapse: false, //  控制菜单收缩展开
+      storageMaxValue: Math.pow(1024, 3) * 10, //  最大存储容量，1GB
+      //  自定义进度条颜色，不同占比，进度条颜色不同
       storageColor: [
         { color: '#67C23A', percentage: 50 },
         { color: '#E6A23C', percentage: 80 },
@@ -72,126 +88,164 @@ export default {
     }
   },
   computed: {
-    //  当前活跃菜单项index，也是当前被选中的文件类型
-    activeIndex: {
-      get() {
-        return String(this.$route.query.fileType)
-      },
-      set() {
-        return '0'
-      }
-    },
-    //  判断当前用户设置的左侧栏是否折叠
-    isFolder() {
-      return this.$store.getters.isFolder
+    // 当前激活菜单的 index
+    activeIndex() {
+      return String(this.$route.query.fileType) //  获取当前路由参数中包含的文件类型
     },
     // 存储容量
     storageValue() {
       return this.$store.state.sideMenu.storageValue
-    },
-    // 最大存储容量
-    storageMaxValue() {
-      return this.$store.state.sideMenu.storageMaxValue
     },
     // 存储百分比
     storagePercentage() {
       return (this.storageValue / this.storageMaxValue) * 100
     }
   },
-  created() {
-    this.$store.dispatch('showStorage')
-  },
-  methods: {
-    //  导航菜单项点击事件
-    handleSelect(index) {
-      this.$router.push({
-        path: '/file',
-        query: { filePath: '/', fileType: index }
-      })
+  watch: {
+    // 监听收缩状态变化，存储在sessionStorage中，保证页面刷新时仍然保存设置的状态
+    isCollapse(newValue) {
+      this.setCookies('isCollapse', newValue)
     }
+  },
+  filters: {
+    // 计算空间占比
+    storageTrans(size, status) {
+      const B = 1024
+      const KB = Math.pow(1024, 2)
+      const MB = Math.pow(1024, 3)
+      const GB = Math.pow(1024, 4)
+      if (status) {
+        //	截取整数部分
+        if (!size) {
+          return 0 + 'KB'
+        } else if (size < KB) {
+          return (size / B).toFixed(0) + 'KB'
+        } else if (size < MB) {
+          return (size / KB).toFixed(0) + 'MB'
+        } else if (size < GB) {
+          return (size / MB).toFixed(0) + 'GB'
+        } else {
+          return (size / GB).toFixed(0) + 'TB'
+        }
+      } else {
+        if (!size) {
+          return 0 + 'KB'
+        } else if (size < KB) {
+          return (size / B).toFixed(0) + 'KB'
+        } else if (size < MB) {
+          return (size / KB).toFixed(2) + 'MB'
+        } else if (size < GB) {
+          return (size / MB).toFixed(3) + 'GB'
+        } else {
+          return (size / GB).toFixed(4) + 'TB'
+        }
+      }
+    }
+  },
+  created() {
+    this.isCollapse = this.getCookies('isCollapse') === 'true' //  读取保存的状态
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl'
-@import '~@/assets/styles/mixins.styl'
+@import '~@/assets/styles/varibles.styl';
+@import '~@/assets/styles/mixins.styl';
 
-.aside-menu-wrapper
-  position relative
-  width 76px
-  height 100%
-  transition width 0.5s
-  -webkit-transition width 0.5s
-  .aside-title
-    position absolute
-    top 50%
-    left 65px
-    z-index 2
-    background $Info
-    color $BorderLight
-    width 12px
-    height 100px
-    line-height 100px
-    cursor pointer
-    z-index 3
+.side-menu-wrapper {
+  position: relative;
+  height: calc(100vh - 61px);
+  padding-right: 11px;
+
+  .side-menu {
+    // 高度设置为屏幕高度减去顶部导航栏的高度
+    height: calc(100vh - 127px);
+    overflow: auto;
+    // 调整滚动条样式
+    setScrollbar(6px, #909399, #EBEEF5);
+  }
+
+  // 对展开状态下的菜单设置宽度
+  .side-menu:not(.el-menu--collapse) {
+    width: 200px;
+  }
+
+  // 存储空间展示区
+  .storage-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    box-sizing: border-box;
+    background: #545c64;
+    width: calc(100% - 12px);
+    height: 66px;
+    padding: 16px;
+    z-index: 2;
+    color: #fff;
+
+    .text {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+  }
+  .storage-wrapper.fold {
+    padding: 0;
+    >>> .el-progress--circle {
+      margin: 0 auto;
+      width: 32px;
+      display: block;
+    }
+    .text {
+      font-size: 12px;
+      justify-content: center;
+    }
+  }
+
+  // 折叠图标调整样式
+  .aside-title {
+    position: absolute;
+    top: calc(50%  - 50px);
+    right: 0;
+    z-index: 3;
+    background: #545c64;
+    color: $BorderLight;
+    width: 12px;
+    height: 100px;
+    line-height: 100px;
+    cursor: pointer;
+
     // transition left 0.5s
     // -webkit-transition left 0.5s
-    &:hover
-      opacity 0.7
-    i {
-      font-size 12px
+    &:hover {
+      opacity: 0.7;
     }
-    .top
-      position absolute
-      top calc(50% - 50px)
-      right 0px
+
+    .icon {
+      font-size: 12px;
+    }
+
+    .top {
+      position: absolute;
+      top: calc(50% - 50px);
+      right: 0px;
       width: 0;
       height: 0;
       border-bottom: 12px solid transparent;
       border-right: 12px solid #fff;
-    .bottom
-      position absolute
-      top calc(50% + 38px)
-      right 0px
+    }
+
+    .bottom {
+      position: absolute;
+      top: calc(50% + 38px);
+      right: 0px;
       width: 0;
       height: 0;
       border-top: 12px solid transparent;
       border-right: 12px solid #fff;
-  >>> .el-menu
-    border none
-    border-right solid 1px $BorderLight
-    width 64px
-    height: calc(100vh - 60px);
-    overflow: auto;
-    setScrollbar(4px, #909399, #EBEEF5)
-    .el-menu-item
-      i
-        color inherit
-    .el-menu-item.is-active
-      background #545c64 !important
-  .store-wrapper
-    position absolute
-    bottom 0
-    left 0
-    background $RegularText
-    padding: 16px;
-    width 220px
-    z-index: 2;
-    color #fff
-    opacity 0.8
-    .text {
-      margin-top 8px
-      display flex
-      justify-content space-between
     }
-.expand
-  width 232px
-  .aside-title
-    left 221px
-  >>> .el-menu
-    width 220px
-    height: calc(100% - 60px);
-    .el-menu-item
-      padding-left 40px !important
+  }
+}
 </style>

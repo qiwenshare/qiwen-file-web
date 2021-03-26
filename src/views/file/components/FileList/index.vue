@@ -208,13 +208,13 @@ export default {
   },
   watch: {
     filePath() {
-      if(this.$route.name === 'File') {
+      if (this.$route.name === 'File') {
         this.setPageCount()
         this.getTableDataByType()
       }
     },
     fileType() {
-      if(this.$route.name === 'File') {
+      if (this.$route.name === 'File') {
         this.setPageCount()
         this.getTableDataByType()
       }
@@ -223,6 +223,11 @@ export default {
     fileModel() {
       this.setPageCount()
       this.getTableDataByType()
+    },
+    batchOperate(value) {
+      if(!value) {
+        this.selectionFile = []
+      }
     }
   },
   created() {
@@ -258,6 +263,7 @@ export default {
         // 全部文件
         this.showFileList()
       }
+      this.$store.dispatch('showStorage')
     },
     // 获取当前路径下的文件列表
     showFileList() {
@@ -391,30 +397,38 @@ export default {
           }
         })
       }
-    },
-    
+    }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl'
-.file-list-wrapper
-  >>> .el-header
-    padding 0
-  .middle-wrapper
-    margin-bottom 8px
-  .pagination-wrapper
-    position relative
-    border-top 1px solid $BorderBase
-    height 44px
-    line-height 44px
-    text-align center
-    .current-page-count
-      position absolute
-      left 16px
-      height 32px
-      line-height 32px
-      font-size 13px
-      color $RegularText
+@import '~@/assets/styles/varibles.styl';
+
+.file-list-wrapper {
+  >>> .el-header {
+    padding: 0;
+  }
+
+  .middle-wrapper {
+    margin-bottom: 8px;
+  }
+
+  .pagination-wrapper {
+    position: relative;
+    border-top: 1px solid $BorderBase;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+
+    .current-page-count {
+      position: absolute;
+      left: 16px;
+      height: 32px;
+      line-height: 32px;
+      font-size: 13px;
+      color: $RegularText;
+    }
+  }
+}
 </style>

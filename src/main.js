@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router/router'
 import store from '@/store/index.js'
-import all from '@/globalFunction.js'
+import globalFunction from '@/globalFunction.js'
 import * as filters from '@/filters/index.js'
 import '@/assets/styles/css/base.css'
 import '@/assets/styles/css/border.css'
@@ -16,7 +16,11 @@ import uploader from 'vue-simple-uploader'
 
 
 Vue.config.productionTip = false;
-Vue.use(all);
+
+for(let key in globalFunction) {
+  Vue.prototype[key] = globalFunction[key]
+}
+
 Vue.use(element);
 Vue.use(uploader);
 Vue.prototype.$EventBus = new Vue()

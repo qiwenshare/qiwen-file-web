@@ -43,7 +43,6 @@
 
 <script>
     import SparkMD5 from 'spark-md5'
-    import Cookies from 'js-cookie'
     
     export default {
         data() {
@@ -64,7 +63,7 @@
                         return (data.uploaded || []).indexOf(chunk.offset + 1) >= 0
                     },
                     headers: {
-                        token: Cookies.get('token', { domain: '.qiwenshare.com' })
+                        token: this.getCookies('token')
                     },
                     query() {}
                 },
