@@ -154,8 +154,7 @@
                 <a
                   target="_blank"
                   style="display: block; color: inherit"
-                  :href="'api' + scope.row.fileUrl"
-                  :download="scope.row.fileName + '.' + scope.row.extendName"
+                  :href="getDownloadFilePath(scope.row)"
                   >下载</a
                 >
               </el-dropdown-item>
