@@ -5,7 +5,9 @@
         <div class="carousel-caption">
           <h1 class="bounce">{{ item.title }}</h1>
           <ul>
-            <li v-for="(descItem, descIndex) in item.descList" :key="`desc-${index}-${descIndex}`">{{ descItem }}</li>
+            <li v-for="(descItem, descIndex) in item.descList" :key="`desc-${index}-${descIndex}`">
+              {{ descItem }}
+            </li>
           </ul>
           <el-button round @click="goFile">{{ item.btn }}</el-button>
           <div class="version-wrapper">
@@ -37,40 +39,17 @@ export default {
       bannerList: [
         {
           title: '一款功能齐全的文件管理系统',
-          descList: ["文件传输，安全快捷","在线解压缩，一触即达","回收站，防止文件误删"],
+          descList: ['文件传输，安全快捷', '在线解压缩，一触即达', '回收站，防止文件误删'],
           btn: '开源免费，立即体验',
           linkList: [
             {
-              versionNo: "最新版本v1.3.0",
-              date: "2020年12月30日发布",
-              link: "https://gitee.com/qiwen-cloud/qiwen-file"
-            },
-            // {
-            //   versionNo: "4.0.beta3 版本",
-            //   date: "12月31日发布",
-            //   link: ""
-            // }
+              versionNo: '最新版本v1.3.0',
+              date: '2020年12月30日发布',
+              link: 'https://gitee.com/qiwen-cloud/qiwen-file'
+            }
           ],
-          bannerImg: require('@/assets/images/home/banner1.png')
-        },
-        // {
-        //   title: '一款功能齐全的文件管理系统',
-        //   descList: ["文件传输，安全快捷","在线解压缩，一触即达","回收站，防止文件误删"],
-        //   btn: '开源免费，立即体验',
-        //   linkList: [
-        //     {
-        //       versionNo: "3.3 版本",
-        //       date: "10月15日发布",
-        //       link: ""
-        //     },
-        //     {
-        //       versionNo: "4.0.beta3 版本",
-        //       date: "12月31日发布",
-        //       link: ""
-        //     }
-        //   ],
-        //   bannerImg: require('@/assets/images/home/banner2.png')
-        // }
+          bannerImg: require('@/assets/images/home/banner/banner1.png')
+        }
       ]
     }
   },
@@ -84,85 +63,90 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl'
+@import '~@/assets/styles/varibles.styl';
 
 .el-carousel {
+  width: 100%;
+  display: block;
+  background: linear-gradient(to right, #409EFF, #79bbff);
+
+  .carosel-inner {
     width: 100%;
-    display: block;
-    background: linear-gradient(to right, #409EFF, #79bbff);
 
-    .carosel-inner {
-      width: 100%;
-      animation: mymove 10s infinite;
+    .carousel-wrap {
+      position: relative;
+      margin: 0 auto;
+      width: 85%;
+      height: 100%;
 
-      .carousel-wrap {
-        position: relative;
-        margin 0 auto
-        width: 85%;
-        height: 100%;
+      .carousel-caption {
+        position: absolute;
+        left: 0;
+        top: 140px;
+        text-shadow: none;
+        max-width: 550px;
+        color: #fff;
+        text-align: center;
 
-        .carousel-caption {
-          position: absolute;
-          left: 0;
-          top: 140px;
-          text-shadow: none;
-          max-width: 550px;
-          color: #fff;
-          text-align center
+        h1 {
+          font-weight: normal;
+          margin: 0;
+          font-size: 30px;
+          animation-delay: 1s;
+        }
 
-          h1 {
-            font-weight: normal;
-            margin: 0;
-            font-size: 30px;
-            animation-delay: 1s;
-          }
+        ul {
+          padding: 25px 0 25px 20px;
 
-          ul {
-            padding: 25px 0 25px 20px;
-
-            li {
-              line-height: 2.2;
-              font-size: 15px;
-            }
-          }
-          >>> .el-button {
-            border-width 2px
-            background transparent
-            color #fff
-            &:hover {
-              border-color transparent
-              background $Warning
-            }
-          }
-          .version-wrapper {
-            margin: 0 0 10px;
-            .version-item {
-              display: inline-block;
-              margin: 50px 0 0 18px;
-              color: rgba(255,255,255,0.8);
-              &:hover {
-                text-decoration underline
-                color #fff
-              }
-              .version-number {
-                margin-right 16px
-              }
-            }
+          li {
+            line-height: 2.2;
+            font-size: 15px;
           }
         }
 
-        .carousel-img {
-          max-width: 580px;
-          position: absolute;
-          right: 0px;
-          top: 0;
+        >>> .el-button {
+          border-width: 2px;
+          background: transparent;
+          color: #fff;
 
-          img {
-            max-width: 100%;
-            vertical-align: middle;
+          &:hover {
+            border-color: transparent;
+            background: $Warning;
           }
+        }
+
+        .version-wrapper {
+          margin: 0 0 10px;
+
+          .version-item {
+            display: inline-block;
+            margin: 50px 0 0 18px;
+            color: rgba(255, 255, 255, 0.8);
+
+            &:hover {
+              text-decoration: underline;
+              color: #fff;
+            }
+
+            .version-number {
+              margin-right: 16px;
+            }
+          }
+        }
+      }
+
+      .carousel-img {
+        max-width: 580px;
+        position: absolute;
+        right: 0px;
+        top: 0;
+
+        img {
+          max-width: 100%;
+          vertical-align: middle;
         }
       }
     }
   }
+}
 </style>

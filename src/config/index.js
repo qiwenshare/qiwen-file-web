@@ -1,5 +1,6 @@
-// 存放项目配置
-
+/**
+ * 存放项目配置
+ */
 const config = {
   /**
    * @description 域名 

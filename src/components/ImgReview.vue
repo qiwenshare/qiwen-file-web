@@ -157,23 +157,34 @@ export default {
     }
   },
   methods: {
-    //  关闭图片预览
+    /**
+     * 关闭图片预览，恢复旋转角度
+     */
     closeImgReview() {
       this.$store.commit('setImgReviewData', { imgReviewVisible: false })
       this.rotate = 0
       this.$refs.imgLarge[this.activeIndex].style.transform = `rotate(${this.rotate}deg)`
     },
-    // 格式化缩放数字 显示图片缩放比例
+    /**
+     * 格式化 tooltip message - 显示图片缩放比例
+     * @param {number} value 缩放数字
+     * @returns {string}  图片缩放比例
+     */
     formatZoom(value) {
       return value + '%'
     },
-    // 图片缩放改变事件
+    /**
+     * 数据改变时触发（使用鼠标拖曳时，活动过程实时触发）
+     * @param {number} value 缩放数字
+     */
     changeZoom(value) {
       if (this.$refs.imgLarge) {
-        this.$refs.imgLarge[this.activeIndex].style.zoom = value + '%'
+        this.$refs.imgLarge[this.activeIndex].style.zoom = value + '%' //  实时设置图片缩放比例
       }
     },
-    // 缩放图片
+    /**
+     * 缩放图片
+     */
     rollImg() {
       let zoom = parseInt(this.$refs.imgLarge[this.activeIndex].style.zoom) || 100
       zoom += event.wheelDelta / 12
@@ -183,7 +194,9 @@ export default {
       }
       return false
     },
-    //  旋转图片
+    /**
+     * 旋转图片
+     */
     rotateImg() {
       this.rotate += 90
       this.$refs.imgLarge[this.activeIndex].style.transform = `rotate(${this.rotate}deg)`
@@ -193,130 +206,187 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl'
+@import '~@/assets/styles/varibles.styl';
 
-.img-review-wrapper
-  position fixed
-  top 0
-  right 0
-  bottom 0
-  left 0
-  overflow auto
-  width 100%
-  height 100%
-  z-index 2010
-  text-align center
-  display flex
-  align-items center
-  animation imgReviewAnimation 0.3s
-  -webkit-animation imgReviewAnimation 0.3s /* Safari and Chrome */
-  animation-iteration-count 0.3
-  -webkit-animation-iteration-count 0.3
-  animation-fill-mode forwards
-  -webkit-animation-fill-mode forwards /* Safari 和 Chrome */
-  @keyframes imgReviewAnimation
-    0%
-      background transparent
-    100%
-      background rgba(0, 0, 0, 0.8)
-  @keyframes imgReviewAnimation
-    0%
-      background transparent
-    100%
-      background rgba(0, 0, 0, 0.8)
-  .tip-wrapper
-    position fixed
-    top 0
-    left 0
-    z-index 2011
-    background rgba(0, 0, 0, 0.5)
-    padding 0 48px
-    width 100%
-    height 48px
-    line-height 48px
-    color #fff
-    font-size 16px
-    display flex
-    justify-content space-between
-    .name
-      flex 1
-      padding-right 16px
-      text-align left
-      overflow hidden
-      text-overflow ellipsis
-      white-space nowrap
-    .opera-btn-group
-      width 100px
-      display flex
-      >>> .el-input-number
-        width 40px
-        .el-input-number__decrease,
-        .el-input-number__increase
-          display none
-        .el-input__inner
-          margin-top 14px
-          background rgba(0, 0, 0, 0.5)
-          height 20px
-          line-height 20px
-          padding 0
-          font-size 16px
-          color #fff
-      .split-line
-        margin 0 8px
-    .tool-wrapper
-      flex 1
-      display flex
-      justify-content flex-end
-      .item
-        margin-left 16px
-        cursor pointer
-        &:hover
-          opacity 0.7
-      .el-icon-refresh-right
-        line-height 48px
-        font-size 18px
-      .download-link
-        color inherit
-        font-size 18px
-      .text-wrapper
-        margin-left 32px
-        .text
-          margin-right 8px
-  .img-large
-    margin 0 auto
-    transition transform 0.5s
-    -webkit-transition transform 0.5s /* Safari */
-  .pre-icon,
-  .next-icon
-    font-size 60px
-    color #fff
-    position fixed
-    top 50%
-    cursor pointer
-    &:hover
-      opacity 0.7
-  .pre-icon
-    left 64px
-  .next-icon
-    right 64px
-  .zoom-bar
-    position fixed
-    right 0
-    bottom 20px
-    left 0
-    margin 0 auto
-    width 600px
-    display flex
-    >>> .el-slider
-      flex 1
-      .el-slider__bar
-        background $PrimaryText
-      .el-slider__button
-        border-color $PrimaryText
-    .zoom-count
-      width 60px
-      height 38px
-      line-height 38px
-      text-align right
-      color #fff
+.img-review-wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  width: 100%;
+  height: 100%;
+  z-index: 2010;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  animation: imgReviewAnimation 0.3s;
+  -webkit-animation: imgReviewAnimation 0.3s; /* Safari and Chrome */
+  animation-iteration-count: 0.3;
+  -webkit-animation-iteration-count: 0.3;
+  animation-fill-mode: forwards;
+  -webkit-animation-fill-mode: forwards; /* Safari 和 Chrome */
+
+  @keyframes imgReviewAnimation {
+    0% {
+      background: transparent;
+    }
+
+    100% {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  @keyframes imgReviewAnimation {
+    0% {
+      background: transparent;
+    }
+
+    100% {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  .tip-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2011;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0 48px;
+    width: 100%;
+    height: 48px;
+    line-height: 48px;
+    color: #fff;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+
+    .name {
+      flex: 1;
+      padding-right: 16px;
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .opera-btn-group {
+      width: 100px;
+      display: flex;
+
+      >>> .el-input-number {
+        width: 40px;
+
+        .el-input-number__decrease, .el-input-number__increase {
+          display: none;
+        }
+
+        .el-input__inner {
+          margin-top: 14px;
+          background: rgba(0, 0, 0, 0.5);
+          height: 20px;
+          line-height: 20px;
+          padding: 0;
+          font-size: 16px;
+          color: #fff;
+        }
+      }
+
+      .split-line {
+        margin: 0 8px;
+      }
+    }
+
+    .tool-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+
+      .item {
+        margin-left: 16px;
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+
+      .el-icon-refresh-right {
+        line-height: 48px;
+        font-size: 18px;
+      }
+
+      .download-link {
+        color: inherit;
+        font-size: 18px;
+      }
+
+      .text-wrapper {
+        margin-left: 32px;
+
+        .text {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+
+  .img-large {
+    margin: 0 auto;
+    transition: transform 0.5s;
+    -webkit-transition: transform 0.5s; /* Safari */
+  }
+
+  .pre-icon, .next-icon {
+    font-size: 60px;
+    color: #fff;
+    position: fixed;
+    top: 50%;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  .pre-icon {
+    left: 64px;
+  }
+
+  .next-icon {
+    right: 64px;
+  }
+
+  .zoom-bar {
+    position: fixed;
+    right: 0;
+    bottom: 20px;
+    left: 0;
+    margin: 0 auto;
+    width: 600px;
+    display: flex;
+
+    >>> .el-slider {
+      flex: 1;
+
+      .el-slider__bar {
+        background: $PrimaryText;
+      }
+
+      .el-slider__button {
+        border-color: $PrimaryText;
+      }
+    }
+
+    .zoom-count {
+      width: 60px;
+      height: 38px;
+      line-height: 38px;
+      text-align: right;
+      color: #fff;
+    }
+  }
+}
 </style>

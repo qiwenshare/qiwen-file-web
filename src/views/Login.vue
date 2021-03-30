@@ -1,30 +1,22 @@
 <template>
-  <div class="loginWrapper" id="loginBackground">
-    <div class="formWrapper">
-      <h1 class="loginTitle">{{ loginTitle }}</h1>
-      <p class="loginSystem">{{ loginSystem }}</p>
+  <div class="login-wrapper" id="loginBackground">
+    <div class="form-wrapper">
+      <h1 class="login-title">登录</h1>
+      <p class="login-system">奇文网盘</p>
+      <!-- 登录表单 -->
       <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleForm"
+        class="login-form"
+        ref="loginForm"
+        :model="loginForm"
+        :rules="loginFormRules"
         label-width="100px"
-        class="demo-ruleForm"
         hide-required-asterisk
       >
-        <el-form-item prop="userName">
-          <el-input
-            prefix-icon="el-icon-mobile-phone"
-            v-model="ruleForm.userName"
-            placeholder="手机号"
-          ></el-input>
+        <el-form-item prop="username">
+          <el-input prefix-icon="el-icon-mobile-phone" v-model="loginForm.username" placeholder="手机号"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input
-            prefix-icon="el-icon-lock"
-            v-model="ruleForm.password"
-            placeholder="密码"
-            show-password
-          ></el-input>
+          <el-input prefix-icon="el-icon-lock" v-model="loginForm.password" placeholder="密码" show-password></el-input>
         </el-form-item>
         <el-form-item>
           <drag-verify
@@ -33,22 +25,17 @@
             successText="验证通过"
             handlerIcon="el-icon-d-arrow-right"
             successIcon="el-icon-circle-check"
-            :width="375"
             handlerBg="#F5F7FA"
+            :width="375"
             :isPassing.sync="isPassing"
             @update:isPassing="updateIsPassing"
           ></drag-verify>
         </el-form-item>
-        <!-- <el-form-item class="forgetPassword">忘记密码</el-form-item> -->
-        <el-form-item class="loginButtonWrapper">
-          <el-button class="loginButton" type="primary" :disabled="submitDisabled" @click="submitForm('ruleForm')">登录</el-button>
+        <el-form-item class="login-btn-form-item">
+          <el-button class="login-btn" type="primary" :disabled="loginBtnDisabled" @click="submitForm('loginForm')"
+            >登录</el-button
+          >
         </el-form-item>
-        <!-- <el-form-item style="text-align:left;">
-          其他账号登录：
-          <a href="/api/user/login/qq">
-            <img :src="qqIcon" style="width: 30px;" />
-          </a>
-        </el-form-item> -->
       </el-form>
     </div>
   </div>
@@ -56,7 +43,7 @@
 
 <script>
 import CanvasNest from 'canvas-nest.js'
-import DragVerify from '@/components/DragVerify.vue'
+import DragVerify from '@/components/DragVerify.vue'  //  引入滑动解锁组件
 import { login } from '@/request/user.js'
 
 // 配置
@@ -73,75 +60,87 @@ export default {
   components: { DragVerify },
   data() {
     return {
-      loginTitle: '登录',
-      loginSystem: '奇文网盘',
-      ruleForm: {
-        userName: '',
+      // 登录表单数据
+      loginForm: {
+        username: '',
         password: ''
       },
-      rules: {
-        userName: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
-        ],
+      // 登录表单验证规则
+      loginFormRules: {
+        username: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 5, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' }
+          {
+            min: 5,
+            max: 20,
+            message: '长度在 5 到 20 个字符',
+            trigger: 'blur'
+          }
         ]
       },
-      isPassing: false,
-      submitDisabled: true,
-      qqIcon: require('@/assets/images/login/qqIcon.png')
+      isPassing: false, //  滑动解锁是否验证通过
+      loginBtnDisabled: true //  登录按钮是否禁用
     }
   },
   computed: {
     url() {
-      let _url = this.$route.query.Rurl //获取路由前置守卫中next函数的参数，即登录后要去的页面
-      if (_url) {
-        //若登录之前有页面，则登录后仍然进入该页面
-        return _url
-      } else {
-        //若登录之前无页面，则登录后进入首页
-        return '/'
-      }
+      let _url = this.$route.query.Rurl //  获取路由前置守卫中 next 函数的参数，即登录后要去的页面
+      return _url ? { path: _url } : { name: 'File', query: { fileType: 0, filePath: '/' } }  //  若登录之前有页面，则登录后仍然进入该页面
     }
   },
   watch: {
-    //  已验证通过时，若重新输入用户名或密码，滑动解锁恢复原样
-    'ruleForm.userName'() {
+    //  滑动解锁验证通过时，若重新输入用户名或密码，滑动解锁恢复原样
+    'loginForm.username'() {
       this.isPassing = false
       this.$refs.dragVerifyRef.reset()
     },
-    'ruleForm.password'() {
+    'loginForm.password'() {
       this.isPassing = false
       this.$refs.dragVerifyRef.reset()
     }
   },
+  created() {
+    // 用户若已登录，自动跳转到首页
+    if (this.$store.getters.isLogin) {
+      let username = this.$store.getters.username
+      this.$message({
+        message: `${username} 您已登录！已跳转到首页`,
+        center: true,
+        type: 'success'
+      })
+      this.$router.replace({ name: 'Home' })
+    }
+    //  绘制背景图
+    this.$nextTick(() => {
+      let element = document.getElementById('loginBackground')
+      new CanvasNest(element, config)
+    })
+  },
   methods: {
-    //  滑动解锁完成
+    /**
+     * 滑动解锁完成 回调函数
+     * @param {boolean} isPassing 解锁是否通过
+     */
     updateIsPassing(isPassing) {
       if (isPassing) {
-        this.submitDisabled = false
+        this.loginBtnDisabled = false
       } else {
-        this.submitDisabled = true
+        this.loginBtnDisabled = true
       }
     },
-    //  登录按钮
+    /**
+     * 登录按钮点击事件 表单验证&用户登录
+     * @param {boolean} formName 表单ref值
+     */
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
-          //各项校验通过
-          let data = {
-            username: this.ruleForm.userName,
-            password: this.ruleForm.password
-          }
-          login(data, true).then(res => {
+          // 表单各项校验通过
+          login(this.loginForm, true).then((res) => {
             if (res.success) {
-              this.setCookies('token', res.data.token);
-              this.$refs[formName].resetFields();
-              this.$store.dispatch('getUserInfo').then(() => {
-                this.$router.replace({ path: this.url })
-                location.reload()
-              })
+              this.setCookies('token', res.data.token) //  存储登录状态
+              this.$refs[formName].resetFields() //  清空表单
+              this.$router.replace(this.url)  //  跳转到前一个页面或者网盘主页
             } else {
               this.$message.error('手机号或密码错误！')
               this.isPassing = false
@@ -154,59 +153,60 @@ export default {
         }
       })
     }
-  },
-  created() {
-    if (this.$store.getters.isLogin) {
-      // 用户若已登录，自动跳转到首页
-      let username = this.$store.getters.username
-      this.$message({
-        message: username + ' 您已登录！已跳转到首页',
-        center: true,
-        type: 'success'
-      })
-      this.$router.replace({ name: 'Home' })
-    }
-    this.$nextTick(() => {
-      let element = document.getElementById('loginBackground')
-      new CanvasNest(element, config)
-    })
   }
 }
 </script>
 <style lang="stylus" scoped>
-.loginWrapper
-  height 550px !important
-  min-height 550px !important
-  padding-top 50px
-  .formWrapper
-    width 375px
-    margin 0 auto
-    text-align center
-    .loginTitle
-      margin-bottom 10px
-      font-weight 300
-      font-size 30px
-      color #000
-    .loginSystem
-      font-weight 300
-      color #999
-    .demo-ruleForm
-      width 100%
-      margin-top 20px
-      >>> .el-form-item__content
-        margin-left 0 !important
-      &>>> .el-input__inner
-        font-size 16px
-      .forgetPassword
-        text-align right
-        margin -22px 0 0 0
-      .loginButtonWrapper
-        .loginButton
-          width 100%
-        &>>> .el-button
-          padding 10px 90px
-          font-size 16px
-    .tip
-      width 70%
-      margin-left 86px
+.login-wrapper {
+  height: 550px !important;
+  min-height: 550px !important;
+  padding-top: 50px;
+
+  .form-wrapper {
+    width: 375px;
+    margin: 0 auto;
+    text-align: center;
+
+    .login-title {
+      margin-bottom: 10px;
+      font-weight: 300;
+      font-size: 30px;
+      color: #000;
+    }
+
+    .login-system {
+      font-weight: 300;
+      color: #999;
+    }
+
+    .login-form {
+      width: 100%;
+      margin-top: 20px;
+
+      >>> .el-form-item__content {
+        margin-left: 0 !important;
+      }
+
+      &>>> .el-input__inner {
+        font-size: 16px;
+      }
+
+      .login-btn-form-item {
+        .login-btn {
+          width: 100%;
+        }
+
+        &>>> .el-button {
+          padding: 10px 90px;
+          font-size: 16px;
+        }
+      }
+    }
+
+    .tip {
+      width: 70%;
+      margin-left: 86px;
+    }
+  }
+}
 </style>

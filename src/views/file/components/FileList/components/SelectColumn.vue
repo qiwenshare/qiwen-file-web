@@ -1,6 +1,6 @@
 <template>
   <div class="select-column">
-    <el-button type="info" size="mini" plain icon="el-icon-s-operation" @click="handleClickSelectColumn"
+    <el-button type="info" size="mini" plain icon="el-icon-s-operation" @click="handleSetShowColumnBtnClick"
       >设置显示列</el-button
     >
     <!-- 对话框 当点击"设置显示列"按钮时弹出对话框 -->
@@ -45,15 +45,21 @@ export default {
     }
   },
   methods: {
-    // 设置显示列按钮 - 点击事件
-    handleClickSelectColumn() {
-      // 获取store中存储的表格显示列
+    /**
+     * 设置显示列按钮点击事件
+     * @description 获取 Vuex 中存储的表格显示列
+     *              并打开对话框
+     */
+    handleSetShowColumnBtnClick() {
       this.selectedColumn = this.$store.getters.selectedColumnList
       this.dialogVisible = true
     },
-    // 对话框 确定按钮
+    /**
+     * 对话框 确定按钮点击事件
+     * @description 通过提交 mutation 更新表格显示列 
+     *              并关闭对话框
+     */
     dialogOk() {
-      // 通过提交 mutation 更新表格显示列
       this.$store.commit('changeSelectedColumnList', this.selectedColumn)
       this.dialogVisible = false
     }

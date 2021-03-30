@@ -5,8 +5,8 @@ import config from '@/config'
 const globalFunction = {
   /**
    * 获取图片缩略图路径
-   * @param {Object} row 文件信息
-   * @returns {String} 图片缩略图路径
+   * @param {object} row 文件信息
+   * @returns {string} 图片缩略图路径
    */
   getImgMinPath: function (row) {
     let fileUrl = ''
@@ -24,8 +24,8 @@ const globalFunction = {
   },
   /**
    * 获取文件查看路径
-   * @param {Object} row 文件信息
-   * @returns {String} 文件路径
+   * @param {object} row 文件信息
+   * @returns {string} 文件路径
    */
    getViewFilePath: function (row) {
     let fileUrl = ''
@@ -38,8 +38,8 @@ const globalFunction = {
   },
   /**
    * 获取文件下载路径
-   * @param {Object} row 文件信息
-   * @returns {String}  文件下载路径
+   * @param {object} row 文件信息
+   * @returns {string}  文件下载路径
    */
   getDownloadFilePath: function (row) {
     let fileUrl = ''
@@ -52,8 +52,8 @@ const globalFunction = {
   },
   /**
    * 获取 office 文件在线预览路径
-   * @param {Object} row 
-   * @returns {String} office 文件在线预览路径
+   * @param {object} row 
+   * @returns {string} office 文件在线预览路径
    */
   getFileOnlineViewPathByOffice: function (row) {
     let fileUrl = ''
@@ -67,25 +67,25 @@ const globalFunction = {
   },
   /**
    * 设置 Cookies
-   * @param {String} name 名称
-   * @param {String} value 值
-   * @param {Object} others 域名、路径、有效期等，封装到对象中
+   * @param {string} name 名称
+   * @param {string} value 值
+   * @param {object} others 域名、路径、有效期等，封装到对象中
    */
   setCookies: function (name, value, others = null) {
     Cookies.set(name, value, { domain: config.domain, ...others })
   },
   /**
    * 获取 Cookies
-   * @param {String} name 名称
+   * @param {string} name 名称
    * @param {object} others 域名、路径等，封装到对象中
-   * @returns {String} Cookies 值
+   * @returns {string} Cookies 值
    */
   getCookies: function (name, others = null) {
     return Cookies.get(name, { domain: config.domain, ...others })
   },
   /**
    * 移除 Cookies
-   * @param {String} name 名称
+   * @param {string} name 名称
    * @param {object} others 域名、路径等，封装到对象中
    */
   removeCookies: function (name, others = null) {

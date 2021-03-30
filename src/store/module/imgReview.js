@@ -5,6 +5,11 @@ export default {
     defaultActiveIndex: 0 //  默认当前打开的图片的索引
   },
   mutations: {
+    /**
+     * 存储图片预览组件所需要的数据
+     * @param {object} state Vuex 的 state 对象
+     * @param {object} data 图片数据
+     */
     setImgReviewData(state, data) {
       if(data.imgReviewVisible) {
         state.imgReviewVisible = data.imgReviewVisible

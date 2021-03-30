@@ -18,16 +18,12 @@
         placement="top"
       >
         <ul class="image-list">
-          <li 
-            class="image-item"
-            v-for="(image, imageIndex) in item.imageList"
-            :key="`${index}-${imageIndex}`"
-          >
+          <li class="image-item" v-for="(image, imageIndex) in item.imageList" :key="`${index}-${imageIndex}`">
             <img
               class="image"
               :src="getImgMinPath(image)"
               :alt="item | fileNameComplete"
-              @click="getImgReviewData(item.imageList, imageIndex)"
+              @click="handleImgClick(item.imageList, imageIndex)"
             />
             <div class="image-name">{{ image | fileNameComplete }}</div>
           </li>
@@ -41,7 +37,11 @@
 export default {
   name: 'FileTimeLine',
   props: {
-    fileList: Array
+    // 文件列表
+    fileList: {
+      required: true,
+      type: Array
+    }
   },
   data() {
     return {
@@ -66,8 +66,13 @@ export default {
     }
   },
   methods: {
-    // 大图查看
-    getImgReviewData(imgList, imageIndex) {
+    /**
+     * 图片点击事件
+     * @description 打开图片预览，查看大图
+     * @param {[]} imgList 图片列表
+     * @param {number} imageIndex 图片索引
+     */
+    handleImgClick(imgList, imageIndex) {
       let data = {
         imgReviewVisible: true,
         imgReviewList: imgList.map((item) => {
@@ -87,38 +92,54 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl'
-@import '~@/assets/styles/mixins.styl'
+@import '~@/assets/styles/varibles.styl';
+@import '~@/assets/styles/mixins.styl';
 
-.image-timeline-wrapper
-  margin-top 20px
-  height calc(100vh - 215px)
-  overflow-y auto
-  setScrollbar(10px)
-  .image-timeline-list
-    margin-top 10px
-    .image-timeline-item
-      .image-list
-        display flex
-        flex-wrap wrap
-        .image-item
-          margin 0 16px 16px 0
-          width 120px
-          padding 8px
-          text-align center
-          cursor pointer
-          &:hover
-            background $tabBackColor
-            .file-name
-              font-weight 550
-          .image
-            width 80px
-            height 80px
-          .image-name
-            margin-top 8px
-            height 44px
-            line-height 22px
-            font-size 12px
-            word-break break-all
-            setEllipsis(2)
+.image-timeline-wrapper {
+  margin-top: 20px;
+  height: calc(100vh - 215px);
+  overflow-y: auto;
+  setScrollbar(10px);
+
+  .image-timeline-list {
+    margin-top: 10px;
+
+    .image-timeline-item {
+      .image-list {
+        display: flex;
+        flex-wrap: wrap;
+
+        .image-item {
+          margin: 0 16px 16px 0;
+          width: 120px;
+          padding: 8px;
+          text-align: center;
+          cursor: pointer;
+
+          &:hover {
+            background: $tabBackColor;
+
+            .file-name {
+              font-weight: 550;
+            }
+          }
+
+          .image {
+            width: 80px;
+            height: 80px;
+          }
+
+          .image-name {
+            margin-top: 8px;
+            height: 44px;
+            line-height: 22px;
+            font-size: 12px;
+            word-break: break-all;
+            setEllipsis(2);
+          }
+        }
+      }
+    }
+  }
+}
 </style>

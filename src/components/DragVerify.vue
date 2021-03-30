@@ -10,21 +10,16 @@
     @touchmove="dragMoving"
     @touchend="dragFinish"
   >
-    <div
-      class="dv_progress_bar"
-      ref="progressBar"
-      :class="{ goFirst2: isOk }"
-      :style="progressBarStyle"
-    ></div>
+    <div class="dv_progress_bar" ref="progressBar" :class="{ goFirst2: isOk }" :style="progressBarStyle"></div>
     <div class="dv_text" :style="textStyle" ref="message">
       <slot name="textBefore" v-if="$slots.textBefore"></slot>
-      {{message}}
+      {{ message }}
       <slot name="textAfter" v-if="$slots.textAfter"></slot>
     </div>
 
     <div
       class="dv_handler dv_handler_bg"
-      :class="{goFirst:isOk}"
+      :class="{ goFirst: isOk }"
       @mousedown="dragStart"
       @touchstart="dragStart"
       ref="handler"
@@ -38,34 +33,42 @@
 export default {
   name: 'dragVerify',
   props: {
+    // 是否通过
     isPassing: {
       type: Boolean,
       default: false
     },
+    // 宽度
     width: {
       type: Number,
       default: 250
     },
+    // 高度
     height: {
       type: Number,
       default: 40
     },
+    // 组件文案
     text: {
       type: String,
       default: 'swiping to the right side'
     },
+    // 成功文案
     successText: {
       type: String,
       default: 'success'
     },
+    // 背景色
     background: {
       type: String,
       default: '#eee'
     },
+    // 解锁中背景色
     progressBarBg: {
       type: String,
       default: '#76c61d'
     },
+    // 解锁成功背景色
     completedBg: {
       type: String,
       default: '#76c61d'
@@ -128,9 +131,7 @@ export default {
       return {
         background: this.progressBarBg,
         height: this.height + 'px',
-        borderRadius: this.circle
-          ? this.height / 2 + 'px 0 0 ' + this.height / 2 + 'px'
-          : this.radius
+        borderRadius: this.circle ? this.height / 2 + 'px 0 0 ' + this.height / 2 + 'px' : this.radius
       }
     },
     textStyle() {
@@ -153,9 +154,7 @@ export default {
       if (!this.isPassing) {
         this.isMoving = true
         var handler = this.$refs.handler
-        this.x =
-          (e.pageX || e.touches[0].pageX) -
-          parseInt(handler.style.left.replace('px', ''), 10)
+        this.x = (e.pageX || e.touches[0].pageX) - parseInt(handler.style.left.replace('px', ''), 10)
       }
       this.$emit('handlerMove')
     },
@@ -168,8 +167,7 @@ export default {
           this.$refs.progressBar.style.width = _x + this.height / 2 + 'px'
         } else if (_x > this.width - this.height) {
           handler.style.left = this.width - this.height + 'px'
-          this.$refs.progressBar.style.width =
-            this.width - this.height / 2 + 'px'
+          this.$refs.progressBar.style.width = this.width - this.height / 2 + 'px'
           this.passVerify()
         }
       }
@@ -188,8 +186,7 @@ export default {
         } else {
           var handler = this.$refs.handler
           handler.style.left = this.width - this.height + 'px'
-          this.$refs.progressBar.style.width =
-            this.width - this.height / 2 + 'px'
+          this.$refs.progressBar.style.width = this.width - this.height / 2 + 'px'
           this.passVerify()
         }
         this.isMoving = false
@@ -226,37 +223,46 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.drag_verify
-  position relative
-  background-color #e8e8e8
-  text-align center
-  overflow hidden
-  .dv_handler
-    position absolute
-    top 0px
-    left 0px
-    cursor move
-    i
-      color #666
-      padding-left 0
-      font-size 16px
-    .el-icon-circle-check
-      color #6c6
-      margin-top 9px
-  .dv_progress_bar
-    position absolute
-    height 34px
-    width 0px
-  .dv_text
-    position absolute
-    top 0px
-    color transparent
-    -moz-user-select none
-    -webkit-user-select none
-    user-select none
-    -o-user-select none
-    -ms-user-select none
-    background -webkit-gradient(
+.drag_verify {
+  position: relative;
+  background-color: #e8e8e8;
+  text-align: center;
+  overflow: hidden;
+
+  .dv_handler {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    cursor: move;
+
+    i {
+      color: #666;
+      padding-left: 0;
+      font-size: 16px;
+    }
+
+    .el-icon-circle-check {
+      color: #6c6;
+      margin-top: 9px;
+    }
+  }
+
+  .dv_progress_bar {
+    position: absolute;
+    height: 34px;
+    width: 0px;
+  }
+
+  .dv_text {
+    position: absolute;
+    top: 0px;
+    color: transparent;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    background: -webkit-gradient(
       linear,
       left top,
       right top,
@@ -265,19 +271,27 @@ export default {
       color-stop(0.5, #fff),
       color-stop(0.6, var(--textColor)),
       color-stop(1, var(--textColor))
-    )
-    -webkit-background-clip text
-    -webkit-text-fill-color transparent
-    -webkit-text-size-adjust none
-    animation slidetounlock 3s infinite
-    *
-      -webkit-text-fill-color var(--textColor)
-  .goFirst
-    left 0px !important
-    transition left 0.5s
-  .goFirst2
-    width 0px !important
-    transition width 0.5s
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-size-adjust: none;
+    animation: slidetounlock 3s infinite;
+
+    * {
+      -webkit-text-fill-color: var(--textColor);
+    }
+  }
+
+  .goFirst {
+    left: 0px !important;
+    transition: left 0.5s;
+  }
+
+  .goFirst2 {
+    width: 0px !important;
+    transition: width 0.5s;
+  }
+}
 </style>
 <style>
 @keyframes slidetounlock {

@@ -13,7 +13,7 @@
         v-for="(item, index) in fileListSorted"
         :key="index"
         :title="item | fileNameComplete"
-        @click="clickFileName(item, index, fileListSorted)"
+        @click="handleFileNameClick(item, index, fileListSorted)"
         @contextmenu.prevent="rightClickFile(item, index, $event)"
       >
         <img class="file-img" :src="setFileImg(item)" />
@@ -34,11 +34,23 @@
     </ul>
     <transition name="el-fade-in-linear">
       <div class="right-menu" v-show="rightMenu.isShow" :style="`top: ${rightMenu.top}px; left: ${rightMenu.left}px;`">
-        <el-button type="info" size="small" plain @click.native="deleteFileBtn(selectedFile)">删除</el-button>
-        <el-button type="info" size="small" plain @click.native="showMoveFileDialog(selectedFile)" v-if="fileType !== 6"
+        <el-button type="info" size="small" plain @click.native="handleDeleteFileBtnClick(selectedFile)"
+          >删除</el-button
+        >
+        <el-button
+          type="info"
+          size="small"
+          plain
+          @click.native="handleMoveFileBtnClick(selectedFile)"
+          v-if="fileType !== 6"
           >移动</el-button
         >
-        <el-button type="info" size="small" plain @click.native="renameFile(selectedFile)" v-if="fileType !== 6"
+        <el-button
+          type="info"
+          size="small"
+          plain
+          @click.native="handleRenameFileBtnClick(selectedFile)"
+          v-if="fileType !== 6"
           >重命名</el-button
         >
         <el-button
@@ -50,7 +62,7 @@
         >
           <a
             target="_blank"
-            style="display: block;color: inherit;"
+            style="display: block; color: inherit"
             :href="getDownloadFilePath(selectedFile)"
             :download="selectedFile.fileName + '.' + selectedFile.extendName"
             >下载</a
@@ -60,7 +72,7 @@
           type="info"
           size="small"
           plain
-          @click.native="unzipFile(selectedFile)"
+          @click.native="handleUnzipFileBtnClick(selectedFile)"
           v-if="fileType !== 6 && (selectedFile.extendName == 'zip' || selectedFile.extendName == 'rar')"
           >解压缩</el-button
         >
@@ -70,13 +82,23 @@
 </template>
 
 <script>
-import { unzipfile, deleteFile, renameFile, deleteRecoveryFile } from '@/request/file.js'
+import { unzipFile, deleteFile, renameFile, deleteRecoveryFile } from '@/request/file.js'
 import { mapGetters } from 'vuex'
 import 'element-ui/lib/theme-chalk/base.css'
 
 export default {
   name: 'FileGrid',
   props: {
+    // 文件类型
+    fileType: {
+      required: true,
+      type: Number
+    },
+    // 文件路径
+    filePath: {
+      required: true,
+      type: String
+    },
     fileList: Array, //  文件列表
     loading: Boolean,
     batchOperate: Boolean
@@ -182,24 +204,6 @@ export default {
      * fileModel: 文件查看模式 0列表模式 1网格模式
      *  */
     ...mapGetters(['selectedColumnList', 'fileModel']),
-    //  当前查看的文件路径
-    filePath: {
-      get() {
-        return this.$route.query.filePath
-      },
-      set() {
-        return ''
-      }
-    },
-    // 文件类型
-    fileType: {
-      get() {
-        return Number(this.$route.query.fileType)
-      },
-      set() {
-        return 0
-      }
-    },
     //  判断当前路径下是否有普通文件
     isIncludeNormalFile() {
       return this.fileList.map((data) => data.isDir).includes(0)
@@ -238,9 +242,11 @@ export default {
   },
   methods: {
     /**
-     * 文件操作相关书事件
+     * 文件鼠标右键事件
+     * @param {object} item 文件信息
+     * @param {number} index 文件索引
+     * @param {object} mouseEvent 鼠标事件信息
      */
-    // 文件右键事件
     rightClickFile(item, index, mouseEvent) {
       if (!this.batchOperate) {
         this.rightMenu.isShow = false
@@ -253,9 +259,9 @@ export default {
       }
     },
     /**
-     * 表格数据获取相关事件
+     * 根据文件扩展名设置文件图片
+     * @param {object} row 文件信息
      */
-    //  根据文件扩展名设置文件图片
     setFileImg(row) {
       if (!row.extendName) {
         //  文件夹
@@ -271,27 +277,15 @@ export default {
         return this.fileImgMap[row.extendName]
       }
     },
-    //  计算文件大小
-    calculateFileSize(size) {
-      const B = 1024
-      const KB = Math.pow(1024, 2)
-      const MB = Math.pow(1024, 3)
-      const GB = Math.pow(1024, 4)
-      if (!size) {
-        return '_'
-      } else if (size < KB) {
-        return (size / B).toFixed(0) + 'KB'
-      } else if (size < MB) {
-        return (size / KB).toFixed(1) + 'MB'
-      } else if (size < GB) {
-        return (size / MB).toFixed(2) + 'GB'
-      } else {
-        return (size / GB).toFixed(3) + 'TB'
-      }
-    },
 
-    //  点击文件名
-    clickFileName(row, activeIndex, imgList) {
+    /**
+     * 文件名点击事件
+     * @description 若当前点击的为文件夹，则进入文件夹内部；若是文件，则进行相应的预览。
+     * @param {object} row 文件信息
+     * @param {number} activeIndex 文件索引
+     * @param {[]} imgList 图片列表
+     */
+    handleFileNameClick(row, activeIndex, imgList) {
       this.rightMenu.isShow = false
       //  若是目录则进入目录
       if (row.isDir) {
@@ -339,7 +333,7 @@ export default {
           }
         }
         //  若当前点击项是可以使用office在线预览的
-        if (['ppt','pptx','doc','docx','xls','xlsx'].includes(row.extendName)) {
+        if (['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'].includes(row.extendName)) {
           window.open(this.getFileOnlineViewPathByOffice(row), '_blank')
         }
         //  若当前点击项是pdf
@@ -363,19 +357,23 @@ export default {
         }
       }
     },
-
     /**
-     * 移动按钮相关事件
+     * 移动按钮点击事件
+     * @description 向父组件传递当前操作的文件信息，并打开“移动文件对话框”
+     * @param {object} file 文件信息
      */
-    //  操作列-移动按钮：打开移动文件模态框
-    showMoveFileDialog(file) {
+    handleMoveFileBtnClick(file) {
       this.rightMenu.isShow = false
-      //  第一个参数: 是否批量移动；第二个参数：打开/关闭移动文件模态框
       this.$emit('setOperationFile', file)
+      //  第一个参数: 是否批量移动；第二个参数：打开/关闭移动文件模态框
       this.$emit('setMoveFileDialogData', false, true)
     },
-    //  操作列-解压缩按钮
-    unzipFile(fileInfo) {
+    /**
+     * 解压缩按钮点击事件
+     * @description 调用解压缩文件接口，并展示新的文件列表
+     * @param {object} fileInfo 文件信息
+     */
+    handleUnzipFileBtnClick(fileInfo) {
       this.rightMenu.isShow = false
       const loading = this.$loading({
         lock: true,
@@ -383,7 +381,7 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      unzipfile(fileInfo).then((res) => {
+      unzipFile(fileInfo).then((res) => {
         if (res.success) {
           this.$emit('getTableDataByType')
           this.$store.dispatch('showStorage')
@@ -394,12 +392,12 @@ export default {
         }
       })
     },
-
     /**
-     * 删除按钮相关事件
+     * 删除按钮点击事件
+     * @description 区分 删除到回收站中 | 在回收站中彻底删除，打开确认对话框
+     * @param {object} fileInfo 文件信息
      */
-    //  操作列-删除按钮
-    deleteFileBtn(fileInfo) {
+    handleDeleteFileBtnClick(fileInfo) {
       this.rightMenu.isShow = false
       if (this.fileType === 6) {
         //  回收站里 - 彻底删除
@@ -435,7 +433,12 @@ export default {
           })
       }
     },
-    //  删除文件模态框-确定按钮
+    /**
+     * 删除文件确认对话框 | 确定按钮点击事件
+     * @description 区分 删除到回收站中 | 在回收站中彻底删除，调用相应的删除文件接口
+     * @param {object} fileInfo 文件信息
+     * @param {boolean} type 文件类型，true 在回收站中彻底删除 false 删除到回收站
+     */
     confirmDeleteFile(fileInfo, type) {
       if (type) {
         //  回收站中删除
@@ -463,8 +466,12 @@ export default {
         })
       }
     },
-    // 文件重命名
-    renameFile(fileInfo) {
+    /**
+     * 文件重命名按钮点击事件
+     * @description 打开确认对话框让用户输入新的文件名
+     * @param {object} fileInfo 文件信息
+     */
+    handleRenameFileBtnClick(fileInfo) {
       this.rightMenu.isShow = false
       var fileName = fileInfo.fileName
       this.$prompt('请输入文件名', '提示', {
@@ -484,7 +491,11 @@ export default {
           })
         })
     },
-    // 文件重命名模态框 确定按钮
+    /**
+     * 文件重命名对话框 | 确定按钮点击事件
+     * @description 调用文件重命名接口
+     * @param {object} fileInfo 文件信息
+     */
     confirmRenameFile(fileInfo) {
       renameFile(fileInfo).then((res) => {
         if (res.success) {
@@ -502,58 +513,80 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl'
-@import '~@/assets/styles/mixins.styl'
+@import '~@/assets/styles/varibles.styl';
+@import '~@/assets/styles/mixins.styl';
 
-.file-grid-wrapper
-  .file-list
-    height calc(100vh - 206px)
-    overflow-y auto
-    display flex
-    flex-wrap wrap
-    align-items flex-start
-    align-content flex-start
-    setScrollbar(10px)
-    .file-item
-      margin 0 16px 16px 0
-      position relative
-      width 120px
-      padding 8px
-      text-align center
-      cursor pointer
-      &:hover
-        background $tabBackColor
-        .file-name
-          font-weight 550
-      .file-img
-        width 80px
-        height 80px
-      .file-name
-        margin-top 8px
-        height 44px
-        line-height 22px
-        font-size 12px
-        word-break break-all
-        setEllipsis(2)
-      .file-checked-wrapper
-        position absolute
-        top 0
-        left 0
-        z-index 2
-        background rgba(245, 247, 250, 0.5)
-        width 100%
-        height 100%
-        .file-checked
-          position absolute
-          top 16px
-          left 24px
-      .file-checked-wrapper.checked
-        background rgba(245, 247, 250, 0)
-  .right-menu
-    position fixed
-    display flex
-    flex-direction column
-    >>> .el-button
-      margin 0
-      border-radius 0
+.file-grid-wrapper {
+  .file-list {
+    height: calc(100vh - 206px);
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    setScrollbar(10px);
+
+    .file-item {
+      margin: 0 16px 16px 0;
+      position: relative;
+      width: 120px;
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+
+      &:hover {
+        background: $tabBackColor;
+
+        .file-name {
+          font-weight: 550;
+        }
+      }
+
+      .file-img {
+        width: 80px;
+        height: 80px;
+      }
+
+      .file-name {
+        margin-top: 8px;
+        height: 44px;
+        line-height: 22px;
+        font-size: 12px;
+        word-break: break-all;
+        setEllipsis(2);
+      }
+
+      .file-checked-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        background: rgba(245, 247, 250, 0.5);
+        width: 100%;
+        height: 100%;
+
+        .file-checked {
+          position: absolute;
+          top: 16px;
+          left: 24px;
+        }
+      }
+
+      .file-checked-wrapper.checked {
+        background: rgba(245, 247, 250, 0);
+      }
+    }
+  }
+
+  .right-menu {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+
+    >>> .el-button {
+      margin: 0;
+      border-radius: 0;
+    }
+  }
+}
 </style>

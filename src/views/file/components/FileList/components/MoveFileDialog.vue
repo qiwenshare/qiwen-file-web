@@ -1,13 +1,13 @@
 <template>
   <div class="move-dialog-wrapper">
-    <!-- 移动文件-选择目录模态框 -->
-    <el-dialog title="选择目录" :visible.sync="dialogMoveFile.visible">
+    <!-- 移动文件-选择目标路径 -->
+    <el-dialog title="选择目标路径" :visible.sync="dialogMoveFile.visible">
       <div class="el-dialog-div">
         <el-tree
           :data="dialogMoveFile.fileTree"
           :props="defaultProps"
           :highlight-current="true"
-          @node-click="selectNodeClick"
+          @node-click="handleNodeClick"
         ></el-tree>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -33,11 +33,13 @@ export default {
     }
   },
   methods: {
-    //  移动文件模态框：选择目录事件
-    selectNodeClick(data) {
-      let selectFilePath = data.attributes.filePath
-        ? data.attributes.filePath
-        : '/'
+    /**
+     * 目录树节点点击回调函数
+     * @description 将当前节点中的文件夹路径传递给父组件
+     * @param {object} data 当前点击的节点信息
+     */
+    handleNodeClick(data) {
+      let selectFilePath = data.attributes.filePath ? data.attributes.filePath : '/'
       this.$emit('setSelectFilePath', selectFilePath)
     }
   }
@@ -45,26 +47,42 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/mixins.styl'
+@import '~@/assets/styles/mixins.styl';
 
-.move-dialog-wrapper
-  >>> .el-dialog
-    .el-dialog__header
-      display flex
-    .el-dialog__body
-      padding 10px 30px
-      .el-dialog-div
-        height 300px
-        overflow auto
-        setScrollbar(6px)
-        .el-tree
-          .el-tree-node__content
-            height 34px
-            font-size 16px
-            .el-icon-caret-right
-              font-size 18px
-          .el-tree-node.is-current>.el-tree-node__content
-            color $Primary
-            .el-tree-node__expand-icon
-              color inherit
+.move-dialog-wrapper {
+  >>> .el-dialog {
+    .el-dialog__header {
+      display: flex;
+    }
+
+    .el-dialog__body {
+      padding: 10px 30px;
+
+      .el-dialog-div {
+        height: 300px;
+        overflow: auto;
+        setScrollbar(6px);
+
+        .el-tree {
+          .el-tree-node__content {
+            height: 34px;
+            font-size: 16px;
+
+            .el-icon-caret-right {
+              font-size: 18px;
+            }
+          }
+
+          .el-tree-node.is-current>.el-tree-node__content {
+            color: $Primary;
+
+            .el-tree-node__expand-icon {
+              color: inherit;
+            }
+          }
+        }
+      }
+    }
+  }
+}
 </style>

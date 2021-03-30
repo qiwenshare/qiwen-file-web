@@ -11,13 +11,12 @@
       tooltip-effect="dark"
       :data="fileList"
       :default-sort="{ prop: 'isDir', order: 'descending' }"
-      @select-all="selectAllFileRow"
-      @select="selectFileRow"
+      @selection-change="handleSelectRow"
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label prop="isDir" width="60" align="center">
         <template slot-scope="scope">
-          <img :src="setFileImg(scope.row)" style="width: 30px;" />
+          <img :src="setFileImg(scope.row)" style="width: 30px" />
         </template>
       </el-table-column>
       <el-table-column prop="fileName" :sort-by="['isDir', 'fileName']" sortable show-overflow-tooltip>
@@ -25,7 +24,7 @@
           <span>文件名</span>
         </template>
         <template slot-scope="scope">
-          <div style="cursor:pointer;" @click="clickFileName(scope.row)">
+          <div style="cursor: pointer" @click="handleFileNameClick(scope.row)">
             {{ scope.row | fileNameComplete }}
           </div>
         </template>
@@ -38,9 +37,13 @@
       >
         <template slot-scope="scope">
           <span
-            style="cursor: pointer;"
+            style="cursor: pointer"
             title="点击跳转"
-            @click="$router.push({ query: { filePath: scope.row.filePath, fileType: 0 } })"
+            @click="
+              $router.push({
+                query: { filePath: scope.row.filePath, fileType: 0 }
+              })
+            "
             >{{ scope.row.filePath }}</span
           >
         </template>
@@ -70,7 +73,9 @@
         v-if="selectedColumnList.includes('fileSize')"
       >
         <template slot-scope="scope">
-          <div style="padding: 0 10px;">{{ calculateFileSize(scope.row.fileSize) }}</div>
+          <div style="padding: 0 10px">
+            {{ calculateFileSize(scope.row.fileSize) }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column
@@ -99,28 +104,27 @@
         </template>
         <template slot-scope="scope">
           <div v-if="operaColumnExpand">
-            <el-button type="text" size="mini" @click.native="deleteFileBtn(scope.row)">删除</el-button>
-            <el-button type="text" size="mini" @click.native="restoreFileBtn(scope.row)" v-if="fileType === 6"
+            <el-button type="text" size="mini" @click.native="handleDeleteFileBtnClick(scope.row)">删除</el-button>
+            <el-button
+              type="text"
+              size="mini"
+              @click.native="handleRestoreFileBtnClick(scope.row)"
+              v-if="fileType === 6"
               >还原</el-button
             >
-            <el-button type="text" size="mini" @click.native="showMoveFileDialog(scope.row)" v-if="fileType !== 6"
+            <el-button type="text" size="mini" @click.native="handleMoveFileBtnClick(scope.row)" v-if="fileType !== 6"
               >移动</el-button
             >
-            <el-button type="text" size="mini" @click.native="renameFile(scope.row)" v-if="fileType !== 6"
+            <el-button type="text" size="mini" @click.native="handleRenameFileBtnClick(scope.row)" v-if="fileType !== 6"
               >重命名</el-button
             >
             <el-button type="text" size="mini" v-if="scope.row.isDir === 0 && fileType !== 6">
-              <a
-                target="_blank"
-                style="display: block;color: inherit;"
-                :href="getDownloadFilePath(scope.row)"
-                >下载</a
-              >
+              <a target="_blank" style="display: block; color: inherit" :href="getDownloadFilePath(scope.row)">下载</a>
             </el-button>
             <el-button
               type="text"
               size="mini"
-              @click.native="unzipFile(scope.row)"
+              @click.native="handleUnzipFileBtnClick(scope.row)"
               v-if="fileType !== 6 && (scope.row.extendName == 'zip' || scope.row.extendName == 'rar')"
               >解压缩</el-button
             >
@@ -131,21 +135,25 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="deleteFileBtn(scope.row)">删除</el-dropdown-item>
-              <el-dropdown-item @click.native="restoreFileBtn(scope.row)" v-if="fileType === 6">还原</el-dropdown-item>
-              <el-dropdown-item @click.native="showMoveFileDialog(scope.row)" v-if="fileType !== 6"
+              <el-dropdown-item @click.native="handleDeleteFileBtnClick(scope.row)">删除</el-dropdown-item>
+              <el-dropdown-item @click.native="handleRestoreFileBtnClick(scope.row)" v-if="fileType === 6"
+                >还原</el-dropdown-item
+              >
+              <el-dropdown-item @click.native="handleMoveFileBtnClick(scope.row)" v-if="fileType !== 6"
                 >移动</el-dropdown-item
               >
-              <el-dropdown-item @click.native="renameFile(scope.row)" v-if="fileType !== 6">重命名</el-dropdown-item>
+              <el-dropdown-item @click.native="handleRenameFileBtnClick(scope.row)" v-if="fileType !== 6"
+                >重命名</el-dropdown-item
+              >
               <el-dropdown-item
                 v-if="scope.row.extendName === 'zip' && fileType !== 6"
-                @click.native="unzipFile(scope.row)"
+                @click.native="handleUnzipFileBtnClick(scope.row)"
                 >解压缩</el-dropdown-item
               >
               <el-dropdown-item v-if="scope.row.isDir === 0 && fileType !== 6">
                 <a
                   target="_blank"
-                  style="display: block;color: inherit;"
+                  style="display: block; color: inherit"
                   :href="'api' + scope.row.fileUrl"
                   :download="scope.row.fileName + '.' + scope.row.extendName"
                   >下载</a
@@ -160,14 +168,32 @@
 </template>
 
 <script>
-import { unzipfile, deleteFile, renameFile, deleteRecoveryFile, restoreRecoveryFile } from '@/request/file.js'
+import { unzipFile, deleteFile, renameFile, deleteRecoveryFile, restoreRecoveryFile } from '@/request/file.js'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'FileTable',
   props: {
-    fileList: Array, //  文件列表
-    loading: Boolean
+    // 文件类型
+    fileType: {
+      required: true,
+      type: Number
+    },
+    // 文件路径
+    filePath: {
+      required: true,
+      type: String
+    },
+    // 文件列表
+    fileList: {
+      required: true,
+      type: Array
+    },
+    // 文件加载状态
+    loading: {
+      required: true,
+      type: Boolean
+    }
   },
   data() {
     return {
@@ -259,26 +285,8 @@ export default {
     }
   },
   computed: {
-    //  selectedColumnList:判断当前用户设置的左侧栏是否折叠
+    //  selectedColumnList: 判断当前用户设置的左侧栏是否折叠
     ...mapGetters(['selectedColumnList']),
-    //  当前查看的文件路径
-    filePath: {
-      get() {
-        return this.$route.query.filePath
-      },
-      set() {
-        return ''
-      }
-    },
-    // 文件类型
-    fileType: {
-      get() {
-        return Number(this.$route.query.fileType)
-      },
-      set() {
-        return 0
-      }
-    },
     //  判断当前路径下是否有普通文件
     isIncludeNormalFile() {
       return this.fileList.map((data) => data.isDir).includes(0)
@@ -290,6 +298,7 @@ export default {
         this.fileList.map((data) => data.extendName).includes('rar')
       )
     },
+    // 操作列宽度
     operaColumnWidth() {
       return this.fileType === 6
         ? 120
@@ -304,21 +313,31 @@ export default {
   },
   watch: {
     /**
-     * 监听文件路径、文件类型、文件列表变化，变化时清空表格已选行
+     * 文件路径变化时清空表格已选行
      */
     filePath() {
       this.$refs.multipleTable.clearSelection()
       this.$emit('setSelectionFile', [])
     },
+    /**
+     * 文件类型变化时清空表格已选行
+     */
     fileType() {
       this.$refs.multipleTable.clearSelection()
       this.$emit('setSelectionFile', [])
     },
+    /**
+     * 文件列表变化时清空表格已选行
+     */
     fileList() {
       this.$refs.multipleTable.clearSelection()
       this.$emit('setSelectionFile', [])
     },
-    // 监听收缩状态变化，存储在sessionStorage中，保证页面刷新时仍然保存设置的状态
+    /**
+     * 监听表格操作列按钮折叠状态变化
+     * @param {boolean} newValue 折叠状态
+     * @description 将状态存储在sessionStorage中，保证页面刷新时仍然保存设置的状态
+     */
     operaColumnExpand(newValue) {
       this.setCookies('operaColumnExpand', newValue)
     }
@@ -328,9 +347,9 @@ export default {
   },
   methods: {
     /**
-     * 表格数据获取相关事件
+     * 根据文件扩展名设置文件图片
+     * @param {object} row 文件信息
      */
-    //  根据文件扩展名设置文件图片
     setFileImg(row) {
       if (!row.extendName) {
         //  文件夹
@@ -346,7 +365,11 @@ export default {
         return this.fileImgMap[row.extendName]
       }
     },
-    //  计算文件大小
+    /**
+     * 格式化文件大小
+     * @param {number} size 文件大小
+     * @returns {string} 文件大小（带单位）
+     */
     calculateFileSize(size) {
       const B = 1024
       const KB = Math.pow(1024, 2)
@@ -364,9 +387,12 @@ export default {
         return (size / GB).toFixed(3) + 'TB'
       }
     },
-
-    //  点击文件名
-    clickFileName(row) {
+    /**
+     * 文件名点击事件
+     * @description 若当前点击的为文件夹，则进入文件夹内部；若是文件，则进行相应的预览。
+     * @param {object} row 文件信息
+     */
+    handleFileNameClick(row) {
       //  若是目录则进入目录
       if (row.isDir) {
         this.$router.push({
@@ -420,38 +446,36 @@ export default {
         }
       }
     },
-
     /**
-     * 表格勾选框事件
+     * 表格选择项发生变化时的回调函数
+     * @param {[]} selection 勾选的行数据
      */
-    //  表格-全选事件, selectoin 勾选的行数据
-    selectAllFileRow(selection) {
+    handleSelectRow(selection) {
       this.$emit('setSelectionFile', selection)
     },
-    //  表格-选中一行事件, selectoin 勾选的行数据
-    selectFileRow(selection) {
-      this.$emit('setSelectionFile', selection)
-    },
-
     /**
-     * 移动按钮相关事件
+     * 移动按钮点击事件
+     * @description 向父组件传递当前操作的文件信息，并打开“移动文件对话框”
+     * @param {object} file 文件信息
      */
-    //  操作列-移动按钮：打开移动文件模态框
-    showMoveFileDialog(file) {
-      //  第一个参数: 是否批量移动；第二个参数：打开/关闭移动文件模态框
+    handleMoveFileBtnClick(file) {
       this.$emit('setOperationFile', file)
+      //  第一个参数: 是否批量移动；第二个参数：打开/关闭移动文件对话框
       this.$emit('setMoveFileDialogData', false, true)
     },
-
-    //  操作列-解压缩按钮
-    unzipFile(fileInfo) {
+    /**
+     * 解压缩按钮点击事件
+     * @description 调用解压缩文件接口，并展示新的文件列表
+     * @param {object} fileInfo 文件信息
+     */
+    handleUnzipFileBtnClick(fileInfo) {
       const loading = this.$loading({
         lock: true,
         text: '正在解压缩，请稍等片刻...',
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      unzipfile(fileInfo).then((res) => {
+      unzipFile(fileInfo).then((res) => {
         if (res.success) {
           this.$emit('getTableDataByType')
           this.$store.dispatch('showStorage')
@@ -464,10 +488,11 @@ export default {
     },
 
     /**
-     * 删除按钮相关事件
+     * 删除按钮点击事件
+     * @description 区分 删除到回收站中 | 在回收站中彻底删除，打开确认对话框
+     * @param {object} fileInfo 文件信息
      */
-    //  操作列-删除按钮
-    deleteFileBtn(fileInfo) {
+    handleDeleteFileBtnClick(fileInfo) {
       if (this.fileType === 6) {
         //  回收站里 - 彻底删除
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -502,7 +527,12 @@ export default {
           })
       }
     },
-    //  删除文件模态框-确定按钮
+    /**
+     * 删除文件确认对话框 | 确定按钮点击事件
+     * @description 区分 删除到回收站中 | 在回收站中彻底删除，调用相应的删除文件接口
+     * @param {object} fileInfo 文件信息
+     * @param {boolean} type 文件类型，true 彻底删除；false 删除到回收站
+     */
     confirmDeleteFile(fileInfo, type) {
       if (type) {
         //  回收站中删除
@@ -531,9 +561,11 @@ export default {
       }
     },
     /**
-     * 回收站文件还原相关事件
+     * 还原按钮点击事件
+     * @description 调用接口，在回收站中还原文件
+     * @param {object} fileInfo 文件信息
      */
-    restoreFileBtn(fileInfo) {
+    handleRestoreFileBtnClick(fileInfo) {
       restoreRecoveryFile({
         deleteBatchNum: fileInfo.deleteBatchNum,
         filePath: fileInfo.filePath
@@ -548,10 +580,11 @@ export default {
       })
     },
     /**
-     * 文件重命名相关事件
+     * 文件重命名按钮点击事件
+     * @description 打开确认对话框让用户输入新的文件名
+     * @param {object} fileInfo 文件信息
      */
-    // 文件重命名
-    renameFile(fileInfo) {
+    handleRenameFileBtnClick(fileInfo) {
       var fileName = fileInfo.fileName
       this.$prompt('请输入文件名', '提示', {
         confirmButtonText: '确定',
@@ -570,7 +603,11 @@ export default {
           })
         })
     },
-    // 文件重命名模态框 确定按钮
+    /**
+     * 文件重命名对话框 | 确定按钮点击事件
+     * @description 调用文件重命名接口
+     * @param {object} fileInfo 文件信息
+     */
     confirmRenameFile(fileInfo) {
       renameFile(fileInfo).then((res) => {
         if (res.success) {
@@ -588,68 +625,105 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl'
-@import '~@/assets/styles/mixins.styl'
-.file-table-wrapper
-  margin-top 2px
-  .file-type-0
-    height calc(100vh - 206px) !important
-    >>> .el-table__body-wrapper
-      height calc(100vh - 264px) !important
-  .file-type-6
-    height calc(100vh - 211px) !important
-    >>> .el-table__body-wrapper
-      height calc(100vh - 263px) !important
-  .file-table
-    width 100% !important
-    height calc(100vh - 203px)
-    >>> .el-table__header-wrapper
-      th
-        background $tabBackColor
-        padding 8px 0
-      .el-icon-circle-plus, .el-icon-remove
-        margin-left 6px
-        cursor pointer
-        font-size 16px
-        &:hover
-          color $Primary
-    >>> .el-table__body-wrapper
-      height calc(100vh - 255px)
-      overflow-y auto
-      setScrollbar(10px)
-      td
-        padding 8px 0
-  .img-review-wrapper
-    position fixed
-    top 0
-    right 0
-    bottom 0
-    left 0
-    overflow auto
-    width 100%
-    height 100%
-    z-index 2010
-    text-align center
-    display flex
-    align-items center
-    animation imgReviewAnimation 0.3s
-    -webkit-animation imgReviewAnimation 0.3s /* Safari and Chrome */
-    animation-iteration-count 0.3
-    -webkit-animation-iteration-count 0.3
-    animation-fill-mode forwards
-    -webkit-animation-fill-mode forwards /* Safari 和 Chrome */
-    @keyframes imgReviewAnimation
-      0%
-        background transparent
-      100%
-        background rgba(0, 0, 0, 0.8)
-    @keyframes imgReviewAnimation
-      0%
-        background transparent
-      100%
-        background rgba(0, 0, 0, 0.8)
-    .img-large
-      margin 0 auto
-      max-width 80%
-      max-height 100%
+@import '~@/assets/styles/varibles.styl';
+@import '~@/assets/styles/mixins.styl';
+
+.file-table-wrapper {
+  margin-top: 2px;
+
+  .file-type-0 {
+    height: calc(100vh - 206px) !important;
+
+    >>> .el-table__body-wrapper {
+      height: calc(100vh - 264px) !important;
+    }
+  }
+
+  .file-type-6 {
+    height: calc(100vh - 211px) !important;
+
+    >>> .el-table__body-wrapper {
+      height: calc(100vh - 263px) !important;
+    }
+  }
+
+  .file-table {
+    width: 100% !important;
+    height: calc(100vh - 203px);
+
+    >>> .el-table__header-wrapper {
+      th {
+        background: $tabBackColor;
+        padding: 8px 0;
+      }
+
+      .el-icon-circle-plus, .el-icon-remove {
+        margin-left: 6px;
+        cursor: pointer;
+        font-size: 16px;
+
+        &:hover {
+          color: $Primary;
+        }
+      }
+    }
+
+    >>> .el-table__body-wrapper {
+      height: calc(100vh - 255px);
+      overflow-y: auto;
+      setScrollbar(10px);
+
+      td {
+        padding: 8px 0;
+      }
+    }
+  }
+
+  .img-review-wrapper {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    z-index: 2010;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    animation: imgReviewAnimation 0.3s;
+    -webkit-animation: imgReviewAnimation 0.3s; /* Safari and Chrome */
+    animation-iteration-count: 0.3;
+    -webkit-animation-iteration-count: 0.3;
+    animation-fill-mode: forwards;
+    -webkit-animation-fill-mode: forwards; /* Safari 和 Chrome */
+
+    @keyframes imgReviewAnimation {
+      0% {
+        background: transparent;
+      }
+
+      100% {
+        background: rgba(0, 0, 0, 0.8);
+      }
+    }
+
+    @keyframes imgReviewAnimation {
+      0% {
+        background: transparent;
+      }
+
+      100% {
+        background: rgba(0, 0, 0, 0.8);
+      }
+    }
+
+    .img-large {
+      margin: 0 auto;
+      max-width: 80%;
+      max-height: 100%;
+    }
+  }
+}
 </style>

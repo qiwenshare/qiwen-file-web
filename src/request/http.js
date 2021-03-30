@@ -1,119 +1,127 @@
-import axios from "axios"
-import Cookies from 'js-cookie'
+import axios from 'axios'
+import globalFunction from '@/globalFunction.js'
 
 // 请求超时时间
-axios.defaults.timeout = 10000 * 5;
+axios.defaults.timeout = 10000 * 5
 
-// 请求基础URL
-axios.defaults.baseURL = '/api';
+// 请求基础 URL
+axios.defaults.baseURL = '/api'
 
-// post请求头
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+// POST 请求头
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 // 请求携带cookie
-axios.defaults.withCredentials = true;
-
+axios.defaults.withCredentials = true
 
 // 请求拦截器
 axios.interceptors.request.use(
-  config => {
-    if (Cookies.get('token', { domain: 'qiwenshare.com' })) {
-      config.headers['token'] = Cookies.get('token', { domain: 'qiwenshare.com' })
-    } else {
-      config.headers['token'] = Cookies.get('token')
-    }
+  (config) => {
+    config.headers['token'] = globalFunction.getCookies('token')
     return config
   },
-  error => {
+  (error) => {
     console.log(error)
     return Promise.reject(error)
   }
 )
 
-
 // 响应拦截器
 axios.interceptors.response.use(
-  response => {
+  (response) => {
     if (response.status === 200) {
-      return Promise.resolve(response);
+      return Promise.resolve(response)
     }
   },
-  // 服务器状态码不是200的情况 
-  error => {
+  // 服务器状态码不是200的情况
+  (error) => {
     if (error.response.status) {
       console.log(error.response)
-      return Promise.reject(error.response);
+      return Promise.reject(error.response)
     }
   }
-);
-/** 
-* get方法，对应get请求 
-*/
-export function get(url, params, info = '') {
+)
+/**
+ * 封装 get方法 对应 GET 请求
+ * @param {string} url 请求url
+ * @param {object} params 查询参数
+ * @returns {Promise}
+ */
+export function get(url, params) {
   return new Promise((resolve, reject) => {
-    axios.get(url + info, {
-      params: params
-    })
-      .then(res => {
-        resolve(res.data);
+    axios
+      .get(url, {
+        params: params
       })
-      .catch(err => {
+      .then((res) => {
+        resolve(res.data)
+      })
+      .catch((err) => {
         reject(err.data)
       })
-  });
+  })
 }
-/** 
- * post方法，对应post请求 
- * info为 true，formData格式；
- * info为 undefined或false，是json格式
+/**
+ * 封装 post 方法，对应 POST 请求
+ * @param {string} url 请求url
+ * @param {object} data 请求体
+ * @param {boolean | undefined} info 请求体是否为 FormData 格式
+ * @returns {Promise}
  */
 export function post(url, data = {}, info) {
   return new Promise((resolve, reject) => {
     let newData = data
-    if (info) {  //  转formData格式
-      newData = new FormData();
+    if (info) {
+      //  转formData格式
+      newData = new FormData()
       for (let i in data) {
-        newData.append(i, data[i]);
+        newData.append(i, data[i])
       }
     }
-    axios.post(url, newData)
-      .then(res => {
-        resolve(res.data);
+    axios
+      .post(url, newData)
+      .then((res) => {
+        resolve(res.data)
       })
-      .catch(err => {
-        reject(err.data)
-      })
-  });
-}
-
-/**
- * 封装put请求
- */
-
-export function put(url, params = {}, info = "") {
-  return new Promise((resolve, reject) => {
-    axios.put(url + info, params)
-      .then(res => {
-        resolve(res.data);
-      }, err => {
+      .catch((err) => {
         reject(err.data)
       })
   })
 }
 
 /**
-* 封装delete请求
-*/
-export function axiosDelete(url, params = {}, info = "") {
+ * 封装 put 方法，对应 PUT 请求
+ * @param {string} url 请求url
+ * @param {object} params 请求体
+ * @returns {Promise}
+ */
+export function put(url, params = {}) {
   return new Promise((resolve, reject) => {
-    axios.delete(url + info, {
-      params: params
-    })
-      .then(res => {
-        resolve(res.data);
+    axios.put(url, params).then(
+      (res) => {
+        resolve(res.data)
+      },
+      (err) => {
+        reject(err.data)
+      }
+    )
+  })
+}
+
+/**
+ * 封装 axiosDelete 方法，对应 DELETE 请求
+ * @param {string} url 请求url
+ * @param {object} params 请求体
+ * @returns {Promise}
+ */
+export function axiosDelete(url, params = {}) {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(url, params)
+      .then((res) => {
+        resolve(res.data)
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.data)
       })
-  });
+  })
 }

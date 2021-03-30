@@ -41,7 +41,6 @@
       </el-menu-item>
     </el-menu>
     <!-- 存储信息显示 -->
-    <!-- v-show="!isCollapse" -->
     <div class="storage-wrapper" :class="{ fold: isCollapse }">
       <el-progress
         :percentage="storagePercentage"
@@ -107,41 +106,6 @@ export default {
       this.setCookies('isCollapse', newValue)
     }
   },
-  filters: {
-    // 计算空间占比
-    storageTrans(size, status) {
-      const B = 1024
-      const KB = Math.pow(1024, 2)
-      const MB = Math.pow(1024, 3)
-      const GB = Math.pow(1024, 4)
-      if (status) {
-        //	截取整数部分
-        if (!size) {
-          return 0 + 'KB'
-        } else if (size < KB) {
-          return (size / B).toFixed(0) + 'KB'
-        } else if (size < MB) {
-          return (size / KB).toFixed(0) + 'MB'
-        } else if (size < GB) {
-          return (size / MB).toFixed(0) + 'GB'
-        } else {
-          return (size / GB).toFixed(0) + 'TB'
-        }
-      } else {
-        if (!size) {
-          return 0 + 'KB'
-        } else if (size < KB) {
-          return (size / B).toFixed(0) + 'KB'
-        } else if (size < MB) {
-          return (size / KB).toFixed(2) + 'MB'
-        } else if (size < GB) {
-          return (size / MB).toFixed(3) + 'GB'
-        } else {
-          return (size / GB).toFixed(4) + 'TB'
-        }
-      }
-    }
-  },
   created() {
     this.isCollapse = this.getCookies('isCollapse') === 'true' //  读取保存的状态
   }
@@ -191,13 +155,16 @@ export default {
       font-size: 14px;
     }
   }
+
   .storage-wrapper.fold {
     padding: 0;
+
     >>> .el-progress--circle {
       margin: 0 auto;
       width: 32px;
       display: block;
     }
+
     .text {
       font-size: 12px;
       justify-content: center;
@@ -207,7 +174,7 @@ export default {
   // 折叠图标调整样式
   .aside-title {
     position: absolute;
-    top: calc(50%  - 50px);
+    top: calc(50% - 50px);
     right: 0;
     z-index: 3;
     background: #545c64;

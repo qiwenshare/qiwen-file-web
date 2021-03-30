@@ -37,14 +37,18 @@ export default {
     ...mapGetters(['isLogin', 'username']),
     // 当前激活菜单的 index
     activeIndex() {
-      return this.$route.name //  获取当前路由名称
+      return this.$route.name || 'Home' //  获取当前路由名称
     },
     isProductEnv() {
       return process.env.NODE_ENV !== 'development' && location.origin === 'https://pan.qiwenshare.com'
     }
   },
   methods: {
-    //  退出登录
+    /**
+     * 退出登录
+     * @description 清除 cookie 存放的 token、downloadDomain 和 viewDomain
+     *              并跳转到登录页面
+     */
     exitButton() {
       this.$message.success('退出登录成功！')
       this.setCookies('token', '')

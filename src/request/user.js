@@ -1,20 +1,27 @@
+// 用户信息相关接口
+import { get, post } from './http'
+
 /**
- * post请求，formData格式，不传额外info参数,调用接口时，test({key: value}).then(res => {})
- * export const test = p => post('/user/getattentionstate', p);
+ * 以登录接口为例 
+ * export const login = p => get('/user/login', p);
  * 
- * post请求，非formData格式，传递额外info = true参数，调用接口时，test({key: value},true).then(res => {})
- * export const test = (p, info) => post('/user/getattentionstate', p, info);
+ * login ---------- 接口名称
+ * p -------------- 传参，若需要在url中拼接其他信息，传参可以改为(p, other)
+ * get ------------ 接口调用的方法，来自 http.js 中封装好的四个axios方法 get/post/put/axiosDelete
+ * '/user/login' -- 接口url，若需要在url中拼接其他信息：
+ *                  首先需要在传参处改为(p, other1, other2)
+ *                  然后将url改为`/user/${other1}/login/${other2}`
+ * p -------------- 传递给 get/post/put/axiosDelete 中的查询参数/请求体
  * 
- * 目前所有post接口均采用formData格式
+ * 
+ * 
+ * 除此之外，POST 请求支持请求体格式为 FormData，那么就需要多传递一个参数，true，如下示例：
+ * export const example = p => post('/test/example', p, true);
  */
 
-//  和用户信息相关的接口
-import { get,post } from './http'
-
-/* 用户登录 */
-export const login = p => get('/user/login', p); //登录 
-export const checkUserLoginInfo = p => get('/user/checkuserlogininfo', p); //登录状态及个人信息
-export const authorize = p => post('/user/authorize/qq', p); //qq登录接口
-
-/* 用户注册 */
-export const addUser = p => post('/user/register', p); //注册 
+// 用户登录
+export const login = p => get('/user/login', p);
+// 获取登录状态及用户信息
+export const checkUserLoginInfo = p => get('/user/checkuserlogininfo', p);
+// 用户注册
+export const addUser = p => post('/user/register', p);

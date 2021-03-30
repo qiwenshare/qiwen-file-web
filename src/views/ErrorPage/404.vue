@@ -17,10 +17,13 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.error-404-wrapper
-  display: initial !important
-  padding: 100px 0
-  text-align: center
-  .title
-    padding-bottom: 20px
+.error-404-wrapper {
+  display: initial !important;
+  padding: 100px 0;
+  text-align: center;
+
+  .title {
+    padding-bottom: 20px;
+  }
+}
 </style>

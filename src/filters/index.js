@@ -1,4 +1,9 @@
-// 存储容量格式化
+/**
+ * 存储值格式化
+ * @param {number} size 
+ * @param {boolean} status 
+ * @returns {string} 存储值（带单位）
+ */
 const storageTrans = (size, status) => {
 	const B = 1024
 	const KB = Math.pow(1024, 2)
@@ -30,8 +35,14 @@ const storageTrans = (size, status) => {
 		}
 	}
 }
-const fileNameComplete = (item) => {
-	return item.fileName + (!item.isDir && item.extendName !== null ? `.${item.extendName}` : '')
+
+/**
+ * 文件名称拼接，包括文件名称 + 文件后缀
+ * @param {object} file 文件信息
+ * @returns {string} 完整文件名称
+ */
+const fileNameComplete = (file) => {
+	return file.fileName + (!file.isDir && file.extendName !== null ? `.${file.extendName}` : '')
 }
 
 export {

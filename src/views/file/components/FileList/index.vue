@@ -3,9 +3,10 @@
     <!-- 操作按钮 -->
     <el-header>
       <OperationMenu
+        :fileType="fileType"
+        :filePath="filePath"
         :operationFile="operationFile"
         :selectionFile="selectionFile"
-        :filePath="filePath"
         :batchOperate.sync="batchOperate"
         @getTableDataByType="getTableDataByType"
         @setMoveFileDialogData="setMoveFileDialogData"
@@ -13,10 +14,12 @@
     </el-header>
     <div class="middle-wrapper">
       <!-- 面包屑导航栏 -->
-      <BreadCrumb class="breadcrumb"></BreadCrumb>
+      <BreadCrumb class="breadcrumb" :fileType="fileType"></BreadCrumb>
     </div>
     <!-- 文件列表-表格模式 -->
     <FileTable
+      :fileType="fileType"
+      :filePath="filePath"
       :fileList="fileList"
       :loading="loading"
       v-if="fileModel === 0"
@@ -27,6 +30,8 @@
     ></FileTable>
     <!-- 文件列表-网格模式 -->
     <FileGrid
+      :fileType="fileType"
+      :filePath="filePath"
       :fileList="fileList"
       :loading="loading"
       :batchOperate="batchOperate"
@@ -70,10 +75,10 @@ import FileTimeLine from './components/FileTimeLine'
 import MoveFileDialog from './components/MoveFileDialog'
 
 import {
-  getfilelist,
-  selectFileByFileType,
+  getFileListByPath,
+  getFileListByType,
   getRecoveryFile,
-  getFileTree,
+  getFoldTree,
   moveFile,
   batchMoveFile
 } from '@/request/file.js'
@@ -183,23 +188,13 @@ export default {
     }
   },
   computed: {
-    //  当前查看的文件路径
-    filePath: {
-      get() {
-        return this.$route.query.filePath
-      },
-      set() {
-        return ''
-      }
+    // 左侧菜单选中的文件类型
+    fileType() {
+      return this.$route.query.fileType ? Number(this.$route.query.fileType) : 0
     },
-    // 文件类型
-    fileType: {
-      get() {
-        return Number(this.$route.query.fileType)
-      },
-      set() {
-        return 0
-      }
+    // 当前所在路径
+    filePath() {
+      return this.$route.query.filePath ? this.$route.query.filePath : '/'
     },
     // 文件查看模式 0列表模式 1网格模式 2 时间线模式
     fileModel() {
@@ -208,13 +203,14 @@ export default {
   },
   watch: {
     filePath() {
-      if (this.$route.name === 'File') {
+      // 当左侧菜单选择全部，文件路径发生变化时，再重新获取文件列表
+      if (this.$route.name === 'File' && this.fileType === 0) {
         this.setPageCount()
         this.getTableDataByType()
       }
     },
     fileType() {
-      if (this.$route.name === 'File') {
+      if (this.$route.name === 'File' && this.fileType !== 0) {
         this.setPageCount()
         this.getTableDataByType()
       }
@@ -236,9 +232,8 @@ export default {
   },
   methods: {
     /**
-     * 表格数据获取相关事件
+     * 表格数据获取相关事件 | 调整分页大小
      */
-    // 调整分页大小
     setPageCount() {
       this.pageData.currentPage = 1
       if (this.fileModel === 0) {
@@ -248,7 +243,9 @@ export default {
         this.pageData.pageCount = 100
       }
     },
-    // 获取文件列表数据
+    /**
+     * 表格数据获取相关事件 | 获取文件列表数据
+     */
     getTableDataByType() {
       this.batchOperate = false
       this.loading = true
@@ -265,14 +262,16 @@ export default {
       }
       this.$store.dispatch('showStorage')
     },
-    // 获取当前路径下的文件列表
+    /**
+     * 表格数据获取相关事件 | 获取当前路径下的文件列表
+     */
     showFileList() {
       let data = {
         filePath: this.filePath,
         currentPage: this.pageData.currentPage,
         pageCount: this.pageData.pageCount
       }
-      getfilelist(data).then((res) => {
+      getFileListByPath(data).then((res) => {
         if (res.success) {
           this.fileList = res.data.list
           this.pageData.total = res.data.total
@@ -282,21 +281,23 @@ export default {
         }
       })
     },
-    // 获取文件平铺数据
-    getFileList() {
-      this.pageData.currentPage++
-      this.getTableDataByType()
-    },
-    // 分页组件 当前页码改变
+    /**
+     * 表格数据获取相关事件 | 分页组件 | 当前页码改变
+     */
     handleCurrentChange(currentPage) {
       this.pageData.currentPage = currentPage
       this.getTableDataByType()
     },
+    /**
+     * 表格数据获取相关事件 | 分页组件 | 页大小改变时
+     */
     handleSizeChange(pageCount) {
       this.pageData.pageCount = pageCount
       this.getTableDataByType()
     },
-    // 获取回收站文件列表
+    /**
+     * 表格数据获取相关事件 | 获取回收站文件列表
+     */
     shwoFileRecovery() {
       getRecoveryFile().then((res) => {
         if (res.success) {
@@ -307,7 +308,9 @@ export default {
         }
       })
     },
-    // 根据文件类型展示文件列表
+    /**
+     * 表格数据获取相关事件 | 根据文件类型展示文件列表
+     */
     showFileListByType() {
       //  分类型
       let data = {
@@ -315,7 +318,7 @@ export default {
         currentPage: this.pageData.currentPage,
         pageCount: this.pageData.pageCount
       }
-      selectFileByFileType(data).then((res) => {
+      getFileListByType(data).then((res) => {
         if (res.success) {
           this.fileList = res.data.list
           this.pageData.total = res.data.total
@@ -327,29 +330,36 @@ export default {
     },
 
     /**
-     * 表格勾选框事件
+     * 表格勾选框事件 | 保存被勾选的文件
+     * @param {object[]} selection 被勾选的文件数组
      */
-    //  勾选的行
     setSelectionFile(selection) {
       this.selectionFile = selection
     },
 
     /**
-     * 移动按钮相关事件
+     * 移动按钮相关事件 | 当前操作行
+     * @param {object} operationFile
      */
-    //  当前操作行
     setOperationFile(operationFile) {
       this.operationFile = operationFile
     },
-    //  设置移动文件模态框相关数据，isBatchMove为null时是确认移动，值由之前的值而定
+    /**
+     * 移动按钮相关事件 | 设置移动文件模态框相关数据
+     * @param {boolean} isBatchMove 是否批量移动，为 null时是确认移动，值由之前的值而定
+     * @param {boolean} visible 移动文件对话框状态
+     */
     setMoveFileDialogData(isBatchMove, visible) {
       this.initFileTree()
       this.dialogMoveFile.isBatchMove = isBatchMove ? isBatchMove : this.dialogMoveFile.isBatchMove
       this.dialogMoveFile.visible = visible
     },
-    //  移动文件模态框：初始化文件目录树
+
+    /**
+     * 移动文件模态框 | 初始化文件目录树
+     */
     initFileTree() {
-      getFileTree().then((res) => {
+      getFoldTree().then((res) => {
         if (res.success) {
           this.dialogMoveFile.fileTree = [res.data]
         } else {
@@ -357,11 +367,16 @@ export default {
         }
       })
     },
-    //  设置移动后的文件路径
+    /**
+     * 移动文件模态框 | 设置移动后的文件路径
+     * @param {string} selectFilePath 目标文件夹路径
+     */
     setSelectFilePath(selectFilePath) {
       this.selectFilePath = selectFilePath
     },
-    //  移动文件模态框-确定按钮事件
+    /**
+     * 移动文件模态框 | 确定按钮事件
+     */
     confirmMoveFile() {
       if (this.dialogMoveFile.isBatchMove) {
         //  批量移动

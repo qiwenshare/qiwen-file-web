@@ -6,11 +6,16 @@
         type="primary"
         icon="el-icon-upload2"
         id="uploadFileId"
-        @click="upload()"
+        @click="handleUploadFileBtnClick()"
         v-if="fileType !== 6"
-        >上传</el-button
+        >上传文件</el-button
       >
-      <el-button size="mini" type="primary" icon="el-icon-plus" @click="addFolder()" v-if="!fileType && fileType !== 6"
+      <el-button
+        size="mini"
+        type="primary"
+        icon="el-icon-plus"
+        @click="handleAddFolderBtnClick()"
+        v-if="!fileType && fileType !== 6"
         >新建文件夹</el-button
       >
       <el-button
@@ -18,27 +23,26 @@
         type="primary"
         :disabled="!selectionFile.length"
         icon="el-icon-delete"
-        @click="deleteSelectedFile()"
-        >删除</el-button
+        @click="handleBatchDeleteBtnClick()"
+        >批量删除</el-button
       >
       <el-button
         size="mini"
         type="primary"
         :disabled="!selectionFile.length"
         icon="el-icon-rank"
-        @click="moveSelectedFile()"
+        @click="handleBatchMoveBtnClick()"
         v-if="!fileType && fileType !== 6"
-        >移动</el-button
+        >批量移动</el-button
       >
-      <!-- <el-button size="mini" icon="el-icon-document-copy">拷贝</el-button> -->
       <el-button
         size="mini"
         type="primary"
         :disabled="!selectionFile.length"
         icon="el-icon-download"
-        @click="downloadSelectedFile()"
+        @click="handleBatchDownloadBtnClick()"
         v-if="fileType !== 6"
-        >下载</el-button
+        >批量下载</el-button
       >
     </el-button-group>
 
@@ -49,13 +53,13 @@
       icon="el-icon-finished"
       size="mini"
       v-if="fileModel === 1"
-      @click="changeBatchOperate()"
+      @click="handleBatchOperationChange()"
     >
       {{ batchOperate ? '取消批量操作' : '批量操作' }}
     </el-button>
     <!-- 文件展示模式 -->
     <div class="change-file-model">
-      <el-radio-group v-model="fileGroupLable" size="mini" @change="changeFileDisplayModel">
+      <el-radio-group v-model="fileGroupLable" size="mini" @change="handleFileDisplayModelChange">
         <el-radio-button :label="0"> <i class="el-icon-tickets"></i> 列表 </el-radio-button>
         <el-radio-button :label="1"> <i class="el-icon-s-grid"></i> 网格 </el-radio-button>
         <el-radio-button :label="2" v-if="fileType === 1"> <i class="el-icon-date"></i> 时间线 </el-radio-button>
@@ -79,12 +83,22 @@
 </template>
 
 <script>
-import { batchDeleteFile, createFile, batchDeleteRecoveryFile } from '@/request/file.js'
+import { batchDeleteFile, createFold, batchDeleteRecoveryFile } from '@/request/file.js'
 import SelectColumn from './SelectColumn'
 
 export default {
   name: 'OperationMenu',
   props: {
+    // 文件类型
+    fileType: {
+      required: true,
+      type: Number
+    },
+    // 文件路径
+    filePath: {
+      required: true,
+      type: String
+    },
     selectionFile: Array,
     operationFile: Object,
     batchOperate: Boolean
@@ -100,24 +114,6 @@ export default {
     }
   },
   computed: {
-    //  当前查看的文件路径
-    filePath: {
-      get() {
-        return this.$route.query.filePath
-      },
-      set() {
-        return ''
-      }
-    },
-    //  文件类型索引
-    fileType: {
-      get() {
-        return Number(this.$route.query.fileType)
-      },
-      set() {
-        return 0
-      }
-    },
     //  上传文件组件参数
     uploadFileData: {
       get() {
@@ -134,7 +130,7 @@ export default {
         }
       }
     },
-    // 文件查看模式 0列表模式 1网格模式 2 时间线模式
+    // 文件查看模式 0 列表模式 1 网格模式 2 时间线模式
     fileModel() {
       return this.$store.getters.fileModel
     }
@@ -157,18 +153,24 @@ export default {
     })
   },
   methods: {
-    upload() {
-      // 打开文件选择框
+    /**
+     * 上传文件按钮点击事件
+     * @description 通过Bus通信，开启全局上传文件流程
+     */
+    handleUploadFileBtnClick() {
       this.$EventBus.$emit('openUploader', this.uploadFileData)
     },
-    //  新建文件夹按钮：打开模态框
-    addFolder() {
+    /**
+     * 新建文件夹按钮点击事件
+     * @description 打开对话框，让用户输入文件夹名称
+     */
+    handleAddFolderBtnClick() {
       this.$prompt('请输入文件夹名称', '创建文件夹', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       })
         .then(({ value }) => {
-          this.createFile(value)
+          this.confirmCreateFile(value)
         })
         .catch(() => {
           this.$message({
@@ -177,14 +179,18 @@ export default {
           })
         })
     },
-    //  新建文件夹模态框-确定按钮
-    createFile(fileName) {
+    /**
+     * 新建文件夹对话框 | 确定按钮点击事件
+     * @description 调用新建文件夹接口
+     * @param {string} fileName 文件夹名称
+     */
+    confirmCreateFile(fileName) {
       let data = {
         fileName: fileName,
         filePath: this.filePath,
         isDir: 1
       }
-      createFile(data).then((res) => {
+      createFold(data).then((res) => {
         if (res.success) {
           this.$message.success('添加成功')
           this.$emit('getTableDataByType')
@@ -193,40 +199,53 @@ export default {
         }
       })
     },
-
-    //  批量操作-删除按钮
-    deleteSelectedFile() {
-      if(this.fileType === 6) { //  回收站里 - 彻底删除
+    /**
+     * 批量删除按钮点击事件
+     * @description 区分 删除到回收站中 | 在回收站中彻底删除，调用相应的删除文件接口
+     */
+    handleBatchDeleteBtnClick() {
+      if (this.fileType === 6) {
+        //  回收站里 - 彻底删除
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          this.confirmDeleteFile(true)
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
         })
-      } else {  //  非回收站
+          .then(() => {
+            this.confirmBatchDeleteFile(true)
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
+      } else {
+        //  非回收站
         this.$confirm('删除后可在回收站查看, 是否继续删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          this.confirmDeleteFile(false)
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
         })
+          .then(() => {
+            this.confirmBatchDeleteFile(false)
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
       }
     },
-    //  删除文件模态框-确定按钮
-    confirmDeleteFile(type) {
-      if(type) {  //  回收站中删除
+    /**
+     * 批量删除文件对话框 | 确定按钮点击事件
+     * @description 区分 删除到回收站中 | 在回收站中彻底删除，调用相应的删除文件接口
+     * @param {boolean} type 文件类型，true 在回收站中彻底删除 false 删除到回收站
+     */
+    confirmBatchDeleteFile(type) {
+      if (type) {
+        //  回收站中删除
         batchDeleteRecoveryFile({
           recoveryFileIds: JSON.stringify(this.selectionFile)
         }).then((res) => {
@@ -241,7 +260,8 @@ export default {
             this.$message.error('失败' + res.message)
           }
         })
-      } else {  //  非回收站删除
+      } else {
+        //  非回收站删除
         batchDeleteFile({
           files: JSON.stringify(this.selectionFile)
         }).then((res) => {
@@ -258,24 +278,36 @@ export default {
         })
       }
     },
-    //  批量操作-移动按钮
-    moveSelectedFile() {
+    /**
+     * 批量移动按钮点击事件
+     */
+    handleBatchMoveBtnClick() {
+      /**
+       * 第一个参数 是否批量移动
+       * 第二个参数 打开/关闭移动文件对话框
+       */
       this.$emit('setMoveFileDialogData', true, true)
     },
-    //  批量操作：下载按钮
-    downloadSelectedFile() {
+    /**
+     * 批量下载按钮点击事件
+     */
+    handleBatchDownloadBtnClick() {
       for (let i = 0; i < this.selectionFile.length; i++) {
         let name = 'downloadLink' + i
         this.$refs[name][0].click()
       }
     },
-
-    // 图片网格模式下 - 批量操作切换
-    changeBatchOperate() {
+    /**
+     * 网格模式下，批量操作状态切换
+     */
+    handleBatchOperationChange() {
       this.$emit('update:batchOperate', !this.batchOperate)
     },
-    // 切换文件查看模式
-    changeFileDisplayModel(label) {
+    /**
+     * 文件查看模式切换
+     * @param {number} label 0 列表 1 网格 2 时间线
+     */
+    handleFileDisplayModelChange(label) {
       this.$store.commit('changeFileModel', label)
     }
   }
@@ -283,19 +315,27 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.operation-menu-wrapper.file-type-6
-  margin 8px 0
-  justify-content flex-end
-.operation-menu-wrapper
-  padding 16px 0
-  display flex
-  justify-content space-between
+.operation-menu-wrapper.file-type-6 {
+  margin: 8px 0;
+  justify-content: flex-end;
+}
+
+.operation-menu-wrapper {
+  padding: 16px 0;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  .operate-group
-    flex 1
-  .change-image-model,
-  .change-file-model
-    margin-right 8px
-  .batch-opera-btn
-    margin-right 8px
+
+  .operate-group {
+    flex: 1;
+  }
+
+  .change-image-model, .change-file-model {
+    margin-right: 8px;
+  }
+
+  .batch-opera-btn {
+    margin-right: 8px;
+  }
+}
 </style>
