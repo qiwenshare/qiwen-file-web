@@ -14,7 +14,7 @@
         size="mini"
         type="primary"
         icon="el-icon-plus"
-        @click="handleAddFolderBtnClick()"
+        @click="dialogAddFolder.visible = true"
         v-if="!fileType && fileType !== 6"
         >新建文件夹</el-button
       >
@@ -45,6 +45,33 @@
         >批量下载</el-button
       >
     </el-button-group>
+
+    <!-- 新建文件夹对话框 -->
+    <el-dialog title="新建文件夹" :visible.sync="dialogAddFolder.visible" :close-on-click-modal="false" width="550px" @close="handleAddFolderDialogCancel('addFolderForm')">
+      <el-form
+        class="add-folder-form"
+        :model="dialogAddFolder.form"
+        :rules="dialogAddFolder.formRules"
+        ref="addFolderForm"
+        label-width="100px"
+        label-position="top"
+      >
+        <el-form-item label="文件夹名称" prop="fileName">
+          <el-input
+            v-model="dialogAddFolder.form.fileName"
+            placeholder="请输入文件夹名称"
+            type="textarea"
+            autosize
+            maxlength="255"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleAddFolderDialogCancel('addFolderForm')">取 消</el-button>
+        <el-button type="primary" :loading="dialogAddFolder.loading" @click="handleAddFolderDialogOk('addFolderForm')">确 定</el-button>
+      </div>
+    </el-dialog>
 
     <!-- 批量操作 -->
     <el-button
@@ -108,6 +135,17 @@ export default {
   },
   data() {
     return {
+      // 新建文件夹对话框数据
+      dialogAddFolder: {
+        visible: false,
+        form: {
+          fileName: ''
+        },
+        formRules: {
+          fileName: [{ required: true, message: '请输入文件夹名称', trigger: 'blur' }]
+        },
+        loading: false
+      },
       fileTree: [],
       batchDeleteFileDialog: false,
       fileGroupLable: 0 //  文件展示模式
@@ -161,43 +199,43 @@ export default {
       this.$EventBus.$emit('openUploader', this.uploadFileData)
     },
     /**
-     * 新建文件夹按钮点击事件
-     * @description 打开对话框，让用户输入文件夹名称
+     * 新建文件夹对话框 | 取消按钮点击事件
+     * @description 关闭对话框，重置表单
+     * @param {string} formName 表单ref值
      */
-    handleAddFolderBtnClick() {
-      this.$prompt('请输入文件夹名称', '创建文件夹', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      })
-        .then(({ value }) => {
-          this.confirmCreateFile(value)
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消输入'
-          })
-        })
+    handleAddFolderDialogCancel(formName) {
+      this.dialogAddFolder.visible = false
+      this.$refs[formName].resetFields()
     },
     /**
      * 新建文件夹对话框 | 确定按钮点击事件
-     * @description 调用新建文件夹接口
-     * @param {string} fileName 文件夹名称
+     * @description 校验表单，校验通过后调用新建文件夹接口
+     * @param {string} formName 表单ref值
      */
-    confirmCreateFile(fileName) {
-      let data = {
-        fileName: fileName,
-        filePath: this.filePath,
-        isDir: 1
-      }
-      createFold(data).then((res) => {
-        if (res.success) {
-          this.$message.success('添加成功')
-          this.$emit('getTableDataByType')
+    handleAddFolderDialogOk(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.dialogAddFolder.loading = true
+          let data = {
+            fileName: this.dialogAddFolder.form.fileName,
+            filePath: this.filePath,
+            isDir: 1
+          }
+          createFold(data).then((res) => {
+            this.dialogAddFolder.loading = false
+            if (res.success) {
+              this.$message.success('添加成功')
+              this.dialogAddFolder.visible = false
+              this.$refs[formName].resetFields()
+              this.$emit('getTableDataByType')
+            } else {
+              this.$message.warning(res.message)
+            }
+          })
         } else {
-          this.$message.warning(res.message)
+          return false;
         }
-      })
+      });
     },
     /**
      * 批量删除按钮点击事件

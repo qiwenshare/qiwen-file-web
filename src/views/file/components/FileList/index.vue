@@ -210,7 +210,7 @@ export default {
       }
     },
     fileType() {
-      if (this.$route.name === 'File' && this.fileType !== 0) {
+      if (this.$route.name === 'File') {
         this.setPageCount()
         this.getTableDataByType()
       }

@@ -42,13 +42,7 @@ const globalFunction = {
    * @returns {string}  文件下载路径
    */
   getDownloadFilePath: function (row) {
-    let fileUrl = ''
-    if (Number(row.isOSS) === 1) {
-      fileUrl = `https://${Cookies.get('viewDomain')}/filetransfer/downloadfile?userFileId=${row.userFileId}`  // 阿里云OSS对象存储
-    } else {
-      fileUrl = `/api/filetransfer/downloadfile?userFileId=${row.userFileId}` // 本地磁盘存储
-    }
-    return fileUrl
+    return `/api/filetransfer/downloadfile?userFileId=${row.userFileId}`
   },
   /**
    * 获取 office 文件在线预览路径

@@ -477,7 +477,10 @@ export default {
       this.$prompt('请输入文件名', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        inputValue: fileName
+        inputValue: fileName,
+        inputPattern: /\S/, //  文件名不能为空
+        inputErrorMessage: '请输入文件名',
+        closeOnClickModal: false
       })
         .then(({ value }) => {
           fileInfo.oldFileName = fileInfo.fileName

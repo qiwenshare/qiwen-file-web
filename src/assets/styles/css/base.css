@@ -17,3 +17,7 @@ p{line-height:22px;}
 /*公共样式*/
 .layout{ width:1100px; display:table; margin:0 auto;}
 .margin-bottom { margin-bottom: 15px; }
+
+.el-input__count {
+  line-height: 100%;
+}
