@@ -86,11 +86,9 @@ export default {
   },
   mounted() {
     this.$EventBus.$on('openUploader', (query) => {
+      this.options.headers.token = this.getCookies('token')
       this.params = query || {}
-      // this.$refs.uploadBtn.click()
-      var e = document.createEvent('MouseEvent')
-      e.initEvent('click', false, false)
-      this.$refs.uploadBtn.$el.dispatchEvent(e)
+      this.$refs.uploadBtn.$el.click()
     })
   },
 	destroyed() {
