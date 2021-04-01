@@ -16,7 +16,11 @@
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label prop="isDir" width="60" align="center">
         <template slot-scope="scope">
-          <img :src="setFileImg(scope.row)" style="width: 30px" />
+          <img
+            :src="setFileImg(scope.row)"
+            style="width: 30px; max-height: 30px; cursor: pointer;"
+            @click="handleFileNameClick(scope.row)"
+          />
         </template>
       </el-table-column>
       <el-table-column prop="fileName" :sort-by="['isDir', 'fileName']" sortable show-overflow-tooltip>
@@ -151,10 +155,7 @@
                 >解压缩</el-dropdown-item
               >
               <el-dropdown-item v-if="scope.row.isDir === 0 && fileType !== 6">
-                <a
-                  target="_blank"
-                  style="display: block; color: inherit"
-                  :href="getDownloadFilePath(scope.row)"
+                <a target="_blank" style="display: block; color: inherit" :href="getDownloadFilePath(scope.row)"
                   >下载</a
                 >
               </el-dropdown-item>
