@@ -8,6 +8,7 @@
         :operationFile="operationFile"
         :selectionFile="selectionFile"
         :batchOperate.sync="batchOperate"
+        @getSearchFileList="getSearchFileList"
         @getTableDataByType="getTableDataByType"
         @setMoveFileDialogData="setMoveFileDialogData"
       ></OperationMenu>
@@ -80,7 +81,8 @@ import {
   getRecoveryFile,
   getFoldTree,
   moveFile,
-  batchMoveFile
+  batchMoveFile,
+  searchFile
 } from '@/request/file.js'
 
 export default {
@@ -412,6 +414,26 @@ export default {
           }
         })
       }
+    },
+    /**
+     * 获取搜索文件结果列表
+     * @param {string} fileName 文件名称
+     */
+    getSearchFileList(fileName) {
+      this.loading = true
+      searchFile({
+        currentPage: this.pageData.currentPage,
+        pageCount: this.pageData.pageCount,
+        fileName: fileName
+      }).then(res => {
+        this.loading = false
+        if(res.success) {
+          this.fileList = res.data.searchHits.map(item => item.content)
+          this.pageData.total = res.data.totalHits
+        } else {
+          this.$message.error(res.message)
+        }
+      })
     }
   }
 }

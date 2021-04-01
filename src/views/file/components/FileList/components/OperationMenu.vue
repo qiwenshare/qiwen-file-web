@@ -7,7 +7,7 @@
         icon="el-icon-upload2"
         id="uploadFileId"
         @click="handleUploadFileBtnClick()"
-        v-if="fileType !== 6"
+        v-if="fileType === 0"
         >上传文件</el-button
       >
       <el-button
@@ -46,32 +46,21 @@
       >
     </el-button-group>
 
-    <!-- 新建文件夹对话框 -->
-    <el-dialog title="新建文件夹" :visible.sync="dialogAddFolder.visible" :close-on-click-modal="false" width="550px" @close="handleAddFolderDialogCancel('addFolderForm')">
-      <el-form
-        class="add-folder-form"
-        :model="dialogAddFolder.form"
-        :rules="dialogAddFolder.formRules"
-        ref="addFolderForm"
-        label-width="100px"
-        label-position="top"
-      >
-        <el-form-item label="文件夹名称" prop="fileName">
-          <el-input
-            v-model="dialogAddFolder.form.fileName"
-            placeholder="请输入文件夹名称"
-            type="textarea"
-            autosize
-            maxlength="255"
-            show-word-limit
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleAddFolderDialogCancel('addFolderForm')">取 消</el-button>
-        <el-button type="primary" :loading="dialogAddFolder.loading" @click="handleAddFolderDialogOk('addFolderForm')">确 定</el-button>
-      </div>
-    </el-dialog>
+    <!-- 全局搜素文件 -->
+    <el-input
+      v-if="fileType === 0"
+      class="select-file-input"
+      v-model="searchFile.fileName"
+      placeholder="搜索您的文件"
+      size="mini"
+      maxlength="255"
+      :clearable="true"
+      @change="handleSearchInputChange"
+      @clear="$emit('getTableDataByType')"
+      @keyup.enter.native="$emit('getTableDataByType')"
+    >
+      <i slot="prefix" class="el-input__icon el-icon-search" title="点击搜索" @click="handleSearchClick"></i>
+    </el-input>
 
     <!-- 批量操作 -->
     <el-button
@@ -95,6 +84,41 @@
 
     <!-- 选择表格列 -->
     <SelectColumn class="select-column"></SelectColumn>
+
+    <!-- 新建文件夹对话框 -->
+    <el-dialog
+      title="新建文件夹"
+      :visible.sync="dialogAddFolder.visible"
+      :close-on-click-modal="false"
+      width="550px"
+      @close="handleAddFolderDialogCancel('addFolderForm')"
+    >
+      <el-form
+        class="add-folder-form"
+        :model="dialogAddFolder.form"
+        :rules="dialogAddFolder.formRules"
+        ref="addFolderForm"
+        label-width="100px"
+        label-position="top"
+      >
+        <el-form-item label="文件夹名称" prop="fileName">
+          <el-input
+            v-model="dialogAddFolder.form.fileName"
+            placeholder="请输入文件夹名称"
+            type="textarea"
+            autosize
+            maxlength="255"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleAddFolderDialogCancel('addFolderForm')">取 消</el-button>
+        <el-button type="primary" :loading="dialogAddFolder.loading" @click="handleAddFolderDialogOk('addFolderForm')"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
 
     <!-- 多选文件下载，页面隐藏 -->
     <a
@@ -135,6 +159,10 @@ export default {
   },
   data() {
     return {
+      // 文件搜索数据
+      searchFile: {
+        fileName: ''
+      },
       // 新建文件夹对话框数据
       dialogAddFolder: {
         visible: false,
@@ -233,9 +261,9 @@ export default {
             }
           })
         } else {
-          return false;
+          return false
         }
-      });
+      })
     },
     /**
      * 批量删除按钮点击事件
@@ -335,6 +363,20 @@ export default {
         this.$refs[name][0].click()
       }
     },
+    handleSearchInputChange(value) {
+      console.log(value)
+      if(value === '') {
+        this.$emit('getTableDataByType')
+      } else {
+        this.$emit('getSearchFileList', value)
+      }
+    },
+    /**
+     * 搜索框图标点击事件
+     */
+    handleSearchClick() {
+      this.$emit('getSearchFileList', this.searchFile.fileName)
+    },
     /**
      * 网格模式下，批量操作状态切换
      */
@@ -353,6 +395,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+@import '~@/assets/styles/varibles.styl';
+
 .operation-menu-wrapper.file-type-6 {
   margin: 8px 0;
   justify-content: flex-end;
@@ -366,6 +410,18 @@ export default {
 
   .operate-group {
     flex: 1;
+  }
+
+  .select-file-input {
+    margin-right: 8px;
+    width: 200px;
+    .el-icon-search {
+      cursor: pointer;
+      font-size: 16px;
+      &:hover {
+        color: $Primary;
+      }
+    }
   }
 
   .change-image-model, .change-file-model {

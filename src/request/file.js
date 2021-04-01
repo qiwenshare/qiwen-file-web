@@ -46,6 +46,8 @@ export const moveFile = p => post('/file/movefile', p);
 export const renameFile = p => post('/file/renamefile', p);
 // 解压文件
 export const unzipFile = p => post('/file/unzipfile', p);
+// 全局搜索文件
+export const searchFile = p => get('/file/search', p);
 
 /**
  * 文件批量操作相关接口
