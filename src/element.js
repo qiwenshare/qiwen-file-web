@@ -51,8 +51,9 @@ import {
   Checkbox,
   Popover,
   Carousel,
-  CarouselItem,
+  CarouselItem
 } from "element-ui";
+
 const element = {
   install: function (Vue) {
     Vue.use(Dialog);

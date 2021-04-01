@@ -12,8 +12,12 @@ import '@/assets/styles/css/mediaScreen.styl'
 import '@/router/before.js'
 import 'element-ui/lib/theme-chalk/index.css'
 import element from './element.js'
+// import uploader from '../public/vue-simple-uploader/src/index'
 import uploader from 'vue-simple-uploader'
+// collapse 展开折叠
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 
+Vue.component(CollapseTransition.name, CollapseTransition)
 
 Vue.config.productionTip = false;
 
