@@ -301,16 +301,14 @@ export default {
             border-right: none;
             border-left: none;
             background: #e1f3d8;
-            // height: calc(100% - 3px);
-            // top: 3px;
           }
 
           .uploader-file-name {
-            width: 45%;
+            width: 44%;
           }
 
           .uploader-file-size {
-            width: 18%;
+            width: 16%;
           }
 
           .uploader-file-meta {
@@ -318,7 +316,8 @@ export default {
           }
 
           .uploader-file-status {
-            width: 27%;
+            width: 30%;
+            text-indent: 0;
           }
 
           .uploader-file-actions>span {
@@ -345,7 +344,6 @@ export default {
           width: 24%;
           height: 40px;
           line-height: 40px;
-          text-indent: 20px;
         }
       }
     }
