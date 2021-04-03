@@ -57,7 +57,7 @@
       :clearable="true"
       @change="handleSearchInputChange"
       @clear="$emit('getTableDataByType')"
-      @keyup.enter.native="$emit('getTableDataByType')"
+      @keyup.enter.native="handleSearchInputChange(searchFile.fileName)"
     >
       <i slot="prefix" class="el-input__icon el-icon-search" title="点击搜索" @click="handleSearchClick"></i>
     </el-input>
@@ -364,7 +364,6 @@ export default {
       }
     },
     handleSearchInputChange(value) {
-      console.log(value)
       if(value === '') {
         this.$emit('getTableDataByType')
       } else {
