@@ -48,6 +48,18 @@ export const renameFile = p => post('/file/renamefile', p);
 export const unzipFile = p => post('/file/unzipfile', p);
 // 全局搜索文件
 export const searchFile = p => get('/file/search', p);
+// 分享文件
+export const shareFile = p => post('/share/sharefile', p);
+// 校验分享链接过期时间
+export const checkShareLinkEndtime = p => get('/share/checkendtime', p);
+// 校验分享链接是否需要提取码
+export const checkShareLinkType = p => get('/share/sharetype', p);
+// 校验分享链接提取码是否正确
+export const checkShareLinkCode = p => get('/share/checkextractioncode', p);
+// 获取分享文件列表
+export const getShareFileList = p => get('/share/sharefileList', p);
+// 保存分享文件
+export const saveShareFile = p => post('/share/savesharefile', p);
 
 /**
  * 文件批量操作相关接口

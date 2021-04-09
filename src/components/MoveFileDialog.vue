@@ -1,38 +1,59 @@
 <template>
   <div class="move-dialog-wrapper">
     <!-- 移动文件-选择目标路径 -->
-    <el-dialog title="选择目标路径" :visible.sync="dialogMoveFile.visible">
+    <el-dialog title="选择目标路径" :visible.sync="dialogData.visible" @open="handleDialogOpen">
       <div class="el-dialog-div">
         <el-tree
-          :data="dialogMoveFile.fileTree"
+          :data="fileTree"
           :props="defaultProps"
           :highlight-current="true"
           @node-click="handleNodeClick"
         ></el-tree>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="$emit('setMoveFileDialogData', null, false)">取 消</el-button>
-        <el-button type="primary" @click="$emit('confirmMoveFile')">确 定</el-button>
+        <el-button @click="$emit('setDialogData', null, false)">取 消</el-button>
+        <el-button type="primary" @click="$emit('confirmDialog')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { getFoldTree } from '@/request/file.js'
+
 export default {
   name: 'MoveFileDialog',
   props: {
-    dialogMoveFile: Object
+    dialogData: Object
   },
   data() {
     return {
       defaultProps: {
         children: 'children',
         label: 'label'
-      }
+      },
+      fileTree: []
     }
   },
   methods: {
+    /**
+     * 对话框打开的回调
+     */
+    handleDialogOpen() {
+      this.initFileTree()
+    },
+    /**
+     * 初始化文件目录树
+     */
+    initFileTree() {
+      getFoldTree().then((res) => {
+        if (res.success) {
+          this.fileTree = [res.data]
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
     /**
      * 目录树节点点击回调函数
      * @description 将当前节点中的文件夹路径传递给父组件

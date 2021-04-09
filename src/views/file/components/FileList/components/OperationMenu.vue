@@ -44,6 +44,15 @@
         v-if="fileType !== 6"
         >批量下载</el-button
       >
+      <el-button
+        size="mini"
+        type="primary"
+        :disabled="!selectionFile.length"
+        icon="el-icon-share"
+        @click="handleBatchShareBtnClick()"
+        v-if="fileType !== 6 && $route.name !== 'Share'"
+        >分享</el-button
+      >
     </el-button-group>
 
     <!-- 全局搜素文件 -->
@@ -63,14 +72,17 @@
     </el-input>
 
     <!-- 批量操作 -->
-    <i class="batch-icon el-icon-finished" :class="batchOperate ? 'active' : ''" :title="batchOperate ? '取消批量操作' : '批量操作'" v-if="fileModel === 1" @click="handleBatchOperationChange()"></i>
-    <el-divider direction="vertical" v-if="fileModel === 1" ></el-divider>
+    <i
+      class="batch-icon el-icon-finished"
+      :class="batchOperate ? 'active' : ''"
+      :title="batchOperate ? '取消批量操作' : '批量操作'"
+      v-if="fileModel === 1"
+      @click="handleBatchOperationChange()"
+    ></i>
+    <el-divider direction="vertical" v-if="fileModel === 1"></el-divider>
 
     <!-- 操作栏收纳 -->
-    <el-popover
-      placement="bottom"
-      trigger="hover"
-    >
+    <el-popover placement="bottom" trigger="hover">
       <i slot="reference" class="setting-icon el-icon-setting"></i>
       <!-- 选择表格列 -->
       <SelectColumn></SelectColumn>
@@ -180,7 +192,6 @@ export default {
         },
         loading: false
       },
-      fileTree: [],
       batchDeleteFileDialog: false,
       fileGroupLable: 0 //  文件展示模式
     }
@@ -212,7 +223,7 @@ export default {
         return this.$store.getters.gridSize
       },
       set(val) {
-        this.$store.commit("changeGridSize", val)
+        this.$store.commit('changeGridSize', val)
       }
     }
   },
@@ -371,6 +382,12 @@ export default {
       this.$emit('setMoveFileDialogData', true, true)
     },
     /**
+     * 分享按钮点击事件
+     */
+    handleBatchShareBtnClick() {
+      this.$emit("setShareFileDialogData")
+    },
+    /**
      * 批量下载按钮点击事件
      */
     handleBatchDownloadBtnClick() {
@@ -414,7 +431,7 @@ export default {
      * @param {number} val 改变后的数值
      */
     formatTooltip(val) {
-      return `${val}px`;
+      return `${val}px`
     }
   }
 }
@@ -465,29 +482,30 @@ export default {
     margin-right: 8px;
   }
 
-  .batch-icon,
-  .setting-icon {
-    font-size 20px
-    cursor pointer
-    color $SecondaryText
+  .batch-icon, .setting-icon {
+    font-size: 20px;
+    cursor: pointer;
+    color: $SecondaryText;
+
     &:hover {
-      color $Primary
+      color: $Primary;
     }
   }
 
   .batch-icon.active {
-    color $Primary
+    color: $Primary;
   }
+}
 
-}
 .split-line {
-  margin 8px 0  
+  margin: 8px 0;
 }
+
 .change-file-model, .change-grid-size {
   .title {
-    margin 8px 0
-    color $SecondaryText
-    font-size 14px
+    margin: 8px 0;
+    color: $SecondaryText;
+    font-size: 14px;
   }
 }
 </style>

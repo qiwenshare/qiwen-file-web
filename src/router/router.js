@@ -33,6 +33,12 @@ export default new Router({
           description: '基于Spring Boot + Vue CLI@3 框架开发的Web文件系统，旨在为用户提供一个简单、方便的文件存储方案'
         }
       }
+    },{
+      path: '/share/:shareBatchNum',
+      name: 'Share',
+      component: () => import(/* webpackChunkName: "share" */ '@/views/Share/index.vue'),
+      meta: { title: '分享 - 奇文网盘' },
+      props: true
     }, {
       path: '*',
       name: 'Error_404',

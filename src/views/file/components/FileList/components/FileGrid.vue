@@ -107,16 +107,6 @@ export default {
   data() {
     return {
       fileListSorted: [],
-      //  移动文件模态框数据
-      dialogMoveFile: {
-        isBatchMove: false,
-        visible: false, //  是否可见
-        fileTree: [], //  目录树
-        defaultProps: {
-          children: 'children',
-          label: 'label'
-        }
-      },
       //  可以识别的文件类型
       fileImgTypeList: [
         'png',

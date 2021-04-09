@@ -1,5 +1,21 @@
 import axios from 'axios'
 import globalFunction from '@/globalFunction.js'
+import router from '@/router/router'
+import { MessageBox } from 'element-ui';
+
+// 登录提醒
+const loginTip = function() {
+  MessageBox.alert('您尚未登录，请先登录', '操作提示', {
+    confirmButtonText: '确定',
+    callback: () => {
+      console.log(router)
+      router.push({
+        path: '/login',
+        query: { Rurl: router.currentRoute.fullPath }  //  将当前页面的url传递给login页面进行操作
+      })
+    }
+  });
+}
 
 // 请求超时时间
 axios.defaults.timeout = 10000 * 5
@@ -36,10 +52,17 @@ axios.interceptors.response.use(
   (error) => {
     if (error.response.status) {
       console.log(error.response)
-      return Promise.reject(error.response)
+      switch(error.response.status) {
+        case 401:
+          loginTip()
+          break
+        default:
+          return Promise.reject(error.response)
+      }
     }
   }
 )
+
 /**
  * 封装 get方法 对应 GET 请求
  * @param {string} url 请求url

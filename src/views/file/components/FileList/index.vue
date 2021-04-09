@@ -11,6 +11,7 @@
         @getSearchFileList="getSearchFileList"
         @getTableDataByType="getTableDataByType"
         @setMoveFileDialogData="setMoveFileDialogData"
+        @setShareFileDialogData="setShareFileDialogData"
       ></OperationMenu>
     </el-header>
     <div class="middle-wrapper">
@@ -25,6 +26,7 @@
       :loading="loading"
       v-if="fileModel === 0"
       @setMoveFileDialogData="setMoveFileDialogData"
+      @setShareFileDialogData="setShareFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
       @getTableDataByType="getTableDataByType"
@@ -59,30 +61,36 @@
     </div>
     <!-- 移动文件模态框 -->
     <MoveFileDialog
-      :dialogMoveFile="dialogMoveFile"
+      :dialogData="dialogMoveFile"
       @setSelectFilePath="setSelectFilePath"
-      @confirmMoveFile="confirmMoveFile"
-      @setMoveFileDialogData="setMoveFileDialogData"
+      @confirmDialog="confirmMoveFile"
+      @setDialogData="setMoveFileDialogData"
     ></MoveFileDialog>
+    <!-- 分享文件模态框 -->
+    <ShareFileDialog
+      :dialogShareFile="dialogShareFile"
+      @setDialogShareFileData="setDialogShareFileData"
+    ></ShareFileDialog>
   </div>
 </template>
 
 <script>
 import OperationMenu from './components/OperationMenu'
-import BreadCrumb from './components/BreadCrumb'
-import FileTable from './components/FileTable'
+import BreadCrumb from '@/components/BreadCrumb'
+import FileTable from '@/components/FileTable'
 import FileGrid from './components/FileGrid'
 import FileTimeLine from './components/FileTimeLine'
-import MoveFileDialog from './components/MoveFileDialog'
+import MoveFileDialog from '@/components/MoveFileDialog'
+import ShareFileDialog from './components/ShareFileDialog'
 
 import {
   getFileListByPath,
   getFileListByType,
   getRecoveryFile,
-  getFoldTree,
   moveFile,
   batchMoveFile,
-  searchFile
+  searchFile,
+  shareFile
 } from '@/request/file.js'
 
 export default {
@@ -93,7 +101,8 @@ export default {
     FileTable,
     FileGrid,
     FileTimeLine,
-    MoveFileDialog
+    MoveFileDialog,
+    ShareFileDialog
   },
   data() {
     return {
@@ -108,12 +117,18 @@ export default {
       //  移动文件模态框数据
       dialogMoveFile: {
         isBatchMove: false,
-        visible: false, //  是否可见
-        fileTree: [] //  目录树
+        visible: false //  是否可见
       },
       selectFilePath: '', //  移动文件路径
       operationFile: {}, // 当前操作行
       selectionFile: [], // 勾选的文件
+      // 分享文件对话框数据
+      dialogShareFile: {
+        visible: false,
+        loading: false,
+        success: false,
+        shareData: {}
+      },
       //  可以识别的文件类型
       fileImgTypeList: [
         'png',
@@ -223,7 +238,7 @@ export default {
       this.getTableDataByType()
     },
     batchOperate(value) {
-      if(!value) {
+      if (!value) {
         this.selectionFile = []
       }
     }
@@ -352,22 +367,8 @@ export default {
      * @param {boolean} visible 移动文件对话框状态
      */
     setMoveFileDialogData(isBatchMove, visible) {
-      this.initFileTree()
       this.dialogMoveFile.isBatchMove = isBatchMove ? isBatchMove : this.dialogMoveFile.isBatchMove
       this.dialogMoveFile.visible = visible
-    },
-
-    /**
-     * 移动文件模态框 | 初始化文件目录树
-     */
-    initFileTree() {
-      getFoldTree().then((res) => {
-        if (res.success) {
-          this.dialogMoveFile.fileTree = [res.data]
-        } else {
-          this.$message.error(res.message)
-        }
-      })
     },
     /**
      * 移动文件模态框 | 设置移动后的文件路径
@@ -425,15 +426,61 @@ export default {
         currentPage: this.pageData.currentPage,
         pageCount: this.pageData.pageCount,
         fileName: fileName
-      }).then(res => {
+      }).then((res) => {
         this.loading = false
-        if(res.success) {
-          this.fileList = res.data.searchHits.map(item => item.content)
+        if (res.success) {
+          this.fileList = res.data.searchHits.map((item) => item.content)
           this.pageData.total = res.data.totalHits
         } else {
           this.$message.error(res.message)
         }
       })
+    },
+    /**
+     * 设置分享文件对话框状态
+     */
+    setShareFileDialogData() {
+      this.dialogShareFile.visible = true
+    },
+    /**
+     * 分享文件对话框确定|取消按钮点击事件
+     * @param {boolean} status 对话框状态
+     * @param {object} data 分享文件数据
+     */
+    setDialogShareFileData(status, data) {
+      if (status) {
+        this.dialogShareFile.loading = true
+        shareFile({
+          ...data,
+          remarks: '',
+          files: JSON.stringify(
+            this.selectionFile.map((item) => {
+              return {
+                userFileId: item.userFileId
+              }
+            })
+          )
+        }).then(
+          (res) => {
+            this.dialogShareFile.loading = false
+            if (res.success) {
+              this.dialogShareFile.success = true
+              this.dialogShareFile.shareData = res.data
+            } else {
+              this.$message.error(res.message)
+            }
+          },
+          (error) => {
+            console.log(error)
+            this.$message.error(error.message)
+            this.dialogShareFile.loading = false
+          }
+        )
+      } else {
+        this.dialogShareFile.visible = false
+        this.dialogShareFile.loading = false
+        this.dialogShareFile.success = false
+      }
     }
   }
 }
