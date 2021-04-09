@@ -14,12 +14,19 @@
       <uploader-unsupport></uploader-unsupport>
       <!-- 选择按钮 在这里隐藏 -->
       <uploader-btn class="select-file-btn" :attrs="attrs" ref="uploadBtn">选择文件</uploader-btn>
+      <!-- 拖拽上传 -->
+      <uploader-drop class="drop-box" v-show="dropBoxShow">
+        <span class="text"> 将文件拖拽到此区域 </span>
+        <i class="close-icon el-icon-circle-close" @click="dropBoxShow = false">关闭</i>
+      </uploader-drop>
       <!-- 上传列表 -->
       <uploader-list v-show="panelShow">
         <template v-slot:default="props">
           <div class="file-panel">
             <div class="file-title">
-              <span class="title-span">上传列表</span>
+              <span class="title-span">
+                上传列表<span class="count">（{{ props.fileList.length }}）</span>
+              </span>
               <div class="operate">
                 <el-button
                   type="text"
@@ -93,7 +100,8 @@ export default {
         accept: '*'
       },
       panelShow: false, //  上传文件面板是否显示
-      collapse: false //	上传文件面板是否折叠
+      collapse: false, //	上传文件面板是否折叠
+      dropBoxShow: false //  拖拽上传是否显示
     }
   },
   computed: {
@@ -103,10 +111,14 @@ export default {
     }
   },
   mounted() {
-    this.$EventBus.$on('openUploader', (query) => {
+    this.$EventBus.$on('openUploader', (query, type) => {
       this.options.headers.token = this.getCookies('token')
       this.params = query || {}
-      this.$refs.uploadBtn.$el.click()
+      if (type) {
+        this.$refs.uploadBtn.$el.click()
+      } else {
+        this.dropBoxShow = true
+      }
     })
   },
   destroyed() {
@@ -118,7 +130,9 @@ export default {
      * @param {object} file 文件信息
      */
     handleFileAdded(file) {
+      this.dropBoxShow = false
       this.panelShow = true
+      this.collapse = false
       this.computeMD5(file)
     },
     /**
@@ -137,6 +151,9 @@ export default {
       if (result.success) {
         this.$message.success(`${file.name} - 上传完毕`)
         file.statusStr = ''
+        setTimeout(() => {
+          this.collapse = true //  折叠上传列表
+        }, 1500)
         this.$EventBus.$emit('refreshList', '')
         this.$EventBus.$emit('refreshStorage', '')
       } else {
@@ -219,7 +236,8 @@ export default {
      * 关闭上传面板，并停止上传
      */
     handleClosePanel() {
-      this.uploader.cancel()
+      this.uploaderInstance.cancel()
+      this.panelShow = false
     }
   }
 }
@@ -234,6 +252,38 @@ export default {
   z-index: 20;
   right: 15px;
   bottom: 15px;
+
+  .drop-box {
+    position: fixed;
+    z-index: 19;
+    top: 0;
+    left: 0;
+    border: 5px dashed #8091a5 !important;
+    background: #fff;
+    opacity: 0.85;
+    color: #8091a5 !important;
+    text-align: center;
+    box-sizing: border-box;
+    height: 100%;
+    line-height: 100%;
+    width: 100%;
+
+    .text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      transform: translate(-50%, -50%);
+      font-size: 30px;
+    }
+
+    .close-icon {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      cursor: pointer;
+    }
+  }
 
   .uploader-app {
     width: 560px;
@@ -256,21 +306,28 @@ export default {
         padding-left: 0;
         margin-bottom: 0;
         font-size: 16px;
+
+        .count {
+          color: $SecondaryText;
+        }
       }
 
       .operate {
         flex: 1;
         text-align: right;
+
         >>> .el-button--text {
           color: $PrimaryText;
+
           i[class^=el-icon-] {
-            font-weight 600
+            font-weight: 600;
           }
+
           &:hover {
-            .el-icon-full-screen,
-            .el-icon-minus {
+            .el-icon-full-screen, .el-icon-minus {
               color: $Success;
             }
+
             .el-icon-close {
               color: $Danger;
             }
@@ -325,9 +382,9 @@ export default {
           }
         }
 
-        >>> .uploader-file[status="success"] {
+        >>> .uploader-file[status='success'] {
           .uploader-file-progress {
-            border: none;  
+            border: none;
           }
         }
       }

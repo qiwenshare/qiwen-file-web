@@ -1,15 +1,15 @@
 <template>
   <div class="operation-menu-wrapper" :class="'file-type-' + fileType">
     <el-button-group class="operate-group">
-      <el-button
-        size="mini"
-        type="primary"
-        icon="el-icon-upload2"
-        id="uploadFileId"
-        @click="handleUploadFileBtnClick()"
-        v-if="fileType === 0"
-        >上传文件</el-button
-      >
+      <el-dropdown class="drop-btn" trigger="hover" v-if="fileType === 0">
+        <el-button size="mini" type="primary" icon="el-icon-upload2" id="uploadFileId"
+          >上传文件<i class="el-icon-arrow-down el-icon--right"></i
+        ></el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item @click.native="handleUploadFileBtnClick(true)">直接添加</el-dropdown-item>
+          <el-dropdown-item @click.native="handleUploadFileBtnClick(false)">拖拽上传</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
       <el-button
         size="mini"
         type="primary"
@@ -222,9 +222,10 @@ export default {
     /**
      * 上传文件按钮点击事件
      * @description 通过Bus通信，开启全局上传文件流程
+     * @param {boolean} type 上传方式 true 直接上传  false 拖拽上传
      */
-    handleUploadFileBtnClick() {
-      this.$EventBus.$emit('openUploader', this.uploadFileData)
+    handleUploadFileBtnClick(type) {
+      this.$EventBus.$emit('openUploader', this.uploadFileData, type)
     },
     /**
      * 新建文件夹对话框 | 取消按钮点击事件
@@ -364,7 +365,7 @@ export default {
       }
     },
     handleSearchInputChange(value) {
-      if(value === '') {
+      if (value === '') {
         this.$emit('getTableDataByType')
       } else {
         this.$emit('getSearchFileList', value)
@@ -409,14 +410,25 @@ export default {
 
   .operate-group {
     flex: 1;
+
+    .drop-btn {
+      float: left;
+      border-radius: 4px 0 0 4px;
+
+      >>> .el-button {
+        border-radius: 4px 0 0 4px;
+      }
+    }
   }
 
   .select-file-input {
     margin-right: 8px;
     width: 200px;
+
     .el-icon-search {
       cursor: pointer;
       font-size: 16px;
+
       &:hover {
         color: $Primary;
       }
