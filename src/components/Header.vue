@@ -4,7 +4,7 @@
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router>
       <el-menu-item index="Home" :route="{ name: 'Home' }">首页</el-menu-item>
       <el-menu-item index="File" :route="{ name: 'File', query: { fileType: 0, filePath: '/' } }">网盘</el-menu-item>
-      <el-menu-item><a href="https://www.qiwenshare.com/" target="_blank">社区</a></el-menu-item>
+      <el-menu-item index="website"><a href="https://www.qiwenshare.com/" target="_blank">社区</a></el-menu-item>
       <!-- 为了和其他菜单样式保持一致，请一定要添加类名 el-menu-item -->
       <div class="el-menu-item exit" @click="exitButton()" v-show="isLogin">
         退出
@@ -51,10 +51,10 @@ export default {
      */
     exitButton() {
       this.$message.success('退出登录成功！')
-      this.setCookies('token', '')
       this.$store.dispatch('getUserInfo').then(() => {
         this.removeCookies('downloadDomain')
         this.removeCookies('viewDomain')
+        this.removeCookies('token')
         this.$router.push({ path: '/login' })
       })
     }
