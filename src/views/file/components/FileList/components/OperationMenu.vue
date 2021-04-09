@@ -63,27 +63,33 @@
     </el-input>
 
     <!-- 批量操作 -->
-    <el-button
-      class="batch-opera-btn"
-      :type="batchOperate ? 'primary' : ''"
-      icon="el-icon-finished"
-      size="mini"
-      v-if="fileModel === 1"
-      @click="handleBatchOperationChange()"
-    >
-      {{ batchOperate ? '取消批量操作' : '批量操作' }}
-    </el-button>
-    <!-- 文件展示模式 -->
-    <div class="change-file-model">
-      <el-radio-group v-model="fileGroupLable" size="mini" @change="handleFileDisplayModelChange">
-        <el-radio-button :label="0"> <i class="el-icon-tickets"></i> 列表 </el-radio-button>
-        <el-radio-button :label="1"> <i class="el-icon-s-grid"></i> 网格 </el-radio-button>
-        <el-radio-button :label="2" v-if="fileType === 1"> <i class="el-icon-date"></i> 时间线 </el-radio-button>
-      </el-radio-group>
-    </div>
+    <i class="batch-icon el-icon-finished" :class="batchOperate ? 'active' : ''" :title="batchOperate ? '取消批量操作' : '批量操作'" v-if="fileModel === 1" @click="handleBatchOperationChange()"></i>
+    <el-divider direction="vertical" v-if="fileModel === 1" ></el-divider>
 
-    <!-- 选择表格列 -->
-    <SelectColumn class="select-column"></SelectColumn>
+    <!-- 操作栏收纳 -->
+    <el-popover
+      placement="bottom"
+      trigger="hover"
+    >
+      <i slot="reference" class="setting-icon el-icon-setting"></i>
+      <!-- 选择表格列 -->
+      <SelectColumn></SelectColumn>
+      <el-divider class="split-line"></el-divider>
+      <!-- 文件展示模式 -->
+      <div class="change-file-model">
+        <div class="title">查看模式</div>
+        <el-radio-group v-model="fileGroupLable" size="mini" @change="handleFileDisplayModelChange">
+          <el-radio-button :label="0"> <i class="el-icon-tickets"></i> 列表 </el-radio-button>
+          <el-radio-button :label="1"> <i class="el-icon-s-grid"></i> 网格 </el-radio-button>
+          <el-radio-button :label="2" v-if="fileType === 1"> <i class="el-icon-date"></i> 时间线 </el-radio-button>
+        </el-radio-group>
+      </div>
+      <!-- 图标大小调整 -->
+      <div class="change-grid-size" v-if="fileGroupLable === 1 || fileGroupLable === 2">
+        <div class="title">调整图标大小</div>
+        <el-slider v-model="gridSize" :min="40" :max="150" :step="10" :format-tooltip="formatTooltip"></el-slider>
+      </div>
+    </el-popover>
 
     <!-- 新建文件夹对话框 -->
     <el-dialog
@@ -199,6 +205,15 @@ export default {
     // 文件查看模式 0 列表模式 1 网格模式 2 时间线模式
     fileModel() {
       return this.$store.getters.fileModel
+    },
+    // 图标大小
+    gridSize: {
+      get() {
+        return this.$store.getters.gridSize
+      },
+      set(val) {
+        this.$store.commit("changeGridSize", val)
+      }
     }
   },
   watch: {
@@ -364,6 +379,10 @@ export default {
         this.$refs[name][0].click()
       }
     },
+    /**
+     * 搜索输入框搜索事件
+     * @param {string} value 搜索内容
+     */
     handleSearchInputChange(value) {
       if (value === '') {
         this.$emit('getTableDataByType')
@@ -389,6 +408,13 @@ export default {
      */
     handleFileDisplayModelChange(label) {
       this.$store.commit('changeFileModel', label)
+    },
+    /**
+     * 格式化图标大小显示
+     * @param {number} val 改变后的数值
+     */
+    formatTooltip(val) {
+      return `${val}px`;
     }
   }
 }
@@ -423,7 +449,7 @@ export default {
 
   .select-file-input {
     margin-right: 8px;
-    width: 200px;
+    width: 250px;
 
     .el-icon-search {
       cursor: pointer;
@@ -435,12 +461,33 @@ export default {
     }
   }
 
-  .change-image-model, .change-file-model {
+  .batch-opera-btn {
     margin-right: 8px;
   }
 
-  .batch-opera-btn {
-    margin-right: 8px;
+  .batch-icon,
+  .setting-icon {
+    font-size 20px
+    cursor pointer
+    color $SecondaryText
+    &:hover {
+      color $Primary
+    }
+  }
+
+  .batch-icon.active {
+    color $Primary
+  }
+
+}
+.split-line {
+  margin 8px 0  
+}
+.change-file-model, .change-grid-size {
+  .title {
+    margin 8px 0
+    color $SecondaryText
+    font-size 14px
   }
 }
 </style>

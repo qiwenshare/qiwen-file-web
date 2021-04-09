@@ -13,10 +13,11 @@
         v-for="(item, index) in fileListSorted"
         :key="index"
         :title="item | fileNameComplete"
+        :style="`width: ${gridSize + 40}px; `"
         @click="handleFileNameClick(item, index, fileListSorted)"
         @contextmenu.prevent="rightClickFile(item, index, $event)"
       >
-        <img class="file-img" :src="setFileImg(item)" />
+        <img class="file-img" :src="setFileImg(item)" :style="`width: ${gridSize}px; height: ${gridSize}px;`" />
         <div class="file-name">{{ item | fileNameComplete }}</div>
         <div
           class="file-checked-wrapper"
@@ -219,6 +220,10 @@ export default {
     selectedFileList() {
       let res = this.fileListSorted.filter((item) => item.checked)
       return res
+    },
+    // 图标大小
+    gridSize() {
+      return this.$store.getters.gridSize
     }
   },
   watch: {
@@ -520,6 +525,7 @@ export default {
 @import '~@/assets/styles/mixins.styl';
 
 .file-grid-wrapper {
+  border-top 1px solid $BorderBase
   .file-list {
     height: calc(100vh - 206px);
     overflow-y: auto;
@@ -532,7 +538,6 @@ export default {
     .file-item {
       margin: 0 16px 16px 0;
       position: relative;
-      width: 120px;
       padding: 8px;
       text-align: center;
       cursor: pointer;
@@ -543,11 +548,6 @@ export default {
         .file-name {
           font-weight: 550;
         }
-      }
-
-      .file-img {
-        width: 80px;
-        height: 80px;
       }
 
       .file-name {

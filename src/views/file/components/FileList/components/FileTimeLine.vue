@@ -18,11 +18,12 @@
         placement="top"
       >
         <ul class="image-list">
-          <li class="image-item" v-for="(image, imageIndex) in item.imageList" :key="`${index}-${imageIndex}`">
+          <li class="image-item" v-for="(image, imageIndex) in item.imageList" :key="`${index}-${imageIndex}`" :style="`width: ${gridSize + 40}px; `">
             <img
               class="image"
               :src="getImgMinPath(image)"
               :alt="item | fileNameComplete"
+              :style="`width: ${gridSize}px; height: ${gridSize}px;`"
               @click="handleImgClick(item.imageList, imageIndex)"
             />
             <div class="image-name">{{ image | fileNameComplete }}</div>
@@ -63,6 +64,10 @@ export default {
         })
       })
       return res
+    },
+    // 图标大小
+    gridSize() {
+      return this.$store.getters.gridSize
     }
   },
   methods: {
@@ -111,7 +116,6 @@ export default {
 
         .image-item {
           margin: 0 16px 16px 0;
-          width: 120px;
           padding: 8px;
           text-align: center;
           cursor: pointer;
@@ -122,11 +126,6 @@ export default {
             .file-name {
               font-weight: 550;
             }
-          }
-
-          .image {
-            width: 80px;
-            height: 80px;
           }
 
           .image-name {
