@@ -41,7 +41,7 @@ The software follows the MIT open source protocol
 ### File operations
 
 1. Users can add, delete and modify the directory structure
-2. Provide drag and drop to uploadand downloading of files.
+2. Provide drag and drop to upload and downloading of files.
 3. Support online decompression of ZIP files and RAR files
 4. Support files and directories to move and copy
 5. Classified view of multiple file formats
