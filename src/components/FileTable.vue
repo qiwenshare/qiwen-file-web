@@ -3,7 +3,7 @@
     <!-- 文件表格 -->
     <el-table
       class="file-table"
-      :class="'file-type-' + fileType"
+      :class="['file-type-' + fileType, routeName === 'Share' ? 'share' : '']"
       ref="multipleTable"
       fit
       v-loading="loading"
@@ -18,7 +18,7 @@
         <template slot-scope="scope">
           <img
             :src="setFileImg(scope.row)"
-            style="width: 30px; max-height: 30px; cursor: pointer;"
+            style="width: 30px; max-height: 30px; cursor: pointer"
             @click="handleFileNameClick(scope.row)"
           />
         </template>
@@ -108,28 +108,33 @@
         </template>
         <template slot-scope="scope">
           <div v-if="operaColumnExpand">
-            <el-button type="text" size="mini" @click.native="handleDeleteFileBtnClick(scope.row)">删除</el-button>
+            <el-button type="text" size="mini" @click.native="handleDeleteFileBtnClick(scope.row)" v-if="deleteBtnShow"
+              >删除</el-button
+            >
             <el-button
               type="text"
               size="mini"
               @click.native="handleRestoreFileBtnClick(scope.row)"
-              v-if="fileType === 6"
+              v-if="restoreBtnShow"
               >还原</el-button
             >
-            <el-button type="text" size="mini" @click.native="handleMoveFileBtnClick(scope.row)" v-if="fileType !== 6"
+            <el-button type="text" size="mini" @click.native="handleMoveFileBtnClick(scope.row)" v-if="moveBtnShow"
               >移动</el-button
             >
-            <el-button type="text" size="mini" @click.native="handleRenameFileBtnClick(scope.row)" v-if="fileType !== 6"
+            <el-button type="text" size="mini" @click.native="handleRenameFileBtnClick(scope.row)" v-if="renameBtnShow"
               >重命名</el-button
             >
-            <el-button type="text" size="mini" v-if="scope.row.isDir === 0 && fileType !== 6">
+            <el-button type="text" size="mini" @click.native="handleShareFileBtnClick(scope.row)" v-if="shareBtnShow"
+              >分享</el-button
+            >
+            <el-button type="text" size="mini" v-if="downloadBtnShow && scope.row.isDir === 0">
               <a target="_blank" style="display: block; color: inherit" :href="getDownloadFilePath(scope.row)">下载</a>
             </el-button>
             <el-button
               type="text"
               size="mini"
               @click.native="handleUnzipFileBtnClick(scope.row)"
-              v-if="fileType !== 6 && (scope.row.extendName == 'zip' || scope.row.extendName == 'rar')"
+              v-if="unzipBtnShow && ['zip', 'rar'].includes(scope.row.extendName)"
               >解压缩</el-button
             >
           </div>
@@ -139,26 +144,31 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="handleDeleteFileBtnClick(scope.row)">删除</el-dropdown-item>
-              <el-dropdown-item @click.native="handleRestoreFileBtnClick(scope.row)" v-if="fileType === 6"
+              <el-dropdown-item @click.native="handleDeleteFileBtnClick(scope.row)" v-if="deleteBtnShow"
+                >删除</el-dropdown-item
+              >
+              <el-dropdown-item @click.native="handleRestoreFileBtnClick(scope.row)" v-if="restoreBtnShow"
                 >还原</el-dropdown-item
               >
-              <el-dropdown-item @click.native="handleMoveFileBtnClick(scope.row)" v-if="fileType !== 6"
+              <el-dropdown-item @click.native="handleMoveFileBtnClick(scope.row)" v-if="moveBtnShow"
                 >移动</el-dropdown-item
               >
-              <el-dropdown-item @click.native="handleRenameFileBtnClick(scope.row)" v-if="fileType !== 6"
+              <el-dropdown-item @click.native="handleRenameFileBtnClick(scope.row)" v-if="renameBtnShow"
                 >重命名</el-dropdown-item
               >
-              <el-dropdown-item
-                v-if="scope.row.extendName === 'zip' && fileType !== 6"
-                @click.native="handleUnzipFileBtnClick(scope.row)"
-                >解压缩</el-dropdown-item
+              <el-dropdown-item v-if="shareBtnShow" @click.native="handleShareFileBtnClick(scope.row)"
+                >分享</el-dropdown-item
               >
-              <el-dropdown-item v-if="scope.row.isDir === 0 && fileType !== 6">
+              <el-dropdown-item v-if="downloadBtnShow && scope.row.isDir === 0">
                 <a target="_blank" style="display: block; color: inherit" :href="getDownloadFilePath(scope.row)"
                   >下载</a
                 >
               </el-dropdown-item>
+              <el-dropdown-item
+                v-if="unzipBtnShow && ['zip', 'rar'].includes(scope.row.extendName)"
+                @click.native="handleUnzipFileBtnClick(scope.row)"
+                >解压缩</el-dropdown-item
+              >
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -198,16 +208,6 @@ export default {
   data() {
     return {
       operaColumnExpand: this.getCookies('operaColumnExpand') || false, //  表格操作列-是否收缩
-      //  移动文件模态框数据
-      dialogMoveFile: {
-        isBatchMove: false,
-        visible: false, //  是否可见
-        fileTree: [], //  目录树
-        defaultProps: {
-          children: 'children',
-          label: 'label'
-        }
-      },
       //  可以识别的文件类型
       fileImgTypeList: [
         'png',
@@ -300,15 +300,49 @@ export default {
     },
     // 操作列宽度
     operaColumnWidth() {
-      return this.fileType === 6
+      return this.routeName === 'Share'
+        ? 100
+        : this.fileType === 6
         ? 120
         : this.operaColumnExpand
         ? this.isIncludeNormalFile
           ? this.isIncludeZipRarFile
-            ? 230
-            : 190
-          : 160
-        : 150
+            ? 270
+            : 230
+          : 200
+        : 100
+    },
+    // 路由名称
+    routeName() {
+      return this.$route.name
+    },
+    // 删除按钮是否显示
+    deleteBtnShow() {
+      return this.routeName !== 'Share'
+    },
+    // 还原按钮是否显示
+    restoreBtnShow() {
+      return this.fileType === 6 && this.routeName !== 'Share'
+    },
+    // 移动按钮是否显示
+    moveBtnShow() {
+      return this.fileType !== 6 && this.routeName !== 'Share'
+    },
+    // 重命名按钮是否显示
+    renameBtnShow() {
+      return this.fileType !== 6 && this.routeName !== 'Share'
+    },
+    // 删除按钮是否显示
+    shareBtnShow() {
+      return this.fileType !== 6 && this.routeName !== 'Share'
+    },
+    // 下载按钮是否显示
+    downloadBtnShow() {
+      return this.fileType !== 6
+    },
+    // 下载按钮是否显示
+    unzipBtnShow() {
+      return this.fileType !== 6 && this.routeName !== 'Share'
     }
   },
   watch: {
@@ -395,12 +429,20 @@ export default {
     handleFileNameClick(row) {
       //  若是目录则进入目录
       if (row.isDir) {
-        this.$router.push({
-          query: {
-            filePath: row.filePath + row.fileName + '/',
-            fileType: 0
-          }
-        })
+        if (this.routeName === 'Share') {
+          this.$router.push({
+            query: {
+              filePath: row.filePath + row.fileName + '/'
+            }
+          })
+        } else {
+          this.$router.push({
+            query: {
+              filePath: row.filePath + row.fileName + '/',
+              fileType: 0
+            }
+          })
+        }
       }
       //  若是文件，则进行相应的预览
       else {
@@ -456,10 +498,10 @@ export default {
     /**
      * 移动按钮点击事件
      * @description 向父组件传递当前操作的文件信息，并打开“移动文件对话框”
-     * @param {object} file 文件信息
+     * @param {object} fileInfo 文件信息
      */
-    handleMoveFileBtnClick(file) {
-      this.$emit('setOperationFile', file)
+    handleMoveFileBtnClick(fileInfo) {
+      this.$emit('setOperationFile', fileInfo)
       //  第一个参数: 是否批量移动；第二个参数：打开/关闭移动文件对话框
       this.$emit('setMoveFileDialogData', false, true)
     },
@@ -622,6 +664,15 @@ export default {
           this.$message.error(res.message)
         }
       })
+    },
+    /**
+     * 文件分享按钮点击事件
+     * @description 打开对话框让用户选择过期时间和提取码
+     * @param {object} fileInfo 文件信息
+     */
+    handleShareFileBtnClick(fileInfo) {
+      this.$emit('setSelectionFile', [fileInfo])
+      this.$emit('setShareFileDialogData')
     }
   }
 }
@@ -647,6 +698,14 @@ export default {
 
     >>> .el-table__body-wrapper {
       height: calc(100vh - 263px) !important;
+    }
+  }
+
+  .file-table.share {
+    height: calc(100vh - 109px) !important;
+
+    >>> .el-table__body-wrapper {
+      height: calc(100vh - 161px) !important;
     }
   }
 

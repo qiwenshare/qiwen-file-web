@@ -11,13 +11,13 @@ const globalFunction = {
   getImgMinPath: function (row) {
     let fileUrl = ''
     if (row.fileUrl) {
-      if (row.isOSS == 1) { 
+      if (row.isOSS == 1) {
         // 阿里云OSS对象存储
         fileUrl = `https://${Cookies.get('viewDomain')}${row.fileUrl}?x-oss-process=image/resize,m_fill,h_150,w_150/rotate,0`
-      } else {  
+      } else {
         // 本地磁盘存储
         let index = row.fileUrl.lastIndexOf('.')
-        fileUrl = 'api' + row.fileUrl.substr(0, index) + '_min' + row.fileUrl.substr(index)
+        fileUrl = '/api' + row.fileUrl.substr(0, index) + '_min' + row.fileUrl.substr(index)
       }
     }
     return fileUrl
@@ -27,7 +27,7 @@ const globalFunction = {
    * @param {object} row 文件信息
    * @returns {string} 文件路径
    */
-   getViewFilePath: function (row) {
+  getViewFilePath: function (row) {
     let fileUrl = ''
     if (Number(row.isOSS) === 1) {
       fileUrl = `https://${Cookies.get('viewDomain')}${row.fileUrl}`  // 阿里云OSS对象存储
@@ -83,7 +83,10 @@ const globalFunction = {
    * @param {object} others 域名、路径等，封装到对象中
    */
   removeCookies: function (name, others = null) {
-    Cookies.remove(name, { domain: config.domain, ...others})
+    Cookies.remove(name, { domain: config.domain, ...others })
+  },
+  getShareLink: function (shareBatchNum) {
+    return `${location.protocol}//${location.host}/share/${shareBatchNum}`
   }
 }
 

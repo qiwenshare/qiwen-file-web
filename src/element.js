@@ -51,7 +51,8 @@ import {
   Checkbox,
   Popover,
   Carousel,
-  CarouselItem
+  CarouselItem,
+  DatePicker
 } from "element-ui";
 
 const element = {
@@ -105,6 +106,7 @@ const element = {
     Vue.use(Popover);
     Vue.use(Carousel);
     Vue.use(CarouselItem);
+    Vue.use(DatePicker);
     Vue.prototype.$loading = Loading.service;
     Vue.prototype.$msgbox = MessageBox;
     Vue.prototype.$alert = MessageBox.alert;

@@ -1,7 +1,7 @@
 <template>
   <div class="breadcrumb-wrapper">
     <div class="title">当前位置：</div>
-    <el-breadcrumb v-if="fileType" separator="/">
+    <el-breadcrumb v-if="fileType && $route.name !== 'Share'" separator="/">
       <el-breadcrumb-item>{{ fileTypeMap[fileType] }}</el-breadcrumb-item>
     </el-breadcrumb>
     <el-breadcrumb v-else separator="/">
@@ -60,7 +60,7 @@ export default {
             _path.push(filePathList[i])
             res.push({
               path: '/',
-              name: '全部文件'
+              name: this.$route.name === 'Share' ? '分享文件' : '全部文件'
             })
           }
         }
