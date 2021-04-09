@@ -1,4 +1,4 @@
-*{ margin:0; padding:0; box-sizing: border-box;}
+*{ margin:0; padding:0; box-sizing: border-box; outline: 0;}
 html{ height: 100%; }
 body{ height: 100%;font-size:16px; font-family:微软雅黑;font-style:normal;overflow-x: hidden;}
 a{ text-decoration:none}
