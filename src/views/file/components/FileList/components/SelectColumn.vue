@@ -1,10 +1,11 @@
 <template>
   <div class="select-column">
-    <el-button type="info" size="mini" plain icon="el-icon-s-operation" @click="handleSetShowColumnBtnClick"
-      >设置显示列</el-button
-    >
+    <div class="text" @click="handleSetShowColumnBtnClick">
+      <i class="el-icon-s-operation"></i>
+      设置显示字段
+    </div>
     <!-- 对话框 当点击"设置显示列"按钮时弹出对话框 -->
-    <el-dialog title="设置表格列显隐" width="700px" :visible.sync="dialogVisible">
+    <el-dialog title="设置表格列显隐" width="700px" :append-to-body="true" :visible.sync="dialogVisible">
       <!-- 多选框组件 勾选需要在表格中显示的列 -->
       <el-checkbox-group v-model="selectedColumn">
         <el-checkbox v-for="item in columnOptions" :key="item.value" :label="item.value">{{ item.label }}</el-checkbox>
@@ -66,3 +67,17 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus" scoped>
+@import '~@/assets/styles/varibles.styl';
+
+.select-column {
+  .text {
+    padding-top 8px
+    cursor pointer
+    &:hover {
+      color $Primary
+    }
+  }  
+}
+</style>
