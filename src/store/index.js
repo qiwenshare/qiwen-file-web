@@ -27,7 +27,9 @@ export default new Vuex.Store({
         ? config.allColumnList
         : state.fileList.selectedColumnList.split(","),
     // 文件查看模式
-    fileModel: (state) => state.fileList.fileModel === undefined ? 0 : Number(state.fileList.fileModel)
+    fileModel: (state) => state.fileList.fileModel === undefined ? 0 : Number(state.fileList.fileModel),
+    // 网格模式 & 时间线模式下 文件图标大小
+    gridSize: (state) => state.fileList.gridSize
   },
   mutations: {
     //
