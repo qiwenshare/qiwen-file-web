@@ -429,13 +429,13 @@ export default {
     handleFileNameClick(row) {
       //  若是目录则进入目录
       if (row.isDir) {
-        if (this.routeName === 'Share') {
+        if (this.routeName === 'Share') { //  当前是分享页面
           this.$router.push({
             query: {
-              filePath: row.filePath + row.fileName + '/'
+              filePath: row.shareFilePath + row.fileName + '/'
             }
           })
-        } else {
+        } else {  //  不是分享页面
           this.$router.push({
             query: {
               filePath: row.filePath + row.fileName + '/',
