@@ -3,7 +3,7 @@
     <!-- 文件表格 -->
     <el-table
       class="file-table"
-      :class="['file-type-' + fileType, routeName === 'Share' ? 'share' : '']"
+      :class="['file-type-' + fileType, routeName === 'Share' ? 'share' : routeName === 'MyShare' ? 'my-share' : '']"
       ref="multipleTable"
       fit
       v-loading="loading"
@@ -89,7 +89,7 @@
         :sort-by="['isDir', 'uploadTime']"
         show-overflow-tooltip
         sortable
-        v-if="selectedColumnList.includes('uploadTime')"
+        v-if="selectedColumnList.includes('uploadTime') && ![7, 8].includes(fileType)"
       ></el-table-column>
       <el-table-column
         label="删除日期"
@@ -100,6 +100,39 @@
         sortable
         v-if="fileType === 6 && selectedColumnList.includes('deleteTime')"
       ></el-table-column>
+      <el-table-column label="分享类型" prop="shareType" width="100" align="center" v-if="routeName === 'MyShare'">
+        <template slot-scope="scope">
+          {{ scope.row.shareType === 1 ? '公共' : '私密' }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="分享时间"
+        prop="shareTime"
+        width="180"
+        :sort-by="['isDir', 'shareTime']"
+        show-overflow-tooltip
+        sortable
+        align="center"
+        v-if="routeName === 'MyShare'"
+      ></el-table-column>
+      <el-table-column
+        label="过期时间"
+        prop="endTime"
+        width="190"
+        :sort-by="['isDir', 'endTime']"
+        show-overflow-tooltip
+        sortable
+        align="center"
+        v-if="routeName === 'MyShare'"
+      >
+        <template slot-scope="scope">
+          <div>
+            <i class="el-icon-warning" v-if="getFileShareStatus(scope.row.endTime)"></i>
+            <i class="el-icon-time" v-else></i>
+            {{ scope.row.endTime }}
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column :width="operaColumnWidth">
         <template slot="header">
           <span>操作</span>
@@ -137,6 +170,13 @@
               v-if="unzipBtnShow && ['zip', 'rar'].includes(scope.row.extendName)"
               >解压缩</el-button
             >
+            <el-button
+              type="text"
+              size="mini"
+              @click="copyShareLink(scope.row.shareBatchNum, scope.row.extractionCode)"
+              v-if="copyLinkBtnShow"
+              >复制链接</el-button
+            >
           </div>
           <el-dropdown trigger="click" v-else>
             <el-button size="mini">
@@ -168,6 +208,11 @@
                 v-if="unzipBtnShow && ['zip', 'rar'].includes(scope.row.extendName)"
                 @click.native="handleUnzipFileBtnClick(scope.row)"
                 >解压缩</el-dropdown-item
+              >
+              <el-dropdown-item
+                v-if="copyLinkBtnShow"
+                @click.native="copyShareLink(scope.row.shareBatchNum, scope.row.extractionCode)"
+                >复制链接</el-dropdown-item
               >
             </el-dropdown-menu>
           </el-dropdown>
@@ -300,7 +345,7 @@ export default {
     },
     // 操作列宽度
     operaColumnWidth() {
-      return this.routeName === 'Share'
+      return ['Share', 'MyShare'].includes(this.routeName)
         ? 100
         : this.fileType === 6
         ? 120
@@ -318,31 +363,35 @@ export default {
     },
     // 删除按钮是否显示
     deleteBtnShow() {
-      return this.routeName !== 'Share'
+      return !['Share', 'MyShare'].includes(this.routeName)
     },
     // 还原按钮是否显示
     restoreBtnShow() {
-      return this.fileType === 6 && this.routeName !== 'Share'
+      return this.fileType === 6 && !['Share', 'MyShare'].includes(this.routeName)
     },
     // 移动按钮是否显示
     moveBtnShow() {
-      return this.fileType !== 6 && this.routeName !== 'Share'
+      return this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName)
     },
     // 重命名按钮是否显示
     renameBtnShow() {
-      return this.fileType !== 6 && this.routeName !== 'Share'
+      return this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName)
     },
     // 删除按钮是否显示
     shareBtnShow() {
-      return this.fileType !== 6 && this.routeName !== 'Share'
+      return this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName)
     },
     // 下载按钮是否显示
     downloadBtnShow() {
-      return this.fileType !== 6
+      return this.fileType !== 6 && !['MyShare'].includes(this.routeName)
     },
-    // 下载按钮是否显示
+    // 解压缩按钮是否显示
     unzipBtnShow() {
-      return this.fileType !== 6 && this.routeName !== 'Share'
+      return this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName)
+    },
+    // 复制链接按钮是否显示
+    copyLinkBtnShow() {
+      return this.routeName === 'MyShare'
     }
   },
   watch: {
@@ -422,20 +471,40 @@ export default {
       }
     },
     /**
+     * 获取文件分享过期状态
+     */
+    getFileShareStatus(time) {
+      if (new Date(time).getTime() > new Date().getTime()) {
+        return false
+      } else {
+        return true
+      }
+    },
+    /**
      * 文件名点击事件
      * @description 若当前点击的为文件夹，则进入文件夹内部；若是文件，则进行相应的预览。
      * @param {object} row 文件信息
      */
     handleFileNameClick(row) {
-      //  若是目录则进入目录
+      // 若是目录则进入目录
       if (row.isDir) {
-        if (this.routeName === 'Share') { //  当前是分享页面
+        if (this.routeName === 'Share') {
+          // 当前是查看他人分享列表的页面
           this.$router.push({
             query: {
               filePath: row.shareFilePath + row.fileName + '/'
             }
           })
-        } else {  //  不是分享页面
+        } else if (this.routeName === 'MyShare') {
+          // 当前是我的已分享列表页面
+          this.$router.push({
+            query: {
+              filePath: row.shareFilePath + row.fileName + '/',
+              shareBatchNum: row.shareBatchNum
+            }
+          })
+        } else {
+          // 网盘页面
           this.$router.push({
             query: {
               filePath: row.filePath + row.fileName + '/',
@@ -444,9 +513,9 @@ export default {
           })
         }
       }
-      //  若是文件，则进行相应的预览
+      // 若是文件，则进行相应的预览
       else {
-        //  若当前点击项是图片
+        // 若当前点击项是图片
         const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
         if (PIC.includes(row.extendName)) {
           let data = {
@@ -709,6 +778,14 @@ export default {
     }
   }
 
+  .file-table.my-share {
+    height: calc(100vh - 157px) !important;
+
+    >>> .el-table__body-wrapper {
+      height: calc(100vh - 209px) !important;
+    }
+  }
+
   .file-table {
     width: 100% !important;
     height: calc(100vh - 203px);
@@ -737,6 +814,16 @@ export default {
 
       td {
         padding: 8px 0;
+      }
+
+      .el-icon-warning {
+        font-size: 16px;
+        color: $Warning;
+      }
+
+      .el-icon-time {
+        font-size: 16px;
+        color: $Success;
       }
     }
   }

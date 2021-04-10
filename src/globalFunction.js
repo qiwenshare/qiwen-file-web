@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
 import config from '@/config'
+import { Message } from 'element-ui';
 
 // 全局函数
 const globalFunction = {
@@ -85,8 +86,34 @@ const globalFunction = {
   removeCookies: function (name, others = null) {
     Cookies.remove(name, { domain: config.domain, ...others })
   },
+  /**
+   * 获取分享链接
+   * @param {string} shareBatchNum 
+   * @returns {string} 完整的分享链接
+   */
   getShareLink: function (shareBatchNum) {
     return `${location.protocol}//${location.host}/share/${shareBatchNum}`
+  },
+  /**
+   * 复制分享链接
+   * @param {string} shareBatchNum 
+   * @param {string} extractionCode 
+   */
+  copyShareLink: function (shareBatchNum, extractionCode) {
+    let input = document.createElement('textarea') // 直接构建textarea以保持换行
+      input.value =
+        extractionCode === null
+          ? `分享链接：${this.getShareLink(
+              shareBatchNum
+            )}\n复制链接到浏览器中并输入提取码即可查看文件`
+          : `分享链接：${this.getShareLink(shareBatchNum)}\n提取码：${
+              extractionCode
+            }\n复制链接到浏览器中并输入提取码即可查看文件` // 设置内容
+      document.body.appendChild(input) // 添加临时实例
+      input.select() // 选择实例内容
+      document.execCommand('Copy') // 执行复制
+      document.body.removeChild(input) // 删除临时实例
+      Message.success('复制成功')
   }
 }
 
