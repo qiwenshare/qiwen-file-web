@@ -62,7 +62,10 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button v-if="dialogShareFile.success" type="primary" @click="handleCopyBtnClick()"
+        <el-button
+          v-if="dialogShareFile.success"
+          type="primary"
+          @click="copyShareLink(dialogShareFile.shareData.shareBatchNum, dialogShareFile.shareData.extractionCode)"
           >复制链接及提取码</el-button
         >
         <template v-else>
@@ -156,25 +159,6 @@ export default {
           return false
         }
       })
-    },
-    /**
-     * 复制链接及提取码按钮点击事件
-     */
-    handleCopyBtnClick() {
-      let input = document.createElement('textarea') // 直接构建textarea以保持换行
-      input.value =
-        this.dialogShareFile.shareData.extractionCode === null
-          ? `分享链接：${this.getShareLink(
-              this.dialogShareFile.shareData.shareBatchNum
-            )}\n复制链接到浏览器中并输入提取码即可查看文件`
-          : `分享链接：${this.getShareLink(this.dialogShareFile.shareData.shareBatchNum)}\n提取码：${
-              this.dialogShareFile.shareData.extractionCode
-            }\n复制链接到浏览器中并输入提取码即可查看文件` // 设置内容
-      document.body.appendChild(input) // 添加临时实例
-      input.select() // 选择实例内容
-      document.execCommand('Copy') // 执行复制
-      document.body.removeChild(input) // 删除临时实例
-      this.$message.success('复制成功')
     }
   }
 }
