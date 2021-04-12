@@ -104,39 +104,11 @@
     </el-popover>
 
     <!-- 新建文件夹对话框 -->
-    <el-dialog
-      title="新建文件夹"
+    <AddFolderDialog
       :visible.sync="dialogAddFolder.visible"
-      :close-on-click-modal="false"
-      width="550px"
-      @close="handleAddFolderDialogCancel('addFolderForm')"
-    >
-      <el-form
-        class="add-folder-form"
-        :model="dialogAddFolder.form"
-        :rules="dialogAddFolder.formRules"
-        ref="addFolderForm"
-        label-width="100px"
-        label-position="top"
-      >
-        <el-form-item label="文件夹名称" prop="fileName">
-          <el-input
-            v-model="dialogAddFolder.form.fileName"
-            placeholder="请输入文件夹名称"
-            type="textarea"
-            autosize
-            maxlength="255"
-            show-word-limit
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleAddFolderDialogCancel('addFolderForm')">取 消</el-button>
-        <el-button type="primary" :loading="dialogAddFolder.loading" @click="handleAddFolderDialogOk('addFolderForm')"
-          >确 定</el-button
-        >
-      </div>
-    </el-dialog>
+      :filePath="filePath"
+      @confirmDialog="$emit('getTableDataByType')"
+    ></AddFolderDialog>
 
     <!-- 多选文件下载，页面隐藏 -->
     <a
@@ -152,7 +124,8 @@
 </template>
 
 <script>
-import { batchDeleteFile, createFold, batchDeleteRecoveryFile } from '@/request/file.js'
+import { batchDeleteFile, batchDeleteRecoveryFile } from '@/request/file.js'
+import AddFolderDialog from '@/components/File/AddFolderDialog.vue'
 import SelectColumn from './SelectColumn'
 
 export default {
@@ -173,6 +146,7 @@ export default {
     batchOperate: Boolean
   },
   components: {
+    AddFolderDialog,
     SelectColumn
   },
   data() {
@@ -183,14 +157,7 @@ export default {
       },
       // 新建文件夹对话框数据
       dialogAddFolder: {
-        visible: false,
-        form: {
-          fileName: ''
-        },
-        formRules: {
-          fileName: [{ required: true, message: '请输入文件夹名称', trigger: 'blur' }]
-        },
-        loading: false
+        visible: false
       },
       batchDeleteFileDialog: false,
       fileGroupLable: 0 //  文件展示模式
@@ -253,45 +220,7 @@ export default {
     handleUploadFileBtnClick(type) {
       this.$EventBus.$emit('openUploader', this.uploadFileData, type)
     },
-    /**
-     * 新建文件夹对话框 | 取消按钮点击事件
-     * @description 关闭对话框，重置表单
-     * @param {string} formName 表单ref值
-     */
-    handleAddFolderDialogCancel(formName) {
-      this.dialogAddFolder.visible = false
-      this.$refs[formName].resetFields()
-    },
-    /**
-     * 新建文件夹对话框 | 确定按钮点击事件
-     * @description 校验表单，校验通过后调用新建文件夹接口
-     * @param {string} formName 表单ref值
-     */
-    handleAddFolderDialogOk(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.dialogAddFolder.loading = true
-          let data = {
-            fileName: this.dialogAddFolder.form.fileName,
-            filePath: this.filePath,
-            isDir: 1
-          }
-          createFold(data).then((res) => {
-            this.dialogAddFolder.loading = false
-            if (res.success) {
-              this.$message.success('添加成功')
-              this.dialogAddFolder.visible = false
-              this.$refs[formName].resetFields()
-              this.$emit('getTableDataByType')
-            } else {
-              this.$message.warning(res.message)
-            }
-          })
-        } else {
-          return false
-        }
-      })
-    },
+
     /**
      * 批量删除按钮点击事件
      * @description 区分 删除到回收站中 | 在回收站中彻底删除，调用相应的删除文件接口
@@ -385,7 +314,7 @@ export default {
      * 分享按钮点击事件
      */
     handleBatchShareBtnClick() {
-      this.$emit("setShareFileDialogData")
+      this.$emit('setShareFileDialogData')
     },
     /**
      * 批量下载按钮点击事件

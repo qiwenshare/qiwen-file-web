@@ -399,22 +399,19 @@ export default {
      * 文件路径变化时清空表格已选行
      */
     filePath() {
-      this.$refs.multipleTable.clearSelection()
-      this.$emit('setSelectionFile', [])
+      this.clearSelectedTable()
     },
     /**
      * 文件类型变化时清空表格已选行
      */
     fileType() {
-      this.$refs.multipleTable.clearSelection()
-      this.$emit('setSelectionFile', [])
+      this.clearSelectedTable()
     },
     /**
      * 文件列表变化时清空表格已选行
      */
     fileList() {
-      this.$refs.multipleTable.clearSelection()
-      this.$emit('setSelectionFile', [])
+      this.clearSelectedTable()
     },
     /**
      * 监听表格操作列按钮折叠状态变化
@@ -429,6 +426,14 @@ export default {
     this.operaColumnExpand = this.getCookies('operaColumnExpand') === 'true' //  读取保存的状态
   },
   methods: {
+    /**
+     * 清空表格已选行
+     * @description 用于父组件调用 | 本组件调用，请勿删除
+     */
+    clearSelectedTable() {
+      this.$refs.multipleTable.clearSelection()
+      this.$emit('setSelectionFile', [])
+    },
     /**
      * 根据文件扩展名设置文件图片
      * @param {object} row 文件信息
