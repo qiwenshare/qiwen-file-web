@@ -30,7 +30,7 @@
 
 <script>
 import BreadCrumb from '@/components/BreadCrumb'
-import FileTable from '@/components/FileTable'
+import FileTable from '@/components/File/FileTable'
 import { getMyShareFileList } from '@/request/file.js'
 
 export default {

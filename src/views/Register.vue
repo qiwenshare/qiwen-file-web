@@ -46,7 +46,7 @@
 
 <script>
 import CanvasNest from 'canvas-nest.js'
-import DragVerify from '@/components/DragVerify.vue'  //  引入滑动解锁组件
+import DragVerify from '@/components/common/DragVerify.vue'  //  引入滑动解锁组件
 import { addUser } from '@/request/user.js'
 
 // 配置

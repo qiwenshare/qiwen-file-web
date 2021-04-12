@@ -77,10 +77,10 @@
 <script>
 import OperationMenu from './components/OperationMenu'
 import BreadCrumb from '@/components/BreadCrumb'
-import FileTable from '@/components/FileTable'
+import FileTable from '@/components/File/FileTable'
 import FileGrid from './components/FileGrid'
 import FileTimeLine from './components/FileTimeLine'
-import MoveFileDialog from '@/components/MoveFileDialog'
+import MoveFileDialog from '@/components/File/MoveFileDialog'
 import ShareFileDialog from './components/ShareFileDialog'
 
 import {

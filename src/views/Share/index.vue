@@ -10,6 +10,7 @@
       </div>
       <!-- 文件列表-表格模式 -->
       <FileTable
+        ref="fileTableInstance"
         :fileType="7"
         :filePath="filePath"
         :fileList="fileList"
@@ -56,8 +57,8 @@
 
 <script>
 import BreadCrumb from '@/components/BreadCrumb'
-import FileTable from '@/components/FileTable'
-import MoveFileDialog from '@/components/MoveFileDialog'
+import FileTable from '@/components/File/FileTable'
+import MoveFileDialog from '@/components/File/MoveFileDialog'
 import {
   checkShareLinkEndtime,
   checkShareLinkType,
@@ -269,9 +270,8 @@ export default {
       }).then((res) => {
         if (res.success) {
           this.$message.success('保存成功')
-          // this.getTableDataByType()
           this.dialogSelectPath.visible = false
-          this.selectionFile = []
+          this.$refs.fileTableInstance.clearSelectedTable() //  清空表格已选项
         } else {
           this.$message.error(res.message)
         }
