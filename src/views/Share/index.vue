@@ -57,8 +57,8 @@
 
 <script>
 import BreadCrumb from '@/components/BreadCrumb'
-import FileTable from '@/components/FileTable'
-import MoveFileDialog from '@/components/MoveFileDialog'
+import FileTable from '@/components/File/FileTable'
+import MoveFileDialog from '@/components/File/MoveFileDialog'
 import {
   checkShareLinkEndtime,
   checkShareLinkType,
