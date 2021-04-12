@@ -63,7 +63,7 @@ The software follows the MIT open source protocol
 
 ## Network topology
 
-![网络拓扑图](https://images.gitee.com/uploads/images/2021/0324/225520_d55b109e_947714.png '屏幕截图.png')
+![网络拓扑图](https://images.gitee.com/uploads/images/2021/0324/225520_d55b109e_947714.png "屏幕截图.png")
 
 ## Software architecture
 
@@ -154,6 +154,38 @@ Manual resizing of ICONS is supported in grid mode and timeline mode:
 
 ![文件回收站](https://images.gitee.com/uploads/images/2021/0325/123843_f8fa15bf_1837873.png)
 
+### 9. Files are shared individually and in batches
+
+1. Support single and batch file sharing to others:
+
+   ![单个或批量分享文件](https://images.gitee.com/uploads/images/2021/0412/094958_842ead78_1837873.png)
+
+2. You can select the expiration time and whether you want to extract the code:
+
+   ![过期时间和是否需要提取码](https://images.gitee.com/uploads/images/2021/0412/095039_b7841dbc_1837873.png)
+
+3. Provide quick copy link and extract code to others:
+
+   ![生成分享链接](https://images.gitee.com/uploads/images/2021/0412/095055_a06df014_1837873.png)
+
+   Paste sharing link and extract code effect:
+
+   ```
+   分享链接：https://pan.qiwenshare.com/share/27d9b438019e4f68bcec02f579d163b7
+   提取码：356978
+   复制链接到浏览器中并输入提取码即可查看文件
+   ```
+
+4. Others view the shared content, and support the function of saving to network disk:
+
+![保存到我的网盘](https://images.gitee.com/uploads/images/2021/0412/095629_ce5b3336_1837873.png)
+
+### 10. Support to view the list of files you have shared
+
+Support quick copy of the sharing link and extraction code in the list, and mark the sharing time and expiration status:
+
+![我的分享](https://images.gitee.com/uploads/images/2021/0412/095142_6d543701_1837873.png)
+
 ## Contact us
 
 If you have any questions, please join the QQ group consultation
@@ -164,7 +196,6 @@ If you have any questions, please join the QQ group consultation
     <img src="https://images.gitee.com/uploads/images/2021/0325/133721_7c174ea5_1837873.png"/>
     <img src="https://images.gitee.com/uploads/images/2021/0325/133740_557ca1d8_1837873.png"/>
 </div>
-
 
 ## Participate in the contribution
 
