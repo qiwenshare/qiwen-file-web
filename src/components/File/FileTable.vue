@@ -13,8 +13,8 @@
       :default-sort="{ prop: 'isDir', order: 'descending' }"
       @selection-change="handleSelectRow"
     >
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column label prop="isDir" width="60" align="center">
+      <el-table-column type="selection" key="selection" width="55"></el-table-column>
+      <el-table-column label prop="isDir" key="isDir" width="60" align="center">
         <template slot-scope="scope">
           <img
             :src="setFileImg(scope.row)"
@@ -23,7 +23,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column prop="fileName" :sort-by="['isDir', 'fileName']" sortable show-overflow-tooltip>
+      <el-table-column prop="fileName" key="fileName" :sort-by="['isDir', 'fileName']" sortable show-overflow-tooltip>
         <template slot="header">
           <span>文件名</span>
         </template>
@@ -36,6 +36,7 @@
       <el-table-column
         :label="fileType === 6 ? '原路径' : '路径'"
         prop="filePath"
+        key="filePath"
         show-overflow-tooltip
         v-if="Number($route.query.fileType)"
       >
@@ -56,6 +57,7 @@
         label="类型"
         width="80"
         prop="extendName"
+        key="extendName"
         :sort-by="['isDir', 'extendName']"
         sortable
         show-overflow-tooltip
@@ -70,6 +72,7 @@
         label="大小"
         width="80"
         prop="fileSize"
+        key="fileSize"
         :sort-by="['isDir', 'fileSize']"
         sortable
         show-overflow-tooltip
@@ -85,22 +88,31 @@
       <el-table-column
         label="修改日期"
         prop="uploadTime"
+        key="uploadTime"
         width="180"
         :sort-by="['isDir', 'uploadTime']"
-        show-overflow-tooltip
         sortable
+        align="center"
         v-if="selectedColumnList.includes('uploadTime') && ![7, 8].includes(fileType)"
       ></el-table-column>
       <el-table-column
         label="删除日期"
         prop="deleteTime"
+        key="deleteTime"
         width="180"
         :sort-by="['isDir', 'deleteTime']"
-        show-overflow-tooltip
         sortable
+        align="center"
         v-if="fileType === 6 && selectedColumnList.includes('deleteTime')"
       ></el-table-column>
-      <el-table-column label="分享类型" prop="shareType" width="100" align="center" v-if="routeName === 'MyShare'">
+      <el-table-column
+        label="分享类型"
+        prop="shareType"
+        key="shareType"
+        width="100"
+        align="center"
+        v-if="routeName === 'MyShare'"
+      >
         <template slot-scope="scope">
           {{ scope.row.shareType === 1 ? '公共' : '私密' }}
         </template>
@@ -108,6 +120,7 @@
       <el-table-column
         label="分享时间"
         prop="shareTime"
+        key="shareTime"
         width="180"
         :sort-by="['isDir', 'shareTime']"
         show-overflow-tooltip
@@ -118,6 +131,7 @@
       <el-table-column
         label="过期时间"
         prop="endTime"
+        key="endTime"
         width="190"
         :sort-by="['isDir', 'endTime']"
         show-overflow-tooltip
@@ -133,7 +147,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :width="operaColumnWidth">
+      <el-table-column :width="operaColumnWidth" key="action">
         <template slot="header">
           <span>操作</span>
           <i class="el-icon-circle-plus" title="展开" @click="operaColumnExpand = true"></i>
