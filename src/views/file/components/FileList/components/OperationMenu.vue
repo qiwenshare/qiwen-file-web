@@ -273,7 +273,7 @@ export default {
         }).then((res) => {
           if (res.success) {
             this.$message({
-              message: res.data,
+              message: "删除成功",
               type: 'success'
             })
             this.$emit('getTableDataByType')
@@ -289,7 +289,7 @@ export default {
         }).then((res) => {
           if (res.success) {
             this.$message({
-              message: res.data,
+              message: "删除成功",
               type: 'success'
             })
             this.$emit('getTableDataByType')
