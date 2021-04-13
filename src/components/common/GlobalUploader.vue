@@ -77,12 +77,14 @@ export default {
         // 服务器分片校验函数，秒传及断点续传基础
         checkChunkUploadedByResponse: function(chunk, message) {
           let objMessage = JSON.parse(message)
-          let data = objMessage.data
-          if (data.skipUpload) {
-            // 分片已存在于服务器中
-            return true
+          if(objMessage.success) {
+            let data = objMessage.data
+            if (data.skipUpload) {
+              // 分片已存在于服务器中
+              return true
+            }
+            return (data.uploaded || []).indexOf(chunk.offset + 1) >= 0
           }
-          return (data.uploaded || []).indexOf(chunk.offset + 1) >= 0
         },
         headers: {
           token: this.getCookies('token')
