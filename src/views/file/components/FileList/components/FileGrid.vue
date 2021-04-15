@@ -79,6 +79,11 @@
         >
       </div>
     </transition>
+    <!-- 视频预览 -->
+    <div class="video-wrapper" v-if="videoObj.show" @click.self="videoObj.show = false">
+      <video class="video-preview" :src="videoObj.src" controls></video>
+      <i class="close-icon el-icon-circle-close" @click="videoObj.show = false">关闭预览</i>
+    </div>
   </div>
 </template>
 
@@ -186,7 +191,16 @@ export default {
         top: 0,
         left: 0
       },
-      selectedFile: {}
+      selectedFile: {},
+      // 视频预览
+      videoObj: {
+        src: '',
+        show: false
+      },
+      // 音频预览
+      audioObj: {
+        src: ''
+      }
     }
   },
   computed: {
@@ -331,24 +345,36 @@ export default {
         if (['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'].includes(row.extendName)) {
           window.open(this.getFileOnlineViewPathByOffice(row), '_blank')
         }
-        //  若当前点击项是pdf
-        if (row.extendName === 'pdf') {
-          window.open(this.getViewFilePath(row), '_blank')
-        }
-        //  若当前点击项是html、js、css、json
-        const CODE = ['html', 'js', 'css', 'json']
+        //  若当前点击项是代码或文本文件
+        const CODE = ['html', 'js', 'css', 'json', 'c', 'java', 'txt', 'pdf']
         if (CODE.includes(row.extendName)) {
           window.open(this.getViewFilePath(row), '_blank')
         }
         //  若当前点击项是视频mp4格式
         const VIDEO = ['mp4']
         if (VIDEO.includes(row.extendName)) {
-          window.open(this.getViewFilePath(row), '_blank')
+          this.videoObj.src = this.getViewFilePath(row)
+          this.videoObj.show = true
         }
-        //  若当前点击项是视频mp3格式
+        //  若当前点击项是音频mp3格式
         const AUDIO = ['mp3']
         if (AUDIO.includes(row.extendName)) {
-          window.open(this.getViewFilePath(row), '_blank')
+          if (this.audioObj.src !== this.getViewFilePath(row)) {
+            this.$notify.closeAll()
+            this.audioObj.src = this.getViewFilePath(row)
+            this.$notify({
+              title: `${row.fileName}.${row.extendName}`,
+              dangerouslyUseHTMLString: true,
+              message: `<audio class="audio-preview" src="${
+                this.audioObj.src
+              }" controls autoplay style="padding-right: 16px; margin-top: 16px;"></audio>`,
+              duration: 0, //  不自动关闭
+              offset: 100,
+              onClose: () => {
+                this.audioObj.src = ''
+              }
+            })
+          }
         }
       }
     },
@@ -515,7 +541,8 @@ export default {
 @import '~@/assets/styles/mixins.styl';
 
 .file-grid-wrapper {
-  border-top 1px solid $BorderBase
+  border-top: 1px solid $BorderBase;
+
   .file-list {
     height: calc(100vh - 206px);
     overflow-y: auto;
@@ -579,6 +606,35 @@ export default {
     >>> .el-button {
       margin: 0;
       border-radius: 0;
+    }
+  }
+
+  .video-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000000a6;
+    width: 100vw;
+    height: 100vh;
+    z-index: 3;
+
+    .video-preview {
+      display: block;
+      margin: 5vh auto 0 auto;
+      height: 90vh;
+    }
+
+    .close-icon {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      color: #fff;
+      z-index: 4;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.5;
+      }
     }
   }
 }
