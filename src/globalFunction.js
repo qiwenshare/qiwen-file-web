@@ -29,13 +29,7 @@ const globalFunction = {
    * @returns {string} 文件路径
    */
   getViewFilePath: function (row) {
-    let fileUrl = ''
-    if (Number(row.isOSS) === 1) {
-      fileUrl = `https://${Cookies.get('viewDomain')}${row.fileUrl}`  // 阿里云OSS对象存储
-    } else {
-      fileUrl = `/api/filetransfer/preview?userFileId=${row.userFileId}`  // 本地磁盘存储
-    }
-    return fileUrl
+    return `/api/filetransfer/preview?userFileId=${row.userFileId}`
   },
   /**
    * 获取文件下载路径
