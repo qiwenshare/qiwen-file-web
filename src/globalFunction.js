@@ -33,7 +33,7 @@ const globalFunction = {
     if (Number(row.isOSS) === 1) {
       fileUrl = `https://${Cookies.get('viewDomain')}${row.fileUrl}`  // 阿里云OSS对象存储
     } else {
-      fileUrl = `/api${row.fileUrl}`  // 本地磁盘存储
+      fileUrl = `/api/filetransfer/preview?userFileId=${row.userFileId}`  // 本地磁盘存储
     }
     return fileUrl
   },

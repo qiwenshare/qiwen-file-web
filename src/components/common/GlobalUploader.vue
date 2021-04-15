@@ -15,8 +15,19 @@
       <!-- 选择按钮 在这里隐藏 -->
       <uploader-btn class="select-file-btn" :attrs="attrs" ref="uploadBtn">选择文件</uploader-btn>
       <!-- 拖拽上传 -->
-      <uploader-drop class="drop-box" v-show="dropBoxShow">
-        <span class="text"> 将文件拖拽到此区域 </span>
+      <uploader-drop
+        class="drop-box"
+        id="dropBox"
+        @paste.native="handlePaste"
+        v-show="dropBoxShow"
+      >
+        <div class="paste-img-wrapper" v-show="pasteImg.src">
+          <div class="paste-name">{{ pasteImg.name }}</div>
+          <img class="paste-img" :src="pasteImg.src" :alt="pasteImg.name" v-if="pasteImg.src" />
+        </div>
+        <span class="text" v-show="!pasteImg.src"> 截图粘贴或将文件拖拽至此区域上传 </span>
+        <i class="upload-icon el-icon-upload" v-show="pasteImg.src" @click="handleUploadPasteImg">上传图片</i>
+        <i class="delete-icon el-icon-delete" v-show="pasteImg.src" @click="handleDeletePasteImg">删除图片</i>
         <i class="close-icon el-icon-circle-close" @click="dropBoxShow = false">关闭</i>
       </uploader-drop>
       <!-- 上传列表 -->
@@ -77,7 +88,7 @@ export default {
         // 服务器分片校验函数，秒传及断点续传基础
         checkChunkUploadedByResponse: function(chunk, message) {
           let objMessage = JSON.parse(message)
-          if(objMessage.success) {
+          if (objMessage.success) {
             let data = objMessage.data
             if (data.skipUpload) {
               // 分片已存在于服务器中
@@ -91,6 +102,7 @@ export default {
         },
         query() {}
       },
+      // 文件状态文案映射
       fileStatusText: {
         success: '上传成功',
         error: 'error',
@@ -103,7 +115,13 @@ export default {
       },
       panelShow: false, //  上传文件面板是否显示
       collapse: false, //	上传文件面板是否折叠
-      dropBoxShow: false //  拖拽上传是否显示
+      dropBoxShow: false, //  拖拽上传是否显示
+      // 粘贴图片的信息
+      pasteImg: {
+        src: '',
+        name: ''
+      },
+      pasteImgObj: null //  粘贴图片 File 对象
     }
   },
   computed: {
@@ -119,6 +137,9 @@ export default {
       if (type) {
         this.$refs.uploadBtn.$el.click()
       } else {
+        this.pasteImg.src = ''
+        this.pasteImg.name = ''
+        this.pasteImgObj = null
         this.dropBoxShow = true
       }
     })
@@ -127,6 +148,43 @@ export default {
     this.$off('openUploader')
   },
   methods: {
+    // 图片粘贴事件
+    handlePaste(event) {
+      let pasteItems = (event.clipboardData || window.clipboardData).items
+      if (pasteItems && pasteItems.length) {
+        // 获取剪切板中最新的对象
+        let imgObj = pasteItems[0].getAsFile()
+        this.pasteImgObj = imgObj !== null ? new File([imgObj], `qiwenshare_${new Date().valueOf()}.${imgObj.name.split('.')[1]}`, {
+          type: imgObj.type
+        }) : null
+      } else {
+        this.$message.error('当前浏览器不支持')
+        return false
+      }
+      if (!this.pasteImgObj) {
+        this.$message.error('粘贴内容非图片')
+        return false
+      }
+      this.pasteImg.name = this.pasteImgObj.name
+      // 此时file就是剪切板中的图片对象
+      // 如果需要预览，可以执行下面代码
+      let reader = new FileReader()
+      let _this = this
+      reader.onload = function(event) {
+        _this.pasteImg.src = event.target.result
+      }
+      reader.readAsDataURL(this.pasteImgObj)
+    },
+    // 上传粘贴的图片
+    handleUploadPasteImg() {
+      this.uploaderInstance.addFile(this.pasteImgObj) //  触发文件添加事件
+    },
+    // 删除粘贴的图片
+    handleDeletePasteImg() {
+      this.pasteImg.src = ''
+      this.pasteImg.name = ''
+      this.pasteImgObj = null
+    },
     /**
      * 添加文件的回调函数
      * @param {object} file 文件信息
@@ -261,8 +319,7 @@ export default {
     top: 0;
     left: 0;
     border: 5px dashed #8091a5 !important;
-    background: #fff;
-    opacity: 0.85;
+    background: #ffffffd9;
     color: #8091a5 !important;
     text-align: center;
     box-sizing: border-box;
@@ -279,11 +336,55 @@ export default {
       font-size: 30px;
     }
 
+    .upload-icon {
+      position: absolute;
+      right: 176px;
+      top: 16px;
+      cursor: pointer;
+
+      &:hover {
+        color: $Primary;
+      }
+    }
+
+    .delete-icon {
+      position: absolute;
+      right: 80px;
+      top: 16px;
+      cursor: pointer;
+
+      &:hover {
+        color: $Danger;
+      }
+    }
+
     .close-icon {
       position: absolute;
       right: 16px;
       top: 16px;
       cursor: pointer;
+
+      &:hover {
+        color: $Success;
+      }
+    }
+
+    .paste-img-wrapper {
+      width: 100%;
+      height: 100%;
+    }
+
+    .paste-img {
+      margin-top: 16px;
+      max-width: 90%;
+      max-height: 80%;
+    }
+
+    .paste-name {
+      height: 24px;
+      line-height: 24px;
+      font-size: 18px;
+      color: $PrimaryText;
     }
   }
 

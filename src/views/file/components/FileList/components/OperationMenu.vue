@@ -7,7 +7,7 @@
         ></el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="handleUploadFileBtnClick(true)">直接添加</el-dropdown-item>
-          <el-dropdown-item @click.native="handleUploadFileBtnClick(false)">拖拽上传</el-dropdown-item>
+          <el-dropdown-item @click.native="handleUploadFileBtnClick(false)" title="截图粘贴或拖拽上传">拖拽上传</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <el-button
