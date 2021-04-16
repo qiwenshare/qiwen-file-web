@@ -1,75 +1,77 @@
 <template>
-  <div
-    class="img-review-wrapper"
-    v-show="imgReviewVisible"
-    @click.self="closeImgReview"
-    @mousewheel.prevent="rollImg()"
-  >
-    <!-- 顶部信息栏 & 工具栏 -->
-    <div class="tip-wrapper" v-if="imgReviewVisible">
-      <div class="name" :title="activeFileName + activeExtendName">{{ activeFileName }}.{{ activeExtendName }}</div>
-      <div class="opera-btn-group">
-        <el-input-number v-model="inputActiveIndex" :min="1" :max="imgReviewList.length" size="mini"></el-input-number>
-        <span class="split-line">/</span>{{ imgReviewList.length }}
+  <transition name="el-fade-in-linear el-fade-in">
+    <div
+      class="img-preview-wrapper"
+      v-show="imgPreviewVisible"
+      @click.self="closeImgReview"
+      @mousewheel.prevent="rollImg()"
+    >
+      <!-- 顶部信息栏 & 工具栏 -->
+      <div class="tip-wrapper" v-if="imgPreviewVisible">
+        <div class="name" :title="activeFileName + activeExtendName">{{ activeFileName }}.{{ activeExtendName }}</div>
+        <div class="opera-btn-group">
+          <el-input-number v-model="inputActiveIndex" :min="1" :max="imgPreviewList.length" size="mini"></el-input-number>
+          <span class="split-line">/</span>{{ imgPreviewList.length }}
+        </div>
+        <div class="tool-wrapper">
+          <i class="item el-icon-refresh-right" title="向右旋转" @click="rotateImg"></i>
+          <a
+            class="item download-link"
+            target="_blank"
+            :href="activeDownloadLink"
+            :download="activeFileName + '.' + activeExtendName"
+          >
+            <i class="el-icon-download" title="保存到本地"></i>
+          </a>
+          <el-tooltip effect="dark" placement="bottom">
+            <div slot="content">
+              操作提示：<br />
+              点击图片以外的区域可退出查看；<br />
+              按Esc键可退出查看；<br />
+              鼠标滚轮可放大缩小图片
+            </div>
+            <div class="item text-wrapper">
+              <span class="text">操作提示</span>
+              <i class="el-icon-question"></i>
+            </div>
+          </el-tooltip>
+        </div>
       </div>
-      <div class="tool-wrapper">
-        <i class="item el-icon-refresh-right" title="向右旋转" @click="rotateImg"></i>
-        <a
-          class="item download-link"
-          target="_blank"
-          :href="activeDownloadLink"
-          :download="activeFileName + '.' + activeExtendName"
-        >
-          <i class="el-icon-download" title="保存到本地"></i>
-        </a>
-        <el-tooltip effect="dark" placement="bottom">
-          <div slot="content">
-            操作提示：<br />
-            点击图片以外的区域可退出查看；<br />
-            按Esc键可退出查看；<br />
-            鼠标滚轮可放大缩小图片
-          </div>
-          <div class="item text-wrapper">
-            <span class="text">操作提示</span>
-            <i class="el-icon-question"></i>
-          </div>
-        </el-tooltip>
+      <!-- 大图查看 -->
+      <img
+        class="img-large"
+        ref="imgLarge"
+        v-for="(item, index) in imgPreviewList"
+        :key="index"
+        :src="item.fileUrl"
+        v-show="index === activeIndex"
+      />
+      <!-- 左右切换图标 -->
+      <i class="pre-icon el-icon-arrow-left" title="上一张" v-show="activeIndex > 0" @click.stop="activeIndex--"></i>
+      <i
+        class="next-icon el-icon-arrow-right"
+        title="下一张"
+        v-show="activeIndex < imgPreviewList.length - 1"
+        @click.stop="activeIndex++"
+      ></i>
+      <!-- 底部显示放大缩小比例 -->
+      <div class="zoom-bar">
+        <el-slider
+          v-model="imgZoom"
+          :min="imgZoomMin"
+          :max="imgZoomMax"
+          :format-tooltip="formatZoom"
+          @input="changeZoom"
+        ></el-slider>
+        <div class="zoom-count">{{ imgZoom }}%</div>
       </div>
     </div>
-    <!-- 大图查看 -->
-    <img
-      class="img-large"
-      ref="imgLarge"
-      v-for="(item, index) in imgReviewList"
-      :key="index"
-      :src="item.fileUrl"
-      v-show="index === activeIndex"
-    />
-    <!-- 左右切换图标 -->
-    <i class="pre-icon el-icon-arrow-left" title="上一张" v-show="activeIndex > 0" @click.stop="activeIndex--"></i>
-    <i
-      class="next-icon el-icon-arrow-right"
-      title="下一张"
-      v-show="activeIndex < imgReviewList.length - 1"
-      @click.stop="activeIndex++"
-    ></i>
-    <!-- 底部显示放大缩小比例 -->
-    <div class="zoom-bar">
-      <el-slider
-        v-model="imgZoom"
-        :min="imgZoomMin"
-        :max="imgZoomMax"
-        :format-tooltip="formatZoom"
-        @input="changeZoom"
-      ></el-slider>
-      <div class="zoom-count">{{ imgZoom }}%</div>
-    </div>
-  </div>
+  </transition>
 </template>
 
 <script>
 export default {
-  name: 'ImgReview',
+  name: 'ImgPreview',
   data() {
     return {
       rotate: 0, //  旋转角度
@@ -81,24 +83,24 @@ export default {
   },
   computed: {
     // 图片查看组件是否显示
-    imgReviewVisible() {
-      return this.$store.state.imgReview.imgReviewVisible
+    imgPreviewVisible() {
+      return this.$store.state.imgPreview.imgPreviewVisible
     },
     // 图片列表
-    imgReviewList() {
-      return this.$store.state.imgReview.imgReviewList
+    imgPreviewList() {
+      return this.$store.state.imgPreview.imgPreviewList
     },
     // 默认显示的图片索引 从 0 开始
     defaultActiveIndex() {
-      return this.$store.state.imgReview.defaultActiveIndex
+      return this.$store.state.imgPreview.defaultActiveIndex
     },
     // 当前显示的图片名称
     activeFileName() {
-      return this.imgReviewList[this.activeIndex].fileName
+      return this.imgPreviewList[this.activeIndex].fileName
     },
     // 当前显示的图片扩展名
     activeExtendName() {
-      return this.imgReviewList[this.activeIndex].extendName
+      return this.imgPreviewList[this.activeIndex].extendName
     },
     // 对用户而言 显示的图片索引 从 1 开始 顶部栏输入框控制此值变化
     inputActiveIndex: {
@@ -111,12 +113,12 @@ export default {
     },
     // 当前显示的图片下载链接
     activeDownloadLink() {
-      return this.imgReviewList[this.activeIndex].downloadLink
+      return this.imgPreviewList[this.activeIndex].downloadLink
     }
   },
   watch: {
     // 监听 图片查看组件 显隐状态变化
-    imgReviewVisible(val) {
+    imgPreviewVisible(val) {
       let body = document.querySelector('body')
       if (val) {
         this.activeIndex = this.defaultActiveIndex
@@ -161,7 +163,7 @@ export default {
      * 关闭图片预览，恢复旋转角度
      */
     closeImgReview() {
-      this.$store.commit('setImgReviewData', { imgReviewVisible: false })
+      this.$store.commit('setImgPreviewData', { imgPreviewVisible: false })
       this.rotate = 0
       this.$refs.imgLarge[this.activeIndex].style.transform = `rotate(${this.rotate}deg)`
     },
@@ -208,7 +210,7 @@ export default {
 <style lang="stylus" scoped>
 @import '~@/assets/styles/varibles.styl';
 
-.img-review-wrapper {
+.img-preview-wrapper {
   position: fixed;
   top: 0;
   right: 0;
@@ -221,14 +223,14 @@ export default {
   text-align: center;
   display: flex;
   align-items: center;
-  animation: imgReviewAnimation 0.3s;
-  -webkit-animation: imgReviewAnimation 0.3s; /* Safari and Chrome */
+  animation: imgPreviewAnimation 0.3s;
+  -webkit-animation: imgPreviewAnimation 0.3s; /* Safari and Chrome */
   animation-iteration-count: 0.3;
   -webkit-animation-iteration-count: 0.3;
   animation-fill-mode: forwards;
   -webkit-animation-fill-mode: forwards; /* Safari 和 Chrome */
 
-  @keyframes imgReviewAnimation {
+  @keyframes imgPreviewAnimation {
     0% {
       background: transparent;
     }
@@ -238,7 +240,7 @@ export default {
     }
   }
 
-  @keyframes imgReviewAnimation {
+  @keyframes imgPreviewAnimation {
     0% {
       background: transparent;
     }

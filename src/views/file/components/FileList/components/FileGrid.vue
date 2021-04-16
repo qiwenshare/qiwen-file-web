@@ -79,11 +79,6 @@
         >
       </div>
     </transition>
-    <!-- 视频预览 -->
-    <div class="video-wrapper" v-if="videoObj.show" @click.self="videoObj.show = false">
-      <video class="video-preview" :src="videoObj.src" controls></video>
-      <i class="close-icon el-icon-circle-close" @click="videoObj.show = false">关闭预览</i>
-    </div>
   </div>
 </template>
 
@@ -192,11 +187,6 @@ export default {
         left: 0
       },
       selectedFile: {},
-      // 视频预览
-      videoObj: {
-        src: '',
-        show: false
-      },
       // 音频预览
       audioObj: {
         src: ''
@@ -292,9 +282,9 @@ export default {
      * @description 若当前点击的为文件夹，则进入文件夹内部；若是文件，则进行相应的预览。
      * @param {object} row 文件信息
      * @param {number} activeIndex 文件索引
-     * @param {[]} imgList 图片列表
+     * @param {[]} fileList 文件列表
      */
-    handleFileNameClick(row, activeIndex, imgList) {
+    handleFileNameClick(row, activeIndex, fileList) {
       this.rightMenu.isShow = false
       //  若是目录则进入目录
       if (row.isDir) {
@@ -312,8 +302,8 @@ export default {
           if (this.fileType === 1) {
             //  图片分类下 - 大图查看
             let data = {
-              imgReviewVisible: true,
-              imgReviewList: imgList.map((item) => {
+              imgPreviewVisible: true,
+              imgPreviewList: fileList.map((item) => {
                 return {
                   fileUrl: this.getViewFilePath(item),
                   downloadLink: this.getDownloadFilePath(item),
@@ -323,12 +313,12 @@ export default {
               }),
               activeIndex: activeIndex
             }
-            this.$store.commit('setImgReviewData', data)
+            this.$store.commit('setImgPreviewData', data)
           } else {
             //  非图片分类下 - 大图查看
             let data = {
-              imgReviewVisible: true,
-              imgReviewList: [
+              imgPreviewVisible: true,
+              imgPreviewList: [
                 {
                   fileUrl: this.getViewFilePath(row),
                   downloadLink: this.getDownloadFilePath(row),
@@ -338,7 +328,7 @@ export default {
               ],
               activeIndex: 0
             }
-            this.$store.commit('setImgReviewData', data)
+            this.$store.commit('setImgPreviewData', data)
           }
         }
         //  若当前点击项是可以使用office在线预览的
@@ -353,8 +343,39 @@ export default {
         //  若当前点击项是视频mp4格式
         const VIDEO = ['mp4']
         if (VIDEO.includes(row.extendName)) {
-          this.videoObj.src = this.getViewFilePath(row)
-          this.videoObj.show = true
+          if (this.fileType === 3) {
+            // 视频分类下 加载播放列表
+            let data = {
+              videoPreviewVisible: true,
+              videoPreviewList: fileList.map((item) => {
+                return {
+                  ...item,
+                  fileUrl: this.getViewFilePath(item),
+                  downloadLink: this.getDownloadFilePath(item),
+                  fileName: item.fileName,
+                  extendName: item.extendName
+                }
+              }),
+              activeIndex: activeIndex
+            }
+            this.$store.commit('setVideoPreviewData', data)
+          } else {
+            // 非视频分类下 - 单个视频预览
+            let data = {
+              videoPreviewVisible: true,
+              videoPreviewList: [
+                {
+                  ...row,
+                  fileUrl: this.getViewFilePath(row),
+                  downloadLink: this.getDownloadFilePath(row),
+                  fileName: row.fileName,
+                  extendName: row.extendName
+                }
+              ],
+              activeIndex: 0
+            }
+            this.$store.commit('setVideoPreviewData', data)
+          }
         }
         //  若当前点击项是音频mp3格式
         const AUDIO = ['mp3']
@@ -606,35 +627,6 @@ export default {
     >>> .el-button {
       margin: 0;
       border-radius: 0;
-    }
-  }
-
-  .video-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: #000000a6;
-    width: 100vw;
-    height: 100vh;
-    z-index: 3;
-
-    .video-preview {
-      display: block;
-      margin: 5vh auto 0 auto;
-      height: 90vh;
-    }
-
-    .close-icon {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      color: #fff;
-      z-index: 4;
-      cursor: pointer;
-
-      &:hover {
-        opacity: 0.5;
-      }
     }
   }
 }

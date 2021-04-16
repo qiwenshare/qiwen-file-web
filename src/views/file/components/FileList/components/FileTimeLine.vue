@@ -79,8 +79,8 @@ export default {
      */
     handleImgClick(imgList, imageIndex) {
       let data = {
-        imgReviewVisible: true,
-        imgReviewList: imgList.map((item) => {
+        imgPreviewVisible: true,
+        imgPreviewList: imgList.map((item) => {
           return {
             fileUrl: this.getViewFilePath(item),
             downloadLink: this.getDownloadFilePath(item),
@@ -90,7 +90,7 @@ export default {
         }),
         activeIndex: imageIndex
       }
-      this.$store.commit('setImgReviewData', data)
+      this.$store.commit('setImgPreviewData', data)
     }
   }
 }

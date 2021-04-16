@@ -5,9 +5,11 @@
     <Footer v-if="isFooterShow"></Footer>
     <el-backtop class="backtop" target="#app" title="回到顶部"></el-backtop>
     <!-- 将上传组件全局注册 -->
-    <global-uploader v-if="isGlobalUploaderShow"></global-uploader>
-    <!-- 查看大图 -->
-    <ImgReview v-if="isImgReviewShow"></ImgReview>
+    <global-uploader v-if="isFileAboutShow"></global-uploader>
+    <!-- 图片预览 -->
+    <img-preview v-if="isFileAboutShow"></img-preview>
+    <!-- 视频预览 -->
+    <video-preview v-if="isFileAboutShow"></video-preview>
   </div>
 </template>
 
@@ -15,7 +17,8 @@
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import globalUploader from '@/components//common/GlobalUploader.vue'
-import ImgReview from '@/components/common/ImgReview'
+import ImgPreview from '@/components/common/ImgPreview'
+import VideoPreview from '@/components/common/VideoPreview'
 
 export default {
   name: 'App',
@@ -23,7 +26,8 @@ export default {
     Header,
     Footer,
     globalUploader,
-    ImgReview
+    ImgPreview,
+    VideoPreview
   },
   computed: {
     //  头部是否显示
@@ -36,13 +40,8 @@ export default {
       let routerNameList = ['File', 'Share', 'MyShare', 'Error_401', 'Error_404', 'Error_500']
       return routerNameList.includes(this.$route.name) ? false : true
     },
-    // 全局上传组件是否显示
-    isGlobalUploaderShow() {
-      let routerNameList = ['Login', 'Register']
-      return routerNameList.includes(this.$route.name) ? false : true
-    },
-    // 图片预览组件是否显示
-    isImgReviewShow() {
+    // 网盘页面文件上传/预览相关组件是否显示
+    isFileAboutShow() {
       let routerNameList = ['Login', 'Register']
       return routerNameList.includes(this.$route.name) ? false : true
     }

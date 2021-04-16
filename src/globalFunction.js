@@ -5,6 +5,28 @@ import { Message } from 'element-ui';
 // 全局函数
 const globalFunction = {
   /**
+   * 格式化文件大小
+   * @param {number} size 文件大小
+   * @returns {string} 文件大小（带单位）
+   */
+  calculateFileSize: function (size) {
+    const B = 1024
+    const KB = Math.pow(1024, 2)
+    const MB = Math.pow(1024, 3)
+    const GB = Math.pow(1024, 4)
+    if (!size) {
+      return '_'
+    } else if (size < KB) {
+      return (size / B).toFixed(0) + 'KB'
+    } else if (size < MB) {
+      return (size / KB).toFixed(1) + 'MB'
+    } else if (size < GB) {
+      return (size / MB).toFixed(2) + 'GB'
+    } else {
+      return (size / GB).toFixed(3) + 'TB'
+    }
+  },
+  /**
    * 获取图片缩略图路径
    * @param {object} row 文件信息
    * @returns {string} 图片缩略图路径
@@ -95,19 +117,18 @@ const globalFunction = {
    */
   copyShareLink: function (shareBatchNum, extractionCode) {
     let input = document.createElement('textarea') // 直接构建textarea以保持换行
-      input.value =
-        extractionCode === null
-          ? `分享链接：${this.getShareLink(
-              shareBatchNum
-            )}\n复制链接到浏览器中并输入提取码即可查看文件`
-          : `分享链接：${this.getShareLink(shareBatchNum)}\n提取码：${
-              extractionCode
-            }\n复制链接到浏览器中并输入提取码即可查看文件` // 设置内容
-      document.body.appendChild(input) // 添加临时实例
-      input.select() // 选择实例内容
-      document.execCommand('Copy') // 执行复制
-      document.body.removeChild(input) // 删除临时实例
-      Message.success('复制成功')
+    input.value =
+      extractionCode === null
+        ? `分享链接：${this.getShareLink(
+          shareBatchNum
+        )}\n复制链接到浏览器中并输入提取码即可查看文件`
+        : `分享链接：${this.getShareLink(shareBatchNum)}\n提取码：${extractionCode
+        }\n复制链接到浏览器中并输入提取码即可查看文件` // 设置内容
+    document.body.appendChild(input) // 添加临时实例
+    input.select() // 选择实例内容
+    document.execCommand('Copy') // 执行复制
+    document.body.removeChild(input) // 删除临时实例
+    Message.success('复制成功')
   }
 }
 
