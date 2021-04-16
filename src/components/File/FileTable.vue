@@ -10,8 +10,8 @@
       element-loading-text="文件加载中……"
       tooltip-effect="dark"
       :data="fileList"
-      :default-sort="{ prop: 'isDir', order: 'descending' }"
       @selection-change="handleSelectRow"
+      @sort-change="handleSortChange"
     >
       <el-table-column type="selection" key="selection" width="55"></el-table-column>
       <el-table-column label prop="isDir" key="isDir" width="60" align="center">
@@ -344,7 +344,8 @@ export default {
       // 音频预览
       audioObj: {
         src: ''
-      }
+      },
+      sortedFileList: [] //  排序后的表格数据
     }
   },
   computed: {
@@ -418,18 +419,22 @@ export default {
      */
     filePath() {
       this.clearSelectedTable()
+      this.$refs.multipleTable.clearSort()
     },
     /**
      * 文件类型变化时清空表格已选行
      */
     fileType() {
       this.clearSelectedTable()
+      this.$refs.multipleTable.clearSort()
     },
     /**
      * 文件列表变化时清空表格已选行
      */
     fileList() {
       this.clearSelectedTable()
+      this.$refs.multipleTable.clearSort()
+      this.sortedFileList = this.fileList
     },
     /**
      * 监听表格操作列按钮折叠状态变化
@@ -444,6 +449,12 @@ export default {
     this.operaColumnExpand = this.getCookies('operaColumnExpand') === 'true' //  读取保存的状态
   },
   methods: {
+    /**
+     * 当表格的排序条件发生变化的时候会触发该事件
+     */
+    handleSortChange() {
+      this.sortedFileList = this.$refs.multipleTable.tableData
+    },
     /**
      * 清空表格已选行
      * @description 用于父组件调用 | 本组件调用，请勿删除
@@ -486,7 +497,7 @@ export default {
      * @description 若当前点击的为文件夹，则进入文件夹内部；若是文件，则进行相应的预览。
      * @param {object} row 文件信息
      */
-    handleFileNameClick(row, activeIndex, fileList) {
+    handleFileNameClick(row, activeIndex) {
       // 若是目录则进入目录
       if (row.isDir) {
         if (this.routeName === 'Share') {
@@ -523,7 +534,7 @@ export default {
             //  图片分类下 - 大图查看
             let data = {
               imgPreviewVisible: true,
-              imgPreviewList: fileList.map((item) => {
+              imgPreviewList: this.sortedFileList.map((item) => {
                 return {
                   fileUrl: this.getViewFilePath(item),
                   downloadLink: this.getDownloadFilePath(item),
@@ -567,7 +578,7 @@ export default {
             // 视频分类下 加载播放列表
             let data = {
               videoPreviewVisible: true,
-              videoPreviewList: fileList.map((item) => {
+              videoPreviewList: this.sortedFileList.map((item) => {
                 return {
                   ...item,
                   fileUrl: this.getViewFilePath(item),
