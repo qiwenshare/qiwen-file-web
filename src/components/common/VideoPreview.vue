@@ -238,6 +238,7 @@ export default {
 
           .name {
             flex: 1;
+            word-break: break-all;
           }
 
           .size {
