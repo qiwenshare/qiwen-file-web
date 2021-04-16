@@ -12,7 +12,10 @@ import '@/assets/styles/css/mediaScreen.styl'
 import '@/router/before.js'
 import 'element-ui/lib/theme-chalk/index.css'
 import element from './element.js'
-// import uploader from '../public/vue-simple-uploader/src/index'
+/**
+ * vue-simple-uploader 中文官方文档 https://github.com/simple-uploader/vue-uploader/blob/master/README_zh-CN.md
+ * simple-uploader.js 中文官方文档 https://github.com/simple-uploader/Uploader/blob/develop/README_zh-CN.md
+ */
 import uploader from 'vue-simple-uploader'
 // collapse 展开折叠
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';

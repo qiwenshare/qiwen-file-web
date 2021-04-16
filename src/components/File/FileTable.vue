@@ -19,7 +19,7 @@
           <img
             :src="setFileImg(scope.row)"
             style="width: 30px; max-height: 30px; cursor: pointer"
-            @click="handleFileNameClick(scope.row)"
+            @click="handleFileNameClick(scope.row, scope.$index, fileList)"
           />
         </template>
       </el-table-column>
@@ -28,7 +28,7 @@
           <span>文件名</span>
         </template>
         <template slot-scope="scope">
-          <div style="cursor: pointer" @click="handleFileNameClick(scope.row)">
+          <div style="cursor: pointer" @click="handleFileNameClick(scope.row, scope.$index, fileList)">
             {{ scope.row | fileNameComplete }}
           </div>
         </template>
@@ -233,11 +233,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 视频预览 -->
-    <div class="video-wrapper" v-if="videoObj.show" @click.self="videoObj.show = false">
-      <video class="video-preview" :src="videoObj.src" controls></video>
-      <i class="close-icon el-icon-circle-close" @click="videoObj.show = false">关闭预览</i>
-    </div>
   </div>
 </template>
 
@@ -346,11 +341,6 @@ export default {
       },
       downloadFilePath: '',
       viewFilePath: '',
-      // 视频预览
-      videoObj: {
-        src: '',
-        show: false
-      },
       // 音频预览
       audioObj: {
         src: ''
@@ -482,28 +472,6 @@ export default {
       }
     },
     /**
-     * 格式化文件大小
-     * @param {number} size 文件大小
-     * @returns {string} 文件大小（带单位）
-     */
-    calculateFileSize(size) {
-      const B = 1024
-      const KB = Math.pow(1024, 2)
-      const MB = Math.pow(1024, 3)
-      const GB = Math.pow(1024, 4)
-      if (!size) {
-        return '_'
-      } else if (size < KB) {
-        return (size / B).toFixed(0) + 'KB'
-      } else if (size < MB) {
-        return (size / KB).toFixed(1) + 'MB'
-      } else if (size < GB) {
-        return (size / MB).toFixed(2) + 'GB'
-      } else {
-        return (size / GB).toFixed(3) + 'TB'
-      }
-    },
-    /**
      * 获取文件分享过期状态
      */
     getFileShareStatus(time) {
@@ -518,7 +486,7 @@ export default {
      * @description 若当前点击的为文件夹，则进入文件夹内部；若是文件，则进行相应的预览。
      * @param {object} row 文件信息
      */
-    handleFileNameClick(row) {
+    handleFileNameClick(row, activeIndex, fileList) {
       // 若是目录则进入目录
       if (row.isDir) {
         if (this.routeName === 'Share') {
@@ -551,19 +519,37 @@ export default {
         // 若当前点击项是图片
         const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
         if (PIC.includes(row.extendName)) {
-          let data = {
-            imgReviewVisible: true,
-            imgReviewList: [
-              {
-                fileUrl: this.getViewFilePath(row),
-                downloadLink: this.getDownloadFilePath(row),
-                fileName: row.fileName,
-                extendName: row.extendName
-              }
-            ],
-            activeIndex: 0
+          if (this.fileType === 1) {
+            //  图片分类下 - 大图查看
+            let data = {
+              imgPreviewVisible: true,
+              imgPreviewList: fileList.map((item) => {
+                return {
+                  fileUrl: this.getViewFilePath(item),
+                  downloadLink: this.getDownloadFilePath(item),
+                  fileName: item.fileName,
+                  extendName: item.extendName
+                }
+              }),
+              activeIndex: activeIndex
+            }
+            this.$store.commit('setImgPreviewData', data)
+          } else {
+            //  非图片分类下 - 大图查看
+            let data = {
+              imgPreviewVisible: true,
+              imgPreviewList: [
+                {
+                  fileUrl: this.getViewFilePath(row),
+                  downloadLink: this.getDownloadFilePath(row),
+                  fileName: row.fileName,
+                  extendName: row.extendName
+                }
+              ],
+              activeIndex: 0
+            }
+            this.$store.commit('setImgPreviewData', data)
           }
-          this.$store.commit('setImgReviewData', data)
         }
         //  若当前点击项是可以使用office在线预览的
         if (['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'].includes(row.extendName)) {
@@ -577,8 +563,39 @@ export default {
         //  若当前点击项是视频mp4格式
         const VIDEO = ['mp4']
         if (VIDEO.includes(row.extendName)) {
-          this.videoObj.src = this.getViewFilePath(row)
-          this.videoObj.show = true
+          if (this.fileType === 3) {
+            // 视频分类下 加载播放列表
+            let data = {
+              videoPreviewVisible: true,
+              videoPreviewList: fileList.map((item) => {
+                return {
+                  ...item,
+                  fileUrl: this.getViewFilePath(item),
+                  downloadLink: this.getDownloadFilePath(item),
+                  fileName: item.fileName,
+                  extendName: item.extendName
+                }
+              }),
+              activeIndex: activeIndex
+            }
+            this.$store.commit('setVideoPreviewData', data)
+          } else {
+            // 非视频分类下 - 单个视频预览
+            let data = {
+              videoPreviewVisible: true,
+              videoPreviewList: [
+                {
+                  ...row,
+                  fileUrl: this.getViewFilePath(row),
+                  downloadLink: this.getDownloadFilePath(row),
+                  fileName: row.fileName,
+                  extendName: row.extendName
+                }
+              ],
+              activeIndex: 0
+            }
+            this.$store.commit('setVideoPreviewData', data)
+          }
         }
         //  若当前点击项是音频mp3格式
         const AUDIO = ['mp3']
@@ -869,82 +886,6 @@ export default {
       .el-icon-time {
         font-size: 16px;
         color: $Success;
-      }
-    }
-  }
-
-  .img-review-wrapper {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    overflow: auto;
-    width: 100%;
-    height: 100%;
-    z-index: 2010;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    animation: imgReviewAnimation 0.3s;
-    -webkit-animation: imgReviewAnimation 0.3s; /* Safari and Chrome */
-    animation-iteration-count: 0.3;
-    -webkit-animation-iteration-count: 0.3;
-    animation-fill-mode: forwards;
-    -webkit-animation-fill-mode: forwards; /* Safari 和 Chrome */
-
-    @keyframes imgReviewAnimation {
-      0% {
-        background: transparent;
-      }
-
-      100% {
-        background: rgba(0, 0, 0, 0.8);
-      }
-    }
-
-    @keyframes imgReviewAnimation {
-      0% {
-        background: transparent;
-      }
-
-      100% {
-        background: rgba(0, 0, 0, 0.8);
-      }
-    }
-
-    .img-large {
-      margin: 0 auto;
-      max-width: 80%;
-      max-height: 100%;
-    }
-  }
-
-  .video-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: #000000a6;
-    width: 100vw;
-    height: 100vh;
-    z-index: 3;
-
-    .video-preview {
-      display: block;
-      margin: 5vh auto 0 auto;
-      height: 90vh;
-    }
-
-    .close-icon {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      color: #fff;
-      z-index: 4;
-      cursor: pointer;
-
-      &:hover {
-        opacity: 0.5;
       }
     }
   }
