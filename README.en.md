@@ -52,8 +52,9 @@ The software follows the MIT open source protocol
 10. Support file renaming
 11. Display file storage and total capacity in real time
 12. Support ElasticSearch file search
-13. Provide picture online preview, video online preview, audio online preview, PDF, JSON, TXT and other commonly used text file online preview, support Office online preview
-14. ...
+13. Support to share files with others and view the list of files you have shared
+14. Provide picture online preview, video online preview, audio online preview, PDF, JSON, TXT and other commonly used text file online preview, support Office online preview
+15. ……
 
 ## The source address
 
