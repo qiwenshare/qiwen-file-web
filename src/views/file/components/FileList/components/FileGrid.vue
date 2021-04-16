@@ -58,7 +58,7 @@
           type="info"
           size="small"
           plain
-          v-if="selectedFile.isDir === 0 && fileType !== 6"
+          v-if="fileType !== 6"
           @click.native="rightMenu.isShow = false"
         >
           <a

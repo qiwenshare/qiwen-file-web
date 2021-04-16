@@ -174,7 +174,7 @@
             <el-button type="text" size="mini" @click.native="handleShareFileBtnClick(scope.row)" v-if="shareBtnShow"
               >分享</el-button
             >
-            <el-button type="text" size="mini" v-if="downloadBtnShow && scope.row.isDir === 0">
+            <el-button type="text" size="mini" v-if="downloadBtnShow">
               <a target="_blank" style="display: block; color: inherit" :href="getDownloadFilePath(scope.row)">下载</a>
             </el-button>
             <el-button
@@ -213,7 +213,7 @@
               <el-dropdown-item v-if="shareBtnShow" @click.native="handleShareFileBtnClick(scope.row)"
                 >分享</el-dropdown-item
               >
-              <el-dropdown-item v-if="downloadBtnShow && scope.row.isDir === 0">
+              <el-dropdown-item v-if="downloadBtnShow">
                 <a target="_blank" style="display: block; color: inherit" :href="getDownloadFilePath(scope.row)"
                   >下载</a
                 >
