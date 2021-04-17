@@ -8,7 +8,6 @@ const loginTip = function() {
   MessageBox.alert('您尚未登录，请先登录', '操作提示', {
     confirmButtonText: '确定',
     callback: () => {
-      console.log(router)
       router.push({
         path: '/login',
         query: { Rurl: router.currentRoute.fullPath }  //  将当前页面的url传递给login页面进行操作
