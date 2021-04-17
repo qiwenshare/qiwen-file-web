@@ -14,7 +14,8 @@
           :props="defaultProps"
           :highlight-current="true"
           :expand-on-click-node="false"
-          node-key="attributes.filePath"
+          :default-expanded-keys="defaultExpandedKeys"
+          node-key="id"
           @node-click="handleNodeClick"
         >
           <span class="custom-tree-node" slot-scope="{ node, data }">
@@ -34,7 +35,7 @@
     <AddFolderDialog
       :visible.sync="dialogAddFolder.visible"
       :filePath="dialogAddFolder.filePath"
-      @confirmDialog="initFileTree(dialogAddFolder.filePath)"
+      @confirmDialog="initFileTree(dialogAddFolder.id)"
     ></AddFolderDialog>
   </div>
 </template>
@@ -59,10 +60,12 @@ export default {
         label: 'label'
       },
       fileTree: [], //  文件夹目录树
+      defaultExpandedKeys: [],
       // 新建文件夹对话框数据
       dialogAddFolder: {
         visible: false,
-        filePath: '/' //  新增文件夹的父级路径
+        filePath: '/', //  新增文件夹的父级路径
+        id: -1
       }
     }
   },
@@ -76,10 +79,11 @@ export default {
     /**
      * 初始化文件目录树
      */
-    initFileTree() {
+    initFileTree(id) {
       getFoldTree().then((res) => {
         if (res.success) {
           this.fileTree = [res.data]
+          this.defaultExpandedKeys = id ? [id] : [this.fileTree[0].id]
         } else {
           this.$message.error(res.message)
         }
@@ -91,14 +95,15 @@ export default {
      * @param {object} data 当前点击的节点信息
      */
     handleNodeClick(data) {
-      this.targetPath = data.attributes.filePath ? data.attributes.filePath : '/'
+      this.targetPath = data.filePath ? data.filePath : '/'
       this.$emit('setSelectFilePath', this.targetPath)
     },
     /**
      * 新建文件夹按钮点击事件
      */
     handleAddFolderBtnClick(data) {
-      this.dialogAddFolder.filePath = data.attributes.filePath ? data.attributes.filePath : '/'
+      this.dialogAddFolder.filePath = data.filePath ? data.filePath : '/'
+      this.dialogAddFolder.id = data.id
       this.dialogAddFolder.visible = true
     }
   }
