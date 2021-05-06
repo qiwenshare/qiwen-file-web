@@ -12,8 +12,8 @@
         label-width="100px"
         hide-required-asterisk
       >
-        <el-form-item prop="username">
-          <el-input prefix-icon="el-icon-mobile-phone" v-model="loginForm.username" placeholder="手机号"></el-input>
+        <el-form-item prop="telephone">
+          <el-input prefix-icon="el-icon-mobile-phone" v-model="loginForm.telephone" placeholder="手机号"></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input prefix-icon="el-icon-lock" v-model="loginForm.password" placeholder="密码" show-password></el-input>
@@ -62,12 +62,12 @@ export default {
     return {
       // 登录表单数据
       loginForm: {
-        username: '',
+        telephone: '',
         password: ''
       },
       // 登录表单验证规则
       loginFormRules: {
-        username: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
+        telephone: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           {
@@ -90,7 +90,7 @@ export default {
   },
   watch: {
     //  滑动解锁验证通过时，若重新输入用户名或密码，滑动解锁恢复原样
-    'loginForm.username'() {
+    'loginForm.telephone'() {
       this.isPassing = false
       this.$refs.dragVerifyRef.reset()
     },
