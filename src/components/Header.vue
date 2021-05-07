@@ -5,7 +5,8 @@
       <el-menu-item index="Home" :route="{ name: 'Home' }">首页</el-menu-item>
       <el-menu-item index="File" :route="{ name: 'File', query: { fileType: 0, filePath: '/' } }">网盘</el-menu-item>
       <el-menu-item index="MyShare" :route="{ name: 'MyShare', query: { filePath: '/' } }" >我的分享</el-menu-item>
-      <div class="el-menu-item"><a href="https://www.qiwenshare.com/topic/detail/6/24" target="_blank">帮助文档</a></div>
+      <div class="el-menu-item"><a href="https://pan.qiwenshare.com/docs/" target="_blank">文档</a></div>
+      <div class="el-menu-item"><a href="https://www.qiwenshare.com/topic/detail/6/24" target="_blank">帮助</a></div>
       <!-- 为了和其他菜单样式保持一致，请一定要添加类名 el-menu-item -->
       <div class="el-menu-item exit" @click="exitButton()" v-show="isLogin">
         退出
