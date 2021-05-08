@@ -5,7 +5,7 @@
       <el-menu-item index="Home" :route="{ name: 'Home' }">首页</el-menu-item>
       <el-menu-item index="File" :route="{ name: 'File', query: { fileType: 0, filePath: '/' } }">网盘</el-menu-item>
       <el-menu-item index="MyShare" :route="{ name: 'MyShare', query: { filePath: '/' } }" >我的分享</el-menu-item>
-      <div class="el-menu-item"><a href="https://pan.qiwenshare.com/docs/" target="_blank">文档</a></div>
+      <li class="el-menu-item external-link"><a href="https://pan.qiwenshare.com/docs/" target="_blank">文档</a></li>
       <!-- 为了和其他菜单样式保持一致，请一定要添加类名 el-menu-item -->
       <div class="el-menu-item exit" @click="exitButton()" v-show="isLogin">
         退出
@@ -81,6 +81,14 @@ export default {
     .el-menu-item:not(.is-disabled):hover {
       border-bottom-color: $Primary !important;
       background: $tabBackColor;
+    }
+
+    .external-link {
+      padding: 0;
+      a {
+        display: block;
+        padding: 0 20px;
+      }
     }
   }
 
