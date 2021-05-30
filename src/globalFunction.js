@@ -34,7 +34,7 @@ const globalFunction = {
   getImgMinPath: function (row) {
     let fileUrl = ''
     if (row.fileUrl) {
-      if (row.isOSS == 1) {
+      if (row.storageType == 1) {
         // 阿里云OSS对象存储
         fileUrl = `https://${Cookies.get('viewDomain')}${row.fileUrl}?x-oss-process=image/resize,m_fill,h_150,w_150/rotate,0`
       } else {
@@ -68,7 +68,7 @@ const globalFunction = {
    */
   getFileOnlineViewPathByOffice: function (row) {
     let fileUrl = ''
-    if (row.isOSS == 1) {
+    if (row.storageType == 1) {
       fileUrl = `https://${Cookies.get('viewDomain')}${row.fileUrl}`  // 阿里云OSS对象存储
     } else {
       // 本地磁盘存储 - 在本地开发环境中，本地磁盘存储的文件是无法预览的，因为 office 要求文件可以在 Internet 访问
