@@ -40,7 +40,7 @@ const globalFunction = {
       } else {
         // 本地磁盘存储
         let index = row.fileUrl.lastIndexOf('.')
-        fileUrl = '/api' + row.fileUrl.substr(0, index) + '_min' + row.fileUrl.substr(index)
+        fileUrl = `/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=true`
       }
     }
     return fileUrl
