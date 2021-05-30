@@ -96,6 +96,10 @@ export default {
             }
             return (data.uploaded || []).indexOf(chunk.offset + 1) >= 0
           }
+          else {
+            alert(objMessage.message)
+            return true;
+          }
         },
         headers: {
           token: this.getCookies('token')

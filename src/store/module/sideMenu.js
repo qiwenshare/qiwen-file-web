@@ -2,7 +2,8 @@ import { getStorage } from '@/request/file.js'
 
 export default {
   state: {
-    storageValue: 0 //  文件已占用的存储空间大小
+    storageValue: 0 , //  文件已占用的存储空间大小
+    totalStorageValue:0
   },
   mutations: {
     /**
@@ -12,6 +13,9 @@ export default {
      */
     setStorageValue(state, data) {
       state.storageValue = data;
+    },
+    setTotalStorageValue(state, data) {
+      state.totalStorageValue = data;
     }
   },
   actions: {
@@ -22,6 +26,7 @@ export default {
       return getStorage().then(res => {
         if (res.success) {
           context.commit('setStorageValue', res.data ? Number(res.data.storageSize) : 0)
+          context.commit('setTotalStorageValue', res.data ? Number(res.data.totalStorageSize) : 0)
         } else {
           this.$message.error(res.message)
         }
