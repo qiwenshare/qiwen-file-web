@@ -53,7 +53,7 @@
       ></el-progress>
       <div class="text" v-show="!isCollapse">
         <span>存储</span>
-        <span>{{ storageValue | storageTrans }} / {{ storageMaxValue | storageTrans(true) }}</span>
+        <span>{{ storageValue | storageTrans }} / {{ totalStorageValue | storageTrans(true) }}</span>
       </div>
       <div class="text" v-show="isCollapse">
         <span>{{ storageValue | storageTrans }}</span>
@@ -77,7 +77,6 @@ export default {
   data() {
     return {
       isCollapse: false, //  控制菜单收缩展开
-      storageMaxValue: Math.pow(1024, 3) * 10, //  最大存储容量，1GB
       //  自定义进度条颜色，不同占比，进度条颜色不同
       storageColor: [
         { color: '#67C23A', percentage: 50 },
@@ -95,9 +94,12 @@ export default {
     storageValue() {
       return this.$store.state.sideMenu.storageValue
     },
+    totalStorageValue() {
+      return this.$store.state.sideMenu.totalStorageValue
+    },
     // 存储百分比
     storagePercentage() {
-      return (this.storageValue / this.storageMaxValue) * 100
+      return (this.storageValue / this.totalStorageValue) * 100
     }
   },
   watch: {
