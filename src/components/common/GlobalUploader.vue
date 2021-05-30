@@ -97,7 +97,7 @@ export default {
             return (data.uploaded || []).indexOf(chunk.offset + 1) >= 0
           }
           else {
-            alert(objMessage.message)
+            console.log(objMessage.message)
             return true;
           }
         },
