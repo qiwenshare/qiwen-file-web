@@ -39,8 +39,7 @@ const globalFunction = {
         fileUrl = `https://${Cookies.get('viewDomain')}${row.fileUrl}?x-oss-process=image/resize,m_fill,h_150,w_150/rotate,0`
       } else {
         // 本地磁盘存储
-        let index = row.fileUrl.lastIndexOf('.')
-        fileUrl = `/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=true`
+        fileUrl = `/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=true&token=${globalFunction.getCookies('token')}`
       }
     }
     return fileUrl
@@ -51,7 +50,7 @@ const globalFunction = {
    * @returns {string} 文件路径
    */
   getViewFilePath: function (row) {
-    return `/api/filetransfer/preview?userFileId=${row.userFileId}`
+    return `/api/filetransfer/preview?userFileId=${row.userFileId}&token=${globalFunction.getCookies('token')}`
   },
   /**
    * 获取文件下载路径
