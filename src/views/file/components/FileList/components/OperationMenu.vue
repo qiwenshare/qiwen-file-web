@@ -115,7 +115,7 @@
       target="_blank"
       v-for="(item, index) in selectionFile"
       :key="index"
-      :href="'api' + item.fileUrl"
+      :href="getDownloadFilePath(item)"
       :download="item.fileName + '.' + item.extendName"
       :title="'downloadLink' + index"
       :ref="'downloadLink' + index"

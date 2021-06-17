@@ -99,7 +99,7 @@ export default {
     },
     // 存储百分比
     storagePercentage() {
-      return (this.storageValue / this.totalStorageValue) * 100
+      return this.totalStorageValue ? (this.storageValue / this.totalStorageValue) * 100 : 0
     }
   },
   watch: {
