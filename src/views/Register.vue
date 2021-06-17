@@ -169,8 +169,8 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .register-wrapper {
-  height: 500px !important;
-  min-height: 500px !important;
+  // height: 500px !important;
+  min-height: calc(100vh - 224px) !important;
   width: 100% !important;
   padding-top: 50px;
 
