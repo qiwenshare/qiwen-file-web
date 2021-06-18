@@ -47,12 +47,11 @@ export default {
   methods: {
     /**
      * 退出登录
-     * @description 清除 cookie 存放的 token 和 viewDomain 并跳转到登录页面
+     * @description 清除 cookie 存放的 token  并跳转到登录页面
      */
     exitButton() {
       this.$message.success('退出登录成功！')
       this.$store.dispatch('getUserInfo').then(() => {
-        this.removeCookies('viewDomain')
         this.removeCookies('token')
         this.$router.push({ path: '/login' })
       })

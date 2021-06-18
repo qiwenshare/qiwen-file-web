@@ -114,7 +114,7 @@
         v-if="routeName === 'MyShare'"
       >
         <template slot-scope="scope">
-          {{ scope.row.shareType === 1 ? '公共' : '私密' }}
+          {{ scope.row.shareType === 1 ? '私密' : '公共' }}
         </template>
       </el-table-column>
       <el-table-column
