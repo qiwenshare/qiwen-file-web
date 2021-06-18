@@ -31,8 +31,6 @@ export default {
     getUserInfo(context) {
       return checkUserLoginInfo().then((res) => {
         if (res.success) {
-          // 存储文件预览域名
-          globalFunction.setCookies("viewDomain", res.data.viewDomain)
           // 改变登录状态
           context.commit("changeIsLogin", res.success);
           // 保存用户信息
