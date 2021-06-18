@@ -56,7 +56,7 @@ const globalFunction = {
    * @returns {string} office 文件在线预览路径
    */
   getFileOnlineViewPathByOffice: function (row) {
-    let fileUrl = `/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${row.extractionCode}&token=${globalFunction.getCookies('token')}`
+    let fileUrl = `${location.protocol}//${location.host}/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${row.extractionCode}&token=${globalFunction.getCookies('token')}`
     return `https://view.officeapps.live.com/op/embed.aspx?src=${fileUrl}`
   },
   /**
