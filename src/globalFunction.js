@@ -57,7 +57,7 @@ const globalFunction = {
    */
   getFileOnlineViewPathByOffice: function (row) {
     let fileUrl = `${location.protocol}//${location.host}/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${row.extractionCode}&token=${globalFunction.getCookies('token')}`
-    return `https://view.officeapps.live.com/op/embed.aspx?src=${fileUrl}`
+    return `http://ow365.cn/?i=24998&ssl=1&furl=${fileUrl}`
   },
   /**
    * 设置 Cookies
