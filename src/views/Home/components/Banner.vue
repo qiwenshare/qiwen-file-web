@@ -43,8 +43,8 @@ export default {
           btn: '开源免费，立即体验',
           linkList: [
             {
-              versionNo: '最新版本v1.3.0',
-              date: '2020年12月30日发布',
+              versionNo: '最新版本v1.4.0',
+              date: '2021年5月14日发布',
               link: 'https://gitee.com/qiwen-cloud/qiwen-file'
             }
           ],

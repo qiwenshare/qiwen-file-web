@@ -51,13 +51,82 @@ const globalFunction = {
     return `/api/filetransfer/downloadfile?userFileId=${row.userFileId}`
   },
   /**
-   * 获取 office 文件在线预览路径
+   * 获取 Onlyoffice 文件创建路径
+   * @param {object} row 
+   * @returns {string} office 文件创建路径
+   */
+   createFileOnlineByOffice: function (data) {
+    debugger
+    let fileUrl = `${location.protocol}//${location.host}/api`
+    debugger
+    const { href } = this.$router.resolve({
+      path: 'onlyoffice',
+      query: {
+        fileUrl: fileUrl,
+        fileName: data.fileName,
+        filePath: data.filePath,
+        extendName: data.extendName,
+        ot: 'add'
+      }
+    })
+    window.open(href, '_blank')
+  },
+  /**
+   * 获取 Onlyoffice 文件在线预览路径
    * @param {object} row 
    * @returns {string} office 文件在线预览路径
    */
-  getFileOnlineViewPathByOffice: function (row) {
-    let fileUrl = `${location.protocol}//${location.host}/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${row.extractionCode}&token=${globalFunction.getCookies('token')}`
-    return `http://ow365.cn/?i=24998&ssl=1&furl=${fileUrl}`
+   getFileOnlineViewPathByOffice: function (row) {
+    let fileUrl = ''
+    let fileName = row.fileName + "." + row.extendName
+    let filePath = row.fileUrl
+    let fileId = row.fileId
+    let userFileId = row.userFileId
+    let extendName = row.extendName
+
+    fileUrl =  `${location.protocol}//${location.host}/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${row.extractionCode}&token=${globalFunction.getCookies('token')}`
+    const { href } = this.$router.resolve({
+      path: 'onlyoffice',
+      query: {
+        fileUrl: fileUrl,
+        fileName: fileName,
+        filePath: filePath,
+        fileId: fileId,
+        userFileId: userFileId,
+        extendName: extendName,
+        ot: 'detail'
+      }
+    })
+    window.open(href, '_blank')
+  },
+  /**
+   * 获取 Onlyoffice 文件在线编辑路径
+   * @param {object} row 
+   * @returns {string} office 文件在线编辑路径
+   */
+   getFileOnlineEditPathByOffice: function (row) {
+    let fileUrl = ''
+    let fileName = row.fileName + "." + row.extendName
+    let filePath = row.fileUrl
+    let fileId = row.fileId
+    let userFileId = row.userFileId
+    let extendName = row.extendName
+   
+    fileUrl =  `${location.protocol}//${location.host}/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${row.extractionCode}&token=${globalFunction.getCookies('token')}`
+    debugger
+    const { href } = this.$router.resolve({
+      path: 'onlyoffice',
+      query: {
+        fileUrl: fileUrl,
+        fileName: fileName,
+        filePath: filePath,
+        fileId: fileId,
+        userFileId: userFileId,
+        extendName: extendName,
+        ot: 'edit'
+      }
+    })
+    window.open(href, '_blank')
   },
   /**
    * 设置 Cookies

@@ -2,6 +2,23 @@
   <div class="operation-menu-wrapper" :class="'file-type-' + fileType">
     <el-button-group class="operate-group">
       <el-dropdown class="drop-btn" trigger="hover" v-if="fileType === 0">
+        <el-button size="mini" type="primary" icon="el-icon-edit-outline" id="uploadFileId"
+          >新建文件<i class="el-icon-arrow-down el-icon--right"></i
+        ></el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item @click.native="handleCreateFile('docx')">
+            <img
+            src="@/assets/images/file/file_word.png"
+            style="width: 30px; max-height: 30px; cursor: pointer"/>Word文档</el-dropdown-item>
+          <el-dropdown-item @click.native="handleCreateFile('xlsx')"><img
+            src="@/assets/images/file/file_excel.png"
+            style="width: 30px; max-height: 30px; cursor: pointer"/>Excel工作表</el-dropdown-item>
+          <el-dropdown-item @click.native="handleCreateFile('pptx')"><img
+            src="@/assets/images/file/file_ppt.png"
+            style="width: 30px; max-height: 30px; cursor: pointer"/>PPT演示文稿</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <el-dropdown class="drop-btn" trigger="hover" v-if="fileType === 0">
         <el-button size="mini" type="primary" icon="el-icon-upload2" id="uploadFileId"
           >上传文件<i class="el-icon-arrow-down el-icon--right"></i
         ></el-button>
@@ -110,6 +127,14 @@
       @confirmDialog="$emit('getTableDataByType')"
     ></AddFolderDialog>
 
+    <!-- 新建文件对话框 -->
+    <AddFileDialog
+      :visible.sync="dialogAddFile.visible"
+      :filePath="filePath"
+      :extendName="extendName"
+      @confirmDialog="$emit('getTableDataByType')"
+    ></AddFileDialog>
+
     <!-- 多选文件下载，页面隐藏 -->
     <a
       target="_blank"
@@ -126,6 +151,7 @@
 <script>
 import { batchDeleteFile, batchDeleteRecoveryFile } from '@/request/file.js'
 import AddFolderDialog from '@/components/File/AddFolderDialog.vue'
+import AddFileDialog from '@/components/File/AddFileDialog.vue'
 import SelectColumn from './SelectColumn'
 
 export default {
@@ -147,6 +173,7 @@ export default {
   },
   components: {
     AddFolderDialog,
+    AddFileDialog,
     SelectColumn
   },
   data() {
@@ -159,6 +186,11 @@ export default {
       dialogAddFolder: {
         visible: false
       },
+      // 新建文件夹对话框数据
+      dialogAddFile: {
+        visible: false
+      },
+      extendName: '',
       batchDeleteFileDialog: false,
       fileGroupLable: 0 //  文件展示模式
     }
@@ -212,6 +244,13 @@ export default {
     })
   },
   methods: {
+    /**
+     * 新建文档
+     */
+    handleCreateFile(extendName) {
+      this.extendName = extendName
+      this.dialogAddFile.visible = true
+    },
     /**
      * 上传文件按钮点击事件
      * @description 通过Bus通信，开启全局上传文件流程

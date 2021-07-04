@@ -11,7 +11,12 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: () => import(/* webpackChunkName: "home" */ '@/views/Home'),
-      meta: { title: '首页 - 奇文网盘' }
+      meta: { 
+        title: '首页 - 奇文网盘' ,
+        content: {
+          description: '基于Spring Boot + Vue CLI@3 框架开发的Web文件系统，旨在为用户提供一个简单、方便的文件存储方案'
+        },
+      }
     },
     {
       path: '/login',
@@ -37,6 +42,17 @@ export default new Router({
         },
         breadCrumbName: '全部文件'
       }
+    },
+    {
+      path: '/onlyoffice',
+      name: 'Onlyoffice',
+      meta: {
+        title: '文档编辑器',
+        content: {
+          description: '文档编辑器'
+        },
+      },
+      component: () => import('@/views/file/Onlyoffice.vue')
     },
     {
       path: '/share/:shareBatchNum',
