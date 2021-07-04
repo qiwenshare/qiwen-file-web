@@ -215,9 +215,9 @@ export default {
       if (result.success) {
         this.$message.success(`${file.name} - 上传完毕`)
         file.statusStr = ''
-        setTimeout(() => {
-          this.collapse = true //  折叠上传列表
-        }, 1500)
+        // setTimeout(() => {
+        //   this.collapse = true //  折叠上传列表
+        // }, 1500)
         this.$EventBus.$emit('refreshList', '')
         this.$EventBus.$emit('refreshStorage', '')
       } else {
