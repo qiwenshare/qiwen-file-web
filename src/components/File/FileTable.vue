@@ -177,6 +177,9 @@
             <el-button type="text" size="mini" v-if="downloadBtnShow">
               <a target="_blank" style="display: block; color: inherit" :href="getDownloadFilePath(scope.row)">下载</a>
             </el-button>
+            <el-button type="text" size="mini" @click.native="getFileOnlineEditPathByOffice(scope.row)" v-if="fileType !== 6 && officeFileType.includes(scope.row.extendName)"
+              >编辑</el-button
+            >
             <el-button
               type="text"
               size="mini"
@@ -218,6 +221,9 @@
                   >下载</a
                 >
               </el-dropdown-item>
+              <el-dropdown-item @click.native="getFileOnlineEditPathByOffice(scope.row)" v-if="fileType !== 6 && officeFileType.includes(scope.row.extendName)"
+                >编辑</el-dropdown-item
+              >
               <el-dropdown-item
                 v-if="unzipBtnShow && ['zip', 'rar'].includes(scope.row.extendName)"
                 @click.native="handleUnzipFileBtnClick(scope.row)"
@@ -339,6 +345,7 @@ export default {
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
       },
+      officeFileType: ['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'],
       downloadFilePath: '',
       viewFilePath: '',
       // 音频预览
@@ -365,15 +372,15 @@ export default {
     // 操作列宽度
     operaColumnWidth() {
       return ['Share', 'MyShare'].includes(this.routeName)
-        ? 100
+        ? 130
         : this.fileType === 6
         ? 120
         : this.operaColumnExpand
         ? this.isIncludeNormalFile
           ? this.isIncludeZipRarFile
-            ? 270
-            : 230
-          : 200
+            ? 300
+            : 270
+          : 230
         : 100
     },
     // 路由名称
@@ -563,7 +570,7 @@ export default {
           }
         }
         //  若当前点击项是可以使用office在线预览的
-        if (['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx', 'pdf'].includes(row.extendName)) {
+        if ([...this.officeFileType, 'pdf'].includes(row.extendName)) {
           this.getFileOnlineViewPathByOffice(row)
         }
         //  若当前点击项是代码或文本文件
