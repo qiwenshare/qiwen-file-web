@@ -35,9 +35,14 @@
     </ul>
     <transition name="el-fade-in-linear">
       <div class="right-menu" v-show="rightMenu.isShow" :style="`top: ${rightMenu.top}px; left: ${rightMenu.left}px;`">
-        <el-button type="info" size="small" plain @click.native="getFileOnlineEditPathByOffice(selectedFile)"
-          v-if="selectedFile.extendName == 'docx' || selectedFile.extendName == 'doc' || selectedFile.extendName == 'xls' || selectedFile.extendName == 'xlsx' || selectedFile.extendName == 'ppt' || selectedFile.extendName == 'pptx'"
-          >编辑</el-button>
+        <el-button
+          type="info"
+          size="small"
+          plain
+          @click.native="getFileOnlineEditPathByOffice(selectedFile)"
+          v-if="fileType !== 6 && officeFileType.includes(selectedFile.extendName)"
+          >编辑</el-button
+        >
         <el-button type="info" size="small" plain @click.native="handleDeleteFileBtnClick(selectedFile)"
           >删除</el-button
         >
@@ -57,13 +62,7 @@
           v-if="fileType !== 6"
           >重命名</el-button
         >
-        <el-button
-          type="info"
-          size="small"
-          plain
-          v-if="fileType !== 6"
-          @click.native="rightMenu.isShow = false"
-        >
+        <el-button type="info" size="small" plain v-if="fileType !== 6" @click.native="rightMenu.isShow = false">
           <a
             target="_blank"
             style="display: block; color: inherit"
@@ -181,6 +180,7 @@ export default {
         json: require('@/assets/images/file/file_json.png'),
         exe: require('@/assets/images/file/file_exe.png')
       },
+      officeFileType: ['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'],
       downloadFilePath: '',
       viewFilePath: '',
       // 右键菜单
@@ -335,7 +335,7 @@ export default {
           }
         }
         //  若当前点击项是可以使用office在线预览的
-        if (['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx', 'pdf'].includes(row.extendName)) {
+        if ([...this.officeFileType, 'pdf'].includes(row.extendName)) {
           this.getFileOnlineViewPathByOffice(row)
         }
         //  若当前点击项是代码或文本文件

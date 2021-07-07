@@ -55,12 +55,10 @@ const globalFunction = {
    * @param {object} row 
    * @returns {string} office 文件创建路径
    */
-   createFileOnlineByOffice: function (data) {
-    debugger
+  createFileOnlineByOffice: function (data) {
     let fileUrl = `${location.protocol}//${location.host}/api`
-    debugger
     const { href } = this.$router.resolve({
-      path: 'onlyoffice',
+      name: 'Onlyoffice',
       query: {
         fileUrl: fileUrl,
         fileName: data.fileName,
@@ -76,7 +74,7 @@ const globalFunction = {
    * @param {object} row 
    * @returns {string} office 文件在线预览路径
    */
-   getFileOnlineViewPathByOffice: function (row) {
+  getFileOnlineViewPathByOffice: function (row) {
     let fileUrl = ''
     let fileName = row.fileName + "." + row.extendName
     let filePath = row.fileUrl
@@ -84,9 +82,9 @@ const globalFunction = {
     let userFileId = row.userFileId
     let extendName = row.extendName
 
-    fileUrl =  `${location.protocol}//${location.host}/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${row.extractionCode}&token=${globalFunction.getCookies('token')}`
+    fileUrl = `${location.protocol}//${location.host}/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${row.extractionCode}&token=${globalFunction.getCookies('token')}`
     const { href } = this.$router.resolve({
-      path: 'onlyoffice',
+      name: 'Onlyoffice',
       query: {
         fileUrl: fileUrl,
         fileName: fileName,
@@ -104,18 +102,17 @@ const globalFunction = {
    * @param {object} row 
    * @returns {string} office 文件在线编辑路径
    */
-   getFileOnlineEditPathByOffice: function (row) {
+  getFileOnlineEditPathByOffice: function (row) {
     let fileUrl = ''
     let fileName = row.fileName + "." + row.extendName
     let filePath = row.fileUrl
     let fileId = row.fileId
     let userFileId = row.userFileId
     let extendName = row.extendName
-   
-    fileUrl =  `${location.protocol}//${location.host}/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${row.extractionCode}&token=${globalFunction.getCookies('token')}`
-    debugger
+
+    fileUrl = `${location.protocol}//${location.host}/api/filetransfer/preview?userFileId=${row.userFileId}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${row.extractionCode}&token=${globalFunction.getCookies('token')}`
     const { href } = this.$router.resolve({
-      path: 'onlyoffice',
+      name: 'Onlyoffice',
       query: {
         fileUrl: fileUrl,
         fileName: fileName,

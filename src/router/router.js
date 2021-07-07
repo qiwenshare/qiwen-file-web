@@ -47,12 +47,12 @@ export default new Router({
       path: '/onlyoffice',
       name: 'Onlyoffice',
       meta: {
-        title: '文档编辑器',
+        title: 'only office 在线编辑预览',
         content: {
-          description: '文档编辑器'
-        },
+          description: 'only office 在线编辑预览'
+        }
       },
-      component: () => import('@/views/file/Onlyoffice.vue')
+      component: () => import('@/views/OnlyOffice/index.vue')
     },
     {
       path: '/share/:shareBatchNum',
