@@ -32,12 +32,12 @@ export default {
   computed: {
     //  头部是否显示
     isHeaderShow() {
-      let routerNameList = ['Error_401', 'Error_404', 'Error_500']
+      let routerNameList = ['Onlyoffice','Error_401', 'Error_404', 'Error_500']
       return routerNameList.includes(this.$route.name) ? false : true
     },
     //  底部是否显示
     isFooterShow() {
-      let routerNameList = ['File', 'Share', 'MyShare', 'Error_401', 'Error_404', 'Error_500']
+      let routerNameList = ['Onlyoffice','File', 'Share', 'MyShare', 'Error_401', 'Error_404', 'Error_500']
       return routerNameList.includes(this.$route.name) ? false : true
     },
     // 网盘页面文件上传/预览相关组件是否显示

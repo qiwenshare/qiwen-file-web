@@ -563,11 +563,11 @@ export default {
           }
         }
         //  若当前点击项是可以使用office在线预览的
-        if (['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'].includes(row.extendName)) {
-          window.open(this.getFileOnlineViewPathByOffice(row), '_blank')
+        if (['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx', 'pdf'].includes(row.extendName)) {
+          this.getFileOnlineViewPathByOffice(row)
         }
         //  若当前点击项是代码或文本文件
-        const CODE = ['html', 'js', 'css', 'json', 'c', 'java', 'txt', 'pdf']
+        const CODE = ['html', 'js', 'css', 'json', 'c', 'java', 'txt']
         if (CODE.includes(row.extendName)) {
           window.open(this.getViewFilePath(row), '_blank')
         }
