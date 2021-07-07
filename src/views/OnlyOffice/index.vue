@@ -66,17 +66,17 @@ export default {
             type: this.platform
           }
           // config.editorConfig.callbackUrl = config.editorConfig.callbackUrl.replace('/IndexServlet', ONLYOFFICE_BASE_URL + '/IndexServlet')
-          this.initDocEditor(res.data.docServiceApiUrl, config)
+          this.initDocEditor(res.data.docserviceApiUrl, config)
         }
       })
     },
     /**
      * 初始化文档编辑器
-     * @param {string} docServiceApiUrl 文档服务API url
+     * @param {string} docserviceApiUrl 文档服务API url
      * @param {object} config 文件相关配置信息
      */
-    initDocEditor(docServiceApiUrl, config) {
-      this.loadOnlyOfficeAPI(docServiceApiUrl).then(() => {
+    initDocEditor(docserviceApiUrl, config) {
+      this.loadOnlyOfficeAPI(docserviceApiUrl).then(() => {
         /* global DocsAPI */
         this.docEditor = new DocsAPI.DocEditor('placeholder', config)
       })
@@ -117,7 +117,7 @@ export default {
             ...res.data.file,
             type: this.platform
           }
-          this.initDocEditor(res.data.docServiceApiUrl, config)
+          this.initDocEditor(res.data.docserviceApiUrl, config)
         }
       })
     },
@@ -135,7 +135,7 @@ export default {
             ...res.data.file,
             type: this.platform
           }
-          this.initDocEditor(res.data.docServiceApiUrl, config)
+          this.initDocEditor(res.data.docserviceApiUrl, config)
         }
       })
     },
