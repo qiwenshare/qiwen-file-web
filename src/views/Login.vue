@@ -159,7 +159,7 @@ export default {
 <style lang="stylus" scoped>
 .login-wrapper {
   // height: 550px !important;
-  min-height: calc(100vh - 224px) !important;
+  min-height: calc(100vh - 189px) !important;
   padding-top: 50px;
 
   .form-wrapper {
