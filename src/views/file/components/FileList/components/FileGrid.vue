@@ -41,7 +41,7 @@
           plain
           @click.native="getFileOnlineEditPathByOffice(selectedFile)"
           v-if="fileType !== 6 && officeFileType.includes(selectedFile.extendName)"
-          >编辑</el-button
+          >在线编辑</el-button
         >
         <el-button type="info" size="small" plain @click.native="handleDeleteFileBtnClick(selectedFile)"
           >删除</el-button

@@ -18,6 +18,7 @@
         <template slot-scope="scope">
           <img
             :src="setFileImg(scope.row)"
+            :title="`${scope.row.isDir ? '' : '点击预览'}`"
             style="width: 30px; max-height: 30px; cursor: pointer"
             @click="handleFileNameClick(scope.row, scope.$index, fileList)"
           />
@@ -28,7 +29,7 @@
           <span>文件名</span>
         </template>
         <template slot-scope="scope">
-          <div style="cursor: pointer" @click="handleFileNameClick(scope.row, scope.$index, fileList)">
+          <div style="cursor: pointer" :title="`${scope.row.isDir ? '' : '点击预览'}`" @click="handleFileNameClick(scope.row, scope.$index, fileList)">
             {{ scope.row | fileNameComplete }}
           </div>
         </template>
@@ -178,7 +179,7 @@
               <a target="_blank" style="display: block; color: inherit" :href="getDownloadFilePath(scope.row)">下载</a>
             </el-button>
             <el-button type="text" size="mini" @click.native="getFileOnlineEditPathByOffice(scope.row)" v-if="fileType !== 6 && officeFileType.includes(scope.row.extendName)"
-              >编辑</el-button
+              >在线编辑</el-button
             >
             <el-button
               type="text"
@@ -222,7 +223,7 @@
                 >
               </el-dropdown-item>
               <el-dropdown-item @click.native="getFileOnlineEditPathByOffice(scope.row)" v-if="fileType !== 6 && officeFileType.includes(scope.row.extendName)"
-                >编辑</el-dropdown-item
+                >在线编辑</el-dropdown-item
               >
               <el-dropdown-item
                 v-if="unzipBtnShow && ['zip', 'rar'].includes(scope.row.extendName)"
