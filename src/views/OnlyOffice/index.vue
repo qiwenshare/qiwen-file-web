@@ -78,7 +78,17 @@ export default {
     initDocEditor(docserviceApiUrl, config) {
       this.loadOnlyOfficeAPI(docserviceApiUrl).then(() => {
         /* global DocsAPI */
-        this.docEditor = new DocsAPI.DocEditor('placeholder', config)
+        this.docEditor = new DocsAPI.DocEditor('placeholder', {
+          ...config,
+          editorConfig: {
+            ...config.editorConfig,
+            lang: 'zh', //  语言设置为中文 
+            customization: {
+              ...config.editorConfig.customization,
+              zoom: 100 //  缩放比例为 100
+            }
+          }
+        })
       })
     },
     /**
@@ -117,6 +127,7 @@ export default {
             ...res.data.file,
             type: this.platform
           }
+          config.document.permissions.edit = false  //  预览模式下编辑权限为 false
           this.initDocEditor(res.data.docserviceApiUrl, config)
         }
       })
