@@ -42,7 +42,7 @@ export default {
     },
     // 网盘页面文件上传/预览相关组件是否显示
     isFileAboutShow() {
-      let routerNameList = ['Login', 'Register']
+      let routerNameList = ['Login', 'Register', 'Onlyoffice',]
       return routerNameList.includes(this.$route.name) ? false : true
     }
   }
