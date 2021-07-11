@@ -48,7 +48,7 @@ const globalFunction = {
    * @returns {string}  文件下载路径
    */
   getDownloadFilePath: function (row) {
-    return `/api/filetransfer/downloadfile?userFileId=${row.userFileId}`
+    return `/api/filetransfer/downloadfile?userFileId=${row.userFileId}&shareBatchNum=${row.shareBatchNum}&extractionCode=${row.extractionCode}&token=${globalFunction.getCookies('token')}`
   },
   /**
    * 获取 Onlyoffice 文件创建路径

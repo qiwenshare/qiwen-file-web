@@ -1,9 +1,28 @@
 <template>
   <div class="operation-menu-wrapper" :class="'file-type-' + fileType">
     <el-button-group class="operate-group">
-      <el-dropdown class="drop-btn" trigger="hover" v-if="fileType === 0">
+      
+      <el-dropdown class="drop-btn" trigger="hover" v-if="!selectionFile.length && fileType === 0">
+        <el-button size="mini" type="primary" icon="el-icon-upload2" id="uploadFileId"
+          >上传<i class="el-icon-arrow-down el-icon--right"></i
+        ></el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item @click.native="handleUploadFileBtnClick(0)">上传文件</el-dropdown-item>
+          <el-dropdown-item @click.native="handleUploadFileBtnClick(1)">上传文件夹</el-dropdown-item>
+          <el-dropdown-item @click.native="handleUploadFileBtnClick(2)" title="截图粘贴或拖拽上传">拖拽上传</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <el-button
+        size="mini"
+        type="primary"
+        icon="el-icon-plus"
+        @click="dialogAddFolder.visible = true"
+        v-if="!selectionFile.length && !fileType && fileType !== 6"
+        >新建文件夹</el-button
+      >
+      <el-dropdown class="drop-btn" trigger="hover" v-if="!selectionFile.length && fileType === 0">
         <el-button size="mini" type="primary" icon="el-icon-edit-outline" id="uploadFileId"
-          >新建文件<i class="el-icon-arrow-down el-icon--right"></i
+          >新建在线文档<i class="el-icon-arrow-down el-icon--right"></i
         ></el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="handleCreateFile('docx')">
@@ -18,27 +37,11 @@
             style="width: 30px; max-height: 30px; cursor: pointer"/>PPT演示文稿</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-dropdown class="drop-btn" trigger="hover" v-if="fileType === 0">
-        <el-button size="mini" type="primary" icon="el-icon-upload2" id="uploadFileId"
-          >上传文件<i class="el-icon-arrow-down el-icon--right"></i
-        ></el-button>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="handleUploadFileBtnClick(true)">直接添加</el-dropdown-item>
-          <el-dropdown-item @click.native="handleUploadFileBtnClick(false)" title="截图粘贴或拖拽上传">拖拽上传</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+      
       <el-button
         size="mini"
         type="primary"
-        icon="el-icon-plus"
-        @click="dialogAddFolder.visible = true"
-        v-if="!fileType && fileType !== 6"
-        >新建文件夹</el-button
-      >
-      <el-button
-        size="mini"
-        type="primary"
-        :disabled="!selectionFile.length"
+        v-if="selectionFile.length"
         icon="el-icon-delete"
         @click="handleBatchDeleteBtnClick()"
         >批量删除</el-button
@@ -46,28 +49,25 @@
       <el-button
         size="mini"
         type="primary"
-        :disabled="!selectionFile.length"
+        v-if="selectionFile.length && !fileType && fileType !== 6"
         icon="el-icon-rank"
         @click="handleBatchMoveBtnClick()"
-        v-if="!fileType && fileType !== 6"
         >批量移动</el-button
       >
       <el-button
         size="mini"
         type="primary"
-        :disabled="!selectionFile.length"
+        v-if="selectionFile.length && fileType !== 6"
         icon="el-icon-download"
         @click="handleBatchDownloadBtnClick()"
-        v-if="fileType !== 6"
         >批量下载</el-button
       >
       <el-button
         size="mini"
         type="primary"
-        :disabled="!selectionFile.length"
+        v-if="selectionFile.length && fileType !== 6 && $route.name !== 'Share'"
         icon="el-icon-share"
         @click="handleBatchShareBtnClick()"
-        v-if="fileType !== 6 && $route.name !== 'Share'"
         >分享</el-button
       >
     </el-button-group>
