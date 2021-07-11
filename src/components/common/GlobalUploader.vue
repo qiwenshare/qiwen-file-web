@@ -14,6 +14,7 @@
       <uploader-unsupport></uploader-unsupport>
       <!-- 选择按钮 在这里隐藏 -->
       <uploader-btn class="select-file-btn" :attrs="attrs" ref="uploadBtn">选择文件</uploader-btn>
+      <uploader-btn class="select-file-btn" :attrs="attrs" :directory="true" ref="uploadDirBtn">选择目录</uploader-btn>
       <!-- 拖拽上传 -->
       <uploader-drop
         class="drop-box"
@@ -138,8 +139,10 @@ export default {
     this.$EventBus.$on('openUploader', (query, type) => {
       this.options.headers.token = this.getCookies('token')
       this.params = query || {}
-      if (type) {
+      if (type == 0) {
         this.$refs.uploadBtn.$el.click()
+      } else if (type == 1) {
+        this.$refs.uploadDirBtn.$el.click()
       } else {
         this.pasteImg.src = ''
         this.pasteImg.name = ''
