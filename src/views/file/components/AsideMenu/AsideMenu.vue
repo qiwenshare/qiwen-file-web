@@ -53,7 +53,7 @@
       ></el-progress>
       <div class="text" v-show="!isCollapse">
         <span>存储</span>
-        <span>{{ storageValue | storageTrans }} / {{ totalStorageValue | storageTrans(true) }}</span>
+        <span>{{ storageValue | storageTrans }} / {{ totalStorageValue | storageTrans }}</span>
       </div>
       <div class="text" v-show="isCollapse">
         <span>{{ storageValue | storageTrans }}</span>
