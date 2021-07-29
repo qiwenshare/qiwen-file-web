@@ -30,7 +30,9 @@ export default new Vuex.Store({
     // 文件查看模式
     fileModel: (state) => state.fileList.fileModel === undefined ? 0 : Number(state.fileList.fileModel),
     // 网格模式 & 时间线模式下 文件图标大小
-    gridSize: (state) => state.fileList.gridSize
+    gridSize: (state) => state.fileList.gridSize,
+    // 剩余存储空间
+    remainderStorageValue: (state) =>  state.sideMenu.totalStorageValue - state.sideMenu.storageValue
   },
   mutations: {
     //
