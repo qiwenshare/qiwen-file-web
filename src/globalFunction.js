@@ -14,10 +14,12 @@ const globalFunction = {
     const KB = Math.pow(1024, 2)
     const MB = Math.pow(1024, 3)
     const GB = Math.pow(1024, 4)
-    if (!size) {
+    if(size === 0) {
+      return '0KB'
+    } else if (!size) {
       return '_'
     } else if (size < KB) {
-      return (size / B).toFixed(0) + 'KB'
+      return `${(size / B).toFixed(0)}KB`
     } else if (size < MB) {
       return (size / KB).toFixed(1) + 'MB'
     } else if (size < GB) {

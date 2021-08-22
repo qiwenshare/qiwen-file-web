@@ -141,9 +141,6 @@ export default {
               this.setCookies('token', res.data.token) //  存储登录状态
               this.$refs[formName].resetFields() //  清空表单
               this.$router.replace(this.url)  //  跳转到前一个页面或者网盘主页
-              if(!this.getCookies('operaColumnExpand')) { //  默认打开操作列
-                this.setCookies('operaColumnExpand', true)
-              }
             } else {
               this.$message.error('手机号或密码错误！')
               this.isPassing = false
