@@ -31,7 +31,11 @@
           <span>文件名</span>
         </template>
         <template slot-scope="scope">
-          <div style="cursor: pointer" :title="`${scope.row.isDir ? '' : '点击预览'}`" @click="handleFileNameClick(scope.row, scope.$index, fileList)">
+          <div
+            style="cursor: pointer"
+            :title="`${scope.row.isDir ? '' : '点击预览'}`"
+            @click="handleFileNameClick(scope.row, scope.$index, fileList)"
+          >
             {{ scope.row | fileNameComplete }}
           </div>
         </template>
@@ -153,36 +157,25 @@
     </el-table>
     <!-- 右键列表 -->
     <transition name="el-fade-in-linear">
-      <ul class="right-menu-list" v-show="rightMenu.isShow" :style="`top: ${rightMenu.top}px; left: ${rightMenu.left}px;`">
-        <li 
-          class="right-menu-item" 
-          @click="handleDeleteFileBtnClick(selectedFile)" v-if="deleteBtnShow"
-        >
+      <ul
+        class="right-menu-list"
+        id="rightMenuList"
+        v-show="rightMenu.isShow"
+        :style="`top: ${rightMenu.top};right: ${rightMenu.right};bottom: ${rightMenu.bottom};left: ${rightMenu.left};`"
+      >
+        <li class="right-menu-item" @click="handleDeleteFileBtnClick(selectedFile)" v-if="deleteBtnShow">
           <i class="el-icon-delete"></i> 删除
         </li>
-        <li 
-          class="right-menu-item" 
-          @click="handleRestoreFileBtnClick(selectedFile)"
-          v-if="restoreBtnShow"
-        >
+        <li class="right-menu-item" @click="handleRestoreFileBtnClick(selectedFile)" v-if="restoreBtnShow">
           <i class="el-icon-delete"></i> 还原
         </li>
-        <li
-          class="right-menu-item"
-          @click="handleMoveFileBtnClick(selectedFile)" v-if="moveBtnShow"
-        >
+        <li class="right-menu-item" @click="handleMoveFileBtnClick(selectedFile)" v-if="moveBtnShow">
           <i class="el-icon-s-promotion"></i> 移动
         </li>
-        <li
-          class="right-menu-item"
-          @click="handleRenameFileBtnClick(selectedFile)" v-if="renameBtnShow"
-        >
+        <li class="right-menu-item" @click="handleRenameFileBtnClick(selectedFile)" v-if="renameBtnShow">
           <i class="el-icon-edit-outline"></i> 重命名
         </li>
-        <li
-          class="right-menu-item"
-          @click="handleShareFileBtnClick(selectedFile)" v-if="shareBtnShow"
-        >
+        <li class="right-menu-item" @click="handleShareFileBtnClick(selectedFile)" v-if="shareBtnShow">
           <i class="el-icon-share"></i> 分享
         </li>
         <li class="right-menu-item" @click="rightMenu.isShow = false" v-if="downloadBtnShow">
@@ -195,18 +188,10 @@
             <i class="el-icon-download"></i> 下载
           </a>
         </li>
-        <li
-          class="right-menu-item"
-          @click="handleUnzipFileBtnClick(selectedFile)"
-          v-if="unzipBtnShow"
-        >
+        <li class="right-menu-item" @click="handleUnzipFileBtnClick(selectedFile)" v-if="unzipBtnShow">
           <i class="el-icon-files"></i> 解压缩
         </li>
-        <li
-          class="right-menu-item"
-          @click="getFileOnlineEditPathByOffice(selectedFile)"
-          v-if="onlineEditBtnShow"
-        >
+        <li class="right-menu-item" @click="getFileOnlineEditPathByOffice(selectedFile)" v-if="onlineEditBtnShow">
           <i class="el-icon-edit"></i> 在线编辑
         </li>
         <li
@@ -335,9 +320,11 @@ export default {
       rightMenu: {
         isShow: false,
         top: 0,
-        left: 0
+        left: 0,
+        bottom: 'auto',
+        right: 'auto'
       },
-      selectedFile: {}  //  右键选中的表格行数据
+      selectedFile: {} //  右键选中的表格行数据
     }
   },
   computed: {
@@ -384,11 +371,19 @@ export default {
     },
     // 解压缩按钮是否显示
     unzipBtnShow() {
-      return this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName) && ['zip', 'rar'].includes(this.selectedFile.extendName)
+      return (
+        this.fileType !== 6 &&
+        !['Share', 'MyShare'].includes(this.routeName) &&
+        ['zip', 'rar'].includes(this.selectedFile.extendName)
+      )
     },
     // 在线编辑按钮是否显示
     onlineEditBtnShow() {
-      return this.fileType !== 6 && this.officeFileType.includes(this.selectedFile.extendName) && !['Share', 'MyShare'].includes(this.routeName)
+      return (
+        this.fileType !== 6 &&
+        this.officeFileType.includes(this.selectedFile.extendName) &&
+        !['Share', 'MyShare'].includes(this.routeName)
+      )
     },
     // 复制链接按钮是否显示
     copyLinkBtnShow() {
@@ -442,10 +437,29 @@ export default {
      */
     handleContextMenu(row, column, event) {
       event.preventDefault()
-      this.$refs.multipleTable.setCurrentRow(row);
+      this.$refs.multipleTable.setCurrentRow(row)
       this.selectedFile = row
-      this.rightMenu.top = event.clientY
-      this.rightMenu.left = event.clientX + 18
+      // 纵坐标设置
+      if (
+        document.body.clientHeight - event.clientY <
+        document.querySelectorAll('#rightMenuList .right-menu-item').length * 36 + 10
+      ) {
+        // 如果到底部的距离小于元素总高度
+        this.rightMenu.top = 'auto'
+        this.rightMenu.bottom = `${document.body.clientHeight - event.clientY}px`
+      } else {
+        this.rightMenu.top = `${event.clientY}px`
+        this.rightMenu.bottom = 'auto'
+      }
+      // 横坐标设置
+      if (document.body.clientWidth - event.clientX < 120) {
+        // 如果到右边的距离小于元素总宽度
+        this.rightMenu.left = 'auto'
+        this.rightMenu.right = `${document.body.clientWidth - event.clientX}px`
+      } else {
+        this.rightMenu.left = `${event.clientX + 8}px`
+        this.rightMenu.right = 'auto'
+      }
       this.rightMenu.isShow = true
     },
     /**
@@ -453,7 +467,7 @@ export default {
      */
     closeRightMenu() {
       this.rightMenu.isShow = false
-      this.$refs.multipleTable.setCurrentRow();
+      this.$refs.multipleTable.setCurrentRow()
     },
     /**
      * 清空表格已选行
