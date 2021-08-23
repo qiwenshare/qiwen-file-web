@@ -40,6 +40,7 @@
       :batchOperate="batchOperate"
       v-if="fileModel === 1"
       @setMoveFileDialogData="setMoveFileDialogData"
+      @setShareFileDialogData="setShareFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
       @getTableDataByType="getTableDataByType"

@@ -14,8 +14,9 @@
         :key="index"
         :title="item | fileNameComplete"
         :style="`width: ${gridSize + 40}px; `"
+        :class="item.userFileId === selectedFile.userFileId ? 'active' : ''"
         @click="handleFileNameClick(item, index, fileListSorted)"
-        @contextmenu.prevent="rightClickFile(item, index, $event)"
+        @contextmenu.prevent="handleContextMenu(item, index, $event)"
       >
         <img class="file-img" :src="setFileImg(item)" :style="`width: ${gridSize}px; height: ${gridSize}px;`" />
         <div class="file-name">{{ item | fileNameComplete }}</div>
@@ -34,58 +35,60 @@
       </li>
     </ul>
     <transition name="el-fade-in-linear">
-      <div class="right-menu" v-show="rightMenu.isShow" :style="`top: ${rightMenu.top}px; left: ${rightMenu.left}px;`">
-        <el-button
-          type="info"
-          size="small"
-          plain
-          @click.native="getFileOnlineEditPathByOffice(selectedFile)"
-          v-if="fileType !== 6 && officeFileType.includes(selectedFile.extendName)"
-          >在线编辑</el-button
-        >
-        <el-button type="info" size="small" plain @click.native="handleDeleteFileBtnClick(selectedFile)"
-          >删除</el-button
-        >
-        <el-button
-          type="info"
-          size="small"
-          plain
-          @click.native="handleMoveFileBtnClick(selectedFile)"
-          v-if="fileType !== 6"
-          >移动</el-button
-        >
-        <el-button
-          type="info"
-          size="small"
-          plain
-          @click.native="handleRenameFileBtnClick(selectedFile)"
-          v-if="fileType !== 6"
-          >重命名</el-button
-        >
-        <el-button type="info" size="small" plain v-if="fileType !== 6" @click.native="rightMenu.isShow = false">
+      <ul
+        class="right-menu-list"
+        id="rightMenuList"
+        v-show="rightMenu.isShow"
+        :style="`top: ${rightMenu.top};right: ${rightMenu.right};bottom: ${rightMenu.bottom};left: ${rightMenu.left};`"
+      >
+        <li class="right-menu-item" @click="handleFileNameClick(selectedFile, 0)" v-if="seeBtnShow">
+          <i class="el-icon-delete"></i> 查看
+        </li>
+        <li class="right-menu-item" @click="handleDeleteFileBtnClick(selectedFile)" v-if="deleteBtnShow">
+          <i class="el-icon-delete"></i> 删除
+        </li>
+        <li class="right-menu-item" @click="handleRestoreFileBtnClick(selectedFile)" v-if="restoreBtnShow">
+          <i class="el-icon-delete"></i> 还原
+        </li>
+        <li class="right-menu-item" @click="handleMoveFileBtnClick(selectedFile)" v-if="moveBtnShow">
+          <i class="el-icon-s-promotion"></i> 移动
+        </li>
+        <li class="right-menu-item" @click="handleRenameFileBtnClick(selectedFile)" v-if="renameBtnShow">
+          <i class="el-icon-edit-outline"></i> 重命名
+        </li>
+        <li class="right-menu-item" @click="handleShareFileBtnClick(selectedFile)" v-if="shareBtnShow">
+          <i class="el-icon-share"></i> 分享
+        </li>
+        <li class="right-menu-item" @click="rightMenu.isShow = false" v-if="downloadBtnShow">
           <a
             target="_blank"
             style="display: block; color: inherit"
             :href="getDownloadFilePath(selectedFile)"
             :download="selectedFile.fileName + '.' + selectedFile.extendName"
-            >下载</a
           >
-        </el-button>
-        <el-button
-          type="info"
-          size="small"
-          plain
-          @click.native="handleUnzipFileBtnClick(selectedFile)"
-          v-if="fileType !== 6 && (selectedFile.extendName == 'zip' || selectedFile.extendName == 'rar')"
-          >解压缩</el-button
+            <i class="el-icon-download"></i> 下载
+          </a>
+        </li>
+        <li class="right-menu-item" @click="handleUnzipFileBtnClick(selectedFile)" v-if="unzipBtnShow">
+          <i class="el-icon-files"></i> 解压缩
+        </li>
+        <li class="right-menu-item" @click="getFileOnlineEditPathByOffice(selectedFile)" v-if="onlineEditBtnShow">
+          <i class="el-icon-edit"></i> 在线编辑
+        </li>
+        <li
+          class="right-menu-item"
+          @click="copyShareLink(selectedFile.shareBatchNum, selectedFile.extractionCode)"
+          v-if="copyLinkBtnShow"
         >
-      </div>
+          <i class="el-icon-edit"></i> 复制链接
+        </li>
+      </ul>
     </transition>
   </div>
 </template>
 
 <script>
-import { unzipFile, deleteFile, renameFile, deleteRecoveryFile } from '@/request/file.js'
+import { unzipFile, deleteFile, renameFile, deleteRecoveryFile, restoreRecoveryFile } from '@/request/file.js'
 import { mapGetters } from 'vuex'
 import 'element-ui/lib/theme-chalk/base.css'
 
@@ -221,6 +224,54 @@ export default {
     // 图标大小
     gridSize() {
       return this.$store.getters.gridSize
+    },
+    // 查看按钮是否显示
+    seeBtnShow() {
+      return this.fileType !== 6
+    },
+    // 删除按钮是否显示
+    deleteBtnShow() {
+      return !['Share', 'MyShare'].includes(this.routeName)
+    },
+    // 还原按钮是否显示
+    restoreBtnShow() {
+      return this.fileType === 6 && !['Share', 'MyShare'].includes(this.routeName)
+    },
+    // 移动按钮是否显示
+    moveBtnShow() {
+      return this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName)
+    },
+    // 重命名按钮是否显示
+    renameBtnShow() {
+      return this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName)
+    },
+    // 删除按钮是否显示
+    shareBtnShow() {
+      return this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName)
+    },
+    // 下载按钮是否显示
+    downloadBtnShow() {
+      return this.fileType !== 6 && !['MyShare'].includes(this.routeName)
+    },
+    // 解压缩按钮是否显示
+    unzipBtnShow() {
+      return (
+        this.fileType !== 6 &&
+        !['Share', 'MyShare'].includes(this.routeName) &&
+        ['zip', 'rar'].includes(this.selectedFile.extendName)
+      )
+    },
+    // 在线编辑按钮是否显示
+    onlineEditBtnShow() {
+      return (
+        this.fileType !== 6 &&
+        this.officeFileType.includes(this.selectedFile.extendName) &&
+        !['Share', 'MyShare'].includes(this.routeName)
+      )
+    },
+    // 复制链接按钮是否显示
+    copyLinkBtnShow() {
+      return this.routeName === 'MyShare'
     }
   },
   watch: {
@@ -240,6 +291,17 @@ export default {
     // 批量操作模式 - 被选中的文件
     selectedFileList(newValue) {
       this.$emit('setSelectionFile', newValue)
+    },
+    /**
+     * 监听右键列表状态
+     * @description 右键列表打开时，body 添加点击事件的监听
+     */
+    'rightMenu.isShow'(newValue) {
+      if (newValue) {
+        document.body.addEventListener('click', this.closeRightMenu)
+      } else {
+        document.body.removeEventListener('click', this.closeRightMenu)
+      }
     }
   },
   methods: {
@@ -247,18 +309,42 @@ export default {
      * 文件鼠标右键事件
      * @param {object} item 文件信息
      * @param {number} index 文件索引
-     * @param {object} mouseEvent 鼠标事件信息
+     * @param {object} event 鼠标事件信息
      */
-    rightClickFile(item, index, mouseEvent) {
+    handleContextMenu(item, index, event) {
       if (!this.batchOperate) {
-        this.rightMenu.isShow = false
-        setTimeout(() => {
-          this.selectedFile = item
-          this.rightMenu.top = mouseEvent.clientY - 64
-          this.rightMenu.left = mouseEvent.clientX + 18
-          this.rightMenu.isShow = true
-        }, 100)
-      }
+        event.preventDefault()
+        this.selectedFile = item
+        // 纵坐标设置
+        if (
+          document.body.clientHeight - event.clientY <
+          document.querySelectorAll('#rightMenuList .right-menu-item').length * 36 + 10
+        ) {
+          // 如果到底部的距离小于元素总高度
+          this.rightMenu.top = 'auto'
+          this.rightMenu.bottom = `${document.body.clientHeight - event.clientY}px`
+        } else {
+          this.rightMenu.top = `${event.clientY}px`
+          this.rightMenu.bottom = 'auto'
+        }
+        // 横坐标设置
+        if (document.body.clientWidth - event.clientX < 120) {
+          // 如果到右边的距离小于元素总宽度
+          this.rightMenu.left = 'auto'
+          this.rightMenu.right = `${document.body.clientWidth - event.clientX}px`
+        } else {
+          this.rightMenu.left = `${event.clientX + 8}px`
+          this.rightMenu.right = 'auto'
+        }
+        this.rightMenu.isShow = true
+        }
+    },
+    /**
+     * 关闭右键列表
+     */
+    closeRightMenu() {
+      this.rightMenu.isShow = false
+      this.selectedFile = {}
     },
     /**
      * 根据文件扩展名设置文件图片
@@ -512,6 +598,25 @@ export default {
       }
     },
     /**
+     * 还原按钮点击事件
+     * @description 调用接口，在回收站中还原文件
+     * @param {object} fileInfo 文件信息
+     */
+    handleRestoreFileBtnClick(fileInfo) {
+      restoreRecoveryFile({
+        deleteBatchNum: fileInfo.deleteBatchNum,
+        filePath: fileInfo.filePath
+      }).then((res) => {
+        if (res.success) {
+          this.$emit('getTableDataByType')
+          this.$store.dispatch('showStorage')
+          this.$message.success('已还原')
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    /**
      * 文件重命名按钮点击事件
      * @description 打开确认对话框让用户输入新的文件名
      * @param {object} fileInfo 文件信息
@@ -555,6 +660,15 @@ export default {
           this.$message.error(res.message)
         }
       })
+    },
+    /**
+     * 文件分享按钮点击事件
+     * @description 打开对话框让用户选择过期时间和提取码
+     * @param {object} fileInfo 文件信息
+     */
+    handleShareFileBtnClick(fileInfo) {
+      this.$emit('setSelectionFile', [fileInfo])
+      this.$emit('setShareFileDialogData')
     }
   }
 }
@@ -620,16 +734,35 @@ export default {
         background: rgba(245, 247, 250, 0);
       }
     }
+    .file-item.active {
+      background: $tabBackColor;
+    }
   }
 
-  .right-menu {
+  .right-menu-list {
     position: fixed;
     display: flex;
     flex-direction: column;
+    background: #fff;
+    border: 1px solid $BorderLighter;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    z-index: 2;
+    padding: 4px 0;
+    color: $RegularText;
 
-    >>> .el-button {
-      margin: 0;
-      border-radius: 0;
+    .right-menu-item {
+      padding: 0 16px;
+      height: 36px;
+      line-height: 36px;
+      cursor: pointer;
+      &:hover {
+        background: $PrimaryHover;
+        color: $Primary;
+      }
+      i {
+        margin-right: 8px;
+      }
     }
   }
 }

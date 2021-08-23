@@ -163,6 +163,9 @@
         v-show="rightMenu.isShow"
         :style="`top: ${rightMenu.top};right: ${rightMenu.right};bottom: ${rightMenu.bottom};left: ${rightMenu.left};`"
       >
+        <li class="right-menu-item" @click="handleFileNameClick(selectedFile, 0)" v-if="seeBtnShow">
+          <i class="el-icon-delete"></i> 查看
+        </li>
         <li class="right-menu-item" @click="handleDeleteFileBtnClick(selectedFile)" v-if="deleteBtnShow">
           <i class="el-icon-delete"></i> 删除
         </li>
@@ -344,6 +347,10 @@ export default {
     // 路由名称
     routeName() {
       return this.$route.name
+    },
+    // 查看按钮是否显示
+    seeBtnShow() {
+      return this.fileType !== 6
     },
     // 删除按钮是否显示
     deleteBtnShow() {

@@ -1,8 +1,7 @@
 <template>
   <div class="operation-menu-wrapper" :class="'file-type-' + fileType">
     <el-button-group class="operate-group">
-      
-      <el-dropdown class="drop-btn" trigger="hover" v-if="!selectionFile.length && fileType === 0">
+      <el-dropdown class="drop-btn" trigger="hover" v-if="(!selectionFile.length || !batchOperate) && fileType === 0">
         <el-button size="mini" type="primary" icon="el-icon-upload2" id="uploadFileId"
           >上传<i class="el-icon-arrow-down el-icon--right"></i
         ></el-button>
@@ -17,10 +16,10 @@
         type="primary"
         icon="el-icon-plus"
         @click="dialogAddFolder.visible = true"
-        v-if="!selectionFile.length && !fileType && fileType !== 6"
+        v-if="(!selectionFile.length || !batchOperate) && !fileType && fileType !== 6"
         >新建文件夹</el-button
       >
-      <el-dropdown class="drop-btn" trigger="hover" v-if="!selectionFile.length && fileType === 0">
+      <el-dropdown class="drop-btn" trigger="hover" v-if="(!selectionFile.length || !batchOperate) && fileType === 0">
         <el-button size="mini" type="primary" icon="el-icon-edit-outline" id="uploadFileId"
           >新建在线文档<i class="el-icon-arrow-down el-icon--right"></i
         ></el-button>
@@ -41,7 +40,7 @@
       <el-button
         size="mini"
         type="primary"
-        v-if="selectionFile.length"
+        v-if="selectionFile.length && batchOperate"
         icon="el-icon-delete"
         @click="handleBatchDeleteBtnClick()"
         >批量删除</el-button
@@ -49,7 +48,7 @@
       <el-button
         size="mini"
         type="primary"
-        v-if="selectionFile.length && !fileType && fileType !== 6"
+        v-if="selectionFile.length && !fileType && fileType !== 6 && batchOperate"
         icon="el-icon-rank"
         @click="handleBatchMoveBtnClick()"
         >批量移动</el-button
@@ -57,7 +56,7 @@
       <el-button
         size="mini"
         type="primary"
-        v-if="selectionFile.length && fileType !== 6"
+        v-if="selectionFile.length && fileType !== 6 && batchOperate"
         icon="el-icon-download"
         @click="handleBatchDownloadBtnClick()"
         >批量下载</el-button
@@ -65,14 +64,14 @@
       <el-button
         size="mini"
         type="primary"
-        v-if="selectionFile.length && fileType !== 6 && $route.name !== 'Share'"
+        v-if="selectionFile.length && fileType !== 6 && $route.name !== 'Share' && batchOperate"
         icon="el-icon-share"
         @click="handleBatchShareBtnClick()"
-        >分享</el-button
+        >批量分享</el-button
       >
     </el-button-group>
 
-    <!-- 全局搜素文件 -->
+    <!-- 全局搜索文件 -->
     <el-input
       v-if="fileType === 0"
       class="select-file-input"
