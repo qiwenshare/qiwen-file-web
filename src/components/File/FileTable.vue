@@ -164,13 +164,13 @@
         :style="`top: ${rightMenu.top};right: ${rightMenu.right};bottom: ${rightMenu.bottom};left: ${rightMenu.left};`"
       >
         <li class="right-menu-item" @click="handleFileNameClick(selectedFile, 0)" v-if="seeBtnShow">
-          <i class="el-icon-delete"></i> 查看
+          <i class="el-icon-view"></i> 查看
         </li>
         <li class="right-menu-item" @click="handleDeleteFileBtnClick(selectedFile)" v-if="deleteBtnShow">
           <i class="el-icon-delete"></i> 删除
         </li>
         <li class="right-menu-item" @click="handleRestoreFileBtnClick(selectedFile)" v-if="restoreBtnShow">
-          <i class="el-icon-delete"></i> 还原
+          <i class="el-icon-refresh-left"></i> 还原
         </li>
         <li class="right-menu-item" @click="handleMoveFileBtnClick(selectedFile)" v-if="moveBtnShow">
           <i class="el-icon-s-promotion"></i> 移动
@@ -191,8 +191,17 @@
             <i class="el-icon-download"></i> 下载
           </a>
         </li>
-        <li class="right-menu-item" @click="handleUnzipFileBtnClick(selectedFile)" v-if="unzipBtnShow">
-          <i class="el-icon-files"></i> 解压缩
+        <!-- 0-解压到当前文件夹， 1-自动创建该文件名目录，并解压到目录里， 3-手动选择解压目录 -->
+        <li class="right-menu-item unzip-menu-item" v-if="unzipBtnShow">
+          <i class="el-icon-files"></i> 解压缩 <i class="el-icon-arrow-right"></i>
+          <ul class="unzip-list" :style="`top: ${unzipMenu.top};bottom: ${unzipMenu.bottom};left: ${unzipMenu.left};right: ${unzipMenu.right};`">
+            <li class="unzip-item" @click="handleUnzipFileBtnClick(selectedFile, 0)" v-if="unzipBtnShow">
+              <i class="el-icon-files"></i> 解压到当前文件夹
+            </li>
+            <li class="unzip-item" @click="handleUnzipFileBtnClick(selectedFile, 1)" v-if="unzipBtnShow" :title='`解压到"${selectedFile.fileName}"`'>
+              <i class="el-icon-files"></i> 解压到"{{selectedFile.fileName}}"
+            </li>
+          </ul>
         </li>
         <li class="right-menu-item" @click="getFileOnlineEditPathByOffice(selectedFile)" v-if="onlineEditBtnShow">
           <i class="el-icon-edit"></i> 在线编辑
@@ -327,6 +336,13 @@ export default {
         bottom: 'auto',
         right: 'auto'
       },
+      // 右键解压缩菜单
+      unzipMenu: {
+        top: 0,
+        bottom: 'auto',
+        left: '138px',
+        right: 'auto'
+      },
       selectedFile: {} //  右键选中的表格行数据
     }
   },
@@ -449,23 +465,31 @@ export default {
       // 纵坐标设置
       if (
         document.body.clientHeight - event.clientY <
-        document.querySelectorAll('#rightMenuList .right-menu-item').length * 36 + 10
+        document.querySelectorAll('#rightMenuList > .right-menu-item').length * 36 + 10
       ) {
         // 如果到底部的距离小于元素总高度
         this.rightMenu.top = 'auto'
         this.rightMenu.bottom = `${document.body.clientHeight - event.clientY}px`
+        this.unzipMenu.top = 'auto'
+        this.unzipMenu.bottom = '0px'
       } else {
         this.rightMenu.top = `${event.clientY}px`
         this.rightMenu.bottom = 'auto'
+        this.unzipMenu.top = '0px'
+        this.unzipMenu.bottom = 'auto'
       }
       // 横坐标设置
-      if (document.body.clientWidth - event.clientX < 120) {
+      if (document.body.clientWidth - event.clientX < 138) {
         // 如果到右边的距离小于元素总宽度
         this.rightMenu.left = 'auto'
         this.rightMenu.right = `${document.body.clientWidth - event.clientX}px`
+        this.unzipMenu.left = '-200px'
+        this.unzipMenu.right = 'auto'
       } else {
         this.rightMenu.left = `${event.clientX + 8}px`
         this.rightMenu.right = 'auto'
+        this.unzipMenu.left = '138px'
+        this.unzipMenu.right = 'auto'
       }
       this.rightMenu.isShow = true
     },
@@ -656,7 +680,7 @@ export default {
      * @param {[]} selection 勾选的行数据
      */
     handleSelectRow(selection) {
-      this.$emit('setSelectionFile', selection)
+      this.$emit('setSelectionFile', selection, selection.length !== 0)
     },
     /**
      * 移动按钮点击事件
@@ -672,24 +696,34 @@ export default {
      * 解压缩按钮点击事件
      * @description 调用解压缩文件接口，并展示新的文件列表
      * @param {object} fileInfo 文件信息
+     * @param {number} unzipMode 解压模式 0-解压到当前文件夹， 1-自动创建该文件名目录，并解压到目录里， 2-手动选择解压目录
      */
-    handleUnzipFileBtnClick(fileInfo) {
-      const loading = this.$loading({
-        lock: true,
-        text: '正在解压缩，请稍等片刻...',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      })
-      unzipFile(fileInfo).then((res) => {
-        if (res.success) {
-          this.$emit('getTableDataByType')
-          this.$store.dispatch('showStorage')
-          this.$message.success('解压成功')
-          loading.close()
-        } else {
-          this.$message.error(res.message)
-        }
-      })
+    handleUnzipFileBtnClick(fileInfo, unzipMode) {
+      if(unzipMode === 0 || unzipMode === 1) {
+        const loading = this.$loading({
+          lock: true,
+          text: '正在解压缩，请稍等片刻...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
+        unzipFile({
+          unzipMode: unzipMode,
+          userFileId: fileInfo.userFileId
+        }).then((res) => {
+          if (res.success) {
+            this.$emit('getTableDataByType')
+            this.$store.dispatch('showStorage')
+            this.$message.success('解压成功')
+            loading.close()
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+      } else if(unzipMode === 2) {
+        this.$emit('setOperationFile', fileInfo)
+        //  第一个参数: 是否批量移动；第二个参数：打开/关闭移动文件对话框
+        this.$emit('setMoveFileDialogData', false, true)
+      }
     },
 
     /**
@@ -934,7 +968,8 @@ export default {
   padding: 4px 0;
   color: $RegularText;
 
-  .right-menu-item {
+  .right-menu-item,
+  .unzip-item {
     padding: 0 16px;
     height: 36px;
     line-height: 36px;
@@ -947,5 +982,32 @@ export default {
       margin-right: 8px;
     }
   }
+
+  .unzip-menu-item {
+    position: relative;
+    &:hover {
+      .unzip-list {
+        display: block;
+      }
+    }
+    .unzip-list {
+      position: absolute;
+      display: none;
+      .unzip-item {
+        width: 200px;
+        setEllipsis(1)
+      }
+    }
+  }
+}
+.right-menu-list,
+.unzip-list {
+  background: #fff;
+  border: 1px solid $BorderLighter;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  padding: 4px 0;
+  color: $RegularText;
 }
 </style>

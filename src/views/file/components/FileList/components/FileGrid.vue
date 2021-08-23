@@ -41,14 +41,14 @@
         v-show="rightMenu.isShow"
         :style="`top: ${rightMenu.top};right: ${rightMenu.right};bottom: ${rightMenu.bottom};left: ${rightMenu.left};`"
       >
-        <li class="right-menu-item" @click="handleFileNameClick(selectedFile, 0)" v-if="seeBtnShow">
-          <i class="el-icon-delete"></i> 查看
+        <li class="right-menu-item" @click="handleFileNameClick(selectedFile, selectedIndex, fileListSorted)" v-if="seeBtnShow">
+          <i class="el-icon-view"></i> 查看
         </li>
         <li class="right-menu-item" @click="handleDeleteFileBtnClick(selectedFile)" v-if="deleteBtnShow">
           <i class="el-icon-delete"></i> 删除
         </li>
         <li class="right-menu-item" @click="handleRestoreFileBtnClick(selectedFile)" v-if="restoreBtnShow">
-          <i class="el-icon-delete"></i> 还原
+          <i class="el-icon-refresh-left"></i> 还原
         </li>
         <li class="right-menu-item" @click="handleMoveFileBtnClick(selectedFile)" v-if="moveBtnShow">
           <i class="el-icon-s-promotion"></i> 移动
@@ -193,6 +193,7 @@ export default {
         left: 0
       },
       selectedFile: {},
+      selectedIndex: 0,
       // 音频预览
       audioObj: {
         src: ''
@@ -315,10 +316,11 @@ export default {
       if (!this.batchOperate) {
         event.preventDefault()
         this.selectedFile = item
+        this.selectedIndex = index
         // 纵坐标设置
         if (
           document.body.clientHeight - event.clientY <
-          document.querySelectorAll('#rightMenuList .right-menu-item').length * 36 + 10
+          document.querySelectorAll('#rightMenuList > .right-menu-item').length * 36 + 10
         ) {
           // 如果到底部的距离小于元素总高度
           this.rightMenu.top = 'auto'

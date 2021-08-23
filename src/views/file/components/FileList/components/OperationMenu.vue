@@ -1,11 +1,11 @@
 <template>
   <div class="operation-menu-wrapper" :class="'file-type-' + fileType">
     <el-button-group class="operate-group">
-      <el-dropdown class="drop-btn" trigger="hover" v-if="(!selectionFile.length || !batchOperate) && fileType === 0">
-        <el-button size="mini" type="primary" icon="el-icon-upload2" id="uploadFileId"
+      <el-dropdown class="drop-btn" trigger="hover">
+        <el-button size="mini" type="primary" icon="el-icon-upload2" id="uploadFileId" :disabled="selectionFile.length && batchOperate || fileType !== 0"
           >上传<i class="el-icon-arrow-down el-icon--right"></i
         ></el-button>
-        <el-dropdown-menu slot="dropdown">
+        <el-dropdown-menu slot="dropdown" :disabled="selectionFile.length && batchOperate || fileType !== 0">
           <el-dropdown-item @click.native="handleUploadFileBtnClick(0)">上传文件</el-dropdown-item>
           <el-dropdown-item @click.native="handleUploadFileBtnClick(1)">上传文件夹</el-dropdown-item>
           <el-dropdown-item @click.native="handleUploadFileBtnClick(2)" title="截图粘贴或拖拽上传">拖拽上传</el-dropdown-item>
@@ -16,14 +16,14 @@
         type="primary"
         icon="el-icon-plus"
         @click="dialogAddFolder.visible = true"
-        v-if="(!selectionFile.length || !batchOperate) && !fileType && fileType !== 6"
+        :disabled="selectionFile.length && batchOperate || fileType !== 0"
         >新建文件夹</el-button
       >
-      <el-dropdown class="drop-btn" trigger="hover" v-if="(!selectionFile.length || !batchOperate) && fileType === 0">
-        <el-button size="mini" type="primary" icon="el-icon-edit-outline" id="uploadFileId"
+      <el-dropdown class="drop-btn" trigger="hover">
+        <el-button size="mini" type="primary" icon="el-icon-edit-outline" id="uploadFileId" :disabled="selectionFile.length && batchOperate || fileType !== 0"
           >新建在线文档<i class="el-icon-arrow-down el-icon--right"></i
         ></el-button>
-        <el-dropdown-menu slot="dropdown">
+        <el-dropdown-menu slot="dropdown" :disabled="selectionFile.length && batchOperate || fileType !== 0">
           <el-dropdown-item @click.native="handleCreateFile('docx')">
             <img
             src="@/assets/images/file/file_word.png"

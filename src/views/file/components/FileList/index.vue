@@ -351,8 +351,9 @@ export default {
      * 表格勾选框事件 | 保存被勾选的文件
      * @param {object[]} selection 被勾选的文件数组
      */
-    setSelectionFile(selection) {
+    setSelectionFile(selection, batchOperate) {
       this.selectionFile = selection
+      this.batchOperate = batchOperate
     },
 
     /**
