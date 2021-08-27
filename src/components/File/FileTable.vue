@@ -10,8 +10,10 @@
       element-loading-text="文件加载中……"
       tooltip-effect="dark"
       :data="fileList"
+      :highlight-current-row="true"
       @selection-change="handleSelectRow"
       @sort-change="handleSortChange"
+      @row-contextmenu="handleContextMenu"
     >
       <el-table-column type="selection" key="selection" width="55"></el-table-column>
       <el-table-column label prop="isDir" key="isDir" width="60" align="center">
@@ -29,7 +31,11 @@
           <span>文件名</span>
         </template>
         <template slot-scope="scope">
-          <div style="cursor: pointer" :title="`${scope.row.isDir ? '' : '点击预览'}`" @click="handleFileNameClick(scope.row, scope.$index, fileList)">
+          <div
+            style="cursor: pointer"
+            :title="`${scope.row.isDir ? '' : '点击预览'}`"
+            @click="handleFileNameClick(scope.row, scope.$index, fileList)"
+          >
             {{ scope.row | fileNameComplete }}
           </div>
         </template>
@@ -148,98 +154,67 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :width="operaColumnWidth" key="action">
-        <template slot="header">
-          <span>操作</span>
-          <i class="el-icon-circle-plus" title="展开" @click="operaColumnExpand = true"></i>
-          <i class="el-icon-remove" title="折叠" @click="operaColumnExpand = false"></i>
-        </template>
-        <template slot-scope="scope">
-          <div v-if="operaColumnExpand">
-            <el-button type="text" size="mini" @click.native="handleDeleteFileBtnClick(scope.row)" v-if="deleteBtnShow"
-              >删除</el-button
-            >
-            <el-button
-              type="text"
-              size="mini"
-              @click.native="handleRestoreFileBtnClick(scope.row)"
-              v-if="restoreBtnShow"
-              >还原</el-button
-            >
-            <el-button type="text" size="mini" @click.native="handleMoveFileBtnClick(scope.row)" v-if="moveBtnShow"
-              >移动</el-button
-            >
-            <el-button type="text" size="mini" @click.native="handleRenameFileBtnClick(scope.row)" v-if="renameBtnShow"
-              >重命名</el-button
-            >
-            <el-button type="text" size="mini" @click.native="handleShareFileBtnClick(scope.row)" v-if="shareBtnShow"
-              >分享</el-button
-            >
-            <el-button type="text" size="mini" v-if="downloadBtnShow">
-              <a target="_blank" style="display: block; color: inherit" :href="getDownloadFilePath(scope.row)">下载</a>
-            </el-button>
-            <el-button type="text" size="mini" @click.native="getFileOnlineEditPathByOffice(scope.row)" v-if="fileType !== 6 && officeFileType.includes(scope.row.extendName)"
-              >在线编辑</el-button
-            >
-            <el-button
-              type="text"
-              size="mini"
-              @click.native="handleUnzipFileBtnClick(scope.row)"
-              v-if="unzipBtnShow && ['zip', 'rar'].includes(scope.row.extendName)"
-              >解压缩</el-button
-            >
-            <el-button
-              type="text"
-              size="mini"
-              @click="copyShareLink(scope.row.shareBatchNum, scope.row.extractionCode)"
-              v-if="copyLinkBtnShow"
-              >复制链接</el-button
-            >
-          </div>
-          <el-dropdown trigger="click" v-else>
-            <el-button size="mini">
-              操作
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="handleDeleteFileBtnClick(scope.row)" v-if="deleteBtnShow"
-                >删除</el-dropdown-item
-              >
-              <el-dropdown-item @click.native="handleRestoreFileBtnClick(scope.row)" v-if="restoreBtnShow"
-                >还原</el-dropdown-item
-              >
-              <el-dropdown-item @click.native="handleMoveFileBtnClick(scope.row)" v-if="moveBtnShow"
-                >移动</el-dropdown-item
-              >
-              <el-dropdown-item @click.native="handleRenameFileBtnClick(scope.row)" v-if="renameBtnShow"
-                >重命名</el-dropdown-item
-              >
-              <el-dropdown-item v-if="shareBtnShow" @click.native="handleShareFileBtnClick(scope.row)"
-                >分享</el-dropdown-item
-              >
-              <el-dropdown-item v-if="downloadBtnShow">
-                <a target="_blank" style="display: block; color: inherit" :href="getDownloadFilePath(scope.row)"
-                  >下载</a
-                >
-              </el-dropdown-item>
-              <el-dropdown-item @click.native="getFileOnlineEditPathByOffice(scope.row)" v-if="fileType !== 6 && officeFileType.includes(scope.row.extendName)"
-                >在线编辑</el-dropdown-item
-              >
-              <el-dropdown-item
-                v-if="unzipBtnShow && ['zip', 'rar'].includes(scope.row.extendName)"
-                @click.native="handleUnzipFileBtnClick(scope.row)"
-                >解压缩</el-dropdown-item
-              >
-              <el-dropdown-item
-                v-if="copyLinkBtnShow"
-                @click.native="copyShareLink(scope.row.shareBatchNum, scope.row.extractionCode)"
-                >复制链接</el-dropdown-item
-              >
-            </el-dropdown-menu>
-          </el-dropdown>
-        </template>
-      </el-table-column>
     </el-table>
+    <!-- 右键列表 -->
+    <transition name="el-fade-in-linear">
+      <ul
+        class="right-menu-list"
+        id="rightMenuList"
+        v-show="rightMenu.isShow"
+        :style="`top: ${rightMenu.top};right: ${rightMenu.right};bottom: ${rightMenu.bottom};left: ${rightMenu.left};`"
+      >
+        <li class="right-menu-item" @click="handleFileNameClick(selectedFile, 0)" v-if="seeBtnShow">
+          <i class="el-icon-view"></i> 查看
+        </li>
+        <li class="right-menu-item" @click="handleDeleteFileBtnClick(selectedFile)" v-if="deleteBtnShow">
+          <i class="el-icon-delete"></i> 删除
+        </li>
+        <li class="right-menu-item" @click="handleRestoreFileBtnClick(selectedFile)" v-if="restoreBtnShow">
+          <i class="el-icon-refresh-left"></i> 还原
+        </li>
+        <li class="right-menu-item" @click="handleMoveFileBtnClick(selectedFile)" v-if="moveBtnShow">
+          <i class="el-icon-s-promotion"></i> 移动
+        </li>
+        <li class="right-menu-item" @click="handleRenameFileBtnClick(selectedFile)" v-if="renameBtnShow">
+          <i class="el-icon-edit-outline"></i> 重命名
+        </li>
+        <li class="right-menu-item" @click="handleShareFileBtnClick(selectedFile)" v-if="shareBtnShow">
+          <i class="el-icon-share"></i> 分享
+        </li>
+        <li class="right-menu-item" @click="rightMenu.isShow = false" v-if="downloadBtnShow">
+          <a
+            target="_blank"
+            style="display: block; color: inherit"
+            :href="getDownloadFilePath(selectedFile)"
+            :download="selectedFile.fileName + '.' + selectedFile.extendName"
+          >
+            <i class="el-icon-download"></i> 下载
+          </a>
+        </li>
+        <!-- 0-解压到当前文件夹， 1-自动创建该文件名目录，并解压到目录里， 3-手动选择解压目录 -->
+        <li class="right-menu-item unzip-menu-item" v-if="unzipBtnShow">
+          <i class="el-icon-files"></i> 解压缩 <i class="el-icon-arrow-right"></i>
+          <ul class="unzip-list" :style="`top: ${unzipMenu.top};bottom: ${unzipMenu.bottom};left: ${unzipMenu.left};right: ${unzipMenu.right};`">
+            <li class="unzip-item" @click="handleUnzipFileBtnClick(selectedFile, 0)" v-if="unzipBtnShow">
+              <i class="el-icon-files"></i> 解压到当前文件夹
+            </li>
+            <li class="unzip-item" @click="handleUnzipFileBtnClick(selectedFile, 1)" v-if="unzipBtnShow" :title='`解压到"${selectedFile.fileName}"`'>
+              <i class="el-icon-files"></i> 解压到"{{selectedFile.fileName}}"
+            </li>
+          </ul>
+        </li>
+        <li class="right-menu-item" @click="getFileOnlineEditPathByOffice(selectedFile)" v-if="onlineEditBtnShow">
+          <i class="el-icon-edit"></i> 在线编辑
+        </li>
+        <li
+          class="right-menu-item"
+          @click="copyShareLink(selectedFile.shareBatchNum, selectedFile.extractionCode)"
+          v-if="copyLinkBtnShow"
+        >
+          <i class="el-icon-edit"></i> 复制链接
+        </li>
+      </ul>
+    </transition>
   </div>
 </template>
 
@@ -273,7 +248,6 @@ export default {
   },
   data() {
     return {
-      operaColumnExpand: this.getCookies('operaColumnExpand') || false, //  表格操作列-是否收缩
       //  可以识别的文件类型
       fileImgTypeList: [
         'png',
@@ -353,7 +327,23 @@ export default {
       audioObj: {
         src: ''
       },
-      sortedFileList: [] //  排序后的表格数据
+      sortedFileList: [], //  排序后的表格数据
+      // 右键菜单
+      rightMenu: {
+        isShow: false,
+        top: 0,
+        left: 0,
+        bottom: 'auto',
+        right: 'auto'
+      },
+      // 右键解压缩菜单
+      unzipMenu: {
+        top: 0,
+        bottom: 'auto',
+        left: '138px',
+        right: 'auto'
+      },
+      selectedFile: {} //  右键选中的表格行数据
     }
   },
   computed: {
@@ -370,23 +360,13 @@ export default {
         this.fileList.map((data) => data.extendName).includes('rar')
       )
     },
-    // 操作列宽度
-    operaColumnWidth() {
-      return ['Share', 'MyShare'].includes(this.routeName)
-        ? 130
-        : this.fileType === 6
-        ? 120
-        : this.operaColumnExpand
-        ? this.isIncludeNormalFile
-          ? this.isIncludeZipRarFile
-            ? 300
-            : 270
-          : 230
-        : 100
-    },
     // 路由名称
     routeName() {
       return this.$route.name
+    },
+    // 查看按钮是否显示
+    seeBtnShow() {
+      return this.fileType !== 6
     },
     // 删除按钮是否显示
     deleteBtnShow() {
@@ -414,7 +394,19 @@ export default {
     },
     // 解压缩按钮是否显示
     unzipBtnShow() {
-      return this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName)
+      return (
+        this.fileType !== 6 &&
+        !['Share', 'MyShare'].includes(this.routeName) &&
+        ['zip', 'rar'].includes(this.selectedFile.extendName)
+      )
+    },
+    // 在线编辑按钮是否显示
+    onlineEditBtnShow() {
+      return (
+        this.fileType !== 6 &&
+        this.officeFileType.includes(this.selectedFile.extendName) &&
+        !['Share', 'MyShare'].includes(this.routeName)
+      )
     },
     // 复制链接按钮是否显示
     copyLinkBtnShow() {
@@ -445,16 +437,16 @@ export default {
       this.sortedFileList = this.fileList
     },
     /**
-     * 监听表格操作列按钮折叠状态变化
-     * @param {boolean} newValue 折叠状态
-     * @description 将状态存储在sessionStorage中，保证页面刷新时仍然保存设置的状态
+     * 监听右键列表状态
+     * @description 右键列表打开时，body 添加点击事件的监听
      */
-    operaColumnExpand(newValue) {
-      this.setCookies('operaColumnExpand', newValue)
+    'rightMenu.isShow'(newValue) {
+      if (newValue) {
+        document.body.addEventListener('click', this.closeRightMenu)
+      } else {
+        document.body.removeEventListener('click', this.closeRightMenu)
+      }
     }
-  },
-  created() {
-    this.operaColumnExpand = this.getCookies('operaColumnExpand') === 'true' //  读取保存的状态
   },
   methods: {
     /**
@@ -462,6 +454,51 @@ export default {
      */
     handleSortChange() {
       this.sortedFileList = this.$refs.multipleTable.tableData
+    },
+    /**
+     * 表格某一行右键事件
+     */
+    handleContextMenu(row, column, event) {
+      event.preventDefault()
+      this.$refs.multipleTable.setCurrentRow(row)
+      this.selectedFile = row
+      // 纵坐标设置
+      if (
+        document.body.clientHeight - event.clientY <
+        document.querySelectorAll('#rightMenuList > .right-menu-item').length * 36 + 10
+      ) {
+        // 如果到底部的距离小于元素总高度
+        this.rightMenu.top = 'auto'
+        this.rightMenu.bottom = `${document.body.clientHeight - event.clientY}px`
+        this.unzipMenu.top = 'auto'
+        this.unzipMenu.bottom = '0px'
+      } else {
+        this.rightMenu.top = `${event.clientY}px`
+        this.rightMenu.bottom = 'auto'
+        this.unzipMenu.top = '0px'
+        this.unzipMenu.bottom = 'auto'
+      }
+      // 横坐标设置
+      if (document.body.clientWidth - event.clientX < 138) {
+        // 如果到右边的距离小于元素总宽度
+        this.rightMenu.left = 'auto'
+        this.rightMenu.right = `${document.body.clientWidth - event.clientX}px`
+        this.unzipMenu.left = '-200px'
+        this.unzipMenu.right = 'auto'
+      } else {
+        this.rightMenu.left = `${event.clientX + 8}px`
+        this.rightMenu.right = 'auto'
+        this.unzipMenu.left = '138px'
+        this.unzipMenu.right = 'auto'
+      }
+      this.rightMenu.isShow = true
+    },
+    /**
+     * 关闭右键列表
+     */
+    closeRightMenu() {
+      this.rightMenu.isShow = false
+      this.$refs.multipleTable.setCurrentRow()
     },
     /**
      * 清空表格已选行
@@ -643,7 +680,7 @@ export default {
      * @param {[]} selection 勾选的行数据
      */
     handleSelectRow(selection) {
-      this.$emit('setSelectionFile', selection)
+      this.$emit('setSelectionFile', selection, selection.length !== 0)
     },
     /**
      * 移动按钮点击事件
@@ -659,24 +696,34 @@ export default {
      * 解压缩按钮点击事件
      * @description 调用解压缩文件接口，并展示新的文件列表
      * @param {object} fileInfo 文件信息
+     * @param {number} unzipMode 解压模式 0-解压到当前文件夹， 1-自动创建该文件名目录，并解压到目录里， 2-手动选择解压目录
      */
-    handleUnzipFileBtnClick(fileInfo) {
-      const loading = this.$loading({
-        lock: true,
-        text: '正在解压缩，请稍等片刻...',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      })
-      unzipFile(fileInfo).then((res) => {
-        if (res.success) {
-          this.$emit('getTableDataByType')
-          this.$store.dispatch('showStorage')
-          this.$message.success('解压成功')
-          loading.close()
-        } else {
-          this.$message.error(res.message)
-        }
-      })
+    handleUnzipFileBtnClick(fileInfo, unzipMode) {
+      if(unzipMode === 0 || unzipMode === 1) {
+        const loading = this.$loading({
+          lock: true,
+          text: '正在解压缩，请稍等片刻...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
+        unzipFile({
+          unzipMode: unzipMode,
+          userFileId: fileInfo.userFileId
+        }).then((res) => {
+          if (res.success) {
+            this.$emit('getTableDataByType')
+            this.$store.dispatch('showStorage')
+            this.$message.success('解压成功')
+            loading.close()
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+      } else if(unzipMode === 2) {
+        this.$emit('setOperationFile', fileInfo)
+        //  第一个参数: 是否批量移动；第二个参数：打开/关闭移动文件对话框
+        this.$emit('setMoveFileDialogData', false, true)
+      }
     },
 
     /**
@@ -908,5 +955,59 @@ export default {
       }
     }
   }
+}
+.right-menu-list {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid $BorderLighter;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  padding: 4px 0;
+  color: $RegularText;
+
+  .right-menu-item,
+  .unzip-item {
+    padding: 0 16px;
+    height: 36px;
+    line-height: 36px;
+    cursor: pointer;
+    &:hover {
+      background: $PrimaryHover;
+      color: $Primary;
+    }
+    i {
+      margin-right: 8px;
+    }
+  }
+
+  .unzip-menu-item {
+    position: relative;
+    &:hover {
+      .unzip-list {
+        display: block;
+      }
+    }
+    .unzip-list {
+      position: absolute;
+      display: none;
+      .unzip-item {
+        width: 200px;
+        setEllipsis(1)
+      }
+    }
+  }
+}
+.right-menu-list,
+.unzip-list {
+  background: #fff;
+  border: 1px solid $BorderLighter;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  padding: 4px 0;
+  color: $RegularText;
 }
 </style>

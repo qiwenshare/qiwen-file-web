@@ -40,6 +40,7 @@
       :batchOperate="batchOperate"
       v-if="fileModel === 1"
       @setMoveFileDialogData="setMoveFileDialogData"
+      @setShareFileDialogData="setShareFileDialogData"
       @setOperationFile="setOperationFile"
       @setSelectionFile="setSelectionFile"
       @getTableDataByType="getTableDataByType"
@@ -350,8 +351,9 @@ export default {
      * 表格勾选框事件 | 保存被勾选的文件
      * @param {object[]} selection 被勾选的文件数组
      */
-    setSelectionFile(selection) {
+    setSelectionFile(selection, batchOperate) {
       this.selectionFile = selection
+      this.batchOperate = batchOperate
     },
 
     /**
