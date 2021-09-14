@@ -359,7 +359,7 @@ export default {
       } else if (!this.fileImgTypeList.includes(row.extendName)) {
         //  无法识别文件类型的文件
         return this.fileImgMap.unknown
-      } else if (this.fileType !== 6 && ['jpg', 'png', 'jpeg', 'gif'].includes(row.extendName)) {
+      } else if (this.fileType !== 6 && ['jpg', 'png', 'jpeg', 'gif', 'mp4'].includes(row.extendName)) {
         // 图片类型，直接显示缩略图
         return this.getImgMinPath(row)
       } else {
