@@ -50,12 +50,23 @@ export default {
     }
   },
   data() {
+    const validateFileName = (rule, value, callback) => {
+      const fileNameReg = new RegExp(`[\\\\/:*?\"<>|]`);
+      if (value && fileNameReg.test(value)) {
+        callback(new Error(`文件夹名称不能包含下列任何字符：\\\/:*?"<>|`));
+      } else {
+        callback();
+      }
+    };
     return {
       form: {
         fileName: ''
       },
       formRules: {
-        fileName: [{ required: true, message: '请输入文件夹名称', trigger: 'blur' }]
+        fileName: [
+          { required: true, message: '请输入文件夹名称', trigger: 'blur' },
+          { validator: validateFileName, trigger: ['blur', 'change'] }
+        ]
       },
       loading: false
     }
