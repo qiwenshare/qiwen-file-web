@@ -52,7 +52,7 @@
         stroke-linecap="square"
       ></el-progress>
       <div class="text" v-show="!isCollapse">
-        <span>存储</span>
+        <span class="label">存储</span>
         <span>{{ storageValue | storageTrans }} / {{ totalStorageValue | storageTrans }}</span>
       </div>
       <div class="text" v-show="isCollapse">
@@ -154,7 +154,8 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 14px;
+      font-size: 12px;
+      flex-wrap: wrap;
     }
   }
 
