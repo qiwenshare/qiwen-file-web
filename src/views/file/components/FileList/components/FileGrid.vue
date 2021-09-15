@@ -291,7 +291,7 @@ export default {
     },
     // 批量操作模式 - 被选中的文件
     selectedFileList(newValue) {
-      this.$emit('setSelectionFile', newValue)
+      this.$emit('setSelectionFile', newValue, this.batchOperate)
     },
     /**
      * 监听右键列表状态
@@ -698,6 +698,7 @@ export default {
       padding: 8px;
       text-align: center;
       cursor: pointer;
+      z-index: 1;
 
       &:hover {
         background: $tabBackColor;
