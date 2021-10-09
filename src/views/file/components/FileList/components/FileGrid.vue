@@ -353,7 +353,7 @@ export default {
      * @param {object} row 文件信息
      */
     setFileImg(row) {
-      if (!row.extendName) {
+      if (row.isDir === 1) {
         //  文件夹
         return this.fileImgMap.dir
       } else if (!this.fileImgTypeList.includes(row.extendName)) {

@@ -42,7 +42,7 @@ const storageTrans = (size, status) => {
  * @returns {string} 完整文件名称
  */
 const fileNameComplete = (file) => {
-	return file.fileName + (!file.isDir && file.extendName !== null ? `.${file.extendName}` : '')
+	return file.fileName + (file.isDir === 0 && file.extendName ? `.${file.extendName}` : '')
 }
 
 export {
