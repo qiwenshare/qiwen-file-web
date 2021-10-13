@@ -17,26 +17,26 @@ import element from './element.js'
  */
 import uploader from 'vue-simple-uploader'
 // collapse 展开折叠
-import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 
 Vue.component(CollapseTransition.name, CollapseTransition)
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
-for(let key in globalFunction) {
-  Vue.prototype[key] = globalFunction[key]
+for (let key in globalFunction) {
+	Vue.prototype[key] = globalFunction[key]
 }
 
-Vue.use(element);
-Vue.use(uploader);
+Vue.use(element)
+Vue.use(uploader)
 Vue.prototype.$EventBus = new Vue()
 
-Object.keys(filters).forEach(key => {
-  Vue.filter(key, filters[key])
+Object.keys(filters).forEach((key) => {
+	Vue.filter(key, filters[key])
 })
 
 new Vue({
-  router,
-  store,
-  render: h => h(App)
+	router,
+	store,
+	render: (h) => h(App)
 }).$mount('#app')

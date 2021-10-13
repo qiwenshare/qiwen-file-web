@@ -21,11 +21,11 @@ router.beforeEach((to, from, next) => {
 		// 调用获取用户登录状态和信息的接口，以便显示顶部导航栏的用户登录信息
 		store.dispatch('getUserInfo')
 	}
-	// 路由发生变化修改页面title
+	// 路由发生变化修改页面 title
 	if (to.meta.title) {
 		document.title = to.meta.title
 	}
-	// 路由发生变化修改页面meta
+	// 路由发生变化修改页面 meta
 	if (to.meta.content) {
 		let head = document.getElementsByTagName('head')
 		let meta = document.createElement('meta')

@@ -1,43 +1,61 @@
 <template>
-  <div class="move-dialog-wrapper">
-    <!-- 移动文件-选择目标路径 -->
-    <el-dialog title="选择目标路径" :visible.sync="dialogData.visible" @open="handleDialogOpen">
-      <div class="el-dialog-div">
-        <!-- 选择的目标路径 -->
-        <div class="target-path">
-          <span class="label">目标路径：</span>
-          <el-input class="content" v-model="targetPath" readonly size="small"></el-input>
-        </div>
-        <!-- 文件目录树 -->
-        <el-tree
-          :data="fileTree"
-          :props="defaultProps"
-          :highlight-current="true"
-          :expand-on-click-node="false"
-          :default-expanded-keys="defaultExpandedKeys"
-          node-key="id"
-          @node-click="handleNodeClick"
-        >
-          <span class="custom-tree-node" slot-scope="{ node, data }">
-            <span class="label">{{ node.label }}</span>
-            <el-button class="add-folder-btn" type="text" size="mini" @click.stop="handleAddFolderBtnClick(data)">
-              新建文件夹
-            </el-button>
-          </span>
-        </el-tree>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="$emit('setDialogData', null, false)">取 消</el-button>
-        <el-button type="primary" @click="$emit('confirmDialog')">确 定</el-button>
-      </div>
-    </el-dialog>
-    <!-- 新建文件夹对话框 -->
-    <AddFolderDialog
-      :visible.sync="dialogAddFolder.visible"
-      :filePath="dialogAddFolder.filePath"
-      @confirmDialog="initFileTree(dialogAddFolder.id)"
-    ></AddFolderDialog>
-  </div>
+	<div class="move-dialog-wrapper">
+		<!-- 移动文件-选择目标路径 -->
+		<el-dialog
+			title="选择目标路径"
+			:visible.sync="dialogData.visible"
+			@open="handleDialogOpen"
+		>
+			<div class="el-dialog-div">
+				<!-- 选择的目标路径 -->
+				<div class="target-path">
+					<span class="label">目标路径：</span>
+					<el-input
+						class="content"
+						v-model="targetPath"
+						readonly
+						size="small"
+					></el-input>
+				</div>
+				<!-- 文件目录树 -->
+				<el-tree
+					:data="fileTree"
+					:props="defaultProps"
+					:highlight-current="true"
+					:expand-on-click-node="false"
+					:default-expanded-keys="defaultExpandedKeys"
+					node-key="id"
+					@node-click="handleNodeClick"
+				>
+					<span class="custom-tree-node" slot-scope="{ node, data }">
+						<span class="label">{{ node.label }}</span>
+						<el-button
+							class="add-folder-btn"
+							type="text"
+							size="mini"
+							@click.stop="handleAddFolderBtnClick(data)"
+						>
+							新建文件夹
+						</el-button>
+					</span>
+				</el-tree>
+			</div>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="$emit('setDialogData', null, false)"
+					>取 消</el-button
+				>
+				<el-button type="primary" @click="$emit('confirmDialog')"
+					>确 定</el-button
+				>
+			</div>
+		</el-dialog>
+		<!-- 新建文件夹对话框 -->
+		<AddFolderDialog
+			:visible.sync="dialogAddFolder.visible"
+			:filePath="dialogAddFolder.filePath"
+			@confirmDialog="initFileTree(dialogAddFolder.id)"
+		></AddFolderDialog>
+	</div>
 </template>
 
 <script>
@@ -45,68 +63,68 @@ import AddFolderDialog from '_c/File/AddFolderDialog.vue'
 import { getFoldTree } from '_r/file.js'
 
 export default {
-  name: 'MoveFileDialog',
-  props: {
-    dialogData: Object
-  },
-  components: {
-    AddFolderDialog
-  },
-  data() {
-    return {
-      targetPath: '/', //  目标路径
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      },
-      fileTree: [], //  文件夹目录树
-      defaultExpandedKeys: [],
-      // 新建文件夹对话框数据
-      dialogAddFolder: {
-        visible: false,
-        filePath: '/', //  新增文件夹的父级路径
-        id: -1
-      }
-    }
-  },
-  methods: {
-    /**
-     * 对话框打开的回调
-     */
-    handleDialogOpen() {
-      this.initFileTree()
-    },
-    /**
-     * 初始化文件目录树
-     */
-    initFileTree(id) {
-      getFoldTree().then((res) => {
-        if (res.success) {
-          this.fileTree = [res.data]
-          this.defaultExpandedKeys = id ? [id] : [this.fileTree[0].id]
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-    /**
-     * 目录树节点点击回调函数
-     * @description 将当前节点中的文件夹路径传递给父组件
-     * @param {object} data 当前点击的节点信息
-     */
-    handleNodeClick(data) {
-      this.targetPath = data.filePath ? data.filePath : '/'
-      this.$emit('setSelectFilePath', this.targetPath)
-    },
-    /**
-     * 新建文件夹按钮点击事件
-     */
-    handleAddFolderBtnClick(data) {
-      this.dialogAddFolder.filePath = data.filePath ? data.filePath : '/'
-      this.dialogAddFolder.id = data.id
-      this.dialogAddFolder.visible = true
-    }
-  }
+	name: 'MoveFileDialog',
+	props: {
+		dialogData: Object
+	},
+	components: {
+		AddFolderDialog
+	},
+	data() {
+		return {
+			targetPath: '/', //  目标路径
+			defaultProps: {
+				children: 'children',
+				label: 'label'
+			},
+			fileTree: [], //  文件夹目录树
+			defaultExpandedKeys: [],
+			// 新建文件夹对话框数据
+			dialogAddFolder: {
+				visible: false,
+				filePath: '/', //  新增文件夹的父级路径
+				id: -1
+			}
+		}
+	},
+	methods: {
+		/**
+		 * 对话框打开的回调
+		 */
+		handleDialogOpen() {
+			this.initFileTree()
+		},
+		/**
+		 * 初始化文件目录树
+		 */
+		initFileTree(id) {
+			getFoldTree().then((res) => {
+				if (res.success) {
+					this.fileTree = [res.data]
+					this.defaultExpandedKeys = id ? [id] : [this.fileTree[0].id]
+				} else {
+					this.$message.error(res.message)
+				}
+			})
+		},
+		/**
+		 * 目录树节点点击回调函数
+		 * @description 将当前节点中的文件夹路径传递给父组件
+		 * @param {object} data 当前点击的节点信息
+		 */
+		handleNodeClick(data) {
+			this.targetPath = data.filePath ? data.filePath : '/'
+			this.$emit('setSelectFilePath', this.targetPath)
+		},
+		/**
+		 * 新建文件夹按钮点击事件
+		 */
+		handleAddFolderBtnClick(data) {
+			this.dialogAddFolder.filePath = data.filePath ? data.filePath : '/'
+			this.dialogAddFolder.id = data.id
+			this.dialogAddFolder.visible = true
+		}
+	}
 }
 </script>
 

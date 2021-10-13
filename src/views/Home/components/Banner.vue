@@ -1,64 +1,75 @@
 <template>
-  <el-carousel height="580px" class="el-carousel">
-    <el-carousel-item class="carosel-inner" v-for="(item, index) in bannerList" :key="index">
-      <div class="carousel-wrap">
-        <div class="carousel-caption">
-          <h1 class="bounce">{{ item.title }}</h1>
-          <ul>
-            <li v-for="(descItem, descIndex) in item.descList" :key="`desc-${index}-${descIndex}`">
-              {{ descItem }}
-            </li>
-          </ul>
-          <el-button round @click="goFile">{{ item.btn }}</el-button>
-          <div class="version-wrapper">
-            <a
-              class="version-item"
-              v-for="(linkItem, linkIndex) in item.linkList"
-              :key="`link-${index}-${linkIndex}`"
-              :href="linkItem.link"
-              target="_blank"
-            >
-              <span class="version-number">{{ linkItem.versionNo }}</span>
-              <span>{{ linkItem.date }} &gt;&gt;</span>
-            </a>
-          </div>
-        </div>
-        <div class="carousel-img">
-          <img :src="item.bannerImg" />
-        </div>
-      </div>
-    </el-carousel-item>
-  </el-carousel>
+	<el-carousel height="580px" class="el-carousel">
+		<el-carousel-item
+			class="carosel-inner"
+			v-for="(item, index) in bannerList"
+			:key="index"
+		>
+			<div class="carousel-wrap">
+				<div class="carousel-caption">
+					<h1 class="bounce">{{ item.title }}</h1>
+					<ul>
+						<li
+							v-for="(descItem, descIndex) in item.descList"
+							:key="`desc-${index}-${descIndex}`"
+						>
+							{{ descItem }}
+						</li>
+					</ul>
+					<el-button round @click="goFile">{{ item.btn }}</el-button>
+					<div class="version-wrapper">
+						<a
+							class="version-item"
+							v-for="(linkItem, linkIndex) in item.linkList"
+							:key="`link-${index}-${linkIndex}`"
+							:href="linkItem.link"
+							target="_blank"
+						>
+							<span class="version-number">{{ linkItem.versionNo }}</span>
+							<span>{{ linkItem.date }} &gt;&gt;</span>
+						</a>
+					</div>
+				</div>
+				<div class="carousel-img">
+					<img :src="item.bannerImg" />
+				</div>
+			</div>
+		</el-carousel-item>
+	</el-carousel>
 </template>
 
 <script>
 export default {
-  name: 'Banner',
-  data() {
-    return {
-      bannerList: [
-        {
-          title: '一款功能齐全的文件管理系统',
-          descList: ['文件传输，安全快捷', '在线解压缩，一触即达', '回收站，防止文件误删'],
-          btn: '开源免费，立即体验',
-          linkList: [
-            {
-              versionNo: '最新版本v1.4.0',
-              date: '2021年5月14日发布',
-              link: 'https://gitee.com/qiwen-cloud/qiwen-file'
-            }
-          ],
-          bannerImg: require('_a/images/home/banner/banner1.png')
-        }
-      ]
-    }
-  },
-  methods: {
-    // 跳转到网盘页面
-    goFile() {
-      this.$router.push({ name: 'File', query: { filePath: '/', fileType: 0 } })
-    }
-  }
+	name: 'Banner',
+	data() {
+		return {
+			bannerList: [
+				{
+					title: '一款功能齐全的文件管理系统',
+					descList: [
+						'文件传输，安全快捷',
+						'在线解压缩，一触即达',
+						'回收站，防止文件误删'
+					],
+					btn: '开源免费，立即体验',
+					linkList: [
+						{
+							versionNo: '最新版本v1.4.0',
+							date: '2021年5月14日发布',
+							link: 'https://gitee.com/qiwen-cloud/qiwen-file'
+						}
+					],
+					bannerImg: require('_a/images/home/banner/banner1.png')
+				}
+			]
+		}
+	},
+	methods: {
+		// 跳转到网盘页面
+		goFile() {
+			this.$router.push({ name: 'File', query: { filePath: '/', fileType: 0 } })
+		}
+	}
 }
 </script>
 
