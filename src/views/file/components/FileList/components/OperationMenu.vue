@@ -26,13 +26,13 @@
         <el-dropdown-menu slot="dropdown" :disabled="selectionFile.length && batchOperate || fileType !== 0">
           <el-dropdown-item @click.native="handleCreateFile('docx')">
             <img
-            src="@/assets/images/file/file_word.png"
+            src="_a/images/file/file_word.png"
             style="width: 30px; max-height: 30px; cursor: pointer"/>Word文档</el-dropdown-item>
           <el-dropdown-item @click.native="handleCreateFile('xlsx')"><img
-            src="@/assets/images/file/file_excel.png"
+            src="_a/images/file/file_excel.png"
             style="width: 30px; max-height: 30px; cursor: pointer"/>Excel工作表</el-dropdown-item>
           <el-dropdown-item @click.native="handleCreateFile('pptx')"><img
-            src="@/assets/images/file/file_ppt.png"
+            src="_a/images/file/file_ppt.png"
             style="width: 30px; max-height: 30px; cursor: pointer"/>PPT演示文稿</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -148,9 +148,9 @@
 </template>
 
 <script>
-import { batchDeleteFile, batchDeleteRecoveryFile } from '@/request/file.js'
-import AddFolderDialog from '@/components/File/AddFolderDialog.vue'
-import AddFileDialog from '@/components/File/AddFileDialog.vue'
+import { batchDeleteFile, batchDeleteRecoveryFile } from '_r/file.js'
+import AddFolderDialog from '_c/File/AddFolderDialog.vue'
+import AddFileDialog from '_c/File/AddFileDialog.vue'
 import SelectColumn from './SelectColumn'
 
 export default {
@@ -405,7 +405,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl';
+@import '~_a/styles/varibles.styl';
 
 .operation-menu-wrapper.file-type-6 {
   margin: 8px 0;

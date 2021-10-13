@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { createOfficeFile } from '@/request/onlyoffice.js'
+import { createOfficeFile } from '_r/onlyoffice.js'
 
 export default {
   name: 'AddFileDialog',

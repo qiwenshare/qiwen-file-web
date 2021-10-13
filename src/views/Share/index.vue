@@ -56,16 +56,16 @@
 </template>
 
 <script>
-import BreadCrumb from '@/components/BreadCrumb'
-import FileTable from '@/components/File/FileTable'
-import MoveFileDialog from '@/components/File/MoveFileDialog'
+import BreadCrumb from '_c/BreadCrumb'
+import FileTable from '_c/File/FileTable'
+import MoveFileDialog from '_c/File/MoveFileDialog'
 import {
   checkShareLinkEndtime,
   checkShareLinkType,
   checkShareLinkCode,
   getShareFileList,
   saveShareFile
-} from '@/request/file.js'
+} from '_r/file.js'
 
 export default {
   name: 'Share',

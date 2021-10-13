@@ -29,9 +29,9 @@
 </template>
 
 <script>
-import BreadCrumb from '@/components/BreadCrumb'
-import FileTable from '@/components/File/FileTable'
-import { getMyShareFileList } from '@/request/file.js'
+import BreadCrumb from '_c/BreadCrumb'
+import FileTable from '_c/File/FileTable'
+import { getMyShareFileList } from '_r/file.js'
 
 export default {
   name: 'MyShare',

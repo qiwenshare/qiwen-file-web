@@ -1,4 +1,4 @@
-import { getStorage } from '@/request/file.js'
+import { getStorage } from '_r/file.js'
 
 export default {
   state: {

@@ -33,24 +33,24 @@ export default {
   name: 'Footer',
   data() {
     return {
-      logoUrl: require('@/assets/images/common/logo_footer.png'),
+      logoUrl: require('_a/images/common/logo_footer.png'),
       joinList: [
         {
           class: 'qq',
           logo: 'icon-qq',
-          img: require('@/assets/images/footer/QQImg.png'),
+          img: require('_a/images/footer/QQImg.png'),
           title: 'QQ群'
         },
         {
           class: 'wechat',
           logo: 'icon-weixin-copy',
-          img: require('@/assets/images/footer/wechatImg.png'),
+          img: require('_a/images/footer/wechatImg.png'),
           title: '微信公众号'
         },
         {
           class: 'gitee',
           logo: 'icon-mayun',
-          img: require('@/assets/images/footer/giteeImg.png'),
+          img: require('_a/images/footer/giteeImg.png'),
           title: '码云 开源社区'
         }
       ]
@@ -60,7 +60,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl';
+@import '~_a/styles/varibles.styl';
 
 .footer-wrapper {
   margin-top: 20px;

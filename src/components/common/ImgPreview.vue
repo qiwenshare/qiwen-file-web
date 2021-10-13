@@ -208,7 +208,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl';
+@import '~_a/styles/varibles.styl';
 
 .img-preview-wrapper {
   position: fixed;

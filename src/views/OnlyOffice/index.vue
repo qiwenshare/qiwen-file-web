@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { createOfficeFile, editOfficeFile, previewOfficeFile } from '@/request/onlyoffice.js'
+import { createOfficeFile, editOfficeFile, previewOfficeFile } from '_r/onlyoffice.js'
 
 export default {
   name: 'OnlyOffice',

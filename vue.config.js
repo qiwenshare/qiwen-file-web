@@ -1,4 +1,6 @@
 const productConfig = require('./public/config.json')
+const path = require('path')
+
 module.exports = {
   // 选项...
   publicPath: '/',
@@ -29,5 +31,15 @@ module.exports = {
       preProcessor: 'stylus',
       patterns: []
     }
-  }  
+  },
+	
+	configureWebpack: config => {
+		config.resolve.alias = {
+			'@': path.resolve(__dirname, './src'),
+			_v: path.resolve(__dirname, './src/views'),
+			_c: path.resolve(__dirname, './src/components'),
+			_a: path.resolve(__dirname, './src/assets'),
+			_r: path.resolve(__dirname, './src/request')
+		}
+	}
 }

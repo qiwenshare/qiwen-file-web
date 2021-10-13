@@ -10,7 +10,7 @@ export default {
   name: 'Error_404',
   data() {
     return {
-      error_404_img: require('@/assets/images/error/404.png')
+      error_404_img: require('_a/images/error/404.png')
     }
   }
 }

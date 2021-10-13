@@ -14,11 +14,11 @@
 </template>
 
 <script>
-import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
-import globalUploader from '@/components//common/GlobalUploader.vue'
-import ImgPreview from '@/components/common/ImgPreview'
-import VideoPreview from '@/components/common/VideoPreview'
+import Header from '_c/Header.vue'
+import Footer from '_c/Footer.vue'
+import globalUploader from '_c//common/GlobalUploader.vue'
+import ImgPreview from '_c/common/ImgPreview'
+import VideoPreview from '_c/common/VideoPreview'
 
 export default {
   name: 'App',
@@ -49,7 +49,7 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl';
+@import '~_a/styles/varibles.styl';
 
 #app {
   height: 100%;

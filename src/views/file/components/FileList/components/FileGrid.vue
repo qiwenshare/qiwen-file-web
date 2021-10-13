@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { unzipFile, deleteFile, renameFile, deleteRecoveryFile, restoreRecoveryFile } from '@/request/file.js'
+import { unzipFile, deleteFile, renameFile, deleteRecoveryFile, restoreRecoveryFile } from '_r/file.js'
 import { mapGetters } from 'vuex'
 import 'element-ui/lib/theme-chalk/base.css'
 
@@ -149,39 +149,39 @@ export default {
       ],
       //  文件图片Map映射
       fileImgMap: {
-        dir: require('@/assets/images/file/dir.png'),
-        chm: require('@/assets/images/file/file_chm.png'),
-        css: require('@/assets/images/file/file_css.png'),
-        csv: require('@/assets/images/file/file_csv.png'),
-        png: require('@/assets/images/file/file_pic.png'),
-        jpg: require('@/assets/images/file/file_pic.png'),
-        jpeg: require('@/assets/images/file/file_pic.png'),
-        docx: require('@/assets/images/file/file_word.png'),
-        doc: require('@/assets/images/file/file_word.png'),
-        ppt: require('@/assets/images/file/file_ppt.png'),
-        pptx: require('@/assets/images/file/file_ppt.png'),
-        xls: require('@/assets/images/file/file_excel.png'),
-        xlsx: require('@/assets/images/file/file_excel.png'),
-        mp4: require('@/assets/images/file/file_video.png'),
-        avi: require('@/assets/images/file/file_avi.png'),
-        rar: require('@/assets/images/file/file_rar.png'),
-        zip: require('@/assets/images/file/file_zip.png'),
-        dmg: require('@/assets/images/file/file_dmg.png'),
-        mp3: require('@/assets/images/file/file_music.png'),
-        open: require('@/assets/images/file/file_open.png'),
-        pdf: require('@/assets/images/file/file_pdf.png'),
-        rtf: require('@/assets/images/file/file_rtf.png'),
-        txt: require('@/assets/images/file/file_txt.png'),
-        oa: require('@/assets/images/file/file_oa.png'),
-        unknown: require('@/assets/images/file/file_unknown.png'),
-        js: require('@/assets/images/file/file_js.png'),
-        html: require('@/assets/images/file/file_html.png'),
-        img: require('@/assets/images/file/file_img.png'),
-        sql: require('@/assets/images/file/file_sql.png'),
-        jar: require('@/assets/images/file/file_jar.png'),
-        svg: require('@/assets/images/file/file_svg.png'),
-        json: require('@/assets/images/file/file_json.png'),
-        exe: require('@/assets/images/file/file_exe.png')
+        dir: require('_a/images/file/dir.png'),
+        chm: require('_a/images/file/file_chm.png'),
+        css: require('_a/images/file/file_css.png'),
+        csv: require('_a/images/file/file_csv.png'),
+        png: require('_a/images/file/file_pic.png'),
+        jpg: require('_a/images/file/file_pic.png'),
+        jpeg: require('_a/images/file/file_pic.png'),
+        docx: require('_a/images/file/file_word.png'),
+        doc: require('_a/images/file/file_word.png'),
+        ppt: require('_a/images/file/file_ppt.png'),
+        pptx: require('_a/images/file/file_ppt.png'),
+        xls: require('_a/images/file/file_excel.png'),
+        xlsx: require('_a/images/file/file_excel.png'),
+        mp4: require('_a/images/file/file_video.png'),
+        avi: require('_a/images/file/file_avi.png'),
+        rar: require('_a/images/file/file_rar.png'),
+        zip: require('_a/images/file/file_zip.png'),
+        dmg: require('_a/images/file/file_dmg.png'),
+        mp3: require('_a/images/file/file_music.png'),
+        open: require('_a/images/file/file_open.png'),
+        pdf: require('_a/images/file/file_pdf.png'),
+        rtf: require('_a/images/file/file_rtf.png'),
+        txt: require('_a/images/file/file_txt.png'),
+        oa: require('_a/images/file/file_oa.png'),
+        unknown: require('_a/images/file/file_unknown.png'),
+        js: require('_a/images/file/file_js.png'),
+        html: require('_a/images/file/file_html.png'),
+        img: require('_a/images/file/file_img.png'),
+        sql: require('_a/images/file/file_sql.png'),
+        jar: require('_a/images/file/file_jar.png'),
+        svg: require('_a/images/file/file_svg.png'),
+        json: require('_a/images/file/file_json.png'),
+        exe: require('_a/images/file/file_exe.png')
       },
       officeFileType: ['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'],
       downloadFilePath: '',
@@ -677,8 +677,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl';
-@import '~@/assets/styles/mixins.styl';
+@import '~_a/styles/varibles.styl';
+@import '~_a/styles/mixins.styl';
 
 .file-grid-wrapper {
   border-top: 1px solid $BorderBase;

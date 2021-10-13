@@ -48,7 +48,7 @@ export default {
               link: 'https://gitee.com/qiwen-cloud/qiwen-file'
             }
           ],
-          bannerImg: require('@/assets/images/home/banner/banner1.png')
+          bannerImg: require('_a/images/home/banner/banner1.png')
         }
       ]
     }
@@ -63,7 +63,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl';
+@import '~_a/styles/varibles.styl';
 
 .el-carousel {
   width: 100%;

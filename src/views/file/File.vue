@@ -27,8 +27,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl';
-@import '~@/assets/styles/mixins.styl';
+@import '~_a/styles/varibles.styl';
+@import '~_a/styles/mixins.styl';
 
 .file-wrapper {
   width: 100% !important;

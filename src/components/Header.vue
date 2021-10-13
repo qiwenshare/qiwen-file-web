@@ -31,7 +31,7 @@ export default {
   name: 'Header',
   data() {
     return {
-      logoUrl: require('@/assets/images/common/logo_header.png')
+      logoUrl: require('_a/images/common/logo_header.png')
     }
   },
   computed: {
@@ -61,7 +61,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl';
+@import '~_a/styles/varibles.styl';
 
 .header-wrapper {
   width: 100%;

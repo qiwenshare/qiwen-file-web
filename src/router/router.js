@@ -10,7 +10,7 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: () => import(/* webpackChunkName: "home" */ '@/views/Home'),
+      component: () => import(/* webpackChunkName: "home" */ '_v/Home'),
       meta: { 
         title: '奇文网盘' ,
         content: {
@@ -21,19 +21,19 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
-      component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
+      component: () => import(/* webpackChunkName: "login" */ '_v/Login.vue'),
       meta: { title: '登录 - 奇文网盘' }
     },
     {
       path: '/register',
       name: 'Register',
-      component: () => import(/* webpackChunkName: "register" */ '@/views/Register.vue'),
+      component: () => import(/* webpackChunkName: "register" */ '_v/Register.vue'),
       meta: { title: '注册 - 奇文网盘' }
     },
     {
       path: '/file',
       name: 'File',
-      component: () => import(/* webpackChunkName: "file" */ '@/views/file/File.vue'),
+      component: () => import(/* webpackChunkName: "file" */ '_v/file/File.vue'),
       meta: {
         requireAuth: true, //  当前路由是否需要登录才可进入
         title: '奇文网盘',
@@ -52,12 +52,12 @@ export default new Router({
           description: '在线编辑预览'
         }
       },
-      component: () => import('@/views/OnlyOffice/index.vue')
+      component: () => import(/* webpackChunkName: "onlyOffice" */ '_v/OnlyOffice/index.vue')
     },
     {
       path: '/share/:shareBatchNum',
       name: 'Share',
-      component: () => import(/* webpackChunkName: "share" */ '@/views/Share/index.vue'),
+      component: () => import(/* webpackChunkName: "share" */ '_v/Share/index.vue'),
       meta: {
         title: '分享 - 奇文网盘',
         breadCrumbName: '分享文件'
@@ -67,7 +67,7 @@ export default new Router({
     {
       path: '/myshare',
       name: 'MyShare',
-      component: () => import(/* webpackChunkName: "my_share" */ '@/views/MyShare/index.vue'),
+      component: () => import(/* webpackChunkName: "my_share" */ '_v/MyShare/index.vue'),
       meta: {
         requireAuth: true,
         title: '我的分享 - 奇文网盘',
@@ -77,7 +77,7 @@ export default new Router({
     {
       path: '*',
       name: 'Error_404',
-      component: () => import(/* webpackChunkName: "error_404" */ '@/views/ErrorPage/404.vue'),
+      component: () => import(/* webpackChunkName: "error_404" */ '_v/ErrorPage/404.vue'),
       meta: { title: '404 - 奇文网盘' }
     }
   ]

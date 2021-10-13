@@ -97,8 +97,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl';
-@import '~@/assets/styles/mixins.styl';
+@import '~_a/styles/varibles.styl';
+@import '~_a/styles/mixins.styl';
 
 .image-timeline-wrapper {
   margin-top: 20px;

@@ -20,32 +20,32 @@ export default {
     return {
       functionList: [
         {
-          icon: require('@/assets/images/home/function/icon1.png'),
+          icon: require('_a/images/home/function/icon1.png'),
           title: '阿里云OSS存储',
           desc: '支持多种文件存储方式，目前已经支持本地磁盘存储和阿里云OSS存储，并可以在使用中随意切换'
         },
         {
-          icon: require('@/assets/images/home/function/icon2.png'),
+          icon: require('_a/images/home/function/icon2.png'),
           title: '文件极速秒传',
           desc: '能够准确识别已上传文件，当上传的文件在磁盘上已存在，可以达到秒传效果'
         },
         {
-          icon: require('@/assets/images/home/function/icon3.png'),
+          icon: require('_a/images/home/function/icon3.png'),
           title: '文件分块上传',
           desc: '对文件进行分块上传，可以提高上传速度，并且能够更加精准的显示出文件传输速率和进度'
         },
         {
-          icon: require('@/assets/images/home/function/icon4.png'),
+          icon: require('_a/images/home/function/icon4.png'),
           title: '多文件格式分类查看',
           desc: '帮助用户更加快速的找到需要的文件，我们支持对文件进行分类显示并查看预览'
         },
         {
-          icon: require('@/assets/images/home/function/icon5.png'),
+          icon: require('_a/images/home/function/icon5.png'),
           title: '支持回收站功能',
           desc: '回收站可以轻松帮助找回误删文件，对回收站进行清理后文件才将彻底删除'
         },
         {
-          icon: require('@/assets/images/home/function/icon6.png'),
+          icon: require('_a/images/home/function/icon6.png'),
           title: '列表和网格风格切换',
           desc: '为了满足不同用户的视觉体验，我们提供了文件的列表显示和网格显示两种风格'
         }
@@ -56,7 +56,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl'
+@import '~_a/styles/varibles.styl'
 
 .function-wrapper {
   margin-bottom: 40px;

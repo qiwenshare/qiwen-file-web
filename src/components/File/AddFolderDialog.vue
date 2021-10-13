@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { createFold } from '@/request/file.js'
+import { createFold } from '_r/file.js'
 
 export default {
   name: 'AddFolderDialog',

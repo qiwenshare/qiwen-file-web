@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import AddFolderDialog from '@/components/File/AddFolderDialog.vue'
-import { getFoldTree } from '@/request/file.js'
+import AddFolderDialog from '_c/File/AddFolderDialog.vue'
+import { getFoldTree } from '_r/file.js'
 
 export default {
   name: 'MoveFileDialog',
@@ -111,8 +111,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl';
-@import '~@/assets/styles/mixins.styl';
+@import '~_a/styles/varibles.styl';
+@import '~_a/styles/mixins.styl';
 
 .move-dialog-wrapper {
   >>> .el-dialog {
