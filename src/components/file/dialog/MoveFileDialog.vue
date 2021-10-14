@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import AddFolderDialog from '_c/File/AddFolderDialog.vue'
+import AddFolderDialog from '_c/file/dialog/AddFolderDialog.vue'
 import { getFoldTree } from '_r/file.js'
 
 export default {

@@ -69,9 +69,9 @@
 </template>
 
 <script>
-import BreadCrumb from '_c/BreadCrumb'
-import FileTable from '_c/File/FileTable'
-import MoveFileDialog from '_c/File/MoveFileDialog'
+import BreadCrumb from '_c/common/BreadCrumb.vue'
+import FileTable from '_c/common/FileTable.vue'
+import MoveFileDialog from '_c/file/dialog/MoveFileDialog.vue'
 import {
 	checkShareLinkEndtime,
 	checkShareLinkType,

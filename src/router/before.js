@@ -17,7 +17,8 @@ router.beforeEach((to, from, next) => {
 			}
 		})
 	} else {
-		next() // 正常跳转
+		// 正常跳转
+		next()
 		// 调用获取用户登录状态和信息的接口，以便显示顶部导航栏的用户登录信息
 		store.dispatch('getUserInfo')
 	}

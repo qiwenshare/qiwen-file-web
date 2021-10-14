@@ -3,6 +3,8 @@
 	padding: 0;
 	box-sizing: border-box;
 	outline: 0;
+	font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+		'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
 }
 html {
 	height: 100%;
@@ -10,16 +12,10 @@ html {
 body {
 	height: 100%;
 	font-size: 16px;
-	font-family: 微软雅黑;
-	font-style: normal;
 	overflow-x: hidden;
 }
 a {
 	text-decoration: none;
-}
-em,
-i {
-	font-style: normal;
 }
 ul,
 ol,
@@ -27,48 +23,8 @@ li {
 	list-style: none;
 }
 img {
-	border: none;
 	vertical-align: middle;
 }
-input,
-select,
-textarea {
-	outline: none;
-	border: none;
-	background: none;
-}
-textarea {
-	resize: none;
-}
 p {
-	line-height: 22px;
-}
-.fl {
-	float: left;
-}
-.fr {
-	float: right;
-}
-.clear {
-	clear: both;
-	height: 0px;
-	width: 100%;
-	overflow: hidden;
-}
-.position {
-	position: relative;
-}
-
-/*公共样式*/
-.layout {
-	width: 1100px;
-	display: table;
-	margin: 0 auto;
-}
-.margin-bottom {
-	margin-bottom: 15px;
-}
-
-.el-input__count {
-	line-height: 100%;
+	line-height: 24px;
 }

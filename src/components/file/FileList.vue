@@ -80,13 +80,13 @@
 </template>
 
 <script>
-import OperationMenu from './components/OperationMenu'
-import BreadCrumb from '_c/BreadCrumb'
-import FileTable from '_c/File/FileTable'
-import FileGrid from './components/FileGrid'
-import FileTimeLine from './components/FileTimeLine'
-import MoveFileDialog from '_c/File/MoveFileDialog'
-import ShareFileDialog from './components/ShareFileDialog'
+import OperationMenu from './components/OperationMenu.vue'
+import BreadCrumb from '_c/common/BreadCrumb.vue'
+import FileTable from '_c/common/FileTable.vue'
+import FileGrid from './components/FileGrid.vue'
+import FileTimeLine from './components/FileTimeLine.vue'
+import MoveFileDialog from './dialog/MoveFileDialog.vue'
+import ShareFileDialog from './dialog/ShareFileDialog.vue'
 
 import {
 	getFileListByPath,

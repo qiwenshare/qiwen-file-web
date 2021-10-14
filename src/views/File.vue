@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import AsideMenu from './components/AsideMenu/AsideMenu'
-import FileList from './components/FileList'
+import AsideMenu from '_c/file/AsideMenu.vue'
+import FileList from '_c/file/FileList.vue'
 
 export default {
 	name: 'File',

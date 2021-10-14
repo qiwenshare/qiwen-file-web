@@ -611,12 +611,7 @@ export default {
 					.then(() => {
 						this.confirmDeleteFile(fileInfo, true)
 					})
-					.catch(() => {
-						this.$message({
-							type: 'info',
-							message: '已取消删除'
-						})
-					})
+					.catch(() => {})
 			} else {
 				//  非回收站
 				this.$confirm('删除后可在回收站查看, 是否继续删除?', '提示', {
@@ -627,12 +622,7 @@ export default {
 					.then(() => {
 						this.confirmDeleteFile(fileInfo, false)
 					})
-					.catch(() => {
-						this.$message({
-							type: 'info',
-							message: '已取消删除'
-						})
-					})
+					.catch(() => {})
 			}
 		},
 		/**

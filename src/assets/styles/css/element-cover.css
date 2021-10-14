@@ -4,3 +4,6 @@
 .el-textarea__inner {
 	font-family: inherit;
 }
+.el-input__count {
+	line-height: 100%;
+}

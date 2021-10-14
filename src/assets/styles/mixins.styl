@@ -1,3 +1,7 @@
+// 设置滚动条样式
+// scrollbarWidth：滚动条宽度
+// trackColor：轨道颜色
+// thumbColor：滑块颜色
 setScrollbar(scrollbarWidth, trackColor = #EBEEF5, thumbColor = #909399) {
   // 修改滚动条下面的宽度
   &::-webkit-scrollbar {
@@ -18,6 +22,8 @@ setScrollbar(scrollbarWidth, trackColor = #EBEEF5, thumbColor = #909399) {
     border-radius: 2em;
   }
 }
+// 设置文字过长显示省略号
+// line：在当前行显示省略号
 setEllipsis(line) {
   display: -webkit-box;
   overflow: hidden;

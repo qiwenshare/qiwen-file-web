@@ -212,9 +212,9 @@
 
 <script>
 import { batchDeleteFile, batchDeleteRecoveryFile } from '_r/file.js'
-import AddFolderDialog from '_c/File/AddFolderDialog.vue'
-import AddFileDialog from '_c/File/AddFileDialog.vue'
-import SelectColumn from './SelectColumn'
+import AddFolderDialog from '_c/file/dialog/AddFolderDialog.vue'
+import AddFileDialog from '_c/file/dialog/AddFileDialog.vue'
+import SelectColumn from './SelectColumn.vue'
 
 export default {
 	name: 'OperationMenu',
@@ -340,12 +340,7 @@ export default {
 					.then(() => {
 						this.confirmBatchDeleteFile(true)
 					})
-					.catch(() => {
-						this.$message({
-							type: 'info',
-							message: '已取消删除'
-						})
-					})
+					.catch(() => {})
 			} else {
 				//  非回收站
 				this.$confirm('删除后可在回收站查看, 是否继续删除?', '提示', {
@@ -356,12 +351,7 @@ export default {
 					.then(() => {
 						this.confirmBatchDeleteFile(false)
 					})
-					.catch(() => {
-						this.$message({
-							type: 'info',
-							message: '已取消删除'
-						})
-					})
+					.catch(() => {})
 			}
 		},
 		/**

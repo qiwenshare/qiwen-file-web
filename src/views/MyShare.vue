@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import BreadCrumb from '_c/BreadCrumb'
-import FileTable from '_c/File/FileTable'
+import BreadCrumb from '_c/common/BreadCrumb.vue'
+import FileTable from '_c/common/FileTable.vue'
 import { getMyShareFileList } from '_r/file.js'
 
 export default {

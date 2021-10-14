@@ -10,7 +10,7 @@ export default new Router({
 		{
 			path: '/',
 			name: 'Home',
-			component: () => import(/* webpackChunkName: "home" */ '_v/Home'),
+			component: () => import(/* webpackChunkName: "home" */ '_v/Home.vue'),
 			meta: {
 				title: '奇文网盘',
 				content: {
@@ -35,8 +35,7 @@ export default new Router({
 		{
 			path: '/file',
 			name: 'File',
-			component: () =>
-				import(/* webpackChunkName: "file" */ '_v/file/File.vue'),
+			component: () => import(/* webpackChunkName: "file" */ '_v/File.vue'),
 			meta: {
 				requireAuth: true, //  当前路由是否需要登录才可进入
 				title: '奇文网盘',
@@ -57,13 +56,12 @@ export default new Router({
 				}
 			},
 			component: () =>
-				import(/* webpackChunkName: "onlyOffice" */ '_v/OnlyOffice/index.vue')
+				import(/* webpackChunkName: "onlyOffice" */ '_v/OnlyOffice.vue')
 		},
 		{
 			path: '/share/:shareBatchNum',
 			name: 'Share',
-			component: () =>
-				import(/* webpackChunkName: "share" */ '_v/Share/index.vue'),
+			component: () => import(/* webpackChunkName: "share" */ '_v/Share.vue'),
 			meta: {
 				title: '分享 - 奇文网盘',
 				breadCrumbName: '分享文件'
@@ -74,7 +72,7 @@ export default new Router({
 			path: '/myshare',
 			name: 'MyShare',
 			component: () =>
-				import(/* webpackChunkName: "my_share" */ '_v/MyShare/index.vue'),
+				import(/* webpackChunkName: "my_share" */ '_v/MyShare.vue'),
 			meta: {
 				requireAuth: true,
 				title: '我的分享 - 奇文网盘',
