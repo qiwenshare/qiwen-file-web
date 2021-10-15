@@ -6,41 +6,74 @@
 			:default-active="activeIndex"
 			:router="true"
 			:collapse="isCollapse"
-			background-color="#545c64"
-			text-color="#fff"
-			active-text-color="#ffd04b"
 		>
+			<!-- background-color="#545c64"
+			text-color="#fff"
+			active-text-color="#ffd04b" -->
+			<el-submenu index="myFile" class="my-file">
+				<template slot="title">
+					<!-- 图标均来自 Element UI 官方图标库 https://element.eleme.cn/#/zh-CN/component/icon -->
+					<i class="el-icon-files"></i>
+					<span slot="title">我的文件</span>
+				</template>
+				<el-menu-item
+					index="0"
+					:route="{ name: 'File', query: { fileType: 0, filePath: '/' } }"
+				>
+					<i class="el-icon-takeaway-box"></i>
+					<span slot="title">全部</span>
+				</el-menu-item>
+				<el-menu-item
+					index="1"
+					:route="{ name: 'File', query: { fileType: 1 } }"
+				>
+					<i class="el-icon-picture-outline"></i>
+					<span slot="title">图片</span>
+				</el-menu-item>
+				<el-menu-item
+					index="2"
+					:route="{ name: 'File', query: { fileType: 2 } }"
+				>
+					<i class="el-icon-document"></i>
+					<span slot="title">文档</span>
+				</el-menu-item>
+				<el-menu-item
+					index="3"
+					:route="{ name: 'File', query: { fileType: 3 } }"
+				>
+					<i class="el-icon-video-camera"></i>
+					<span slot="title">视频</span>
+				</el-menu-item>
+				<el-menu-item
+					index="4"
+					:route="{ name: 'File', query: { fileType: 4 } }"
+				>
+					<i class="el-icon-headset"></i>
+					<span slot="title">音乐</span>
+				</el-menu-item>
+				<el-menu-item
+					index="5"
+					:route="{ name: 'File', query: { fileType: 5 } }"
+				>
+					<i class="el-icon-takeaway-box"></i>
+					<span slot="title">其他</span>
+				</el-menu-item>
+			</el-submenu>
 			<el-menu-item
-				index="0"
-				:route="{ name: 'File', query: { fileType: 0, filePath: '/' } }"
+				index="6"
+				:route="{ name: 'File', query: { fileType: 6 } }"
+				class="recovery"
 			>
-				<!-- 图标均来自 Element UI 官方图标库 https://element.eleme.cn/#/zh-CN/component/icon -->
-				<i class="el-icon-menu"></i>
-				<span slot="title">全部</span>
-			</el-menu-item>
-			<el-menu-item index="1" :route="{ name: 'File', query: { fileType: 1 } }">
-				<i class="el-icon-picture"></i>
-				<span slot="title">图片</span>
-			</el-menu-item>
-			<el-menu-item index="2" :route="{ name: 'File', query: { fileType: 2 } }">
-				<i class="el-icon-document"></i>
-				<span slot="title">文档</span>
-			</el-menu-item>
-			<el-menu-item index="3" :route="{ name: 'File', query: { fileType: 3 } }">
-				<i class="el-icon-video-camera-solid"></i>
-				<span slot="title">视频</span>
-			</el-menu-item>
-			<el-menu-item index="4" :route="{ name: 'File', query: { fileType: 4 } }">
-				<i class="el-icon-headset"></i>
-				<span slot="title">音乐</span>
-			</el-menu-item>
-			<el-menu-item index="5" :route="{ name: 'File', query: { fileType: 5 } }">
-				<i class="el-icon-takeaway-box"></i>
-				<span slot="title">其他</span>
-			</el-menu-item>
-			<el-menu-item index="6" :route="{ name: 'File', query: { fileType: 6 } }">
 				<i class="el-icon-box"></i>
 				<span slot="title">回收站</span>
+			</el-menu-item>
+			<el-menu-item
+				index="8"
+				:route="{ name: 'File', query: { fileType: 8, filePath: '/' } }"
+				class="my-share"
+			>
+				<i class="el-icon-share"></i>
+				<span slot="title">我的分享</span>
 			</el-menu-item>
 		</el-menu>
 		<!-- 存储信息显示 -->
@@ -75,14 +108,11 @@
 				class="aside-title"
 				@click="isCollapse ? (isCollapse = false) : (isCollapse = true)"
 			>
-				<div class="top"></div>
 				<i
-					class="icon el-icon-d-arrow-right"
-					v-if="isCollapse"
-					title="展开"
+					class="icon"
+					:class="isCollapse ? 'el-icon-d-arrow-right' : 'el-icon-d-arrow-left'"
+					:title="isCollapse ? '展开' : '收起'"
 				></i>
-				<i class="icon el-icon-d-arrow-left" v-else title="收起"></i>
-				<div class="bottom"></div>
 			</div>
 		</el-tooltip>
 	</div>
@@ -141,33 +171,39 @@ export default {
   position: relative;
   height: calc(100vh - 61px);
   padding-right: 11px;
-
   .side-menu {
+    background: transparent;
     // 高度设置为屏幕高度减去顶部导航栏的高度
     height: calc(100vh - 127px);
     overflow: auto;
     // 调整滚动条样式
-    setScrollbar(6px, #909399, #EBEEF5);
+    setScrollbar(6px, transparent, #C0C4CC);
+    .el-menu-item.is-active {
+      background-color: #ecf5ff;
+    }
+    .my-file, .recovery {
+      box-shadow: 0 4px 12px 0 $BorderExtralight;
+    }
   }
-
   // 对展开状态下的菜单设置宽度
   .side-menu:not(.el-menu--collapse) {
-    width: 200px;
+    width: 210px;
   }
-
   // 存储空间展示区
   .storage-wrapper {
     position: absolute;
     bottom: 0;
     left: 0;
+    box-shadow: 0 -2px 12px 0 $BorderExtralight;
+    border-right: solid 1px #e6e6e6;
     box-sizing: border-box;
-    background: #545c64;
-    width: calc(100% - 12px);
+    // background: #545c64;
+    width: calc(100% - 11px);
     height: 66px;
     padding: 16px;
     z-index: 2;
-    color: #fff;
-
+    // color: #fff;
+    color: $PrimaryText;
     .text {
       margin-top: 8px;
       display: flex;
@@ -177,63 +213,37 @@ export default {
       flex-wrap: wrap;
     }
   }
-
   .storage-wrapper.fold {
     padding: 0;
-
     >>> .el-progress--circle {
       margin: 0 auto;
       width: 32px;
       display: block;
     }
-
     .text {
       font-size: 12px;
       justify-content: center;
     }
   }
-
   // 折叠图标调整样式
   .aside-title {
     position: absolute;
     top: calc(50% - 50px);
     right: 0;
     z-index: 3;
-    background: #545c64;
-    color: $BorderLight;
+    // background: #545c64;
+    background: $BorderBase;
+    color: #fff;
     width: 12px;
     height: 100px;
     line-height: 100px;
     cursor: pointer;
-
-    // transition left 0.5s
-    // -webkit-transition left 0.5s
+    border-radius: 0 16px 16px 0;
     &:hover {
       opacity: 0.7;
     }
-
     .icon {
       font-size: 12px;
-    }
-
-    .top {
-      position: absolute;
-      top: calc(50% - 50px);
-      right: 0px;
-      width: 0;
-      height: 0;
-      border-bottom: 12px solid transparent;
-      border-right: 12px solid #fff;
-    }
-
-    .bottom {
-      position: absolute;
-      top: calc(50% + 38px);
-      right: 0px;
-      width: 0;
-      height: 0;
-      border-top: 12px solid transparent;
-      border-right: 12px solid #fff;
     }
   }
 }

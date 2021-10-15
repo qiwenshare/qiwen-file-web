@@ -1,6 +1,8 @@
 import Cookies from 'js-cookie'
-import config from '@/config'
+import router from '@/router/router'
+import config from '@/config/index.js'
 import { Message } from 'element-ui'
+import { fileImgMap, unknownImg } from '@/libs/map.js'
 
 // 全局函数
 const globalFunction = {
@@ -71,7 +73,7 @@ const globalFunction = {
 	 */
 	createFileOnlineByOffice: function (data) {
 		let fileUrl = `${location.protocol}//${location.host}/api`
-		const { href } = this.$router.resolve({
+		const { href } = router.resolve({
 			name: 'Onlyoffice',
 			query: {
 				fileUrl: fileUrl,
@@ -103,7 +105,7 @@ const globalFunction = {
 		}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${
 			row.extractionCode
 		}&token=${globalFunction.getCookies('token')}`
-		const { href } = this.$router.resolve({
+		const { href } = router.resolve({
 			name: 'Onlyoffice',
 			query: {
 				fileUrl: fileUrl,
@@ -137,7 +139,7 @@ const globalFunction = {
 		}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${
 			row.extractionCode
 		}&token=${globalFunction.getCookies('token')}`
-		const { href } = this.$router.resolve({
+		const { href } = router.resolve({
 			name: 'Onlyoffice',
 			query: {
 				fileUrl: fileUrl,
@@ -205,6 +207,28 @@ const globalFunction = {
 		document.execCommand('Copy') // 执行复制
 		document.body.removeChild(input) // 删除临时实例
 		Message.success('复制成功')
+	},
+	/**
+	 * 根据文件扩展名设置文件图片
+	 * @param {object} file 文件信息
+	 */
+	setFileImg: function (file) {
+		if (file.isDir === 1) {
+			//  文件夹
+			return fileImgMap.get('dir')
+		} else if (
+			Number(router.currentRoute.query.fileType) !== 6 &&
+			['jpg', 'png', 'jpeg', 'gif', 'mp4'].includes(file.extendName)
+		) {
+			// 图片、视频类型，直接显示缩略图
+			return this.getImgMinPath(file)
+		} else if (fileImgMap.has(file.extendName)) {
+			// 可以识别文件类型的文件
+			return fileImgMap.get(file.extendName)
+		} else {
+			// 无法识别文件类型的文件
+			return unknownImg
+		}
 	}
 }
 

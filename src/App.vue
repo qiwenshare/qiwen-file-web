@@ -41,7 +41,6 @@ export default {
 				'Onlyoffice',
 				'File',
 				'Share',
-				'MyShare',
 				'Error_401',
 				'Error_404',
 				'Error_500'

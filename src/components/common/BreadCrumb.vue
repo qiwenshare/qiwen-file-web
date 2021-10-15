@@ -2,7 +2,7 @@
 	<div class="breadcrumb-wrapper">
 		<div class="title">当前位置：</div>
 		<el-breadcrumb
-			v-if="fileType && !['Share', 'MyShare'].includes($route.name)"
+			v-if="![0, 8].includes(fileType) && !['Share'].includes($route.name)"
 			separator="/"
 		>
 			<el-breadcrumb-item>{{ fileTypeMap[fileType] }}</el-breadcrumb-item>
@@ -63,7 +63,12 @@ export default {
 						_path.push(filePathList[i])
 						res.push({
 							path: '/',
-							name: this.$route.meta.breadCrumbName
+							name:
+								this.fileType === 0
+									? '全部文件'
+									: this.fileType === 8
+									? '我的分享'
+									: ''
 						})
 					}
 				}
@@ -81,10 +86,11 @@ export default {
 			if (routeName === 'Share') {
 				// 当前是查看他人分享列表的页面
 				return { query: { filePath: item.path } }
-			} else if (routeName === 'MyShare') {
+			} else if (this.fileType === 8) {
 				// 当前是我的已分享列表页面
 				return {
 					query: {
+						fileType: 8,
 						filePath: item.path,
 						shareBatchNum:
 							item.path === '/' ? undefined : this.$route.query.shareBatchNum //  当查看的是根目录，批次号置空

@@ -117,7 +117,7 @@ export default {
   margin-top: 20px;
   height: calc(100vh - 215px);
   overflow-y: auto;
-  setScrollbar(10px);
+  setScrollbar(6px, transparent, #C0C4CC);
 
   .image-timeline-list {
     margin-top: 10px;

@@ -13,11 +13,6 @@
 				:route="{ name: 'File', query: { fileType: 0, filePath: '/' } }"
 				>网盘</el-menu-item
 			>
-			<el-menu-item
-				index="MyShare"
-				:route="{ name: 'MyShare', query: { filePath: '/' } }"
-				>我的分享</el-menu-item
-			>
 			<li class="el-menu-item external-link">
 				<a href="https://pan.qiwenshare.com/docs/" target="_blank">文档</a>
 			</li>

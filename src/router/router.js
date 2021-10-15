@@ -42,8 +42,7 @@ export default new Router({
 				content: {
 					description:
 						'基于Spring Boot + Vue CLI@3 框架开发的Web文件系统，旨在为用户提供一个简单、方便的文件存储方案'
-				},
-				breadCrumbName: '全部文件'
+				}
 			}
 		},
 		{
@@ -63,21 +62,9 @@ export default new Router({
 			name: 'Share',
 			component: () => import(/* webpackChunkName: "share" */ '_v/Share.vue'),
 			meta: {
-				title: '分享 - 奇文网盘',
-				breadCrumbName: '分享文件'
+				title: '分享 - 奇文网盘'
 			},
 			props: true
-		},
-		{
-			path: '/myshare',
-			name: 'MyShare',
-			component: () =>
-				import(/* webpackChunkName: "my_share" */ '_v/MyShare.vue'),
-			meta: {
-				requireAuth: true,
-				title: '我的分享 - 奇文网盘',
-				breadCrumbName: '我的分享'
-			}
 		},
 		{
 			path: '*',

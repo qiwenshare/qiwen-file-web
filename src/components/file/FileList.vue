@@ -92,6 +92,7 @@ import {
 	getFileListByPath,
 	getFileListByType,
 	getRecoveryFile,
+	getMyShareFileList,
 	moveFile,
 	batchMoveFile,
 	searchFile,
@@ -134,78 +135,6 @@ export default {
 				success: false,
 				shareData: {}
 			},
-			//  可以识别的文件类型
-			fileImgTypeList: [
-				'png',
-				'jpg',
-				'jpeg',
-				'docx',
-				'doc',
-				'ppt',
-				'pptx',
-				'xls',
-				'xlsx',
-				'avi',
-				'mp4',
-				'css',
-				'csv',
-				'chm',
-				'rar',
-				'zip',
-				'dmg',
-				'mp3',
-				'open',
-				'pdf',
-				'rtf',
-				'txt',
-				'oa',
-				'js',
-				'html',
-				'img',
-				'sql',
-				'jar',
-				'svg',
-				'gif',
-				'json',
-				'exe'
-			],
-			//  文件图片Map映射
-			fileImgMap: {
-				dir: require('_a/images/file/dir.png'),
-				chm: require('_a/images/file/file_chm.png'),
-				css: require('_a/images/file/file_css.png'),
-				csv: require('_a/images/file/file_csv.png'),
-				png: require('_a/images/file/file_pic.png'),
-				jpg: require('_a/images/file/file_pic.png'),
-				jpeg: require('_a/images/file/file_pic.png'),
-				docx: require('_a/images/file/file_word.png'),
-				doc: require('_a/images/file/file_word.png'),
-				ppt: require('_a/images/file/file_ppt.png'),
-				pptx: require('_a/images/file/file_ppt.png'),
-				xls: require('_a/images/file/file_excel.png'),
-				xlsx: require('_a/images/file/file_excel.png'),
-				mp4: require('_a/images/file/file_video.png'),
-				avi: require('_a/images/file/file_avi.png'),
-				rar: require('_a/images/file/file_rar.png'),
-				zip: require('_a/images/file/file_zip.png'),
-				dmg: require('_a/images/file/file_dmg.png'),
-				mp3: require('_a/images/file/file_music.png'),
-				open: require('_a/images/file/file_open.png'),
-				pdf: require('_a/images/file/file_pdf.png'),
-				rtf: require('_a/images/file/file_rtf.png'),
-				txt: require('_a/images/file/file_txt.png'),
-				oa: require('_a/images/file/file_oa.png'),
-				unknown: require('_a/images/file/file_unknown.png'),
-				js: require('_a/images/file/file_js.png'),
-				html: require('_a/images/file/file_html.png'),
-				img: require('_a/images/file/file_img.png'),
-				sql: require('_a/images/file/file_sql.png'),
-				jar: require('_a/images/file/file_jar.png'),
-				svg: require('_a/images/file/file_svg.png'),
-				gif: require('_a/images/file/file_gif.png'),
-				json: require('_a/images/file/file_json.png'),
-				exe: require('_a/images/file/file_exe.png')
-			},
 			batchOperate: false //  批量操作模式
 		}
 	},
@@ -225,8 +154,8 @@ export default {
 	},
 	watch: {
 		filePath() {
-			// 当左侧菜单选择全部，文件路径发生变化时，再重新获取文件列表
-			if (this.$route.name === 'File' && this.fileType === 0) {
+			// 当左侧菜单选择“全部”或“我的分享”，文件路径发生变化时，再重新获取文件列表
+			if (this.$route.name === 'File' && [0, 8].includes(this.fileType)) {
 				this.setPageCount()
 				this.getTableDataByType()
 			}
@@ -273,10 +202,19 @@ export default {
 			this.loading = true
 			// 分类型
 			if (Number(this.fileType)) {
-				if (Number(this.fileType) === 6) {
-					this.shwoFileRecovery() //  回收站
-				} else {
-					this.showFileListByType()
+				switch (Number(this.fileType)) {
+					case 6: {
+						this.showFileRecovery() //  回收站
+						break
+					}
+					case 8: {
+						this.showMyShareFile() //  我的分享
+						break
+					}
+					default: {
+						this.showFileListByType()
+						break
+					}
 				}
 			} else {
 				// 全部文件
@@ -320,10 +258,30 @@ export default {
 		/**
 		 * 表格数据获取相关事件 | 获取回收站文件列表
 		 */
-		shwoFileRecovery() {
+		showFileRecovery() {
 			getRecoveryFile().then((res) => {
 				if (res.success) {
 					this.fileList = res.data
+					this.loading = false
+				} else {
+					this.$message.error(res.message)
+				}
+			})
+		},
+		/**
+		 * 表格数据获取相关事件 | 获取我的分享列表
+		 */
+		showMyShareFile() {
+			let data = {
+				shareFilePath: this.filePath,
+				shareBatchNum: this.$route.query.shareBatchNum,
+				currentPage: this.pageData.currentPage,
+				pageCount: this.pageData.pageCount
+			}
+			getMyShareFileList(data).then((res) => {
+				if (res.success) {
+					this.fileList = res.data.list
+					this.pageData.total = res.data.total
 					this.loading = false
 				} else {
 					this.$message.error(res.message)

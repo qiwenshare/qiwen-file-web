@@ -1,5 +1,5 @@
 import axios from 'axios'
-import globalFunction from '@/globalFunction.js'
+import globalFunction from '@/libs/globalFunction.js'
 import router from '@/router/router'
 import { MessageBox, Message } from 'element-ui'
 

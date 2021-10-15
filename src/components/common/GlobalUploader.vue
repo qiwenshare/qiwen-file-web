@@ -530,7 +530,7 @@ export default {
       overflow-y: auto;
       background-color: #fff;
       font-size: 12px;
-      setScrollbar(8px, #EBEEF5, #C0C4CC);
+      setScrollbar(6px, #EBEEF5, #C0C4CC);
 
       .file-item {
         position: relative;

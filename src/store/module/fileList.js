@@ -1,4 +1,4 @@
-import globalFunction from '@/globalFunction.js'
+import globalFunction from '@/libs/globalFunction.js'
 
 export default {
 	state: {

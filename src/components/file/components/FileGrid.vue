@@ -165,77 +165,6 @@ export default {
 	data() {
 		return {
 			fileListSorted: [],
-			//  可以识别的文件类型
-			fileImgTypeList: [
-				'png',
-				'jpg',
-				'jpeg',
-				'docx',
-				'doc',
-				'ppt',
-				'pptx',
-				'xls',
-				'xlsx',
-				'avi',
-				'mp4',
-				'css',
-				'csv',
-				'chm',
-				'rar',
-				'zip',
-				'dmg',
-				'mp3',
-				'open',
-				'pdf',
-				'rtf',
-				'txt',
-				'oa',
-				'js',
-				'html',
-				'img',
-				'sql',
-				'jar',
-				'svg',
-				'gif',
-				'json',
-				'exe'
-			],
-			//  文件图片Map映射
-			fileImgMap: {
-				dir: require('_a/images/file/dir.png'),
-				chm: require('_a/images/file/file_chm.png'),
-				css: require('_a/images/file/file_css.png'),
-				csv: require('_a/images/file/file_csv.png'),
-				png: require('_a/images/file/file_pic.png'),
-				jpg: require('_a/images/file/file_pic.png'),
-				jpeg: require('_a/images/file/file_pic.png'),
-				docx: require('_a/images/file/file_word.png'),
-				doc: require('_a/images/file/file_word.png'),
-				ppt: require('_a/images/file/file_ppt.png'),
-				pptx: require('_a/images/file/file_ppt.png'),
-				xls: require('_a/images/file/file_excel.png'),
-				xlsx: require('_a/images/file/file_excel.png'),
-				mp4: require('_a/images/file/file_video.png'),
-				avi: require('_a/images/file/file_avi.png'),
-				rar: require('_a/images/file/file_rar.png'),
-				zip: require('_a/images/file/file_zip.png'),
-				dmg: require('_a/images/file/file_dmg.png'),
-				mp3: require('_a/images/file/file_music.png'),
-				open: require('_a/images/file/file_open.png'),
-				pdf: require('_a/images/file/file_pdf.png'),
-				rtf: require('_a/images/file/file_rtf.png'),
-				txt: require('_a/images/file/file_txt.png'),
-				oa: require('_a/images/file/file_oa.png'),
-				unknown: require('_a/images/file/file_unknown.png'),
-				js: require('_a/images/file/file_js.png'),
-				html: require('_a/images/file/file_html.png'),
-				img: require('_a/images/file/file_img.png'),
-				sql: require('_a/images/file/file_sql.png'),
-				jar: require('_a/images/file/file_jar.png'),
-				svg: require('_a/images/file/file_svg.png'),
-				json: require('_a/images/file/file_json.png'),
-				exe: require('_a/images/file/file_exe.png')
-			},
 			officeFileType: ['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'],
 			downloadFilePath: '',
 			viewFilePath: '',
@@ -285,55 +214,53 @@ export default {
 		},
 		// 删除按钮是否显示
 		deleteBtnShow() {
-			return !['Share', 'MyShare'].includes(this.routeName)
+			return this.fileType !== 8 && !['Share'].includes(this.routeName)
 		},
 		// 还原按钮是否显示
 		restoreBtnShow() {
-			return (
-				this.fileType === 6 && !['Share', 'MyShare'].includes(this.routeName)
-			)
+			return this.fileType === 6 && !['Share'].includes(this.routeName)
 		},
 		// 移动按钮是否显示
 		moveBtnShow() {
 			return (
-				this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName)
+				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
 			)
 		},
 		// 重命名按钮是否显示
 		renameBtnShow() {
 			return (
-				this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName)
+				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
 			)
 		},
-		// 删除按钮是否显示
+		// 分享按钮是否显示
 		shareBtnShow() {
 			return (
-				this.fileType !== 6 && !['Share', 'MyShare'].includes(this.routeName)
+				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
 			)
 		},
 		// 下载按钮是否显示
 		downloadBtnShow() {
-			return this.fileType !== 6 && !['MyShare'].includes(this.routeName)
+			return ![6, 8].includes(this.fileType)
 		},
 		// 解压缩按钮是否显示
 		unzipBtnShow() {
 			return (
-				this.fileType !== 6 &&
-				!['Share', 'MyShare'].includes(this.routeName) &&
+				![6, 8].includes(this.fileType) &&
+				!['Share'].includes(this.routeName) &&
 				['zip', 'rar'].includes(this.selectedFile.extendName)
 			)
 		},
 		// 在线编辑按钮是否显示
 		onlineEditBtnShow() {
 			return (
-				this.fileType !== 6 &&
+				![6, 8].includes(this.fileType) &&
 				this.officeFileType.includes(this.selectedFile.extendName) &&
-				!['Share', 'MyShare'].includes(this.routeName)
+				!['Share'].includes(this.routeName)
 			)
 		},
 		// 复制链接按钮是否显示
 		copyLinkBtnShow() {
-			return this.routeName === 'MyShare'
+			return this.fileType === 8
 		}
 	},
 	watch: {
@@ -415,28 +342,6 @@ export default {
 		closeRightMenu() {
 			this.rightMenu.isShow = false
 			this.selectedFile = {}
-		},
-		/**
-		 * 根据文件扩展名设置文件图片
-		 * @param {object} row 文件信息
-		 */
-		setFileImg(row) {
-			if (row.isDir === 1) {
-				//  文件夹
-				return this.fileImgMap.dir
-			} else if (!this.fileImgTypeList.includes(row.extendName)) {
-				//  无法识别文件类型的文件
-				return this.fileImgMap.unknown
-			} else if (
-				this.fileType !== 6 &&
-				['jpg', 'png', 'jpeg', 'gif', 'mp4'].includes(row.extendName)
-			) {
-				// 图片类型，直接显示缩略图
-				return this.getImgMinPath(row)
-			} else {
-				//  可以识别文件类型的文件
-				return this.fileImgMap[row.extendName]
-			}
 		},
 
 		/**
@@ -749,7 +654,7 @@ export default {
     flex-wrap: wrap;
     align-items: flex-start;
     align-content: flex-start;
-    setScrollbar(10px);
+    setScrollbar(6px, transparent, #C0C4CC);
 
     .file-item {
       margin: 0 16px 16px 0;

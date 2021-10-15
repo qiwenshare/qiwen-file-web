@@ -1,7 +1,7 @@
 <template>
 	<div class="operation-menu-wrapper" :class="'file-type-' + fileType">
-		<el-button-group class="operate-group">
-			<el-dropdown class="drop-btn" trigger="hover">
+		<el-button-group class="create-operate-group">
+			<el-dropdown class="upload-drop" trigger="hover">
 				<el-button
 					size="mini"
 					type="primary"
@@ -35,7 +35,7 @@
 				:disabled="(selectionFile.length && batchOperate) || fileType !== 0"
 				>新建文件夹</el-button
 			>
-			<el-dropdown class="drop-btn" trigger="hover">
+			<el-dropdown class="create-drop" trigger="hover">
 				<el-button
 					size="mini"
 					type="primary"
@@ -51,24 +51,25 @@
 					<el-dropdown-item @click.native="handleCreateFile('docx')">
 						<img
 							:src="wordImg"
-							style="width: 30px; max-height: 30px; cursor: pointer"
+							style="width: 24px; max-height: 24px; cursor: pointer"
 						/>Word 文档</el-dropdown-item
 					>
 					<el-dropdown-item @click.native="handleCreateFile('xlsx')">
 						<img
 							:src="excelImg"
-							style="width: 30px; max-height: 30px; cursor: pointer"
+							style="width: 24px; max-height: 24px; cursor: pointer"
 						/>Excel 工作表</el-dropdown-item
 					>
 					<el-dropdown-item @click.native="handleCreateFile('pptx')"
 						><img
 							:src="pptImg"
-							style="width: 30px; max-height: 30px; cursor: pointer"
+							style="width: 24px; max-height: 24px; cursor: pointer"
 						/>PPT 演示文稿</el-dropdown-item
 					>
 				</el-dropdown-menu>
 			</el-dropdown>
-
+		</el-button-group>
+		<el-button-group class="batch-operate-group">
 			<el-button
 				size="mini"
 				type="primary"
@@ -127,7 +128,7 @@
 				slot="prefix"
 				class="el-input__icon el-icon-search"
 				title="点击搜索"
-				@click="handleSearchClick"
+				@click="handleSearchInputChange(searchFile.fileName)"
 			></i>
 		</el-input>
 
@@ -431,12 +432,6 @@ export default {
 			}
 		},
 		/**
-		 * 搜索框图标点击事件
-		 */
-		handleSearchClick() {
-			this.$emit('getSearchFileList', this.searchFile.fileName)
-		},
-		/**
 		 * 网格模式下，批量操作状态切换
 		 */
 		handleBatchOperationChange() {
@@ -474,17 +469,20 @@ export default {
   justify-content: space-between;
   align-items: center;
 
-  .operate-group {
-    flex: 1;
-
-    .drop-btn {
+  .create-operate-group {
+    .upload-drop {
       float: left;
-      border-radius: 4px 0 0 4px;
-
       >>> .el-button {
         border-radius: 4px 0 0 4px;
       }
     }
+    .create-drop {
+      float: left;
+    }
+  }
+
+  .batch-operate-group {
+    flex: 1;
   }
 
   .select-file-input {
