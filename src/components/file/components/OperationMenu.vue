@@ -7,21 +7,25 @@
 					type="primary"
 					icon="el-icon-upload2"
 					id="uploadFileId"
-					:disabled="(selectionFile.length && batchOperate) || fileType !== 0"
+					:disabled="
+						(selectedFiles.length && isBatchOperation) || fileType !== 0
+					"
 					>上传<i class="el-icon-arrow-down el-icon--right"></i
 				></el-button>
 				<el-dropdown-menu
 					slot="dropdown"
-					:disabled="(selectionFile.length && batchOperate) || fileType !== 0"
+					:disabled="
+						(selectedFiles.length && isBatchOperation) || fileType !== 0
+					"
 				>
-					<el-dropdown-item @click.native="handleUploadFileBtnClick(0)"
+					<el-dropdown-item @click.native="handleUploadFileBtnClick(1)"
 						>上传文件</el-dropdown-item
 					>
-					<el-dropdown-item @click.native="handleUploadFileBtnClick(1)"
+					<el-dropdown-item @click.native="handleUploadFileBtnClick(2)"
 						>上传文件夹</el-dropdown-item
 					>
 					<el-dropdown-item
-						@click.native="handleUploadFileBtnClick(2)"
+						@click.native="handleUploadFileBtnClick(3)"
 						title="截图粘贴或拖拽上传"
 						>拖拽上传</el-dropdown-item
 					>
@@ -31,8 +35,8 @@
 				size="mini"
 				type="primary"
 				icon="el-icon-plus"
-				@click="dialogAddFolder.visible = true"
-				:disabled="(selectionFile.length && batchOperate) || fileType !== 0"
+				@click="handleClickAddFolderBtn"
+				:disabled="(selectedFiles.length && isBatchOperation) || fileType !== 0"
 				>新建文件夹</el-button
 			>
 			<el-dropdown class="create-drop" trigger="hover">
@@ -41,12 +45,16 @@
 					type="primary"
 					icon="el-icon-edit-outline"
 					id="uploadFileId"
-					:disabled="(selectionFile.length && batchOperate) || fileType !== 0"
+					:disabled="
+						(selectedFiles.length && isBatchOperation) || fileType !== 0
+					"
 					>新建在线文档<i class="el-icon-arrow-down el-icon--right"></i
 				></el-button>
 				<el-dropdown-menu
 					slot="dropdown"
-					:disabled="(selectionFile.length && batchOperate) || fileType !== 0"
+					:disabled="
+						(selectedFiles.length && isBatchOperation) || fileType !== 0
+					"
 				>
 					<el-dropdown-item @click.native="handleCreateFile('docx')">
 						<img
@@ -69,47 +77,44 @@
 				</el-dropdown-menu>
 			</el-dropdown>
 		</el-button-group>
-		<el-button-group class="batch-operate-group">
-			<el-button
-				size="mini"
-				type="primary"
-				v-if="selectionFile.length && batchOperate"
-				icon="el-icon-delete"
-				@click="handleBatchDeleteBtnClick()"
-				>批量删除</el-button
-			>
-			<el-button
-				size="mini"
-				type="primary"
-				v-if="
-					selectionFile.length && !fileType && fileType !== 6 && batchOperate
-				"
-				icon="el-icon-rank"
-				@click="handleBatchMoveBtnClick()"
-				>批量移动</el-button
-			>
-			<el-button
-				size="mini"
-				type="primary"
-				v-if="selectionFile.length && fileType !== 6 && batchOperate"
-				icon="el-icon-download"
-				@click="handleBatchDownloadBtnClick()"
-				>批量下载</el-button
-			>
-			<el-button
-				size="mini"
-				type="primary"
-				v-if="
-					selectionFile.length &&
-					fileType !== 6 &&
-					$route.name !== 'Share' &&
-					batchOperate
-				"
-				icon="el-icon-share"
-				@click="handleBatchShareBtnClick()"
-				>批量分享</el-button
-			>
-		</el-button-group>
+		<div class="batch-operate-group">
+			<el-button-group v-if="isBatchOperation">
+				<el-button
+					size="mini"
+					type="primary"
+					v-if="selectedFiles.length"
+					icon="el-icon-delete"
+					@click="handleBatchDeleteBtnClick"
+					>批量删除</el-button
+				>
+				<el-button
+					size="mini"
+					type="primary"
+					v-if="selectedFiles.length && !fileType && fileType !== 6"
+					icon="el-icon-rank"
+					@click="handleBatchMoveBtnClick"
+					>批量移动</el-button
+				>
+				<el-button
+					size="mini"
+					type="primary"
+					v-if="selectedFiles.length && fileType !== 6"
+					icon="el-icon-download"
+					@click="handleBatchDownloadBtnClick"
+					>批量下载</el-button
+				>
+				<el-button
+					size="mini"
+					type="primary"
+					v-if="
+						selectedFiles.length && fileType !== 6 && $route.name !== 'Share'
+					"
+					icon="el-icon-share"
+					@click="handleBatchShareBtnClick"
+					>批量分享</el-button
+				>
+			</el-button-group>
+		</div>
 
 		<!-- 全局搜索文件 -->
 		<el-input
@@ -135,8 +140,8 @@
 		<!-- 批量操作 -->
 		<i
 			class="batch-icon el-icon-finished"
-			:class="batchOperate ? 'active' : ''"
-			:title="batchOperate ? '取消批量操作' : '批量操作'"
+			:class="isBatchOperation ? 'active' : ''"
+			:title="isBatchOperation ? '取消批量操作' : '批量操作'"
 			v-if="fileModel === 1"
 			@click="handleBatchOperationChange()"
 		></i>
@@ -183,25 +188,10 @@
 			</div>
 		</el-popover>
 
-		<!-- 新建文件夹对话框 -->
-		<AddFolderDialog
-			:visible.sync="dialogAddFolder.visible"
-			:filePath="filePath"
-			@confirmDialog="$emit('getTableDataByType')"
-		></AddFolderDialog>
-
-		<!-- 新建文件对话框 -->
-		<AddFileDialog
-			:visible.sync="dialogAddFile.visible"
-			:filePath="filePath"
-			:extendName="extendName"
-			@confirmDialog="$emit('getTableDataByType')"
-		></AddFileDialog>
-
 		<!-- 多选文件下载，页面隐藏 -->
 		<a
 			target="_blank"
-			v-for="(item, index) in selectionFile"
+			v-for="(item, index) in selectedFiles"
 			:key="index"
 			:href="getDownloadFilePath(item)"
 			:download="item.fileName + '.' + item.extendName"
@@ -212,9 +202,6 @@
 </template>
 
 <script>
-import { batchDeleteFile, batchDeleteRecoveryFile } from '_r/file.js'
-import AddFolderDialog from '_c/file/dialog/AddFolderDialog.vue'
-import AddFileDialog from '_c/file/dialog/AddFileDialog.vue'
 import SelectColumn from './SelectColumn.vue'
 
 export default {
@@ -229,14 +216,9 @@ export default {
 		filePath: {
 			required: true,
 			type: String
-		},
-		selectionFile: Array,
-		operationFile: Object,
-		batchOperate: Boolean
+		}
 	},
 	components: {
-		AddFolderDialog,
-		AddFileDialog,
 		SelectColumn
 	},
 	data() {
@@ -245,16 +227,6 @@ export default {
 			searchFile: {
 				fileName: ''
 			},
-			// 新建文件夹对话框数据
-			dialogAddFolder: {
-				visible: false
-			},
-			// 新建文件夹对话框数据
-			dialogAddFile: {
-				visible: false
-			},
-			extendName: '',
-			batchDeleteFileDialog: false,
 			fileGroupLable: 0, //  文件展示模式
 			wordImg: require('_a/images/file/file_word.png'),
 			excelImg: require('_a/images/file/file_excel.png'),
@@ -262,8 +234,8 @@ export default {
 		}
 	},
 	computed: {
-		//  上传文件组件参数
-		uploadFileData: {
+		// 上传文件组件参数
+		uploadFileParams: {
 			get() {
 				let res = {
 					filePath: this.filePath,
@@ -290,6 +262,14 @@ export default {
 			set(val) {
 				this.$store.commit('changeGridSize', val)
 			}
+		},
+		// 被选中的文件列表
+		selectedFiles() {
+			return this.$store.state.fileList.selectedFiles
+		},
+		// 是否批量操作
+		isBatchOperation() {
+			return this.$store.state.fileList.isBatchOperation
 		}
 	},
 	watch: {
@@ -302,28 +282,50 @@ export default {
 	},
 	mounted() {
 		this.fileGroupLable = this.fileModel
-		this.$EventBus.$on('refreshList', () => {
-			this.$emit('getTableDataByType')
-		})
-		this.$EventBus.$on('refreshStorage', () => {
-			this.$store.dispatch('showStorage')
-		})
 	},
 	methods: {
 		/**
-		 * 新建文档
+		 * 新建文件夹按钮点击事件
+		 * @description 调用新建文件夹服务，并在弹窗确认回调事件中刷新文件列表
+		 */
+		handleClickAddFolderBtn() {
+			this.$addFolder({
+				filePath: this.$route.query.filePath || '/'
+			}).then((res) => {
+				if (res === 'confirm') {
+					this.$emit('getTableDataByType')
+				}
+			})
+		},
+		/**
+		 * 新建 office 文件
+		 * @description 调用新建 office 文件服务，并在弹窗确认回调事件中刷新文件列表
+		 * @param {string} 文件扩展名 docx xlsx pptx
 		 */
 		handleCreateFile(extendName) {
-			this.extendName = extendName
-			this.dialogAddFile.visible = true
+			this.$addFile({
+				extendName: extendName
+			}).then((res) => {
+				if (res === 'confirm') {
+					this.$emit('getTableDataByType')
+				}
+			})
 		},
 		/**
 		 * 上传文件按钮点击事件
 		 * @description 通过Bus通信，开启全局上传文件流程
-		 * @param {boolean} type 上传方式 true 直接上传  false 拖拽上传
+		 * @param {boolean} uploadWay 上传方式 0-文件上传 1-文件夹上传 2-粘贴图片或拖拽上传
 		 */
-		handleUploadFileBtnClick(type) {
-			this.$EventBus.$emit('openUploader', this.uploadFileData, type)
+		handleUploadFileBtnClick(uploadWay) {
+			this.$uploadFile({
+				params: this.uploadFileParams,
+				uploadWay
+			}).then((res) => {
+				if (res === 'confirm') {
+					this.$emit('getTableDataByType')
+					this.$store.dispatch('showStorage')
+				}
+			})
 		},
 
 		/**
@@ -331,91 +333,52 @@ export default {
 		 * @description 区分 删除到回收站中 | 在回收站中彻底删除，调用相应的删除文件接口
 		 */
 		handleBatchDeleteBtnClick() {
-			if (this.fileType === 6) {
-				//  回收站里 - 彻底删除
-				this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				})
-					.then(() => {
-						this.confirmBatchDeleteFile(true)
-					})
-					.catch(() => {})
-			} else {
-				//  非回收站
-				this.$confirm('删除后可在回收站查看, 是否继续删除?', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				})
-					.then(() => {
-						this.confirmBatchDeleteFile(false)
-					})
-					.catch(() => {})
-			}
-		},
-		/**
-		 * 批量删除文件对话框 | 确定按钮点击事件
-		 * @description 区分 删除到回收站中 | 在回收站中彻底删除，调用相应的删除文件接口
-		 * @param {boolean} type 文件类型，true 在回收站中彻底删除 false 删除到回收站
-		 */
-		confirmBatchDeleteFile(type) {
-			if (type) {
-				//  回收站中删除
-				batchDeleteRecoveryFile({
-					recoveryFileIds: JSON.stringify(this.selectionFile)
-				}).then((res) => {
-					if (res.success) {
-						this.$message({
-							message: '删除成功',
-							type: 'success'
-						})
-						this.$emit('getTableDataByType')
-						this.$store.dispatch('showStorage')
-					} else {
-						this.$message.error('失败' + res.message)
-					}
-				})
-			} else {
-				//  非回收站删除
-				batchDeleteFile({
-					files: JSON.stringify(this.selectionFile)
-				}).then((res) => {
-					if (res.success) {
-						this.$message({
-							message: '删除成功',
-							type: 'success'
-						})
-						this.$emit('getTableDataByType')
-						this.$store.dispatch('showStorage')
-					} else {
-						this.$message.error('失败' + res.message)
-					}
-				})
-			}
+			this.$deleteFile({
+				isBatchOperation: true,
+				fileInfo: this.selectedFiles,
+				deleteMode: this.fileType === 6 ? 2 : 1 //  删除模式：1-删除到回收站 2-彻底删除
+			}).then((res) => {
+				console.log(res)
+				if (res === 'confirm') {
+					this.$emit('getTableDataByType')
+					this.$store.dispatch('showStorage')
+				}
+			})
 		},
 		/**
 		 * 批量移动按钮点击事件
 		 */
 		handleBatchMoveBtnClick() {
-			/**
-			 * 第一个参数 是否批量移动
-			 * 第二个参数 打开/关闭移动文件对话框
-			 */
-			this.$emit('setMoveFileDialogData', true, true)
+			if (this.selectedFiles.length > 0) {
+				this.$moveFile({
+					isBatchOperation: true,
+					fileInfo: this.selectedFiles
+				}).then((res) => {
+					if (res === 'confirm') {
+						this.$emit('getTableDataByType')
+					}
+				})
+			} else {
+				this.$message.warning('请先勾选文件')
+			}
 		},
 		/**
-		 * 分享按钮点击事件
+		 * 批量分享按钮点击事件
 		 */
 		handleBatchShareBtnClick() {
-			this.$emit('setShareFileDialogData')
+			this.$shareFile({
+				fileInfo: this.selectedFiles.map((item) => {
+					return {
+						userFileId: item.userFileId
+					}
+				})
+			})
 		},
 		/**
 		 * 批量下载按钮点击事件
 		 */
 		handleBatchDownloadBtnClick() {
-			for (let i = 0; i < this.selectionFile.length; i++) {
+			for (let i = 0; i < this.selectedFiles.length; i++) {
 				let name = 'downloadLink' + i
 				this.$refs[name][0].click()
 			}
@@ -435,7 +398,7 @@ export default {
 		 * 网格模式下，批量操作状态切换
 		 */
 		handleBatchOperationChange() {
-			this.$emit('update:batchOperate', !this.batchOperate)
+			this.$store.commit('changeIsBatchOperation', !this.isBatchOperation)
 		},
 		/**
 		 * 文件查看模式切换

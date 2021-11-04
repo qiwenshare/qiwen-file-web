@@ -2,12 +2,12 @@
 	<transition name="el-fade-in-linear el-fade-in">
 		<div
 			class="img-preview-wrapper"
-			v-show="imgPreviewVisible"
+			v-show="visible"
 			@click.self="closeImgReview"
 			@mousewheel.prevent="rollImg()"
 		>
 			<!-- 顶部信息栏 & 工具栏 -->
-			<div class="tip-wrapper" v-if="imgPreviewVisible">
+			<div class="tip-wrapper" v-if="visible">
 				<div class="name" :title="activeFileName + activeExtendName">
 					{{ activeFileName }}.{{ activeExtendName }}
 				</div>
@@ -15,10 +15,10 @@
 					<el-input-number
 						v-model="inputActiveIndex"
 						:min="1"
-						:max="imgPreviewList.length"
+						:max="imgList.length"
 						size="mini"
 					></el-input-number>
-					<span class="split-line">/</span>{{ imgPreviewList.length }}
+					<span class="split-line">/</span>{{ imgList.length }}
 				</div>
 				<div class="tool-wrapper">
 					<i
@@ -52,7 +52,7 @@
 			<img
 				class="img-large"
 				ref="imgLarge"
-				v-for="(item, index) in imgPreviewList"
+				v-for="(item, index) in imgList"
 				:key="index"
 				:src="item.fileUrl"
 				v-show="index === activeIndex"
@@ -67,7 +67,7 @@
 			<i
 				class="next-icon el-icon-arrow-right"
 				title="下一张"
-				v-show="activeIndex < imgPreviewList.length - 1"
+				v-show="activeIndex < imgList.length - 1"
 				@click.stop="activeIndex++"
 			></i>
 			<!-- 底部显示放大缩小比例 -->
@@ -90,6 +90,7 @@ export default {
 	name: 'ImgPreview',
 	data() {
 		return {
+			visible: false, //  图片预览遮罩层组件是否显示
 			rotate: 0, //  旋转角度
 			activeIndex: 0, //  当前图片索引 从 0 开始
 			imgZoom: 40, //  图片缩放比例
@@ -98,25 +99,13 @@ export default {
 		}
 	},
 	computed: {
-		// 图片查看组件是否显示
-		imgPreviewVisible() {
-			return this.$store.state.imgPreview.imgPreviewVisible
-		},
-		// 图片列表
-		imgPreviewList() {
-			return this.$store.state.imgPreview.imgPreviewList
-		},
-		// 默认显示的图片索引 从 0 开始
-		defaultActiveIndex() {
-			return this.$store.state.imgPreview.defaultActiveIndex
-		},
 		// 当前显示的图片名称
 		activeFileName() {
-			return this.imgPreviewList[this.activeIndex].fileName
+			return this.imgList[this.activeIndex].fileName
 		},
 		// 当前显示的图片扩展名
 		activeExtendName() {
-			return this.imgPreviewList[this.activeIndex].extendName
+			return this.imgList[this.activeIndex].extendName
 		},
 		// 对用户而言 显示的图片索引 从 1 开始 顶部栏输入框控制此值变化
 		inputActiveIndex: {
@@ -129,16 +118,16 @@ export default {
 		},
 		// 当前显示的图片下载链接
 		activeDownloadLink() {
-			return this.imgPreviewList[this.activeIndex].downloadLink
+			return this.imgList[this.activeIndex].downloadLink
 		}
 	},
 	watch: {
 		// 监听 图片查看组件 显隐状态变化
-		imgPreviewVisible(val) {
+		visible(val) {
 			let body = document.querySelector('body')
 			if (val) {
-				this.activeIndex = this.defaultActiveIndex
-				// 挂在body下，防止组件元素有样式transform而使position: fixed失效
+				this.activeIndex = this.defaultIndex
+				// 挂在 body 下，防止组件元素有样式 transform 而使 position: fixed 失效
 				body.appendChild(this.$el)
 				body.style.overflow = 'hidden'
 				// 添加键盘Esc事件
@@ -181,11 +170,11 @@ export default {
 		 * 关闭图片预览，恢复旋转角度
 		 */
 		closeImgReview() {
-			this.$store.commit('setImgPreviewData', { imgPreviewVisible: false })
 			this.rotate = 0
 			this.$refs.imgLarge[
 				this.activeIndex
 			].style.transform = `rotate(${this.rotate}deg)`
+			this.visible = false
 		},
 		/**
 		 * 格式化 tooltip message - 显示图片缩放比例

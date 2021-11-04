@@ -4,30 +4,18 @@
 		<router-view class="mainContent"></router-view>
 		<Footer v-if="isFooterShow"></Footer>
 		<el-backtop class="backtop" target="#app" title="回到顶部"></el-backtop>
-		<!-- 将上传组件全局注册 -->
-		<global-uploader v-if="isFileAboutShow"></global-uploader>
-		<!-- 图片预览 -->
-		<img-preview v-if="isFileAboutShow"></img-preview>
-		<!-- 视频预览 -->
-		<video-preview v-if="isFileAboutShow"></video-preview>
 	</div>
 </template>
 
 <script>
 import Header from '_c/Header.vue'
 import Footer from '_c/Footer.vue'
-import globalUploader from '_c//common/GlobalUploader.vue'
-import ImgPreview from '_c/common/ImgPreview'
-import VideoPreview from '_c/common/VideoPreview'
 
 export default {
 	name: 'App',
 	components: {
 		Header,
-		Footer,
-		globalUploader,
-		ImgPreview,
-		VideoPreview
+		Footer
 	},
 	computed: {
 		//  头部是否显示
@@ -45,11 +33,6 @@ export default {
 				'Error_404',
 				'Error_500'
 			]
-			return routerNameList.includes(this.$route.name) ? false : true
-		},
-		// 网盘页面文件上传/预览相关组件是否显示
-		isFileAboutShow() {
-			let routerNameList = ['Login', 'Register', 'Onlyoffice']
 			return routerNameList.includes(this.$route.name) ? false : true
 		}
 	}

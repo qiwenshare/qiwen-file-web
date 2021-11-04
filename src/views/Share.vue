@@ -19,10 +19,9 @@
 				:filePath="filePath"
 				:fileList="fileList"
 				:loading="loading"
-				@setSelectionFile="setSelectionFile"
 			></FileTable>
 		</div>
-		<!-- 文件分享对话框 -->
+		<!-- 校验文件分享链接状态和是否需要提取码对话框 -->
 		<el-dialog
 			title="文件分享"
 			:visible.sync="dialogShareFile.visible"
@@ -58,34 +57,24 @@
 				>
 			</span>
 		</el-dialog>
-		<!-- 保存到网盘 路径选择对话框 -->
-		<MoveFileDialog
-			:dialogData="dialogSelectPath"
-			@setSelectFilePath="setSelectFilePath"
-			@confirmDialog="confirmSelectPathDialog"
-			@setDialogData="setSelectPathDialogData"
-		></MoveFileDialog>
 	</div>
 </template>
 
 <script>
 import BreadCrumb from '_c/common/BreadCrumb.vue'
 import FileTable from '_c/common/FileTable.vue'
-import MoveFileDialog from '_c/file/dialog/MoveFileDialog.vue'
 import {
 	checkShareLinkEndtime,
 	checkShareLinkType,
 	checkShareLinkCode,
-	getShareFileList,
-	saveShareFile
+	getShareFileList
 } from '_r/file.js'
 
 export default {
 	name: 'Share',
 	components: {
 		BreadCrumb,
-		FileTable,
-		MoveFileDialog
+		FileTable
 	},
 	data() {
 		return {
@@ -107,13 +96,7 @@ export default {
 			},
 			shareStep: 0,
 			fileList: [],
-			loading: false,
-			// 保存到网盘对话框数据
-			dialogSelectPath: {
-				visible: false //  是否可见
-			},
-			selectFilePath: '', //  保存到网盘的目标路径
-			selectionFile: [] //  表格勾选的文件列表
+			loading: false
 		}
 	},
 	computed: {
@@ -125,6 +108,10 @@ export default {
 		},
 		shareFilePath() {
 			return this.$route.query.filePath
+		},
+		// 被选中的文件列表
+		selectedFiles() {
+			return this.$store.state.fileList.selectedFiles
 		}
 	},
 	watch: {
@@ -145,13 +132,6 @@ export default {
 		this.checkEndTime()
 	},
 	methods: {
-		/**
-		 * 表格勾选框事件 | 保存被勾选的文件
-		 * @param {object[]} selection 被勾选的文件数组
-		 */
-		setSelectionFile(selection) {
-			this.selectionFile = selection
-		},
 		/**
 		 * 校验分享链接过期时间
 		 */
@@ -254,49 +234,20 @@ export default {
 		 * 保存到网盘按钮点击事件
 		 */
 		handleSaveBtnClick() {
-			if (this.selectionFile.length) {
-				this.dialogSelectPath.visible = true
-			} else {
-				this.$message.warning('请先勾选要保存的文件')
-			}
-		},
-		/**
-		 * 移动文件模态框 | 设置移动后的文件路径
-		 * @param {string} selectFilePath 目标文件夹路径
-		 */
-		setSelectFilePath(selectFilePath) {
-			this.selectFilePath = selectFilePath
-		},
-		/**
-		 * 移动文件模态框 | 确定按钮事件
-		 */
-		confirmSelectPathDialog() {
-			saveShareFile({
-				filePath: this.selectFilePath,
-				files: JSON.stringify(
-					this.selectionFile.map((item) => {
+			if (this.selectedFiles.length) {
+				this.$saveShareFile({
+					filePath: '',
+					fileInfo: this.selectedFiles.map((item) => {
 						return {
 							userFileId: item.userFileId
 						}
 					})
-				)
-			}).then((res) => {
-				if (res.success) {
-					this.$message.success('保存成功')
-					this.dialogSelectPath.visible = false
+				}).then(() => {
 					this.$refs.fileTableInstance.clearSelectedTable() //  清空表格已选项
-				} else {
-					this.$message.error(res.message)
-				}
-			})
-		},
-		/**
-		 * 设置移动文件模态框相关数据
-		 * @param {boolean} isBatchMove 是否批量移动，为 null时是确认移动，值由之前的值而定，在此业务中此致无用
-		 * @param {boolean} visible 移动文件对话框状态
-		 */
-		setSelectPathDialogData(isBatchMove, visible) {
-			this.dialogSelectPath.visible = visible
+				})
+			} else {
+				this.$message.warning('请先勾选要保存的文件')
+			}
 		}
 	}
 }

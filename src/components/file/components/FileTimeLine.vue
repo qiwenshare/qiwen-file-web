@@ -27,13 +27,13 @@
 						v-for="(image, imageIndex) in item.imageList"
 						:key="`${index}-${imageIndex}`"
 						:style="`width: ${gridSize + 40}px; `"
+						@click="handleImgPreview(imageIndex, {}, item.imageList)"
 					>
 						<img
 							class="image"
 							:src="getImgMinPath(image)"
 							:alt="item | fileNameComplete"
 							:style="`width: ${gridSize}px; height: ${gridSize}px;`"
-							@click="handleImgClick(item.imageList, imageIndex)"
 						/>
 						<div class="image-name">{{ image | fileNameComplete }}</div>
 					</li>
@@ -81,29 +81,6 @@ export default {
 		// 图标大小
 		gridSize() {
 			return this.$store.getters.gridSize
-		}
-	},
-	methods: {
-		/**
-		 * 图片点击事件
-		 * @description 打开图片预览，查看大图
-		 * @param {[]} imgList 图片列表
-		 * @param {number} imageIndex 图片索引
-		 */
-		handleImgClick(imgList, imageIndex) {
-			let data = {
-				imgPreviewVisible: true,
-				imgPreviewList: imgList.map((item) => {
-					return {
-						fileUrl: this.getViewFilePath(item),
-						downloadLink: this.getDownloadFilePath(item),
-						fileName: item.fileName,
-						extendName: item.extendName
-					}
-				}),
-				activeIndex: imageIndex
-			}
-			this.$store.commit('setImgPreviewData', data)
 		}
 	}
 }

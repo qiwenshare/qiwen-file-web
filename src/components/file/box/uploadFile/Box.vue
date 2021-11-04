@@ -1,5 +1,5 @@
 <template>
-	<div id="global-uploader">
+	<div class="upload-file-wrapper">
 		<!-- 上传文件组件 -->
 		<uploader
 			class="uploader-app"
@@ -115,6 +115,7 @@
 </template>
 
 <script>
+import store from '@/store/index.js'
 import SparkMD5 from 'spark-md5'
 
 export default {
@@ -176,29 +177,33 @@ export default {
 		},
 		// 剩余存储空间
 		remainderStorageValue() {
-			return this.$store.getters.remainderStorageValue
+			return store.getters.remainderStorageValue
 		}
 	},
-	mounted() {
-		this.$EventBus.$on('openUploader', (query, type) => {
-			this.options.headers.token = this.getCookies('token')
-			this.params = query || {}
-			if (type == 0) {
-				this.$refs.uploadBtn.$el.click()
-			} else if (type == 1) {
-				this.$refs.uploadDirBtn.$el.click()
-			} else {
-				this.pasteImg.src = ''
-				this.pasteImg.name = ''
-				this.pasteImgObj = null
-				this.dropBoxShow = true
-			}
-		})
-	},
-	destroyed() {
-		this.$off('openUploader')
-	},
 	methods: {
+		/**
+		 * 上传组件预处理
+		 */
+		handlePrepareUpload() {
+			this.options.headers.token = this.getCookies('token')
+			switch (this.uploadWay) {
+				case 1: {
+					this.$refs.uploadBtn.$el.click()
+					break
+				}
+				case 2: {
+					this.$refs.uploadDirBtn.$el.click()
+					break
+				}
+				case 3: {
+					this.pasteImg.src = ''
+					this.pasteImg.name = ''
+					this.pasteImgObj = null
+					this.dropBoxShow = true
+					break
+				}
+			}
+		},
 		// 图片粘贴事件
 		handlePaste(event) {
 			let pasteItems = (event.clipboardData || window.clipboardData).items
@@ -283,6 +288,7 @@ export default {
 		handleFileSuccess(rootFile, file, response) {
 			if (response == '') {
 				file.statusStr = '上传失败'
+				this.callback(false)
 				return
 			}
 
@@ -290,11 +296,7 @@ export default {
 			if (result.success) {
 				this.$message.success(`${file.name} - 上传完毕`)
 				file.statusStr = ''
-				// setTimeout(() => {
-				//   this.collapse = true //  折叠上传列表
-				// }, 1500)
-				this.$EventBus.$emit('refreshList', '')
-				this.$EventBus.$emit('refreshStorage', '')
+				this.callback(true)
 			} else {
 				this.$message.error(result.message)
 				file.statusStr = '上传失败'
@@ -391,11 +393,11 @@ export default {
 @import '~_a/styles/varibles.styl';
 @import '~_a/styles/mixins.styl';
 
-#global-uploader {
+.upload-file-wrapper {
   position: fixed;
   z-index: 20;
-  right: 15px;
-  bottom: 15px;
+  right: 16px;
+  bottom: 16px;
 
   .drop-box {
     position: fixed;

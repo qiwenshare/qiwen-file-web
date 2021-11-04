@@ -1,6 +1,6 @@
 <template>
 	<transition name="el-zoom-in-top">
-		<div class="video-preview-wrapper" v-show="videoPreviewVisible">
+		<div class="video-preview-wrapper" v-show="visible">
 			<div class="top">
 				<div class="video-name">
 					{{ activeFileObj.fileName }}.{{ activeFileObj.extendName }}
@@ -32,7 +32,7 @@
 					ref="videoPlayer"
 					:playsinline="true"
 					:options="playerOptions"
-					v-if="videoPreviewVisible"
+					v-if="visible"
 				></video-player>
 				<el-collapse-transition>
 					<div class="video-list-wrapper" v-show="!isFoldVideoList">
@@ -40,7 +40,7 @@
 						<ul class="video-list">
 							<li
 								class="video-item"
-								v-for="(item, index) in videoPreviewList"
+								v-for="(item, index) in videoList"
 								:key="index"
 								:class="[activeIndex === index ? 'active' : '']"
 								@click="activeIndex = index"
@@ -74,28 +74,15 @@ export default {
 	},
 	data() {
 		return {
+			visible: false, //  视频预览组件是否可见
 			activeIndex: 0, //  当前打开的视频索引
 			isFoldVideoList: false //  是否折叠右侧视频列表
 		}
 	},
 	computed: {
-		// 视频查看组件是否显示
-		videoPreviewVisible() {
-			return this.$store.state.videoPreview.videoPreviewVisible
-		},
-		// 视频列表
-		videoPreviewList() {
-			return this.$store.state.videoPreview.videoPreviewList
-		},
-		// 默认显示的视频索引 从 0 开始
-		defaultActiveIndex() {
-			return this.$store.state.videoPreview.defaultActiveIndex
-		},
 		// 当前显示的文件信息
 		activeFileObj() {
-			return this.videoPreviewList.length
-				? this.videoPreviewList[this.activeIndex]
-				: {}
+			return this.videoList.length ? this.videoList[this.activeIndex] : {}
 		},
 		// 播放器配置项
 		playerOptions() {
@@ -111,7 +98,7 @@ export default {
 				sources: [
 					{
 						type: 'video/mp4', // 这里的种类支持很多种：基本视频格式、直播、流媒体等，具体可以参看git网址项目
-						src: this.videoPreviewList[this.activeIndex].fileUrl // url地址
+						src: this.videoList[this.activeIndex].fileUrl // url地址
 					}
 				],
 				// poster: 'https://p1.music.126.net/5zs7IvmLv7KahY3BFzUmrg==/109951163635241613.jpg?param=600y500', // 你的封面地址
@@ -127,16 +114,17 @@ export default {
 	},
 	watch: {
 		// 监听视频预览组件状态
-		videoPreviewVisible(newValue) {
+		visible(newValue) {
 			if (newValue) {
-				this.activeIndex = this.defaultActiveIndex
+				this.activeIndex = this.defaultIndex
 			}
 		}
 	},
 	methods: {
 		// 关闭图片预览
 		handleClosePreview() {
-			this.$store.commit('setVideoPreviewData', { videoPreviewVisible: false })
+			this.visible = false
+			this.callback('cancel')
 		}
 	}
 }

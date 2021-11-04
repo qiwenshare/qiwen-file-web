@@ -1,7 +1,8 @@
+import Vue from 'vue'
 import Cookies from 'js-cookie'
 import router from '@/router/router'
 import config from '@/config/index.js'
-import { Message } from 'element-ui'
+import { Message, Notification } from 'element-ui'
 import { fileImgMap, unknownImg } from '@/libs/map.js'
 
 // 全局函数
@@ -11,7 +12,7 @@ const globalFunction = {
 	 * @param {number} size 文件大小
 	 * @returns {string} 文件大小（带单位）
 	 */
-	calculateFileSize: function (size) {
+	calculateFileSize(size) {
 		const B = 1024
 		const KB = Math.pow(1024, 2)
 		const MB = Math.pow(1024, 3)
@@ -35,7 +36,7 @@ const globalFunction = {
 	 * @param {object} row 文件信息
 	 * @returns {string} 图片缩略图路径
 	 */
-	getImgMinPath: function (row) {
+	getImgMinPath(row) {
 		return `/api/filetransfer/preview?userFileId=${
 			row.userFileId
 		}&isMin=true&shareBatchNum=${row.shareBatchNum}&extractionCode=${
@@ -47,7 +48,7 @@ const globalFunction = {
 	 * @param {object} row 文件信息
 	 * @returns {string} 文件路径
 	 */
-	getViewFilePath: function (row) {
+	getViewFilePath(row) {
 		return `/api/filetransfer/preview?userFileId=${
 			row.userFileId
 		}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${
@@ -59,7 +60,7 @@ const globalFunction = {
 	 * @param {object} row 文件信息
 	 * @returns {string}  文件下载路径
 	 */
-	getDownloadFilePath: function (row) {
+	getDownloadFilePath(row) {
 		return `/api/filetransfer/downloadfile?userFileId=${
 			row.userFileId
 		}&shareBatchNum=${row.shareBatchNum}&extractionCode=${
@@ -71,7 +72,7 @@ const globalFunction = {
 	 * @param {object} row
 	 * @returns {string} office 文件创建路径
 	 */
-	createFileOnlineByOffice: function (data) {
+	createFileOnlineByOffice(data) {
 		let fileUrl = `${location.protocol}//${location.host}/api`
 		const { href } = router.resolve({
 			name: 'Onlyoffice',
@@ -90,7 +91,7 @@ const globalFunction = {
 	 * @param {object} row
 	 * @returns {string} office 文件在线预览路径
 	 */
-	getFileOnlineViewPathByOffice: function (row) {
+	getFileOnlineViewPathByOffice(row) {
 		let fileUrl = ''
 		let fileName = row.fileName + '.' + row.extendName
 		let filePath = row.fileUrl
@@ -124,7 +125,7 @@ const globalFunction = {
 	 * @param {object} row
 	 * @returns {string} office 文件在线编辑路径
 	 */
-	getFileOnlineEditPathByOffice: function (row) {
+	getFileOnlineEditPathByOffice(row) {
 		let fileUrl = ''
 		let fileName = row.fileName + '.' + row.extendName
 		let filePath = row.fileUrl
@@ -159,7 +160,7 @@ const globalFunction = {
 	 * @param {string} value 值
 	 * @param {object} others 域名、路径、有效期等，封装到对象中
 	 */
-	setCookies: function (name, value, others = null) {
+	setCookies(name, value, others = null) {
 		Cookies.set(name, value, { domain: config.domain, ...others })
 	},
 	/**
@@ -168,7 +169,7 @@ const globalFunction = {
 	 * @param {object} others 域名、路径等，封装到对象中
 	 * @returns {string} Cookies 值
 	 */
-	getCookies: function (name, others = null) {
+	getCookies(name, others = null) {
 		return Cookies.get(name, { domain: config.domain, ...others })
 	},
 	/**
@@ -176,7 +177,7 @@ const globalFunction = {
 	 * @param {string} name 名称
 	 * @param {object} others 域名、路径等，封装到对象中
 	 */
-	removeCookies: function (name, others = null) {
+	removeCookies(name, others = null) {
 		Cookies.remove(name, { domain: config.domain, ...others })
 	},
 	/**
@@ -184,7 +185,7 @@ const globalFunction = {
 	 * @param {string} shareBatchNum
 	 * @returns {string} 完整的分享链接
 	 */
-	getShareLink: function (shareBatchNum) {
+	getShareLink(shareBatchNum) {
 		return `${location.protocol}//${location.host}/share/${shareBatchNum}`
 	},
 	/**
@@ -192,7 +193,7 @@ const globalFunction = {
 	 * @param {string} shareBatchNum
 	 * @param {string} extractionCode
 	 */
-	copyShareLink: function (shareBatchNum, extractionCode) {
+	copyShareLink(shareBatchNum, extractionCode) {
 		let input = document.createElement('textarea') // 直接构建textarea以保持换行
 		input.value =
 			extractionCode === null
@@ -212,7 +213,7 @@ const globalFunction = {
 	 * 根据文件扩展名设置文件图片
 	 * @param {object} file 文件信息
 	 */
-	setFileImg: function (file) {
+	setFileImg(file) {
 		if (file.isDir === 1) {
 			//  文件夹
 			return fileImgMap.get('dir')
@@ -228,6 +229,151 @@ const globalFunction = {
 		} else {
 			// 无法识别文件类型的文件
 			return unknownImg
+		}
+	},
+	/**
+	 * 图片预览
+	 * @param {*} currentIndex 当前图片索引
+	 * @param {*} imgInfo 单个图片信息
+	 * @param {*} imgInfoList 多个图片列表
+	 */
+	handleImgPreview(currentIndex, imgInfo = {}, imgInfoList = []) {
+		// 图片分类下 - 传递整个页面的图片列表；非图片分类下 - 由单个图片构建图片列表
+		const imgList =
+			Number(router.currentRoute.query.fileType) === 1
+				? imgInfoList.map((item) => {
+						return {
+							fileUrl: this.getViewFilePath(item),
+							downloadLink: this.getDownloadFilePath(item),
+							fileName: item.fileName,
+							extendName: item.extendName
+						}
+				  })
+				: [
+						{
+							fileUrl: this.getViewFilePath(imgInfo),
+							downloadLink: this.getDownloadFilePath(imgInfo),
+							fileName: imgInfo.fileName,
+							extendName: imgInfo.extendName
+						}
+				  ]
+		const defaultIndex =
+			Number(router.currentRoute.query.fileType) === 1 ? currentIndex : 0
+		Vue.prototype.$previewImg({ imgList, defaultIndex })
+	},
+	/**
+	 * 视频预览
+	 * @param {*} currentIndex 当前视频索引
+	 * @param {*} videoInfo 单个视频信息
+	 * @param {*} videoInfoList 多个视频列表
+	 */
+	handleVideoPreview(currentIndex, videoInfo = {}, videoInfoList = []) {
+		// 视频分类下 - 传递整个页面的视频列表；非视频分类下 - 由单个视频构建视频列表
+		const videoList =
+			Number(router.currentRoute.query.fileType) === 3
+				? videoInfoList.map((item) => {
+						return {
+							...item,
+							fileUrl: this.getViewFilePath(item),
+							downloadLink: this.getDownloadFilePath(item),
+							fileName: item.fileName,
+							extendName: item.extendName
+						}
+				  })
+				: [
+						{
+							...videoInfo,
+							fileUrl: this.getViewFilePath(videoInfo),
+							downloadLink: this.getDownloadFilePath(videoInfo),
+							fileName: videoInfo.fileName,
+							extendName: videoInfo.extendName
+						}
+				  ]
+		const defaultIndex =
+			Number(router.currentRoute.query.fileType) === 3 ? currentIndex : 0
+		Vue.prototype.$previewVideo({ videoList, defaultIndex })
+	},
+	/**
+	 * 文件预览
+	 * @description 若当前点击的为文件夹，则进入文件夹内部；若是文件，则进行相应的预览。
+	 * @param {object} row 文件信息
+	 * @param {number} currentIndex 当前文件索引
+	 * @param {array} fileList 文件列表
+	 */
+	handleFileNameClick(row, currentIndex, fileList = []) {
+		// 若是文件夹则进入该文件夹
+		if (row.isDir) {
+			if (router.currentRoute.name === 'Share') {
+				// 当前是查看他人分享列表的页面
+				router.push({
+					query: {
+						filePath: row.shareFilePath + row.fileName + '/'
+					}
+				})
+			} else if (Number(router.currentRoute.query.fileType) === 8) {
+				// 当前是我的已分享列表页面
+				router.push({
+					query: {
+						fileType: 8,
+						filePath: row.shareFilePath + row.fileName + '/',
+						shareBatchNum: row.shareBatchNum
+					}
+				})
+			} else if (Number(router.currentRoute.query.fileType) !== 6) {
+				// 回收站页面不允许打开文件夹
+				// 网盘页面
+				router.push({
+					query: {
+						filePath: row.filePath + row.fileName + '/',
+						fileType: 0
+					}
+				})
+			}
+		}
+		// 若是文件，则进行相应的预览
+		else {
+			// 若当前点击项是图片
+			const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
+			if (PIC.includes(row.extendName)) {
+				this.handleImgPreview(currentIndex, row, fileList)
+				return false
+			}
+			//  若当前点击项是可以使用office在线预览的
+			if ([...this.officeFileType, 'pdf'].includes(row.extendName)) {
+				this.getFileOnlineViewPathByOffice(row)
+				return false
+			}
+			//  若当前点击项是代码或文本文件
+			const CODE = ['html', 'js', 'css', 'json', 'c', 'java', 'txt']
+			if (CODE.includes(row.extendName)) {
+				window.open(this.getViewFilePath(row), '_blank')
+				return false
+			}
+			//  若当前点击项是视频mp4格式
+			const VIDEO = ['mp4']
+			if (VIDEO.includes(row.extendName)) {
+				this.handleVideoPreview(currentIndex, row, fileList)
+				return false
+			}
+			//  若当前点击项是音频mp3格式
+			const AUDIO = ['mp3']
+			if (AUDIO.includes(row.extendName)) {
+				if (this.audioObj.src !== this.getViewFilePath(row)) {
+					Notification.closeAll()
+					this.audioObj.src = this.getViewFilePath(row)
+					Notification({
+						title: `${row.fileName}.${row.extendName}`,
+						dangerouslyUseHTMLString: true,
+						message: `<audio class="audio-preview" src="${this.audioObj.src}" controls autoplay style="padding-right: 16px; margin-top: 16px;"></audio>`,
+						duration: 0, //  不自动关闭
+						offset: 100,
+						onClose: () => {
+							this.audioObj.src = ''
+						}
+					})
+				}
+				return false
+			}
 		}
 	}
 }

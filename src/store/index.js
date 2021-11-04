@@ -6,8 +6,6 @@ import config from '@/config'
 import user from './module/user' //  用户模块
 import fileList from './module/fileList' //  文件列表模块
 import sideMenu from './module/sideMenu' //  左侧菜单模块
-import imgPreview from './module/imgPreview' //  图片预览模块
-import videoPreview from './module/videoPreview' //  视频预览模块
 
 Vue.use(Vuex)
 
@@ -47,8 +45,6 @@ export default new Vuex.Store({
 	modules: {
 		user,
 		fileList,
-		sideMenu,
-		imgPreview,
-		videoPreview
+		sideMenu
 	}
 })

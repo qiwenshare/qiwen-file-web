@@ -7,7 +7,11 @@ export default {
 		// 文件展示模式 0 列表模式 | 1 网格模式 | 2 时间线模式
 		fileModel: globalFunction.getCookies('fileModel'),
 		// 网格模式 & 时间线模式下 图标大小 单位px
-		gridSize: 80
+		gridSize: 80,
+		// 批量模式下：被选中的文件列表
+		selectedFiles: [],
+		// 是否批量操作：true - 批量，false - 单文件
+		isBatchOperation: false
 	},
 	mutations: {
 		/**
@@ -39,6 +43,22 @@ export default {
 		changeGridSize(state, data) {
 			globalFunction.setCookies('gridSize', data)
 			state.gridSize = data
+		},
+		/**
+		 * 设置批量操作模式下被选中的文件列表
+		 * @param {object} state Vuex 的 state 对象
+		 * @param {array} data 批量操作模式下，被选中的文件列表
+		 */
+		changeSelectedFiles(state, data) {
+			state.selectedFiles = data
+		},
+		/**
+		 * 设置是否批量操作
+		 * @param {object} state Vuex 的 state 对象
+		 * @param {boolean} data 是否批量操作
+		 */
+		changeIsBatchOperation(state, data) {
+			state.isBatchOperation = data
 		}
 	},
 	actions: {}

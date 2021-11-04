@@ -5,18 +5,18 @@
 			<OperationMenu
 				:fileType="fileType"
 				:filePath="filePath"
-				:operationFile="operationFile"
-				:selectionFile="selectionFile"
-				:batchOperate.sync="batchOperate"
 				@getSearchFileList="getSearchFileList"
 				@getTableDataByType="getTableDataByType"
-				@setMoveFileDialogData="setMoveFileDialogData"
-				@setShareFileDialogData="setShareFileDialogData"
 			></OperationMenu>
 		</el-header>
 		<div class="middle-wrapper">
 			<!-- 面包屑导航栏 -->
-			<BreadCrumb class="breadcrumb" :fileType="fileType"></BreadCrumb>
+			<BreadCrumb
+				class="breadcrumb"
+				:fileType="fileType"
+				:filePath="filePath"
+				@getTableDataByType="getTableDataByType"
+			></BreadCrumb>
 		</div>
 		<!-- 文件列表-表格模式 -->
 		<FileTable
@@ -25,10 +25,6 @@
 			:fileList="fileList"
 			:loading="loading"
 			v-if="fileModel === 0"
-			@setMoveFileDialogData="setMoveFileDialogData"
-			@setShareFileDialogData="setShareFileDialogData"
-			@setOperationFile="setOperationFile"
-			@setSelectionFile="setSelectionFile"
 			@getTableDataByType="getTableDataByType"
 		></FileTable>
 		<!-- 文件列表-网格模式 -->
@@ -37,19 +33,14 @@
 			:filePath="filePath"
 			:fileList="fileList"
 			:loading="loading"
-			:batchOperate="batchOperate"
 			v-if="fileModel === 1"
-			@setMoveFileDialogData="setMoveFileDialogData"
-			@setShareFileDialogData="setShareFileDialogData"
-			@setOperationFile="setOperationFile"
-			@setSelectionFile="setSelectionFile"
 			@getTableDataByType="getTableDataByType"
 		></FileGrid>
 		<!-- 图片-时间线模式 -->
 		<FileTimeLine
 			class="image-model"
-			v-if="fileModel === 2"
 			:fileList="fileList"
+			v-if="fileModel === 2"
 		></FileTimeLine>
 		<div class="pagination-wrapper">
 			<div class="current-page-count">当前页{{ fileList.length }}条</div>
@@ -64,18 +55,6 @@
 			>
 			</el-pagination>
 		</div>
-		<!-- 移动文件模态框 -->
-		<MoveFileDialog
-			:dialogData="dialogMoveFile"
-			@setSelectFilePath="setSelectFilePath"
-			@confirmDialog="confirmMoveFile"
-			@setDialogData="setMoveFileDialogData"
-		></MoveFileDialog>
-		<!-- 分享文件模态框 -->
-		<ShareFileDialog
-			:dialogShareFile="dialogShareFile"
-			@setDialogShareFileData="setDialogShareFileData"
-		></ShareFileDialog>
 	</div>
 </template>
 
@@ -85,18 +64,13 @@ import BreadCrumb from '_c/common/BreadCrumb.vue'
 import FileTable from '_c/common/FileTable.vue'
 import FileGrid from './components/FileGrid.vue'
 import FileTimeLine from './components/FileTimeLine.vue'
-import MoveFileDialog from './dialog/MoveFileDialog.vue'
-import ShareFileDialog from './dialog/ShareFileDialog.vue'
 
 import {
 	getFileListByPath,
 	getFileListByType,
 	getRecoveryFile,
 	getMyShareFileList,
-	moveFile,
-	batchMoveFile,
-	searchFile,
-	shareFile
+	searchFile
 } from '_r/file.js'
 
 export default {
@@ -106,36 +80,19 @@ export default {
 		BreadCrumb,
 		FileTable,
 		FileGrid,
-		FileTimeLine,
-		MoveFileDialog,
-		ShareFileDialog
+		FileTimeLine
 	},
 	data() {
 		return {
 			fileNameSearch: '',
 			loading: true, //  表格数据-loading
 			fileList: [], //  表格数据-文件列表
+			// 分页数据
 			pageData: {
 				currentPage: 1,
 				pageCount: 50,
 				total: 0
-			},
-			//  移动文件模态框数据
-			dialogMoveFile: {
-				isBatchMove: false,
-				visible: false //  是否可见
-			},
-			selectFilePath: '', //  移动文件路径
-			operationFile: {}, // 当前操作行
-			selectionFile: [], // 勾选的文件
-			// 分享文件对话框数据
-			dialogShareFile: {
-				visible: false,
-				loading: false,
-				success: false,
-				shareData: {}
-			},
-			batchOperate: false //  批量操作模式
+			}
 		}
 	},
 	computed: {
@@ -170,11 +127,6 @@ export default {
 		fileModel() {
 			this.setPageCount()
 			this.getTableDataByType()
-		},
-		batchOperate(value) {
-			if (!value) {
-				this.selectionFile = []
-			}
 		}
 	},
 	created() {
@@ -198,7 +150,6 @@ export default {
 		 * 表格数据获取相关事件 | 获取文件列表数据
 		 */
 		getTableDataByType() {
-			this.batchOperate = false
 			this.loading = true
 			// 分类型
 			if (Number(this.fileType)) {
@@ -310,79 +261,6 @@ export default {
 		},
 
 		/**
-		 * 表格勾选框事件 | 保存被勾选的文件
-		 * @param {object[]} selection 被勾选的文件数组
-		 */
-		setSelectionFile(selection, batchOperate) {
-			this.selectionFile = selection
-			this.batchOperate = batchOperate
-		},
-
-		/**
-		 * 移动按钮相关事件 | 当前操作行
-		 * @param {object} operationFile
-		 */
-		setOperationFile(operationFile) {
-			this.operationFile = operationFile
-		},
-		/**
-		 * 移动按钮相关事件 | 设置移动文件模态框相关数据
-		 * @param {boolean} isBatchMove 是否批量移动，为 null时是确认移动，值由之前的值而定
-		 * @param {boolean} visible 移动文件对话框状态
-		 */
-		setMoveFileDialogData(isBatchMove, visible) {
-			this.dialogMoveFile.isBatchMove = isBatchMove
-				? isBatchMove
-				: this.dialogMoveFile.isBatchMove
-			this.dialogMoveFile.visible = visible
-		},
-		/**
-		 * 移动文件模态框 | 设置移动后的文件路径
-		 * @param {string} selectFilePath 目标文件夹路径
-		 */
-		setSelectFilePath(selectFilePath) {
-			this.selectFilePath = selectFilePath
-		},
-		/**
-		 * 移动文件模态框 | 确定按钮事件
-		 */
-		confirmMoveFile() {
-			if (this.dialogMoveFile.isBatchMove) {
-				//  批量移动
-				let data = {
-					filePath: this.selectFilePath,
-					files: JSON.stringify(this.selectionFile)
-				}
-				batchMoveFile(data).then((res) => {
-					if (res.success) {
-						this.$message.success(res.data)
-						this.getTableDataByType()
-						this.dialogMoveFile.visible = false
-						this.selectionFile = []
-					} else {
-						this.$message.error(res.message)
-					}
-				})
-			} else {
-				//  单文件移动
-				let data = {
-					oldFilePath: this.operationFile.filePath,
-					filePath: this.selectFilePath,
-					fileName: this.operationFile.fileName,
-					extendName: this.operationFile.extendName
-				}
-				moveFile(data).then((res) => {
-					if (res.success) {
-						this.$message.success('移动文件成功')
-						this.getTableDataByType()
-						this.dialogMoveFile.visible = false
-					} else {
-						this.$message.error(res.message)
-					}
-				})
-			}
-		},
-		/**
 		 * 获取搜索文件结果列表
 		 * @param {string} fileName 文件名称
 		 */
@@ -401,52 +279,6 @@ export default {
 					this.$message.error(res.message)
 				}
 			})
-		},
-		/**
-		 * 设置分享文件对话框状态
-		 */
-		setShareFileDialogData() {
-			this.dialogShareFile.visible = true
-		},
-		/**
-		 * 分享文件对话框确定|取消按钮点击事件
-		 * @param {boolean} status 对话框状态
-		 * @param {object} data 分享文件数据
-		 */
-		setDialogShareFileData(status, data) {
-			if (status) {
-				this.dialogShareFile.loading = true
-				shareFile({
-					...data,
-					remarks: '',
-					files: JSON.stringify(
-						this.selectionFile.map((item) => {
-							return {
-								userFileId: item.userFileId
-							}
-						})
-					)
-				}).then(
-					(res) => {
-						this.dialogShareFile.loading = false
-						if (res.success) {
-							this.dialogShareFile.success = true
-							this.dialogShareFile.shareData = res.data
-						} else {
-							this.$message.error(res.message)
-						}
-					},
-					(error) => {
-						console.log(error)
-						this.$message.error(error.message)
-						this.dialogShareFile.loading = false
-					}
-				)
-			} else {
-				this.dialogShareFile.visible = false
-				this.dialogShareFile.loading = false
-				this.dialogShareFile.success = false
-			}
 		}
 	}
 }

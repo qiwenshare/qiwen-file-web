@@ -1,20 +1,38 @@
 <template>
 	<div class="breadcrumb-wrapper">
 		<div class="title">当前位置：</div>
-		<el-breadcrumb
-			v-if="![0, 8].includes(fileType) && !['Share'].includes($route.name)"
-			separator="/"
+		<el-input
+			class="file-path-input"
+			ref="filePathInputRef"
+			placeholder="请输入路径"
+			v-model="inputFilePath"
+			size="mini"
+			:autofocus="true"
+			v-show="isShowInput"
+			@blur="handleInputBlurEnter"
+			@change="handleInputBlurEnter"
+		></el-input>
+		<div
+			class="breadcrumb-box"
+			:class="{ 'able-input': fileType === 0 }"
+			v-show="!isShowInput"
+			@click.self="handleClickBreadCrumbSelf"
 		>
-			<el-breadcrumb-item>{{ fileTypeMap[fileType] }}</el-breadcrumb-item>
-		</el-breadcrumb>
-		<el-breadcrumb v-else separator="/">
-			<el-breadcrumb-item
-				v-for="(item, index) in breadCrumbList"
-				:key="index"
-				:to="getRouteQuery(item)"
-				>{{ item.name }}</el-breadcrumb-item
+			<el-breadcrumb
+				v-if="![0, 8].includes(fileType) && !['Share'].includes($route.name)"
+				separator-class="el-icon-arrow-right"
 			>
-		</el-breadcrumb>
+				<el-breadcrumb-item>{{ fileTypeMap[fileType] }}</el-breadcrumb-item>
+			</el-breadcrumb>
+			<el-breadcrumb v-else separator-class="el-icon-arrow-right">
+				<el-breadcrumb-item
+					v-for="(item, index) in breadCrumbList"
+					:key="index"
+					:to="getRouteQuery(item)"
+					>{{ item.name }}</el-breadcrumb-item
+				>
+			</el-breadcrumb>
+		</div>
 	</div>
 </template>
 
@@ -26,6 +44,11 @@ export default {
 		fileType: {
 			required: true,
 			type: Number
+		},
+		// 文件路径
+		filePath: {
+			require: true,
+			type: String
 		}
 	},
 	data() {
@@ -37,7 +60,9 @@ export default {
 				4: '全部音乐',
 				5: '其他',
 				6: '回收站'
-			}
+			},
+			isShowInput: false, //  是否展示路径输入框
+			inputFilePath: '' //  路径输入
 		}
 	},
 	computed: {
@@ -80,6 +105,31 @@ export default {
 		}
 	},
 	methods: {
+		/**
+		 * 点击面包屑导航栏空白处
+		 */
+		handleClickBreadCrumbSelf() {
+			if (this.fileType === 0) {
+				this.inputFilePath = this.filePath
+				this.isShowInput = true
+				this.$nextTick(() => {
+					this.$refs.filePathInputRef.focus()
+				})
+			}
+		},
+		/**
+		 * 路径输入框失去焦点或用户按下回车时触发
+		 */
+		handleInputBlurEnter() {
+			console.log(2222)
+			this.isShowInput = false
+			if (this.inputFilePath !== this.filePath) {
+				this.$router.push({
+					query: { filePath: this.inputFilePath + '/', fileType: 0 }
+				})
+				this.inputFilePath = ''
+			}
+		},
 		// 获取文件参数
 		getRouteQuery(item) {
 			let routeName = this.$route.name
@@ -106,15 +156,34 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+@import '~_a/styles/varibles.styl';
+
 .breadcrumb-wrapper {
   padding: 0;
   height: 30px;
   line-height: 30px;
   display: flex;
 
-  .title, >>> .el-breadcrumb {
+  .title,
+  >>> .el-breadcrumb {
     height: 30px;
     line-height: 30px;
+  }
+
+  .file-path-input {
+    flex: 1;
+    font-size: 14px;
+  }
+  .breadcrumb-box {
+    padding: 0 8px;
+    flex: 1;
+    display: flex;
+    &.able-input {
+      cursor: pointer;
+      &:hover {
+        background: $tabBackColor;
+      }
+    }
   }
 }
 </style>

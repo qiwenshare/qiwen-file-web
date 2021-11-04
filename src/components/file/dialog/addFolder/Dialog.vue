@@ -2,9 +2,10 @@
 	<!-- 新建文件夹对话框 -->
 	<el-dialog
 		title="新建文件夹"
-		:visible.sync="dialogStatus"
+		:visible.sync="visible"
 		:close-on-click-modal="false"
 		width="550px"
+		@close="handleDialogClose"
 	>
 		<el-form
 			class="add-folder-form"
@@ -26,13 +27,11 @@
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
-			<el-button @click="handleAddFolderDialogCancel('addFolderForm')"
-				>取 消</el-button
-			>
+			<el-button @click="handleDialogClose">取 消</el-button>
 			<el-button
 				type="primary"
-				:loading="loading"
-				@click="handleAddFolderDialogOk('addFolderForm')"
+				:loading="sureBtnLoading"
+				@click="handleDialogSure('addFolderForm')"
 				>确 定</el-button
 			>
 		</div>
@@ -44,18 +43,6 @@ import { createFold } from '_r/file.js'
 
 export default {
 	name: 'AddFolderDialog',
-	props: {
-		// 对话框是否可见
-		visible: {
-			type: Boolean,
-			required: true
-		},
-		// 文件路径
-		filePath: {
-			required: true,
-			type: String
-		}
-	},
 	data() {
 		const validateFileName = (rule, value, callback) => {
 			const fileNameReg = new RegExp(`[\\\\/:*?"<>|]`)
@@ -66,6 +53,7 @@ export default {
 			}
 		}
 		return {
+			visible: false, //  对话框是否可见
 			form: {
 				fileName: ''
 			},
@@ -75,55 +63,49 @@ export default {
 					{ validator: validateFileName, trigger: ['blur', 'change'] }
 				]
 			},
-			loading: false
-		}
-	},
-	computed: {
-		// 对话框是否可见
-		dialogStatus: {
-			get() {
-				return this.visible
-			},
-			set(val) {
-				this.$emit('update:visible', val)
-			}
+			sureBtnLoading: false
 		}
 	},
 	methods: {
 		/**
-		 * 新建文件夹对话框 | 取消按钮点击事件
+		 * 取消按钮点击事件 & 对话框关闭的回调
 		 * @description 关闭对话框，重置表单
-		 * @param {string} formName 表单ref值
 		 */
-		handleAddFolderDialogCancel(formName) {
-			this.dialogStatus = false
-			this.$refs[formName].resetFields()
+		handleDialogClose() {
+			this.$refs['addFolderForm'].resetFields()
+			this.visible = false
+			this.callback('cancel')
 		},
 		/**
-		 * 新建文件夹对话框 | 确定按钮点击事件
+		 * 确定按钮点击事件
 		 * @description 校验表单，校验通过后调用新建文件夹接口
 		 * @param {string} formName 表单ref值
 		 */
-		handleAddFolderDialogOk(formName) {
+		handleDialogSure(formName) {
+			this.sureBtnLoading = true
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
-					this.loading = true
 					createFold({
 						fileName: this.form.fileName,
 						filePath: this.filePath,
 						isDir: 1
-					}).then((res) => {
-						this.loading = false
-						if (res.success) {
-							this.$message.success('添加成功')
-							this.dialogStatus = false
-							this.$refs[formName].resetFields()
-							this.$emit('confirmDialog')
-						} else {
-							this.$message.warning(res.message)
-						}
 					})
+						.then((res) => {
+							this.sureBtnLoading = false
+							if (res.success) {
+								this.$message.success('文件夹创建成功')
+								this.$refs[formName].resetFields()
+								this.visible = false
+								this.callback('confirm')
+							} else {
+								this.$message.warning(res.message)
+							}
+						})
+						.catch(() => {
+							this.sureBtnLoading = false
+						})
 				} else {
+					this.sureBtnLoading = false
 					return false
 				}
 			})
