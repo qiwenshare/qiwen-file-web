@@ -124,9 +124,8 @@ export default {
 			this.isShowInput = false
 			if (this.inputFilePath !== this.filePath) {
 				this.$router.push({
-					query: { filePath: this.inputFilePath + '/', fileType: 0 }
+					query: { filePath: `${this.inputFilePath}/`, fileType: 0 }
 				})
-				this.inputFilePath = ''
 			}
 		},
 		// 获取文件参数
