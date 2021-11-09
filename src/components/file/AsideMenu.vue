@@ -7,9 +7,6 @@
 			:router="true"
 			:collapse="isCollapse"
 		>
-			<!-- background-color="#545c64"
-			text-color="#fff"
-			active-text-color="#ffd04b" -->
 			<el-submenu index="myFile" class="my-file">
 				<template slot="title">
 					<!-- 图标均来自 Element UI 官方图标库 https://element.eleme.cn/#/zh-CN/component/icon -->
@@ -20,7 +17,7 @@
 					index="0"
 					:route="{ name: 'File', query: { fileType: 0, filePath: '/' } }"
 				>
-					<i class="el-icon-takeaway-box"></i>
+					<i class="el-icon-menu"></i>
 					<span slot="title">全部</span>
 				</el-menu-item>
 				<el-menu-item
@@ -64,7 +61,7 @@
 				:route="{ name: 'File', query: { fileType: 6 } }"
 				class="recovery"
 			>
-				<i class="el-icon-box"></i>
+				<i class="el-icon-delete"></i>
 				<span slot="title">回收站</span>
 			</el-menu-item>
 			<el-menu-item
@@ -124,6 +121,17 @@ export default {
 	data() {
 		return {
 			isCollapse: false, //  控制菜单收缩展开
+			// 菜单 index 和名称 Map
+			myFileMenuMap: {
+				0: '全部',
+				1: '图片',
+				2: '文档',
+				3: '视频',
+				4: '音乐',
+				5: '其他',
+				6: '回收站',
+				8: '我的分享'
+			},
 			//  自定义进度条颜色，不同占比，进度条颜色不同
 			storageColor: [
 				{ color: '#67C23A', percentage: 50 },
@@ -152,13 +160,24 @@ export default {
 		}
 	},
 	watch: {
-		// 监听收缩状态变化，存储在sessionStorage中，保证页面刷新时仍然保存设置的状态
+		// 监听左侧菜单切换，修改浏览器标签标题
+		activeIndex(newValue) {
+			document.title = `${this.myFileMenuMap[Number(newValue)]} - ${
+				this.$config.siteName
+			}`
+		},
+		// 监听收缩状态变化，存储在 localStorage 中，保证页面刷新时仍然保存设置的状态
 		isCollapse(newValue) {
-			this.setCookies('isCollapse', newValue)
+			localStorage.setItem('isCollapse', newValue)
 		}
 	},
 	created() {
-		this.isCollapse = this.getCookies('isCollapse') === 'true' //  读取保存的状态
+		this.isCollapse = localStorage.getItem('isCollapse') === 'true' //  读取保存的状态
+	},
+	mounted() {
+		document.title = `${this.myFileMenuMap[Number(this.activeIndex)]} - ${
+			this.$config.siteName
+		}`
 	}
 }
 </script>
@@ -172,18 +191,21 @@ export default {
   height: calc(100vh - 61px);
   padding-right: 11px;
   .side-menu {
-    background: transparent;
     // 高度设置为屏幕高度减去顶部导航栏的高度
     height: calc(100vh - 127px);
     overflow: auto;
     // 调整滚动条样式
     setScrollbar(6px, transparent, #C0C4CC);
     .el-menu-item.is-active {
-      background-color: #ecf5ff;
+      background: #ecf5ff;
     }
     .my-file, .recovery {
       box-shadow: 0 4px 12px 0 $BorderExtralight;
     }
+  }
+  >>> .el-menu {
+    border-right: none;
+    background: transparent;
   }
   // 对展开状态下的菜单设置宽度
   .side-menu:not(.el-menu--collapse) {
@@ -197,12 +219,10 @@ export default {
     box-shadow: 0 -2px 12px 0 $BorderExtralight;
     border-right: solid 1px #e6e6e6;
     box-sizing: border-box;
-    // background: #545c64;
     width: calc(100% - 11px);
     height: 66px;
     padding: 16px;
     z-index: 2;
-    // color: #fff;
     color: $PrimaryText;
     .text {
       margin-top: 8px;
@@ -231,7 +251,6 @@ export default {
     top: calc(50% - 50px);
     right: 0;
     z-index: 3;
-    // background: #545c64;
     background: $BorderBase;
     color: #fff;
     width: 12px;

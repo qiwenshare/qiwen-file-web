@@ -121,7 +121,6 @@ export default {
 		 * 路径输入框失去焦点或用户按下回车时触发
 		 */
 		handleInputBlurEnter() {
-			console.log(2222)
 			this.isShowInput = false
 			if (this.inputFilePath !== this.filePath) {
 				this.$router.push({

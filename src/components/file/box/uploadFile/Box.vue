@@ -123,7 +123,7 @@ export default {
 		return {
 			// 上传组件配置项
 			options: {
-				target: '/api/filetransfer/uploadfile', // 上传文件-目标 URL
+				target: `${this.$config.baseContext}/filetransfer/uploadfile`, // 上传文件-目标 URL
 				chunkSize: 1024 * 1024, //  每个分片的大小
 				fileParameterName: 'file', //  上传文件时文件的参数名，默认 file
 				maxChunkRetries: 3, //  并发上传数，默认 3

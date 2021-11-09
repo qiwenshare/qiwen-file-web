@@ -1,4 +1,5 @@
 import axios from 'axios'
+import config from '@/config/index.js'
 import globalFunction from '@/libs/globalFunction.js'
 import router from '@/router/router'
 import { MessageBox, Message } from 'element-ui'
@@ -20,7 +21,7 @@ const loginTip = function () {
 axios.defaults.timeout = 10000 * 5
 
 // 请求基础 URL
-axios.defaults.baseURL = '/api'
+axios.defaults.baseURL = config.baseContext
 
 // POST 请求头
 axios.defaults.headers.post['Content-Type'] =

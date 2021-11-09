@@ -1,7 +1,15 @@
-// 未知文件类型图标
+/**
+ * 存放一些静态变量、Map 等全局可用的变量
+ * @author 李雅婷
+ */
+/**
+ * 未知文件类型图标
+ */
 export const unknownImg = require('_a/images/file/file_unknown.png')
 
-// 文件类型图标 Map 映射
+/**
+ * 文件类型图标 Map 映射
+ */
 export const fileImgMap = new Map([
 	['avi', require('_a/images/file/file_avi.png')],
 	['chm', require('_a/images/file/file_chm.png')],
@@ -34,5 +42,17 @@ export const fileImgMap = new Map([
 	['zip', require('_a/images/file/file_zip.png')]
 ])
 
-// 支持使用 onlyoffice 打开的文件格式
+/**
+ * 支持使用 onlyoffice 打开的文件格式
+ */
 export const officeFileType = ['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx']
+
+/**
+ * 文件展示模式选择列表时，所有可供选择的表格列名
+ */
+export const allColumnList = [
+	'extendName',
+	'fileSize',
+	'uploadTime',
+	'deleteTime'
+]

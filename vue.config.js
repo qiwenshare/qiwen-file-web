@@ -1,4 +1,3 @@
-const productConfig = require('./public/config.json')
 const path = require('path')
 
 module.exports = {
@@ -8,10 +7,10 @@ module.exports = {
 	devServer: {
 		disableHostCheck: true,
 		host: '0.0.0.0',
+		// 配置代理，解决本地开发环境下跨域请求后台接口的问题，proxy 中的修改项修改完后需要重启项目才可生效
 		proxy: {
-			//配置代理，解决跨域请求后台数据的问题
 			'/api': {
-				target: productConfig.baseUrl, //后台接口，连接本地服务
+				target: 'http://www.qiwenshare.com:8763', //  本地开发环境 - 连接后台接口
 				ws: true, //是否跨域
 				changeOrigin: true,
 				pathRewrite: {
@@ -22,6 +21,14 @@ module.exports = {
 	},
 
 	productionSourceMap: false,
+
+	// 修改或新增 html-webpack-plugin 的值，在 index.html 里面能读取 htmlWebpackPlugin.options.title
+	chainWebpack: (config) => {
+		config.plugin('html').tap((args) => {
+			args[0].title = '奇文网盘'
+			return args
+		})
+	},
 
 	pluginOptions: {
 		'style-resources-loader': {

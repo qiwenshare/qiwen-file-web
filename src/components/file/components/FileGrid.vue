@@ -201,8 +201,6 @@ export default {
 					selectedFile: item,
 					domEvent: event
 				}).then((res) => {
-					console.log(res)
-					this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
 					if (res === 'confirm') {
 						this.$emit('getTableDataByType') //  刷新文件列表
 					}

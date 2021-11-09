@@ -338,7 +338,6 @@ export default {
 				fileInfo: this.selectedFiles,
 				deleteMode: this.fileType === 6 ? 2 : 1 //  删除模式：1-删除到回收站 2-彻底删除
 			}).then((res) => {
-				console.log(res)
 				if (res === 'confirm') {
 					this.$emit('getTableDataByType')
 					this.$store.dispatch('showStorage')

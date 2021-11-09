@@ -11,6 +11,7 @@ import '_a/styles/css/mediaScreen.styl'
 import '@/router/before.js'
 import 'element-ui/lib/theme-chalk/index.css'
 import element from './plugins/element.js'
+import config from '@/config/index.js'
 /**
  * vue-simple-uploader 中文官方文档 https://github.com/simple-uploader/vue-uploader/blob/master/README_zh-CN.md
  * simple-uploader.js 中文官方文档 https://github.com/simple-uploader/Uploader/blob/develop/README_zh-CN.md
@@ -30,6 +31,7 @@ for (let key in globalFunction) {
 }
 
 Vue.use(element)
+Vue.prototype.$config = config
 Vue.use(uploader)
 Vue.use(operateElement) //  挂载自定义插件
 

@@ -1,11 +1,9 @@
-import globalFunction from '@/libs/globalFunction.js'
-
 export default {
 	state: {
 		// 表格中显示的列
-		selectedColumnList: globalFunction.getCookies('selectedColumnList'),
+		selectedColumnList: localStorage.getItem('selectedColumnList'),
 		// 文件展示模式 0 列表模式 | 1 网格模式 | 2 时间线模式
-		fileModel: globalFunction.getCookies('fileModel'),
+		fileModel: localStorage.getItem('fileModel'),
 		// 网格模式 & 时间线模式下 图标大小 单位px
 		gridSize: 80,
 		// 批量模式下：被选中的文件列表
@@ -21,7 +19,7 @@ export default {
 		 * @param {[]} data 表格需要显示的列数组
 		 */
 		changeSelectedColumnList(state, data) {
-			globalFunction.setCookies('selectedColumnList', data.toString())
+			localStorage.setItem('selectedColumnList', data.toString())
 			state.selectedColumnList = data.toString()
 		},
 		/**
@@ -31,7 +29,7 @@ export default {
 		 * @param {string} data 文件展示模式
 		 */
 		changeFileModel(state, data) {
-			globalFunction.setCookies('fileModel', data)
+			localStorage.setItem('fileModel', data)
 			state.fileModel = data
 		},
 		/**
@@ -41,7 +39,7 @@ export default {
 		 * @param {string} data 文件图标大小
 		 */
 		changeGridSize(state, data) {
-			globalFunction.setCookies('gridSize', data)
+			localStorage.setItem('gridSize', data)
 			state.gridSize = data
 		},
 		/**

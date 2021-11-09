@@ -2,7 +2,7 @@
 	<div class="register-wrapper" id="registerBackground">
 		<div class="form-wrapper">
 			<h1 class="register-title">注册</h1>
-			<p class="register-system">奇文网盘</p>
+			<p class="register-system">{{ $config.siteName }}</p>
 			<!-- 注册表单 -->
 			<el-form
 				class="register-form"

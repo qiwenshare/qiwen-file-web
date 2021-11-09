@@ -12,10 +12,10 @@ export default new Router({
 			name: 'Home',
 			component: () => import(/* webpackChunkName: "home" */ '_v/Home.vue'),
 			meta: {
-				title: '奇文网盘',
+				title: '首页',
 				content: {
 					description:
-						'基于Spring Boot + Vue CLI@3 框架开发的Web文件系统，旨在为用户提供一个简单、方便的文件存储方案'
+						'基于 Spring Boot + Vue CLI@3(Vue 2.0) 框架开发的 Web 文件系统，旨在为用户提供一个简单、方便的文件存储方案'
 				}
 			}
 		},
@@ -23,14 +23,14 @@ export default new Router({
 			path: '/login',
 			name: 'Login',
 			component: () => import(/* webpackChunkName: "login" */ '_v/Login.vue'),
-			meta: { title: '登录 - 奇文网盘' }
+			meta: { title: '登录' }
 		},
 		{
 			path: '/register',
 			name: 'Register',
 			component: () =>
 				import(/* webpackChunkName: "register" */ '_v/Register.vue'),
-			meta: { title: '注册 - 奇文网盘' }
+			meta: { title: '注册' }
 		},
 		{
 			path: '/file',
@@ -38,10 +38,9 @@ export default new Router({
 			component: () => import(/* webpackChunkName: "file" */ '_v/File.vue'),
 			meta: {
 				requireAuth: true, //  当前路由是否需要登录才可进入
-				title: '奇文网盘',
+				title: '网盘',
 				content: {
-					description:
-						'基于Spring Boot + Vue CLI@3 框架开发的Web文件系统，旨在为用户提供一个简单、方便的文件存储方案'
+					description: '图片 文档 视频 音乐 其他 回收站 我的分享'
 				}
 			}
 		},
@@ -49,9 +48,9 @@ export default new Router({
 			path: '/onlyoffice',
 			name: 'Onlyoffice',
 			meta: {
-				title: '在线编辑预览 - 奇文网盘',
+				title: '在线编辑预览',
 				content: {
-					description: '在线编辑预览'
+					description: 'onlyoffice 文档在线编辑预览，支持 Word Excel PowerPoint'
 				}
 			},
 			component: () =>
@@ -62,7 +61,10 @@ export default new Router({
 			name: 'Share',
 			component: () => import(/* webpackChunkName: "share" */ '_v/Share.vue'),
 			meta: {
-				title: '分享 - 奇文网盘'
+				title: '分享',
+				content: {
+					description: '查看他人分享'
+				}
 			},
 			props: true
 		},
@@ -71,7 +73,7 @@ export default new Router({
 			name: 'Error_404',
 			component: () =>
 				import(/* webpackChunkName: "error_404" */ '_v/ErrorPage/404.vue'),
-			meta: { title: '404 - 奇文网盘' }
+			meta: { title: '链接不存在' }
 		}
 	]
 })

@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import config from '@/config'
-
 import user from './module/user' //  用户模块
 import fileList from './module/fileList' //  文件列表模块
 import sideMenu from './module/sideMenu' //  左侧菜单模块
+
+import { allColumnList } from '@/libs/map.js'
 
 Vue.use(Vuex)
 
@@ -22,14 +22,12 @@ export default new Vuex.Store({
 		userId: (state) => state.user.userInfoObj.userId,
 		// 表格显示列
 		selectedColumnList: (state) =>
-			state.fileList.selectedColumnList === undefined
-				? config.allColumnList
+			state.fileList.selectedColumnList === null
+				? allColumnList
 				: state.fileList.selectedColumnList.split(','),
 		// 文件查看模式
 		fileModel: (state) =>
-			state.fileList.fileModel === undefined
-				? 0
-				: Number(state.fileList.fileModel),
+			state.fileList.fileModel === null ? 0 : Number(state.fileList.fileModel),
 		// 网格模式 & 时间线模式下 文件图标大小
 		gridSize: (state) => state.fileList.gridSize,
 		// 剩余存储空间
