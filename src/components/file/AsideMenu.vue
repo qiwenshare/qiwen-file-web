@@ -204,7 +204,6 @@ export default {
     }
   }
   >>> .el-menu {
-    border-right: none;
     background: transparent;
   }
   // 对展开状态下的菜单设置宽度
