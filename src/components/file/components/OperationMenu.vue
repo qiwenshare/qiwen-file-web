@@ -321,7 +321,7 @@ export default {
 				params: this.uploadFileParams,
 				uploadWay
 			}).then((res) => {
-				if (res === 'confirm') {
+				if (res) {
 					this.$emit('getTableDataByType')
 					this.$store.dispatch('showStorage')
 				}
