@@ -1,18 +1,18 @@
 <template>
-  <div class="error-404-wrapper">
-    <h2 class="title">您的页面飞走了……</h2>
-    <img :src="error_404_img" />
-  </div>
+	<div class="error-404-wrapper">
+		<h2 class="title">您的页面飞走了……</h2>
+		<img :src="error_404_img" />
+	</div>
 </template>
 
 <script>
 export default {
-  name: 'Error_404',
-  data() {
-    return {
-      error_404_img: require('@/assets/images/error/404.png')
-    }
-  }
+	name: 'Error_404',
+	data() {
+		return {
+			error_404_img: require('_a/images/error/404.png')
+		}
+	}
 }
 </script>
 

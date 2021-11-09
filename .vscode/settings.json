@@ -1,0 +1,64 @@
+{
+	// 控制是否在打开文件时，基于文件内容自动检测 #editor.tabSize# 和 #editor.insertSpaces#。
+	"editor.detectIndentation": false,
+	// 一个制表符等于的空格数
+	"editor.tabSize": 2,
+	// 每次保存的时候是否自动格式化
+	"editor.formatOnSave": true,
+	// 在保存时运行的代码类型操作
+	"editor.codeActionsOnSave": {
+		// 文件保存时自动修复
+		"source.fixAll": true
+	},
+	// 差异编辑器将不会忽略前后空格中的更改
+	"diffEditor.ignoreTrimWhitespace": false,
+	"[vue]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode" // 使用 prettier 扩展中的配置
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode" // 使用 prettier 扩展中的配置
+	},
+	"[html]": {
+		"editor.defaultFormatter": "vscode.html-language-features"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	},
+	"[css]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode" // 使用 prettier 扩展中的配置
+	},
+	"[stylus]": {
+		"editor.defaultFormatter": "thisismanta.stylus-supremacy"
+	},
+	// 以下均为 stylus Supremacy 扩展配置
+	"stylusSupremacy.insertColons": true, // 是否插入冒号
+	"stylusSupremacy.insertSemicolons": true, // 是否插入分号
+	"stylusSupremacy.insertBraces": true, // 是否插入大括号
+	"stylusSupremacy.insertNewLineAroundImports": true, // import 之后是否换行
+	"stylusSupremacy.insertNewLineAroundBlocks": false, // 两个选择器中是否换行
+	// HTML 每行最大字符数为 80, 如果超出则换行
+	"html.format.wrapLineLength": 80,
+	// JavaScript 函数(名)和后面的括号不添加空格
+	"javascript.format.insertSpaceBeforeFunctionParenthesis": false,
+	// Vetur 扩展配置
+	"vetur.format.defaultFormatterOptions": {
+		"prettier": {
+			"semi": false, //  代码结尾不加分号
+			"singleQuote": true, //  使用单引号
+			"trailingComma": "none" //  不自动添加逗号
+		}
+	},
+	/*
+    以下均为 prettier 扩展配置
+  */
+	// 指定每行代码最佳长度为 80 如果超出则换行
+	"prettier.printWidth": 80,
+	// 代码结尾不加分号
+	"prettier.semi": false,
+	// 使用单引号
+	"prettier.singleQuote": true,
+	// 不自动添加逗号
+	"prettier.trailingComma": "none",
+	// 当箭头函数仅有一个参数不添加括号
+	"prettier.arrowParens": "avoid"
+}
