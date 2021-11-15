@@ -384,6 +384,7 @@ export default {
 		handleClosePanel() {
 			this.uploaderInstance.cancel()
 			this.panelShow = false
+			this.callback('cancel')
 		}
 	}
 }

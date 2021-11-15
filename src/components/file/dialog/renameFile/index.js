@@ -26,11 +26,20 @@ const initInstanceRenameFile = (oldFileName, userFileId) => {
  * @returns {Promise} 抛出确认和取消回调函数
  */
 const showRenameFileDialog = (obj) => {
+	// 非首次调用服务时，在 DOM 中移除上个实例
+	if (renameFileInstance !== null) {
+		document.body.removeChild(renameFileInstance.$el)
+	}
 	let { oldFileName, userFileId } = obj
 	return new Promise((reslove) => {
 		initInstanceRenameFile(oldFileName, userFileId)
 		renameFileInstance.callback = (res) => {
 			reslove(res)
+			// 服务取消时卸载 DOM
+			if (res === 'cancel' && renameFileInstance !== null) {
+				document.body.removeChild(renameFileInstance.$el)
+				renameFileInstance = null
+			}
 		}
 		document.body.appendChild(renameFileInstance.$el) //  挂载 DOM
 		Vue.nextTick(() => {

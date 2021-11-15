@@ -121,10 +121,6 @@ export default {
 		return {
 			visible: false, //  右键菜单是否显示
 			officeFileType: ['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'],
-			// 音频预览
-			audioObj: {
-				src: ''
-			},
 			sortedFileList: [], //  排序后的表格数据
 			// 右键菜单
 			rightMenu: {

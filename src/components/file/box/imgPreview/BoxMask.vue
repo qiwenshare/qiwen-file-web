@@ -127,8 +127,6 @@ export default {
 			let body = document.querySelector('body')
 			if (val) {
 				this.activeIndex = this.defaultIndex
-				// 挂在 body 下，防止组件元素有样式 transform 而使 position: fixed 失效
-				body.appendChild(this.$el)
 				body.style.overflow = 'hidden'
 				// 添加键盘Esc事件
 				this.$nextTick(() => {
@@ -175,6 +173,7 @@ export default {
 				this.activeIndex
 			].style.transform = `rotate(${this.rotate}deg)`
 			this.visible = false
+			this.callback('cancel')
 		},
 		/**
 		 * 格式化 tooltip message - 显示图片缩放比例

@@ -26,11 +26,20 @@ const initInstanceImgPreview = (imgList, defaultIndex) => {
  * @returns {Promise} 抛出确认和取消回调函数
  */
 const showImgPreviewBox = (obj) => {
+	// 非首次调用服务时，在 DOM 中移除上个实例
+	if (imgPreviewInstance !== null) {
+		document.body.removeChild(imgPreviewInstance.$el)
+	}
 	let { imgList, defaultIndex } = obj
 	return new Promise((reslove) => {
 		initInstanceImgPreview(imgList, defaultIndex)
 		imgPreviewInstance.callback = (res) => {
 			reslove(res)
+			// 服务取消时卸载 DOM
+			if (res === 'cancel' && imgPreviewInstance !== null) {
+				document.body.removeChild(imgPreviewInstance.$el)
+				imgPreviewInstance = null
+			}
 		}
 		document.body.appendChild(imgPreviewInstance.$el) //  挂载 DOM
 		Vue.nextTick(() => {
