@@ -48,4 +48,12 @@ const showContextMenuBox = (obj) => {
 	})
 }
 
+// 添加关闭事件
+showContextMenuBox.close = () => {
+	if (contextMenuInstance !== null) {
+		document.body.removeChild(contextMenuInstance.$el)
+		contextMenuInstance = null
+	}
+}
+
 export default showContextMenuBox

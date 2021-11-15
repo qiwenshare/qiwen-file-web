@@ -404,6 +404,8 @@ export default {
 		 * @param {number} label 0 列表 1 网格 2 时间线
 		 */
 		handleFileDisplayModelChange(label) {
+			// 关闭右键菜单事件
+			this.$openContextMenu.close()
 			this.$store.commit('changeFileModel', label)
 		},
 		/**
