@@ -24,10 +24,19 @@ const initInstanceAddFolder = (filePath) => {
  * @returns {Promise} 抛出确认和取消回调函数
  */
 const showAddFolderDialog = ({ filePath }) => {
+	// 非首次调用服务时，在 DOM 中移除上个实例
+	if (addFolderInstance !== null) {
+		document.body.removeChild(addFolderInstance.$el)
+	}
 	return new Promise((reslove) => {
 		initInstanceAddFolder(filePath)
 		addFolderInstance.callback = (res) => {
 			reslove(res)
+			// 服务取消时卸载 DOM
+			if (res === 'cancel' && addFolderInstance !== null) {
+				document.body.removeChild(addFolderInstance.$el)
+				addFolderInstance = null
+			}
 		}
 		document.body.appendChild(addFolderInstance.$el) //  挂载 DOM
 		Vue.nextTick(() => {

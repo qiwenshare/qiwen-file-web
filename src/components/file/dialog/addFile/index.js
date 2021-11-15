@@ -30,11 +30,20 @@ const initInstanceAddFile = (
  * @returns {Promise} 抛出确认和取消回调函数
  */
 const showAddFileDialog = (obj) => {
+	// 非首次调用服务时，在 DOM 中移除上个实例
+	if (addFileInstance !== null) {
+		document.body.removeChild(addFileInstance.$el)
+	}
 	let { extendName, filePath } = obj
 	return new Promise((reslove) => {
 		initInstanceAddFile(extendName, filePath)
 		addFileInstance.callback = (res) => {
 			reslove(res)
+			// 服务取消时卸载 DOM
+			if (res === 'cancel' && addFileInstance !== null) {
+				document.body.removeChild(addFileInstance.$el)
+				addFileInstance = null
+			}
 		}
 		document.body.appendChild(addFileInstance.$el) //  挂载 DOM
 		Vue.nextTick(() => {

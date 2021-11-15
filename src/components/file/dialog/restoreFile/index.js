@@ -26,11 +26,20 @@ const initInstanceRestoreFile = (deleteBatchNum, filePath) => {
  * @returns {Promise} 抛出确认和取消回调函数
  */
 const showRestoreFileDialog = (obj) => {
+	// 非首次调用服务时，在 DOM 中移除上个实例
+	if (restoreFileInstance !== null) {
+		document.body.removeChild(restoreFileInstance.$el)
+	}
 	let { deleteBatchNum, filePath } = obj
 	return new Promise((reslove) => {
 		initInstanceRestoreFile(deleteBatchNum, filePath)
 		restoreFileInstance.callback = (res) => {
 			reslove(res)
+			// 服务取消时卸载 DOM
+			if (res === 'cancel' && restoreFileInstance !== null) {
+				document.body.removeChild(restoreFileInstance.$el)
+				restoreFileInstance = null
+			}
 		}
 		document.body.appendChild(restoreFileInstance.$el) //  挂载 DOM
 		Vue.nextTick(() => {

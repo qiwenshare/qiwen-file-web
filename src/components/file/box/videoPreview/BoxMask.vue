@@ -121,7 +121,7 @@ export default {
 		}
 	},
 	methods: {
-		// 关闭图片预览
+		// 关闭视频预览
 		handleClosePreview() {
 			this.visible = false
 			this.callback('cancel')

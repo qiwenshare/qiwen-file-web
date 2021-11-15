@@ -24,11 +24,20 @@ const initInstanceShareFile = (fileInfo) => {
  * @returns {Promise} 抛出确认和取消回调函数
  */
 const showShareFileDialog = (obj) => {
+	// 非首次调用服务时，在 DOM 中移除上个实例
+	if (shareFileInstance !== null) {
+		document.body.removeChild(shareFileInstance.$el)
+	}
 	let { fileInfo } = obj
 	return new Promise((reslove) => {
 		initInstanceShareFile(fileInfo)
 		shareFileInstance.callback = (res) => {
 			reslove(res)
+			// 服务取消时卸载 DOM
+			if (res === 'cancel' && shareFileInstance !== null) {
+				document.body.removeChild(shareFileInstance.$el)
+				shareFileInstance = null
+			}
 		}
 		document.body.appendChild(shareFileInstance.$el) //  挂载 DOM
 		Vue.nextTick(() => {

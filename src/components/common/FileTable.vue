@@ -208,27 +208,7 @@ export default {
 	data() {
 		return {
 			officeFileType: ['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'],
-			// 音频预览
-			audioObj: {
-				src: ''
-			},
-			sortedFileList: [], //  排序后的表格数据
-			// 右键菜单
-			rightMenu: {
-				isShow: false,
-				top: 0,
-				left: 0,
-				bottom: 'auto',
-				right: 'auto'
-			},
-			// 右键解压缩菜单
-			unzipMenu: {
-				top: 0,
-				bottom: 'auto',
-				left: '138px',
-				right: 'auto'
-			},
-			selectedFile: {} //  右键选中的表格行数据
+			sortedFileList: [] //  排序后的表格数据
 		}
 	},
 	computed: {
@@ -237,60 +217,6 @@ export default {
 		// 路由名称
 		routeName() {
 			return this.$route.name
-		},
-		// 查看按钮是否显示
-		seeBtnShow() {
-			return this.fileType !== 6
-		},
-		// 删除按钮是否显示
-		deleteBtnShow() {
-			return this.fileType !== 8 && !['Share'].includes(this.routeName)
-		},
-		// 还原按钮是否显示
-		restoreBtnShow() {
-			return this.fileType === 6 && !['Share'].includes(this.routeName)
-		},
-		// 移动按钮是否显示
-		moveBtnShow() {
-			return (
-				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
-			)
-		},
-		// 重命名按钮是否显示
-		renameBtnShow() {
-			return (
-				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
-			)
-		},
-		// 分享按钮是否显示
-		shareBtnShow() {
-			return (
-				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
-			)
-		},
-		// 下载按钮是否显示
-		downloadBtnShow() {
-			return ![6, 8].includes(this.fileType)
-		},
-		// 解压缩按钮是否显示
-		unzipBtnShow() {
-			return (
-				![6, 8].includes(this.fileType) &&
-				!['Share'].includes(this.routeName) &&
-				['zip', 'rar'].includes(this.selectedFile.extendName)
-			)
-		},
-		// 在线编辑按钮是否显示
-		onlineEditBtnShow() {
-			return (
-				![6, 8].includes(this.fileType) &&
-				this.officeFileType.includes(this.selectedFile.extendName) &&
-				!['Share'].includes(this.routeName)
-			)
-		},
-		// 复制链接按钮是否显示
-		copyLinkBtnShow() {
-			return this.fileType === 8
 		}
 	},
 	watch: {
@@ -315,17 +241,6 @@ export default {
 			this.clearSelectedTable()
 			this.$refs.multipleTable.clearSort()
 			this.sortedFileList = this.fileList
-		},
-		/**
-		 * 监听右键列表状态
-		 * @description 右键列表打开时，body 添加点击事件的监听
-		 */
-		'rightMenu.isShow'(newValue) {
-			if (newValue) {
-				document.body.addEventListener('click', this.closeRightMenu)
-			} else {
-				document.body.removeEventListener('click', this.closeRightMenu)
-			}
 		}
 	},
 	methods: {
@@ -355,13 +270,6 @@ export default {
 					this.$store.dispatch('showStorage') //  刷新存储容量
 				}
 			})
-		},
-		/**
-		 * 关闭右键列表
-		 */
-		closeRightMenu() {
-			this.rightMenu.isShow = false
-			this.$refs.multipleTable.setCurrentRow()
 		},
 		/**
 		 * 清空表格已选行

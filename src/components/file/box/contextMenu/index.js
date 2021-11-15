@@ -26,11 +26,20 @@ const initInstanceContextMenu = (selectedFile, domEvent) => {
  * @returns {Promise} 抛出确认和取消回调函数
  */
 const showContextMenuBox = (obj) => {
+	// 非首次调用服务时，在 DOM 中移除上个实例
+	if (contextMenuInstance !== null) {
+		document.body.removeChild(contextMenuInstance.$el)
+	}
 	let { selectedFile, domEvent } = obj
 	return new Promise((reslove) => {
 		initInstanceContextMenu(selectedFile, domEvent)
 		contextMenuInstance.callback = (res) => {
 			reslove(res)
+			// 服务取消时卸载 DOM
+			if (res === 'cancel' && contextMenuInstance !== null) {
+				document.body.removeChild(contextMenuInstance.$el)
+				contextMenuInstance = null
+			}
 		}
 		document.body.appendChild(contextMenuInstance.$el) //  挂载 DOM
 		Vue.nextTick(() => {

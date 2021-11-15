@@ -26,11 +26,20 @@ const initInstanceUnzipFile = (unzipMode, userFileId) => {
  * @returns {Promise} 抛出确认和取消回调函数
  */
 const showUnzipFileDialog = (obj) => {
+	// 非首次调用服务时，在 DOM 中移除上个实例
+	if (unzipFileInstance !== null) {
+		document.body.removeChild(unzipFileInstance.$el)
+	}
 	let { unzipMode, userFileId } = obj
 	return new Promise((reslove) => {
 		initInstanceUnzipFile(unzipMode, userFileId)
 		unzipFileInstance.callback = (res) => {
 			reslove(res)
+			// 服务取消时卸载 DOM
+			if (res === 'cancel' && unzipFileInstance !== null) {
+				document.body.removeChild(unzipFileInstance.$el)
+				unzipFileInstance = null
+			}
 		}
 		document.body.appendChild(unzipFileInstance.$el) //  挂载 DOM
 		Vue.nextTick(() => {

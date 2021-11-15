@@ -26,11 +26,20 @@ const initInstanceUploadFile = (params, uploadWay) => {
  * @returns {Promise} 抛出确认和取消回调函数
  */
 const showUploadFileBox = (obj) => {
+	// 非首次调用服务时，在 DOM 中移除上个实例
+	if (uploadFileInstance !== null) {
+		document.body.removeChild(uploadFileInstance.$el)
+	}
 	let { params, uploadWay } = obj
 	return new Promise((reslove) => {
 		initInstanceUploadFile(params, uploadWay)
 		uploadFileInstance.callback = (res) => {
 			reslove(res)
+			// 服务取消时卸载 DOM
+			if (res === 'cancel' && uploadFileInstance !== null) {
+				document.body.removeChild(uploadFileInstance.$el)
+				uploadFileInstance = null
+			}
 		}
 		document.body.appendChild(uploadFileInstance.$el) //  挂载 DOM
 		Vue.nextTick(() => {

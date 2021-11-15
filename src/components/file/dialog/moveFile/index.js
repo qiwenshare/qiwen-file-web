@@ -26,11 +26,20 @@ const initInstanceMoveFile = (isBatchOperation, fileInfo) => {
  * @returns {Promise} 抛出确认和取消回调函数
  */
 const showMoveFileDialog = (obj) => {
+	// 非首次调用服务时，在 DOM 中移除上个实例
+	if (moveFileInstance !== null) {
+		document.body.removeChild(moveFileInstance.$el)
+	}
 	let { isBatchOperation, fileInfo } = obj
 	return new Promise((reslove) => {
 		initInstanceMoveFile(isBatchOperation, fileInfo)
 		moveFileInstance.callback = (res) => {
 			reslove(res)
+			// 服务取消时卸载 DOM
+			if (res === 'cancel' && moveFileInstance !== null) {
+				document.body.removeChild(moveFileInstance.$el)
+				moveFileInstance = null
+			}
 		}
 		document.body.appendChild(moveFileInstance.$el) //  挂载 DOM
 		Vue.nextTick(() => {
