@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Cookies from 'js-cookie'
 import router from '@/router/router'
 import config from '@/config/index.js'
-import { Message, Notification } from 'element-ui'
+import { Message } from 'element-ui'
 import { fileImgMap, unknownImg } from '@/libs/map.js'
 
 // 全局函数
@@ -358,20 +358,9 @@ const globalFunction = {
 			//  若当前点击项是音频mp3格式
 			const AUDIO = ['mp3']
 			if (AUDIO.includes(row.extendName)) {
-				if (this.audioObj.src !== this.getViewFilePath(row)) {
-					Notification.closeAll()
-					this.audioObj.src = this.getViewFilePath(row)
-					Notification({
-						title: `${row.fileName}.${row.extendName}`,
-						dangerouslyUseHTMLString: true,
-						message: `<audio class="audio-preview" src="${this.audioObj.src}" controls autoplay style="padding-right: 16px; margin-top: 16px;"></audio>`,
-						duration: 0, //  不自动关闭
-						offset: 100,
-						onClose: () => {
-							this.audioObj.src = ''
-						}
-					})
-				}
+				Vue.prototype.$preivewAudio({
+					audioObj: row
+				})
 				return false
 			}
 		}
