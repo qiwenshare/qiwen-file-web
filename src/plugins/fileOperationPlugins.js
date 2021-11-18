@@ -21,6 +21,7 @@ import showContextMenuBox from '_c/file/box/contextMenu/index.js'
 import showImgPreviewBox from '_c/file/box/imgPreview/index.js'
 import showVideoPreviewBox from '_c/file/box/videoPreview/index.js'
 import showUploadFileBox from '_c/file/box/uploadFile/index.js'
+import showAudioPreviewBox from '_c/file/box/audioPreview/index.js'
 
 const operateElement = {
 	install: (Vue) => {
@@ -39,6 +40,7 @@ const operateElement = {
 		Vue.prototype.$previewImg = showImgPreviewBox
 		Vue.prototype.$previewVideo = showVideoPreviewBox
 		Vue.prototype.$uploadFile = showUploadFileBox
+		Vue.prototype.$preivewAudio = showAudioPreviewBox
 	}
 }
 export default operateElement
