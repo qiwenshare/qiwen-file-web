@@ -142,7 +142,7 @@
 			class="batch-icon el-icon-finished"
 			:class="isBatchOperation ? 'active' : ''"
 			:title="isBatchOperation ? '取消批量操作' : '批量操作'"
-			v-if="fileModel === 1"
+			v-if="fileModel === 1 && fileType !== 8"
 			@click="handleBatchOperationChange()"
 		></i>
 		<el-divider direction="vertical" v-if="fileModel === 1"></el-divider>
