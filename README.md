@@ -214,11 +214,8 @@
 如您有问题，请加入 QQ 群咨询
 
 **QQ 交流群** 和 **微信公众号** 请扫描下面二维码
+![联系我们 二维码](https://images.gitee.com/uploads/images/2021/1120/183641_ae76c638_1837873.png "二维码.png")
 
-<div style="dispaly: flex;">
-    <img src="https://images.gitee.com/uploads/images/2021/0325/133721_7c174ea5_1837873.png"/>
-    <img src="https://images.gitee.com/uploads/images/2021/0325/133740_557ca1d8_1837873.png"/>
-</div>
 
 ## 鸣谢
 
