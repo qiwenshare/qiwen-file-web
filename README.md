@@ -216,8 +216,15 @@
 **QQ 交流群** 和 **微信公众号** 请扫描下面二维码
 
 <div style="dispaly: flex;">
-    <img src="https://images.gitee.com/uploads/images/2021/0325/133721_7c174ea5_1837873.png"/>
-    <img src="https://images.gitee.com/uploads/images/2021/0325/133740_557ca1d8_1837873.png"/>
+<div style="margin-right: 32px;">
+    <img src="https://images.gitee.com/uploads/images/2021/1120/182517_85c46377_1837873.png" style="width: 160px;"/>
+</div>
+<div style="margin-right: 32px;">
+    <img src="https://images.gitee.com/uploads/images/2021/1120/182603_6fdfe7c2_1837873.png" style="width: 160px;"/>
+</div>
+<div style="margin-right: 32px;">
+    <img src="https://images.gitee.com/uploads/images/2021/0325/133740_557ca1d8_1837873.png" style="width: 160px;"/>
+</div>
 </div>
 
 ## 鸣谢
