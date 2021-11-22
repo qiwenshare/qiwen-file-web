@@ -219,13 +219,15 @@ const globalFunction = {
 			return fileImgMap.get('dir')
 		} else if (
 			Number(router.currentRoute.query.fileType) !== 6 &&
-			['jpg', 'png', 'jpeg', 'gif', 'mp4'].includes(file.extendName)
+			['jpg', 'png', 'jpeg', 'gif', 'mp4'].includes(
+				file.extendName.toLowerCase()
+			)
 		) {
 			// 图片、视频类型，直接显示缩略图
 			return this.getImgMinPath(file)
-		} else if (fileImgMap.has(file.extendName)) {
+		} else if (fileImgMap.has(file.extendName.toLowerCase())) {
 			// 可以识别文件类型的文件
-			return fileImgMap.get(file.extendName)
+			return fileImgMap.get(file.extendName.toLowerCase())
 		} else {
 			// 无法识别文件类型的文件
 			return unknownImg
@@ -334,30 +336,32 @@ const globalFunction = {
 		else {
 			// 若当前点击项是图片
 			const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
-			if (PIC.includes(row.extendName)) {
+			if (PIC.includes(row.extendName.toLowerCase())) {
 				this.handleImgPreview(currentIndex, row, fileList)
 				return false
 			}
 			//  若当前点击项是可以使用office在线预览的
-			if ([...this.officeFileType, 'pdf'].includes(row.extendName)) {
+			if (
+				[...this.officeFileType, 'pdf'].includes(row.extendName.toLowerCase())
+			) {
 				this.getFileOnlineViewPathByOffice(row)
 				return false
 			}
 			//  若当前点击项是代码或文本文件
 			const CODE = ['html', 'js', 'css', 'json', 'c', 'java', 'txt']
-			if (CODE.includes(row.extendName)) {
+			if (CODE.includes(row.extendName.toLowerCase())) {
 				window.open(this.getViewFilePath(row), '_blank')
 				return false
 			}
 			//  若当前点击项是视频mp4格式
 			const VIDEO = ['mp4']
-			if (VIDEO.includes(row.extendName)) {
+			if (VIDEO.includes(row.extendName.toLowerCase())) {
 				this.handleVideoPreview(currentIndex, row, fileList)
 				return false
 			}
 			//  若当前点击项是音频mp3格式
 			const AUDIO = ['mp3']
-			if (AUDIO.includes(row.extendName)) {
+			if (AUDIO.includes(row.extendName.toLowerCase())) {
 				Vue.prototype.$preivewAudio({
 					audioObj: row
 				})
