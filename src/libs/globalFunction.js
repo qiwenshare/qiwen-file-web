@@ -368,6 +368,21 @@ const globalFunction = {
 				return false
 			}
 		}
+	},
+	/**
+	 * 文件名称拼接，包括文件名称 + 文件后缀
+	 * @param {object} file 文件信息
+	 * @param {boolean} isHighlight 是否需要展示高亮效果，默认不需要
+	 * @returns {string} 完整文件名称
+	 */
+	getFileNameComplete(file, isHighlight = false) {
+		return isHighlight === true && file.highlightFields
+			? `${file.highlightFields}${
+					file.isDir === 0 && file.extendName ? `.${file.extendName}` : ''
+			  }`
+			: `${file.fileName}${
+					file.isDir === 0 && file.extendName ? `.${file.extendName}` : ''
+			  }`
 	}
 }
 

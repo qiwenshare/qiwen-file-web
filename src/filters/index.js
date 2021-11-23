@@ -37,16 +37,4 @@ const storageTrans = (size, status) => {
 	}
 }
 
-/**
- * 文件名称拼接，包括文件名称 + 文件后缀
- * @param {object} file 文件信息
- * @returns {string} 完整文件名称
- */
-const fileNameComplete = (file) => {
-	return (
-		file.fileName +
-		(file.isDir === 0 && file.extendName ? `.${file.extendName}` : '')
-	)
-}
-
-export { storageTrans, fileNameComplete }
+export { storageTrans }

@@ -32,10 +32,13 @@
 						<img
 							class="image"
 							:src="getImgMinPath(image)"
-							:alt="item | fileNameComplete"
+							:alt="getFileNameComplete(image)"
 							:style="`width: ${gridSize}px; height: ${gridSize}px;`"
 						/>
-						<div class="image-name">{{ image | fileNameComplete }}</div>
+						<div
+							class="image-name"
+							v-html="getFileNameComplete(image, true)"
+						></div>
 					</li>
 				</ul>
 			</el-timeline-item>
@@ -125,6 +128,9 @@ export default {
             font-size: 12px;
             word-break: break-all;
             setEllipsis(2);
+            >>> .keyword {
+              color: $Danger;
+            }
           }
         }
       }

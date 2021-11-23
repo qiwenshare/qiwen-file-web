@@ -12,7 +12,7 @@
 				class="file-item"
 				v-for="(item, index) in fileListSorted"
 				:key="index"
-				:title="item | fileNameComplete"
+				:title="getFileNameComplete(item)"
 				:style="`width: ${gridSize + 40}px; `"
 				:class="item.userFileId === selectedFile.userFileId ? 'active' : ''"
 				@click="handleFileNameClick(item, index, fileListSorted)"
@@ -23,7 +23,7 @@
 					:src="setFileImg(item)"
 					:style="`width: ${gridSize}px; height: ${gridSize}px;`"
 				/>
-				<div class="file-name">{{ item | fileNameComplete }}</div>
+				<div class="file-name" v-html="getFileNameComplete(item, true)"></div>
 				<div
 					class="file-checked-wrapper"
 					:class="{ checked: item.checked }"
@@ -64,34 +64,14 @@ export default {
 		return {
 			fileListSorted: [],
 			officeFileType: ['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'],
-			// 右键菜单
-			rightMenu: {
-				isShow: false,
-				top: 0,
-				left: 0
-			},
-			// 右键解压缩菜单
-			unzipMenu: {
-				top: 0,
-				bottom: 'auto',
-				left: '138px',
-				right: 'auto'
-			},
-			selectedFile: {},
-			selectedIndex: 0,
-			// 音频预览
-			audioObj: {
-				src: ''
-			}
+			selectedFile: {}
 		}
 	},
 	computed: {
 		/**
-		 * selectedColumnList: 列显隐
-		 * fileModel: 文件查看模式 0列表模式 1网格模式
 		 * gridSize: 图标大小
 		 *  */
-		...mapGetters(['selectedColumnList', 'fileModel', 'gridSize']),
+		...mapGetters(['gridSize']),
 		// 是否批量操作
 		isBatchOperation() {
 			return this.$store.state.fileList.isBatchOperation
@@ -100,60 +80,6 @@ export default {
 		selectedFileList() {
 			let res = this.fileListSorted.filter((item) => item.checked)
 			return res
-		},
-		// 查看按钮是否显示
-		seeBtnShow() {
-			return this.fileType !== 6
-		},
-		// 删除按钮是否显示
-		deleteBtnShow() {
-			return this.fileType !== 8 && !['Share'].includes(this.routeName)
-		},
-		// 还原按钮是否显示
-		restoreBtnShow() {
-			return this.fileType === 6 && !['Share'].includes(this.routeName)
-		},
-		// 移动按钮是否显示
-		moveBtnShow() {
-			return (
-				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
-			)
-		},
-		// 重命名按钮是否显示
-		renameBtnShow() {
-			return (
-				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
-			)
-		},
-		// 分享按钮是否显示
-		shareBtnShow() {
-			return (
-				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
-			)
-		},
-		// 下载按钮是否显示
-		downloadBtnShow() {
-			return ![6, 8].includes(this.fileType)
-		},
-		// 解压缩按钮是否显示
-		unzipBtnShow() {
-			return (
-				![6, 8].includes(this.fileType) &&
-				!['Share'].includes(this.routeName) &&
-				['zip', 'rar'].includes(this.selectedFile.extendName)
-			)
-		},
-		// 在线编辑按钮是否显示
-		onlineEditBtnShow() {
-			return (
-				![6, 8].includes(this.fileType) &&
-				this.officeFileType.includes(this.selectedFile.extendName) &&
-				!['Share'].includes(this.routeName)
-			)
-		},
-		// 复制链接按钮是否显示
-		copyLinkBtnShow() {
-			return this.fileType === 8
 		}
 	},
 	watch: {
@@ -174,17 +100,6 @@ export default {
 		selectedFileList(newValue) {
 			this.$store.commit('changeSelectedFiles', newValue)
 			this.$store.commit('changeIsBatchOperation', newValue.length !== 0)
-		},
-		/**
-		 * 监听右键列表状态
-		 * @description 右键列表打开时，body 添加点击事件的监听
-		 */
-		'rightMenu.isShow'(newValue) {
-			if (newValue) {
-				document.body.addEventListener('click', this.closeRightMenu)
-			} else {
-				document.body.removeEventListener('click', this.closeRightMenu)
-			}
 		}
 	},
 	methods: {
@@ -195,14 +110,17 @@ export default {
 		 * @param {object} event 鼠标事件信息
 		 */
 		handleContextMenu(item, index, event) {
+			this.selectedFile = item
 			if (!this.isBatchOperation) {
 				event.preventDefault()
 				this.$openContextMenu({
 					selectedFile: item,
 					domEvent: event
 				}).then((res) => {
+					this.selectedFile = {}
 					if (res === 'confirm') {
 						this.$emit('getTableDataByType') //  刷新文件列表
+						this.$store.dispatch('showStorage') //  刷新存储容量
 					}
 				})
 			}
@@ -257,6 +175,9 @@ export default {
         font-size: 12px;
         word-break: break-all;
         setEllipsis(2);
+        >>> .keyword {
+          color: $Danger;
+        }
       }
 
       .file-checked-wrapper {
