@@ -407,6 +407,7 @@ export default {
 			// 关闭右键菜单事件
 			this.$openContextMenu.close()
 			this.$store.commit('changeFileModel', label)
+			this.handleSearchInputChange(this.searchFile.fileName)
 		},
 		/**
 		 * 格式化图标大小显示

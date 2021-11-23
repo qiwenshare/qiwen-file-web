@@ -23,7 +23,7 @@
 			:fileType="fileType"
 			:filePath="filePath"
 			:fileList="fileList"
-			:loading="loading"
+			:loading.sync="loading"
 			v-if="fileModel === 0"
 			@getTableDataByType="getTableDataByType"
 		></FileTable>
@@ -126,7 +126,6 @@ export default {
 		// 监听文件查看模式
 		fileModel() {
 			this.setPageCount()
-			this.getTableDataByType()
 		}
 	},
 	created() {
@@ -273,7 +272,12 @@ export default {
 			}).then((res) => {
 				this.loading = false
 				if (res.success) {
-					this.fileList = res.data.searchHits.map((item) => item.content)
+					this.fileList = res.data.searchHits.map((item) => {
+						return {
+							...item.content,
+							highlightFields: item.highlightFields.fileName[0]
+						}
+					})
 					this.pageData.total = res.data.totalHits
 				} else {
 					this.$message.error(res.message)

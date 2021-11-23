@@ -45,14 +45,14 @@
 				</template>
 				<template slot-scope="scope">
 					<div
+						class="file-name"
 						style="cursor: pointer"
 						:title="`${scope.row.isDir ? '' : '点击预览'}`"
 						@click="
 							handleFileNameClick(scope.row, scope.$index, sortedFileList)
 						"
-					>
-						{{ scope.row | fileNameComplete }}
-					</div>
+						v-html="getFileNameComplete(scope.row, true)"
+					></div>
 				</template>
 			</el-table-column>
 			<el-table-column
@@ -360,6 +360,11 @@ export default {
 
       td {
         padding: 8px 0;
+        .file-name {
+          .keyword {
+            color: $Danger;
+          }
+        }
       }
 
       .el-icon-warning {
