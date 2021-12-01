@@ -30,6 +30,13 @@
 			</li>
 			<li
 				class="right-menu-item"
+				@click="handleCopyFileBtnClick(selectedFile)"
+				v-if="copyBtnShow"
+			>
+				<i class="el-icon-copy-document"></i> 复制到
+			</li>
+			<li
+				class="right-menu-item"
 				@click="handleMoveFileBtnClick(selectedFile)"
 				v-if="moveBtnShow"
 			>
@@ -161,6 +168,12 @@ export default {
 		restoreBtnShow() {
 			return this.fileType === 6 && !['Share'].includes(this.routeName)
 		},
+		// 复制按钮是否显示
+		copyBtnShow() {
+			return (
+				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
+			)
+		},
 		// 移动按钮是否显示
 		moveBtnShow() {
 			return (
@@ -276,6 +289,19 @@ export default {
 			} else {
 				return true
 			}
+		},
+		/**
+		 * 复制按钮点击事件
+		 * @description 向父组件传递当前操作的文件信息，并打开“复制文件对话框”
+		 * @param {object} fileInfo 文件信息
+		 */
+		handleCopyFileBtnClick(fileInfo) {
+			this.visible = false
+			this.$copyFile({
+				fileInfo
+			}).then((res) => {
+				this.callback(res)
+			})
 		},
 		/**
 		 * 移动按钮点击事件
