@@ -41,6 +41,8 @@ export const getFoldTree = (p) => get('/file/getfiletree', p)
 export const createFold = (p) => post('/file/createfile', p)
 // 删除文件
 export const deleteFile = (p) => post('/file/deletefile', p)
+// 复制文件
+export const copyFile = (p) => post('/file/copyfile', p)
 // 移动文件
 export const moveFile = (p) => post('/file/movefile', p)
 // 重命名文件

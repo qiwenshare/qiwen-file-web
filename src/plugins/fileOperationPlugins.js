@@ -9,6 +9,7 @@
 // 导入操作文件的弹窗类组件
 import showAddFolderDialog from '_c/file/dialog/addFolder/index.js'
 import showAddFileDialog from '_c/file/dialog/addFile/index.js'
+import showCopyFileDialog from '_c/file/dialog/copyFile/index.js'
 import showMoveFileDialog from '_c/file/dialog/moveFile/index.js'
 import showSaveShareFileDialog from '_c/file/dialog/saveShareFile/index.js'
 import showShareFileDialog from '_c/file/dialog/shareFile/index.js'
@@ -28,6 +29,7 @@ const operateElement = {
 		// 挂载操作文件的弹窗类组件
 		Vue.prototype.$addFolder = showAddFolderDialog
 		Vue.prototype.$addFile = showAddFileDialog
+		Vue.prototype.$copyFile = showCopyFileDialog
 		Vue.prototype.$moveFile = showMoveFileDialog
 		Vue.prototype.$saveShareFile = showSaveShareFileDialog
 		Vue.prototype.$shareFile = showShareFileDialog
