@@ -105,7 +105,7 @@ export default {
       .carousel-caption {
         position: absolute;
         left: 0;
-        top: 140px;
+        top: 96px;
         text-shadow: none;
         max-width: 550px;
         color: #fff;
