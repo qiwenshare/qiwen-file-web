@@ -23,10 +23,12 @@
 							v-for="(linkItem, linkIndex) in item.linkList"
 							:key="`link-${index}-${linkIndex}`"
 							:href="linkItem.link"
+							:title="linkItem.link"
 							target="_blank"
 						>
-							<span class="version-number">{{ linkItem.versionNo }}</span>
-							<span>{{ linkItem.date }} &gt;&gt;</span>
+							<span class="link-name"
+								>{{ linkItem.name }} <i class="el-icon-d-arrow-right"></i
+							></span>
 						</a>
 					</div>
 				</div>
@@ -47,16 +49,26 @@ export default {
 				{
 					title: '一款功能齐全的文件管理系统',
 					descList: [
-						'文件传输，安全快捷',
-						'在线解压缩，一触即达',
-						'回收站，防止文件误删'
+						'多种存储方式',
+						'支持分享文件',
+						'单个、批量操作文件、文件夹',
+						'在线解压缩、在线预览、在线编辑文档',
+						'回收站，防止文件误删',
+						'全局搜索文件'
 					],
 					btn: '开源免费，立即体验',
 					linkList: [
 						{
-							versionNo: '最新版本v1.4.0',
-							date: '2021年5月14日发布',
+							name: '前端工程',
+							link: 'https://gitee.com/qiwen-cloud/qiwen-file-web'
+						},
+						{
+							name: '后台工程',
 							link: 'https://gitee.com/qiwen-cloud/qiwen-file'
+						},
+						{
+							name: '说明文档',
+							link: 'https://pan.qiwenshare.com/docs/'
 						}
 					],
 					bannerImg: require('_a/images/home/banner/banner1.png')
@@ -135,11 +147,10 @@ export default {
             color: rgba(255, 255, 255, 0.8);
 
             &:hover {
-              text-decoration: underline;
               color: #fff;
             }
 
-            .version-number {
+            .link-name {
               margin-right: 16px;
             }
           }
