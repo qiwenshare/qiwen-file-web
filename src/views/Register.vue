@@ -51,7 +51,8 @@
 					<el-button
 						class="registerButton"
 						type="primary"
-						:disabled="submitDisabled"
+						:disabled="registerBtnDisabled"
+						:loading="registerBtnLoading"
 						@click="submitForm('registerForm')"
 						>注册</el-button
 					>
@@ -106,28 +107,20 @@ export default {
 				]
 			},
 			isPassing: false, //  滑动解锁是否验证通过
-			submitDisabled: true //  登录按钮是否禁用
-		}
-	},
-	computed: {
-		url() {
-			let _url = this.$route.query.Rurl //  获取路由前置守卫中 next 函数的参数，即登录后要去的页面
-			return _url ? _url : '/' //  若登录之前有页面，则登录后仍然进入该页面
+			registerBtnDisabled: true, //  注册按钮是否禁用
+			registerBtnLoading: false //  注册按钮是否 loading 状态
 		}
 	},
 	watch: {
 		//  滑动解锁验证通过时，若重新输入手机号、用户名或密码，滑动解锁恢复原样
 		'registerForm.telephone'() {
-			this.isPassing = false
-			this.$refs.dragVerifyRef.reset()
+			this.resetVerifyPassing()
 		},
 		'registerForm.username'() {
-			this.isPassing = false
-			this.$refs.dragVerifyRef.reset()
+			this.resetVerifyPassing()
 		},
 		'registerForm.password'() {
-			this.isPassing = false
-			this.$refs.dragVerifyRef.reset()
+			this.resetVerifyPassing()
 		}
 	},
 	created() {
@@ -139,6 +132,15 @@ export default {
 	},
 	methods: {
 		/**
+		 * 重置滑动解锁至未解锁状态
+		 * 注册按钮禁用
+		 */
+		resetVerifyPassing() {
+			this.isPassing = false
+			this.$refs.dragVerifyRef.reset()
+			this.registerBtnDisabled = true
+		},
+		/**
 		 * 滑动解锁完成 回调函数
 		 * @param {boolean} isPassing 解锁是否通过
 		 */
@@ -147,13 +149,13 @@ export default {
 				//  校验手机号
 				this.$refs.registerForm.validateField('telephone', (telephoneError) => {
 					if (telephoneError) {
-						this.submitDisabled = true
+						this.registerBtnDisabled = true
 					} else {
-						this.submitDisabled = false
+						this.registerBtnDisabled = false
 					}
 				})
 			} else {
-				this.submitDisabled = true
+				this.registerBtnDisabled = true
 			}
 		},
 		/**
@@ -161,24 +163,31 @@ export default {
 		 * @param {boolean} formName 表单ref值
 		 */
 		submitForm(formName) {
+			this.registerBtnLoading = true
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
 					// 表单各项校验通过
-					addUser(this.registerForm).then((res) => {
-						if (res.success) {
-							this.$notify({
-								title: '成功',
-								message: '注册成功！已跳转到登录页面',
-								type: 'success'
-							})
-							this.$refs[formName].resetFields()
-							this.$router.replace({ path: '/login' })
-						} else {
-							this.$message.error(res.message)
-						}
-					})
+					addUser(this.registerForm)
+						.then((res) => {
+							this.registerBtnLoading = false
+							if (res.success) {
+								this.$notify({
+									title: '成功',
+									message: '注册成功！已跳转到登录页面',
+									type: 'success'
+								})
+								this.$refs[formName].resetFields()
+								this.$router.replace({ path: '/login' })
+							} else {
+								this.$message.error(res.message)
+							}
+						})
+						.catch(() => {
+							this.registerBtnLoading = false
+						})
 				} else {
 					this.$message.error('请完善信息！')
+					this.registerBtnLoading = false
 					return false
 				}
 			})

@@ -45,6 +45,7 @@
 						class="login-btn"
 						type="primary"
 						:disabled="loginBtnDisabled"
+						:loading="loginBtnLoading"
 						@click="submitForm('loginForm')"
 						>登录</el-button
 					>
@@ -94,7 +95,8 @@ export default {
 				]
 			},
 			isPassing: false, //  滑动解锁是否验证通过
-			loginBtnDisabled: true //  登录按钮是否禁用
+			loginBtnDisabled: true, //  登录按钮是否禁用
+			loginBtnLoading: false //  登录按钮是否 loading 状态
 		}
 	},
 	computed: {
@@ -108,12 +110,10 @@ export default {
 	watch: {
 		//  滑动解锁验证通过时，若重新输入用户名或密码，滑动解锁恢复原样
 		'loginForm.telephone'() {
-			this.isPassing = false
-			this.$refs.dragVerifyRef.reset()
+			this.resetVerifyPassing()
 		},
 		'loginForm.password'() {
-			this.isPassing = false
-			this.$refs.dragVerifyRef.reset()
+			this.resetVerifyPassing()
 		}
 	},
 	created() {
@@ -135,6 +135,15 @@ export default {
 	},
 	methods: {
 		/**
+		 * 重置滑动解锁至未解锁状态
+		 * 注册按钮禁用
+		 */
+		resetVerifyPassing() {
+			this.isPassing = false
+			this.$refs.dragVerifyRef.reset()
+			this.loginBtnDisabled = true
+		},
+		/**
 		 * 滑动解锁完成 回调函数
 		 * @param {boolean} isPassing 解锁是否通过
 		 */
@@ -150,22 +159,29 @@ export default {
 		 * @param {boolean} formName 表单ref值
 		 */
 		submitForm(formName) {
+			this.loginBtnLoading = true
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
 					// 表单各项校验通过
-					login(this.loginForm, true).then((res) => {
-						if (res.success) {
-							this.setCookies('token', res.data.token) //  存储登录状态
-							this.$refs[formName].resetFields() //  清空表单
-							this.$router.replace(this.url) //  跳转到前一个页面或者网盘主页
-						} else {
-							this.$message.error('手机号或密码错误！')
-							this.isPassing = false
-							this.$refs.dragVerifyRef.reset()
-						}
-					})
+					login(this.loginForm, true)
+						.then((res) => {
+							this.loginBtnLoading = false
+							if (res.success) {
+								this.setCookies('token', res.data.token) //  存储登录状态
+								this.$router.replace(this.url) //  跳转到前一个页面或者网盘主页
+								this.$refs[formName].resetFields() //  清空表单
+							} else {
+								this.$message.error('手机号或密码错误！')
+								this.isPassing = false
+								this.$refs.dragVerifyRef.reset()
+							}
+						})
+						.catch(() => {
+							this.loginBtnLoading = false
+						})
 				} else {
 					this.$message.error('请完善信息！')
+					this.loginBtnLoading = false
 					return false
 				}
 			})
