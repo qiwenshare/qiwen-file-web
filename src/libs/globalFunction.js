@@ -41,7 +41,7 @@ const globalFunction = {
 			row.userFileId
 		}&isMin=true&shareBatchNum=${row.shareBatchNum}&extractionCode=${
 			row.extractionCode
-		}&token=${globalFunction.getCookies('token')}`
+		}&token=${globalFunction.getCookies(config.tokenKeyName)}`
 	},
 	/**
 	 * 获取文件查看路径
@@ -53,7 +53,7 @@ const globalFunction = {
 			row.userFileId
 		}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${
 			row.extractionCode
-		}&token=${globalFunction.getCookies('token')}`
+		}&token=${globalFunction.getCookies(config.tokenKeyName)}`
 	},
 	/**
 	 * 获取文件下载路径
@@ -65,7 +65,7 @@ const globalFunction = {
 			row.userFileId
 		}&shareBatchNum=${row.shareBatchNum}&extractionCode=${
 			row.extractionCode
-		}&token=${globalFunction.getCookies('token')}`
+		}&token=${globalFunction.getCookies(config.tokenKeyName)}`
 	},
 	/**
 	 * 获取 Onlyoffice 文件创建路径
@@ -105,7 +105,7 @@ const globalFunction = {
 			row.userFileId
 		}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${
 			row.extractionCode
-		}&token=${globalFunction.getCookies('token')}`
+		}&token=${globalFunction.getCookies(config.tokenKeyName)}`
 		const { href } = router.resolve({
 			name: 'Onlyoffice',
 			query: {
@@ -139,7 +139,7 @@ const globalFunction = {
 			row.userFileId
 		}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${
 			row.extractionCode
-		}&token=${globalFunction.getCookies('token')}`
+		}&token=${globalFunction.getCookies(config.tokenKeyName)}`
 		const { href } = router.resolve({
 			name: 'Onlyoffice',
 			query: {

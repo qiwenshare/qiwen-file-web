@@ -78,7 +78,7 @@ export default {
 		exitButton() {
 			this.$message.success('退出登录成功！')
 			this.$store.dispatch('getUserInfo').then(() => {
-				this.removeCookies('token')
+				this.removeCookies(this.$config.tokenKeyName)
 				this.$router.push({ path: '/login' })
 			})
 		}

@@ -40,7 +40,7 @@
 		<FileTimeLine
 			class="image-model"
 			:fileList="fileList"
-			v-if="fileModel === 2"
+			v-if="fileModel === 2 && fileType === 1"
 		></FileTimeLine>
 		<div class="pagination-wrapper">
 			<div class="current-page-count">当前页{{ fileList.length }}条</div>
