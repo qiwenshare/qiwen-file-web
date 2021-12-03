@@ -167,7 +167,7 @@ export default {
 						.then((res) => {
 							this.loginBtnLoading = false
 							if (res.success) {
-								this.setCookies('token', res.data.token) //  存储登录状态
+								this.setCookies(this.$config.tokenKeyName, res.data.token) //  存储登录状态
 								this.$router.replace(this.url) //  跳转到前一个页面或者网盘主页
 								this.$refs[formName].resetFields() //  清空表单
 							} else {

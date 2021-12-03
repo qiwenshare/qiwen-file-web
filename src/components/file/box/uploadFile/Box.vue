@@ -144,7 +144,7 @@ export default {
 					}
 				},
 				headers: {
-					token: this.getCookies('token')
+					token: this.getCookies(this.$config.tokenKeyName)
 				},
 				query() {}
 			},
@@ -185,7 +185,7 @@ export default {
 		 * 上传组件预处理
 		 */
 		handlePrepareUpload() {
-			this.options.headers.token = this.getCookies('token')
+			this.options.headers.token = this.getCookies(this.$config.tokenKeyName)
 			switch (this.uploadWay) {
 				case 1: {
 					this.$refs.uploadBtn.$el.click()

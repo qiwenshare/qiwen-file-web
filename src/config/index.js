@@ -26,7 +26,11 @@ const config = {
 	 * 对应 vue.config.js 中配置的 devServer.proxy 中的代理之一
 	 * 若修改了此值，请同步修改 vue.config.js 中 devServer.proxy 对应的值
 	 */
-	baseContext: '/api'
+	baseContext: '/api',
+	/**
+	 * 存放 token 时的命名方式
+	 */
+	tokenKeyName: 'qiwen-file-token'
 }
 
 export default config
