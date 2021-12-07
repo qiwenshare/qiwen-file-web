@@ -135,8 +135,16 @@
 		<el-divider direction="vertical" v-if="fileModel === 1"></el-divider>
 
 		<!-- 操作栏收纳 -->
-		<el-popover placement="bottom" trigger="hover">
-			<i slot="reference" class="setting-icon el-icon-setting"></i>
+		<el-popover
+			v-model="operatePopoverVisible"
+			placement="bottom"
+			:trigger="screenWidth <= 768 ? 'manual' : 'hover'"
+		>
+			<i
+				slot="reference"
+				class="setting-icon el-icon-setting"
+				@click="operatePopoverVisible = !operatePopoverVisible"
+			></i>
 			<!-- 选择表格列 -->
 			<SelectColumn></SelectColumn>
 			<el-divider class="split-line"></el-divider>
@@ -214,6 +222,7 @@ export default {
 			searchFile: {
 				fileName: ''
 			},
+			operatePopoverVisible: false, //  收纳栏是否显示
 			fileGroupLable: 0, //  文件展示模式
 			wordImg: require('_a/images/file/file_word.png'),
 			excelImg: require('_a/images/file/file_excel.png'),
@@ -268,6 +277,17 @@ export default {
 			if (oldValue === 1 && this.fileModel === 2) {
 				this.$store.commit('changeFileModel', 0)
 				this.fileGroupLable = 0
+			}
+		},
+		/**
+		 * 监听收纳栏状态
+		 * @description 打开时，body 添加点击事件的监听
+		 */
+		operatePopoverVisible(newValue) {
+			if (newValue === true) {
+				document.body.addEventListener('click', this.closeOperatePopover)
+			} else {
+				document.body.removeEventListener('click', this.closeOperatePopover)
 			}
 		}
 	},
@@ -399,6 +419,8 @@ export default {
 			this.$openContextMenu.close()
 			this.$store.commit('changeFileModel', label)
 			this.handleSearchInputChange(this.searchFile.fileName)
+			// 关闭收纳栏
+			this.operatePopoverVisible = false
 		},
 		/**
 		 * 格式化图标大小显示
@@ -406,6 +428,14 @@ export default {
 		 */
 		formatTooltip(val) {
 			return `${val}px`
+		},
+		/**
+		 * 关闭收纳栏
+		 */
+		closeOperatePopover(event) {
+			if (!event.target.className.includes('setting-icon')) {
+				this.operatePopoverVisible = false
+			}
 		}
 	}
 }
