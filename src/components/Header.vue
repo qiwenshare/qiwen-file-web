@@ -21,13 +21,26 @@
 			<li class="el-menu-item external-link">
 				<a href="https://pan.qiwenshare.com/docs/" target="_blank">文档</a>
 			</li>
-			<!-- 为了和其他菜单样式保持一致，请一定要添加类名 el-menu-item -->
-			<div class="el-menu-item exit" @click="exitButton()" v-show="isLogin">
-				退出
-			</div>
-			<div class="el-menu-item username" v-show="isLogin">
-				<i class="el-icon-user-solid"></i>{{ username }}
-			</div>
+			<template v-if="isLogin">
+				<el-submenu
+					class="user-exit-submenu"
+					index="User"
+					v-if="screenWidth <= 768"
+				>
+					<template slot="title">
+						<i class="el-icon-user-solid"></i>
+						<span>{{ username }}</span>
+					</template>
+					<el-menu-item @click="exitButton()">退出</el-menu-item>
+				</el-submenu>
+				<template v-else>
+					<!-- 为了和其他菜单样式保持一致，请一定要添加类名 el-menu-item -->
+					<div class="el-menu-item exit" @click="exitButton()">退出</div>
+					<div class="el-menu-item username" v-show="isLogin">
+						<i class="el-icon-user-solid"></i> <span>{{ username }}</span>
+					</div>
+				</template>
+			</template>
 			<el-menu-item
 				class="login"
 				index="Login"
@@ -74,6 +87,10 @@ export default {
 				process.env.NODE_ENV !== 'development' &&
 				location.origin === 'https://pan.qiwenshare.com'
 			)
+		},
+		// 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
 		}
 	},
 	methods: {
@@ -130,7 +147,7 @@ export default {
   .top-menu-list {
     flex: 1;
 
-    .login, .register, .username, .exit {
+    .login, .register, .username, .exit, .user-exit-submenu {
       float: right;
     }
   }

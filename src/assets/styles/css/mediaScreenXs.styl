@@ -16,10 +16,15 @@
         cursor: pointer;
       }
       .top-menu-list {
-        .el-menu-item {
+        .el-menu-item, .el-submenu {
           height: 48px;
           line-height: 48px;
           padding: 0 12px;
+          .el-submenu__title {
+            height: 48px;
+            line-height: 48px;
+            padding: 0;
+          }
         }
         .external-link {
           a {
