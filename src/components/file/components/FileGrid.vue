@@ -5,8 +5,6 @@
 			class="file-list"
 			v-loading="loading"
 			element-loading-text="文件加载中……"
-			@click.self="rightMenu.isShow = false"
-			@scroll="rightMenu.isShow = false"
 		>
 			<li
 				class="file-item"
@@ -24,6 +22,11 @@
 					:style="`width: ${gridSize}px; height: ${gridSize}px;`"
 				/>
 				<div class="file-name" v-html="getFileNameComplete(item, true)"></div>
+				<i
+					class="file-operate el-icon-more"
+					:class="`operate-more-${index}`"
+					@click.stop="handleClickMore(item, $event)"
+				></i>
 				<div
 					class="file-checked-wrapper"
 					:class="{ checked: item.checked }"
@@ -110,6 +113,31 @@ export default {
 		 * @param {object} event 鼠标事件信息
 		 */
 		handleContextMenu(item, index, event) {
+			// xs 以上的屏幕
+			if (this.screenWidth > 768) {
+				this.selectedFile = item
+				if (!this.isBatchOperation) {
+					event.preventDefault()
+					this.$openContextMenu({
+						selectedFile: item,
+						domEvent: event
+					}).then((res) => {
+						this.selectedFile = {}
+						if (res === 'confirm') {
+							this.$emit('getTableDataByType') //  刷新文件列表
+							this.$store.dispatch('showStorage') //  刷新存储容量
+						}
+					})
+				}
+			}
+		},
+		/**
+		 * 更多图标点击事件
+		 * @description 打开右键菜单
+		 * @param {object} item 当前行数据
+		 * @param {object} event 当前右键元素
+		 */
+		handleClickMore(item, event) {
 			this.selectedFile = item
 			if (!this.isBatchOperation) {
 				event.preventDefault()
@@ -124,13 +152,6 @@ export default {
 					}
 				})
 			}
-		},
-		/**
-		 * 关闭右键列表
-		 */
-		closeRightMenu() {
-			this.rightMenu.isShow = false
-			this.selectedFile = {}
 		}
 	}
 }

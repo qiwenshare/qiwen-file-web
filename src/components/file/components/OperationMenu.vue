@@ -1,23 +1,18 @@
 <template>
 	<div class="operation-menu-wrapper" :class="'file-type-' + fileType">
-		<el-button-group class="create-operate-group">
+		<el-button-group
+			class="create-operate-group"
+			v-if="(!selectedFiles.length || !isBatchOperation) && fileType === 0"
+		>
 			<el-dropdown class="upload-drop" trigger="hover">
 				<el-button
 					size="mini"
 					type="primary"
 					icon="el-icon-upload2"
 					id="uploadFileId"
-					:disabled="
-						(selectedFiles.length && isBatchOperation) || fileType !== 0
-					"
 					>上传<i class="el-icon-arrow-down el-icon--right"></i
 				></el-button>
-				<el-dropdown-menu
-					slot="dropdown"
-					:disabled="
-						(selectedFiles.length && isBatchOperation) || fileType !== 0
-					"
-				>
+				<el-dropdown-menu slot="dropdown">
 					<el-dropdown-item @click.native="handleUploadFileBtnClick(1)"
 						>上传文件</el-dropdown-item
 					>
@@ -27,6 +22,7 @@
 					<el-dropdown-item
 						@click.native="handleUploadFileBtnClick(3)"
 						title="截图粘贴或拖拽上传"
+						:disabled="screenWidth <= 520"
 						>拖拽上传</el-dropdown-item
 					>
 				</el-dropdown-menu>
@@ -36,7 +32,6 @@
 				type="primary"
 				icon="el-icon-plus"
 				@click="handleClickAddFolderBtn"
-				:disabled="(selectedFiles.length && isBatchOperation) || fileType !== 0"
 				>新建文件夹</el-button
 			>
 			<el-dropdown class="create-drop" trigger="hover">
@@ -45,17 +40,9 @@
 					type="primary"
 					icon="el-icon-edit-outline"
 					id="uploadFileId"
-					:disabled="
-						(selectedFiles.length && isBatchOperation) || fileType !== 0
-					"
 					>新建在线文档<i class="el-icon-arrow-down el-icon--right"></i
 				></el-button>
-				<el-dropdown-menu
-					slot="dropdown"
-					:disabled="
-						(selectedFiles.length && isBatchOperation) || fileType !== 0
-					"
-				>
+				<el-dropdown-menu slot="dropdown">
 					<el-dropdown-item @click.native="handleCreateFile('docx')">
 						<img
 							:src="wordImg"
@@ -180,7 +167,7 @@
 				<div class="title">调整图标大小</div>
 				<el-slider
 					v-model="gridSize"
-					:min="40"
+					:min="20"
 					:max="150"
 					:step="10"
 					:format-tooltip="formatTooltip"
@@ -270,6 +257,10 @@ export default {
 		// 是否批量操作
 		isBatchOperation() {
 			return this.$store.state.fileList.isBatchOperation
+		},
+		// 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
 		}
 	},
 	watch: {

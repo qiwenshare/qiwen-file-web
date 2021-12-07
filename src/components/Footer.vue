@@ -96,6 +96,9 @@ export default {
     .logo {
       width: 240px;
       display: block;
+      @media screen and (max-width: 920px) {
+        width: 160px;
+      }
     }
 
     .split {

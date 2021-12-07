@@ -9,7 +9,7 @@
 		>
 			<li
 				class="right-menu-item"
-				@click="handleFileNameClick(selectedFile, 0)"
+				@click="handleFileNameClick(selectedFile, 0, [selectedFile])"
 				v-if="seeBtnShow"
 			>
 				<i class="el-icon-view"></i> 查看
@@ -276,9 +276,11 @@ export default {
 		/**
 		 * 关闭右键列表
 		 */
-		closeRightMenu() {
-			this.visible = false
-			this.callback('cancel')
+		closeRightMenu(event) {
+			if (!event.target.className.includes('operate-more-')) {
+				this.visible = false
+				this.callback('cancel')
+			}
 		},
 		/**
 		 * 获取文件分享过期状态

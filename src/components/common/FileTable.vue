@@ -18,10 +18,18 @@
 			<el-table-column
 				type="selection"
 				key="selection"
-				width="55"
+				width="56"
+				align="center"
 				v-if="fileType !== 8"
 			></el-table-column>
-			<el-table-column label prop="isDir" key="isDir" width="60" align="center">
+			<el-table-column
+				label
+				prop="isDir"
+				key="isDir"
+				:width="screenWidth <= 768 ? 40 : 56"
+				align="center"
+				class-name="file-icon-column"
+			>
 				<template slot-scope="scope">
 					<img
 						:src="setFileImg(scope.row)"
@@ -44,15 +52,28 @@
 					<span>文件名</span>
 				</template>
 				<template slot-scope="scope">
-					<div
-						class="file-name"
-						style="cursor: pointer"
-						:title="`${scope.row.isDir ? '' : '点击预览'}`"
+					<span
 						@click="
 							handleFileNameClick(scope.row, scope.$index, sortedFileList)
 						"
-						v-html="getFileNameComplete(scope.row, true)"
-					></div>
+					>
+						<span
+							class="file-name"
+							style="cursor: pointer"
+							:title="`${scope.row.isDir ? '' : '点击预览'}`"
+							v-html="getFileNameComplete(scope.row, true)"
+						></span>
+						<div class="file-info" v-if="screenWidth <= 768">
+							{{ scope.row.uploadTime }}
+							<span class="file-size">
+								{{
+									scope.row.fileSize
+										? calculateFileSize(scope.row.fileSize)
+										: ''
+								}}
+							</span>
+						</div>
+					</span>
 				</template>
 			</el-table-column>
 			<el-table-column
@@ -60,7 +81,9 @@
 				prop="filePath"
 				key="filePath"
 				show-overflow-tooltip
-				v-if="![0, 8].includes(Number($route.query.fileType))"
+				v-if="
+					![0, 8].includes(Number($route.query.fileType)) && screenWidth > 768
+				"
 			>
 				<template slot-scope="scope">
 					<span
@@ -83,7 +106,7 @@
 				:sort-by="['isDir', 'extendName']"
 				sortable
 				show-overflow-tooltip
-				v-if="selectedColumnList.includes('extendName')"
+				v-if="selectedColumnList.includes('extendName') && screenWidth > 768"
 			>
 				<template slot-scope="scope">
 					<span v-if="scope.row.extendName">{{ scope.row.extendName }}</span>
@@ -92,13 +115,13 @@
 			</el-table-column>
 			<el-table-column
 				label="大小"
-				width="120"
+				width="100"
 				prop="fileSize"
 				key="fileSize"
 				:sort-by="['isDir', 'fileSize']"
 				sortable
 				align="right"
-				v-if="selectedColumnList.includes('fileSize')"
+				v-if="selectedColumnList.includes('fileSize') && screenWidth > 768"
 			>
 				<template slot-scope="scope">
 					<div style="padding: 0 10px">
@@ -110,24 +133,29 @@
 				label="修改日期"
 				prop="uploadTime"
 				key="uploadTime"
-				width="180"
+				width="160"
 				:sort-by="['isDir', 'uploadTime']"
 				sortable
 				align="center"
 				v-if="
 					selectedColumnList.includes('uploadTime') &&
-					![7, 8].includes(fileType)
+					![7, 8].includes(fileType) &&
+					screenWidth > 768
 				"
 			></el-table-column>
 			<el-table-column
 				label="删除日期"
 				prop="deleteTime"
 				key="deleteTime"
-				width="180"
+				width="160"
 				:sort-by="['isDir', 'deleteTime']"
 				sortable
 				align="center"
-				v-if="fileType === 6 && selectedColumnList.includes('deleteTime')"
+				v-if="
+					fileType === 6 &&
+					selectedColumnList.includes('deleteTime') &&
+					screenWidth > 768
+				"
 			></el-table-column>
 			<el-table-column
 				label="分享类型"
@@ -135,7 +163,7 @@
 				key="shareType"
 				width="100"
 				align="center"
-				v-if="fileType === 8"
+				v-if="fileType === 8 && screenWidth > 768"
 			>
 				<template slot-scope="scope">
 					{{ scope.row.shareType === 1 ? '私密' : '公共' }}
@@ -145,12 +173,12 @@
 				label="分享时间"
 				prop="shareTime"
 				key="shareTime"
-				width="180"
+				width="160"
 				:sort-by="['isDir', 'shareTime']"
 				show-overflow-tooltip
 				sortable
 				align="center"
-				v-if="fileType === 8"
+				v-if="fileType === 8 && screenWidth > 768"
 			></el-table-column>
 			<el-table-column
 				label="过期时间"
@@ -161,7 +189,7 @@
 				show-overflow-tooltip
 				sortable
 				align="center"
-				v-if="fileType === 8"
+				v-if="fileType === 8 && screenWidth > 768"
 			>
 				<template slot-scope="scope">
 					<div>
@@ -172,6 +200,20 @@
 						<i class="el-icon-time" v-else></i>
 						{{ scope.row.endTime }}
 					</div>
+				</template>
+			</el-table-column>
+			<el-table-column
+				label=""
+				key="operation"
+				width="48"
+				v-if="screenWidth <= 768"
+			>
+				<template slot-scope="scope">
+					<i
+						class="file-operate el-icon-more"
+						:class="`operate-more-${scope.$index}`"
+						@click="handleClickMore(scope.row, $event)"
+					></i>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -217,6 +259,10 @@ export default {
 		// 路由名称
 		routeName() {
 			return this.$route.name
+		},
+		// 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
 		}
 	},
 	watch: {
@@ -258,18 +304,21 @@ export default {
 		 * @param {object} event 当前右键元素
 		 */
 		handleContextMenu(row, column, event) {
-			event.preventDefault()
-			this.$refs.multipleTable.setCurrentRow(row) //  选中当前行
-			this.$openContextMenu({
-				selectedFile: row,
-				domEvent: event
-			}).then((res) => {
-				this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
-				if (res === 'confirm') {
-					this.$emit('getTableDataByType') //  刷新文件列表
-					this.$store.dispatch('showStorage') //  刷新存储容量
-				}
-			})
+			// xs 以上的屏幕
+			if (this.screenWidth > 768) {
+				event.preventDefault()
+				this.$refs.multipleTable.setCurrentRow(row) //  选中当前行
+				this.$openContextMenu({
+					selectedFile: row,
+					domEvent: event
+				}).then((res) => {
+					this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
+					if (res === 'confirm') {
+						this.$emit('getTableDataByType') //  刷新文件列表
+						this.$store.dispatch('showStorage') //  刷新存储容量
+					}
+				})
+			}
 		},
 		/**
 		 * 清空表格已选行
@@ -295,6 +344,25 @@ export default {
 		handleSelectRow(selection) {
 			this.$store.commit('changeSelectedFiles', selection)
 			this.$store.commit('changeIsBatchOperation', selection.length !== 0)
+		},
+		/**
+		 * 更多图标点击事件
+		 * @description 打开右键菜单
+		 * @param {object} row 当前行数据
+		 * @param {object} event 当前右键元素
+		 */
+		handleClickMore(row, event) {
+			this.$refs.multipleTable.setCurrentRow(row) //  选中当前行
+			this.$openContextMenu({
+				selectedFile: row,
+				domEvent: event
+			}).then((res) => {
+				this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
+				if (res === 'confirm') {
+					this.$emit('getTableDataByType') //  刷新文件列表
+					this.$store.dispatch('showStorage') //  刷新存储容量
+				}
+			})
 		}
 	}
 }

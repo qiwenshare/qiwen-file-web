@@ -16,8 +16,10 @@
 					<div class="img-wrapper">
 						<img class="img" :src="item.icon" />
 					</div>
-					<h3 class="title">{{ item.title }}</h3>
-					<p class="desc">{{ item.desc }}</p>
+					<div class="content">
+						<h3 class="title">{{ item.title }}</h3>
+						<p class="desc">{{ item.desc }}</p>
+					</div>
 				</a>
 			</li>
 		</ul>
@@ -121,9 +123,11 @@ export default {
         text-align: center;
         &:hover {
           background linear-gradient(to right bottom, $Primary, #66b1ff)
-          .title,
-          .desc {
-            color #fff
+          .content {
+            .title,
+            .desc {
+              color #fff
+            }
           }
         }
         .img-wrapper {
@@ -138,15 +142,18 @@ export default {
             height 70px
           }
         }
-        .title {
-          margin 32px 0 24px
-          color: #333;
-          font-weight: normal;
-          font-size: 18px;
-        }
+        .content {
+          margin-top: 32px;
+          .title {
+            margin 0 0 24px
+            color: #333;
+            font-weight: normal;
+            font-size: 18px;
+          }
 
-        .desc {
-          color: #808080;
+          .desc {
+            color: #808080;
+          }
         }
       }
     }

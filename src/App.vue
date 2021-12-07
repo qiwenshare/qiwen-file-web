@@ -1,7 +1,7 @@
 <template>
 	<div id="app">
 		<Header v-if="isHeaderShow" id="headWrapper"></Header>
-		<router-view class="mainContent"></router-view>
+		<router-view class="main-content"></router-view>
 		<Footer v-if="isFooterShow"></Footer>
 		<el-backtop class="backtop" target="#app" title="回到顶部"></el-backtop>
 	</div>
@@ -35,6 +35,14 @@ export default {
 			]
 			return routerNameList.includes(this.$route.name) ? false : true
 		}
+	},
+	mounted() {
+		const that = this
+		window.addEventListener('resize', function () {
+			return (() => {
+				that.$store.commit('changeScreenWidth', document.body.clientWidth)
+			})()
+		})
 	}
 }
 </script>
@@ -51,7 +59,7 @@ export default {
     color: #fff;
     z-index: 3;
   }
-  .mainContent {
+  .main-content {
     flex: 1;
     width: 90%;
     min-height: calc(100vh - 70px);

@@ -27,7 +27,8 @@
 						show-password
 					></el-input>
 				</el-form-item>
-				<el-form-item>
+				<!-- 页面宽度大于 768 像素时，直接在表单项内显示滑动解锁 -->
+				<el-form-item v-if="screenWidth > 768">
 					<drag-verify
 						ref="dragVerifyRef"
 						text="请按住滑块拖动解锁"
@@ -51,6 +52,25 @@
 					>
 				</el-form-item>
 			</el-form>
+		</div>
+		<!-- 页面宽度小于等于 768 像素时，在遮罩层内显示滑动解锁，以防止移动端浏览器自带的左滑返回上一页手势 -->
+		<div
+			class="drag-verify-modal"
+			v-show="isShowDragVerify"
+			v-if="screenWidth <= 768"
+			@click.self="isShowDragVerify = false"
+		>
+			<drag-verify
+				ref="dragVerifyRef"
+				text="请按住滑块拖动解锁"
+				successText="验证通过"
+				handlerIcon="el-icon-d-arrow-right"
+				successIcon="el-icon-circle-check"
+				handlerBg="#F5F7FA"
+				:width="300"
+				:isPassing.sync="isPassing"
+				@update:isPassing="updateIsPassing"
+			></drag-verify>
 		</div>
 	</div>
 </template>
@@ -94,6 +114,7 @@ export default {
 					}
 				]
 			},
+			isShowDragVerify: false, //  页面宽度小于 768px 时，滑动解锁是否显示
 			isPassing: false, //  滑动解锁是否验证通过
 			loginBtnDisabled: true, //  登录按钮是否禁用
 			loginBtnLoading: false //  登录按钮是否 loading 状态
@@ -105,6 +126,10 @@ export default {
 			return _url
 				? { path: _url }
 				: { name: 'File', query: { fileType: 0, filePath: '/' } } //  若登录之前有页面，则登录后仍然进入该页面
+		},
+		// 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
 		}
 	},
 	watch: {
@@ -133,6 +158,11 @@ export default {
 			new CanvasNest(element, config)
 		})
 	},
+	mounted() {
+		if (this.screenWidth <= 768) {
+			this.loginBtnDisabled = false
+		}
+	},
 	methods: {
 		/**
 		 * 重置滑动解锁至未解锁状态
@@ -141,7 +171,9 @@ export default {
 		resetVerifyPassing() {
 			this.isPassing = false
 			this.$refs.dragVerifyRef.reset()
-			this.loginBtnDisabled = true
+			if (this.screenWidth > 768) {
+				this.loginBtnDisabled = true
+			}
 		},
 		/**
 		 * 滑动解锁完成 回调函数
@@ -149,9 +181,15 @@ export default {
 		 */
 		updateIsPassing(isPassing) {
 			if (isPassing) {
-				this.loginBtnDisabled = false
+				if (this.screenWidth > 768) {
+					this.loginBtnDisabled = false
+				} else {
+					this.handleUserLogin('loginForm')
+				}
 			} else {
-				this.loginBtnDisabled = true
+				if (this.screenWidth > 768) {
+					this.loginBtnDisabled = true
+				}
 			}
 		},
 		/**
@@ -163,28 +201,46 @@ export default {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
 					// 表单各项校验通过
-					login(this.loginForm, true)
-						.then((res) => {
-							this.loginBtnLoading = false
-							if (res.success) {
-								this.setCookies(this.$config.tokenKeyName, res.data.token) //  存储登录状态
-								this.$router.replace(this.url) //  跳转到前一个页面或者网盘主页
-								this.$refs[formName].resetFields() //  清空表单
-							} else {
-								this.$message.error('手机号或密码错误！')
-								this.isPassing = false
-								this.$refs.dragVerifyRef.reset()
-							}
-						})
-						.catch(() => {
-							this.loginBtnLoading = false
-						})
+					if (this.screenWidth > 768) {
+						this.handleUserLogin(formName)
+					} else {
+						this.isShowDragVerify = true
+						this.loginBtnLoading = false
+					}
 				} else {
 					this.$message.error('请完善信息！')
 					this.loginBtnLoading = false
 					return false
 				}
 			})
+		},
+		/**
+		 * 用户登录
+		 */
+		handleUserLogin(formName) {
+			login(this.loginForm, true)
+				.then((res) => {
+					this.loginBtnLoading = false
+					if (this.screenWidth <= 768) {
+						this.isShowDragVerify = false
+					}
+					if (res.success) {
+						this.setCookies(this.$config.tokenKeyName, res.data.token) //  存储登录状态
+						this.$message.success('登录成功！')
+						this.$router.replace(this.url) //  跳转到前一个页面或者网盘主页
+						this.$refs[formName].resetFields() //  清空表单
+					} else {
+						this.$message.error('手机号或密码错误！')
+						this.isPassing = false
+						this.$refs.dragVerifyRef.reset()
+					}
+				})
+				.catch(() => {
+					this.loginBtnLoading = false
+					if (this.screenWidth <= 768) {
+						this.isShowDragVerify = false
+					}
+				})
 		}
 	}
 }
