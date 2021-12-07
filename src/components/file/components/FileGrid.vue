@@ -25,6 +25,7 @@
 				<i
 					class="file-operate el-icon-more"
 					:class="`operate-more-${index}`"
+					v-if="screenWidth <= 768"
 					@click.stop="handleClickMore(item, $event)"
 				></i>
 				<div
@@ -83,6 +84,10 @@ export default {
 		selectedFileList() {
 			let res = this.fileListSorted.filter((item) => item.checked)
 			return res
+		},
+		// 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
 		}
 	},
 	watch: {
