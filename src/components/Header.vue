@@ -1,9 +1,14 @@
 <template>
 	<div class="header-wrapper">
 		<img class="logo" :src="logoUrl" @click="$router.push({ name: 'Home' })" />
+		<img
+			class="logo-xs"
+			:src="logoUrlXs"
+			@click="$router.push({ name: 'Home' })"
+		/>
 		<el-menu
 			:default-active="activeIndex"
-			class="el-menu-demo"
+			class="top-menu-list"
 			mode="horizontal"
 			router
 		>
@@ -54,7 +59,8 @@ export default {
 	name: 'Header',
 	data() {
 		return {
-			logoUrl: require('_a/images/common/logo_header.png')
+			logoUrl: require('_a/images/common/logo_header.png'),
+			logoUrlXs: require('_a/images/common/logo_header_xs.png')
 		}
 	},
 	computed: {
@@ -102,6 +108,10 @@ export default {
     cursor: pointer;
   }
 
+  .logo-xs {
+    display: none;
+  }
+
   >>> .el-menu--horizontal {
     .el-menu-item:not(.is-disabled):hover {
       border-bottom-color: $Primary !important;
@@ -117,19 +127,8 @@ export default {
     }
   }
 
-  .el-menu-demo {
+  .top-menu-list {
     flex: 1;
-
-    .headerLogo {
-      color: $Primary;
-      font-size: 60px;
-      opacity: 1;
-      cursor: default;
-
-      a {
-        display: block;
-      }
-    }
 
     .login, .register, .username, .exit {
       float: right;

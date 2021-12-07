@@ -1,23 +1,18 @@
 <template>
 	<div class="operation-menu-wrapper" :class="'file-type-' + fileType">
-		<el-button-group class="create-operate-group">
+		<el-button-group
+			class="create-operate-group"
+			v-if="(!selectedFiles.length || !isBatchOperation) && fileType === 0"
+		>
 			<el-dropdown class="upload-drop" trigger="hover">
 				<el-button
 					size="mini"
 					type="primary"
 					icon="el-icon-upload2"
 					id="uploadFileId"
-					:disabled="
-						(selectedFiles.length && isBatchOperation) || fileType !== 0
-					"
 					>上传<i class="el-icon-arrow-down el-icon--right"></i
 				></el-button>
-				<el-dropdown-menu
-					slot="dropdown"
-					:disabled="
-						(selectedFiles.length && isBatchOperation) || fileType !== 0
-					"
-				>
+				<el-dropdown-menu slot="dropdown">
 					<el-dropdown-item @click.native="handleUploadFileBtnClick(1)"
 						>上传文件</el-dropdown-item
 					>
@@ -27,6 +22,7 @@
 					<el-dropdown-item
 						@click.native="handleUploadFileBtnClick(3)"
 						title="截图粘贴或拖拽上传"
+						:disabled="screenWidth <= 520"
 						>拖拽上传</el-dropdown-item
 					>
 				</el-dropdown-menu>
@@ -36,7 +32,6 @@
 				type="primary"
 				icon="el-icon-plus"
 				@click="handleClickAddFolderBtn"
-				:disabled="(selectedFiles.length && isBatchOperation) || fileType !== 0"
 				>新建文件夹</el-button
 			>
 			<el-dropdown class="create-drop" trigger="hover">
@@ -45,17 +40,9 @@
 					type="primary"
 					icon="el-icon-edit-outline"
 					id="uploadFileId"
-					:disabled="
-						(selectedFiles.length && isBatchOperation) || fileType !== 0
-					"
 					>新建在线文档<i class="el-icon-arrow-down el-icon--right"></i
 				></el-button>
-				<el-dropdown-menu
-					slot="dropdown"
-					:disabled="
-						(selectedFiles.length && isBatchOperation) || fileType !== 0
-					"
-				>
+				<el-dropdown-menu slot="dropdown">
 					<el-dropdown-item @click.native="handleCreateFile('docx')">
 						<img
 							:src="wordImg"
@@ -148,8 +135,16 @@
 		<el-divider direction="vertical" v-if="fileModel === 1"></el-divider>
 
 		<!-- 操作栏收纳 -->
-		<el-popover placement="bottom" trigger="hover">
-			<i slot="reference" class="setting-icon el-icon-setting"></i>
+		<el-popover
+			v-model="operatePopoverVisible"
+			placement="bottom"
+			:trigger="screenWidth <= 768 ? 'manual' : 'hover'"
+		>
+			<i
+				slot="reference"
+				class="setting-icon el-icon-setting"
+				@click="operatePopoverVisible = !operatePopoverVisible"
+			></i>
 			<!-- 选择表格列 -->
 			<SelectColumn></SelectColumn>
 			<el-divider class="split-line"></el-divider>
@@ -180,7 +175,7 @@
 				<div class="title">调整图标大小</div>
 				<el-slider
 					v-model="gridSize"
-					:min="40"
+					:min="20"
 					:max="150"
 					:step="10"
 					:format-tooltip="formatTooltip"
@@ -227,6 +222,7 @@ export default {
 			searchFile: {
 				fileName: ''
 			},
+			operatePopoverVisible: false, //  收纳栏是否显示
 			fileGroupLable: 0, //  文件展示模式
 			wordImg: require('_a/images/file/file_word.png'),
 			excelImg: require('_a/images/file/file_excel.png'),
@@ -270,6 +266,10 @@ export default {
 		// 是否批量操作
 		isBatchOperation() {
 			return this.$store.state.fileList.isBatchOperation
+		},
+		// 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
 		}
 	},
 	watch: {
@@ -277,6 +277,17 @@ export default {
 			if (oldValue === 1 && this.fileModel === 2) {
 				this.$store.commit('changeFileModel', 0)
 				this.fileGroupLable = 0
+			}
+		},
+		/**
+		 * 监听收纳栏状态
+		 * @description 打开时，body 添加点击事件的监听
+		 */
+		operatePopoverVisible(newValue) {
+			if (newValue === true) {
+				document.body.addEventListener('click', this.closeOperatePopover)
+			} else {
+				document.body.removeEventListener('click', this.closeOperatePopover)
 			}
 		}
 	},
@@ -408,6 +419,8 @@ export default {
 			this.$openContextMenu.close()
 			this.$store.commit('changeFileModel', label)
 			this.handleSearchInputChange(this.searchFile.fileName)
+			// 关闭收纳栏
+			this.operatePopoverVisible = false
 		},
 		/**
 		 * 格式化图标大小显示
@@ -415,6 +428,14 @@ export default {
 		 */
 		formatTooltip(val) {
 			return `${val}px`
+		},
+		/**
+		 * 关闭收纳栏
+		 */
+		closeOperatePopover(event) {
+			if (!event.target.className.includes('setting-icon')) {
+				this.operatePopoverVisible = false
+			}
 		}
 	}
 }

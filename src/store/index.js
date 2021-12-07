@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import user from './module/user' //  用户模块
 import fileList from './module/fileList' //  文件列表模块
 import sideMenu from './module/sideMenu' //  左侧菜单模块
+import common from './module/common' //  公共模块
 
 import { allColumnList } from '@/libs/map.js'
 
@@ -43,6 +44,7 @@ export default new Vuex.Store({
 	modules: {
 		user,
 		fileList,
-		sideMenu
+		sideMenu,
+		common
 	}
 })

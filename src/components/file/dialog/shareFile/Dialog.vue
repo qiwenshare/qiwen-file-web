@@ -14,6 +14,7 @@
 			ref="shareFileForm"
 			label-suffix="："
 			label-width="130px"
+			:label-position="screenWidth <= 520 ? 'top' : 'right'"
 			:rules="rules"
 		>
 			<el-form-item label="链接有效期至" prop="endTime">
@@ -43,6 +44,7 @@
 			ref="shareSuccessForm"
 			label-suffix="："
 			label-width="90px"
+			:label-position="screenWidth <= 520 ? 'top' : 'right'"
 		>
 			<div class="success-tip">
 				<i class="el-icon-success"></i>
@@ -86,6 +88,7 @@
 </template>
 
 <script>
+import store from '@/store/index.js'
 import { shareFile } from '_r/file.js'
 
 export default {
@@ -144,6 +147,12 @@ export default {
 				shareBatchNum: '',
 				extractionCode: ''
 			}
+		}
+	},
+	computed: {
+		// 屏幕宽度
+		screenWidth() {
+			return store.state.common.screenWidth
 		}
 	},
 	methods: {

@@ -17,6 +17,7 @@ import showUnzipFileDialog from '_c/file/dialog/unzipFile/index.js'
 import showRenameFileDialog from '_c/file/dialog/renameFile/index.js'
 import showDeleteFileDialog from '_c/file/dialog/deleteFile/index.js'
 import showRestoreFileDialog from '_c/file/dialog/restoreFile/index.js'
+import showFileDetailInfoDialog from '_c/file/dialog/fileDetailInfo/index.js'
 // 导入操作文件的遮罩类组件
 import showContextMenuBox from '_c/file/box/contextMenu/index.js'
 import showImgPreviewBox from '_c/file/box/imgPreview/index.js'
@@ -37,6 +38,7 @@ const operateElement = {
 		Vue.prototype.$renameFile = showRenameFileDialog
 		Vue.prototype.$deleteFile = showDeleteFileDialog
 		Vue.prototype.$restoreFile = showRestoreFileDialog
+		Vue.prototype.$showFileDetailInfo = showFileDetailInfoDialog
 		// 挂载操作文件的遮罩类组件
 		Vue.prototype.$openContextMenu = showContextMenuBox
 		Vue.prototype.$previewImg = showImgPreviewBox

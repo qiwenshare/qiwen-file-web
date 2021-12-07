@@ -66,6 +66,7 @@
 import { videoPlayer } from 'vue-video-player'
 import 'video.js/dist/video-js.css'
 import 'vue-video-player/src/custom-theme.css'
+import store from '@/store/index.js'
 
 export default {
 	name: 'VideoPreview',
@@ -110,6 +111,10 @@ export default {
 					fullscreenToggle: true // 全屏按钮
 				}
 			}
+		},
+		// 屏幕宽度
+		screenWidth() {
+			return store.state.common.screenWidth
 		}
 	},
 	watch: {
@@ -118,6 +123,16 @@ export default {
 			if (newValue) {
 				this.activeIndex = this.defaultIndex
 			}
+		},
+		screenWidth(newValue) {
+			if (newValue <= 768) {
+				this.isFoldVideoList = true
+			}
+		}
+	},
+	mounted() {
+		if (this.screenWidth <= 768) {
+			this.isFoldVideoList = true
 		}
 	},
 	methods: {

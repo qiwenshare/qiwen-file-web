@@ -1,100 +1,207 @@
 <template>
 	<div class="side-menu-wrapper">
-		<!-- collapse 属性：控制菜单收缩展开 -->
-		<el-menu
-			class="side-menu"
-			:default-active="activeIndex"
-			:router="true"
-			:collapse="isCollapse"
+		<!-- 768px 下，以抽屉形式展示 -->
+		<el-drawer
+			:visible.sync="isDrawer"
+			:with-header="false"
+			:size="210"
+			direction="ltr"
+			v-if="screenWidth <= 768"
 		>
-			<el-submenu index="myFile" class="my-file">
-				<template slot="title">
-					<!-- 图标均来自 Element UI 官方图标库 https://element.eleme.cn/#/zh-CN/component/icon -->
-					<i class="el-icon-files"></i>
-					<span slot="title">我的文件</span>
-				</template>
-				<el-menu-item
-					index="0"
-					:route="{ name: 'File', query: { fileType: 0, filePath: '/' } }"
-				>
-					<i class="el-icon-menu"></i>
-					<span slot="title">全部</span>
-				</el-menu-item>
-				<el-menu-item
-					index="1"
-					:route="{ name: 'File', query: { fileType: 1 } }"
-				>
-					<i class="el-icon-picture-outline"></i>
-					<span slot="title">图片</span>
-				</el-menu-item>
-				<el-menu-item
-					index="2"
-					:route="{ name: 'File', query: { fileType: 2 } }"
-				>
-					<i class="el-icon-document"></i>
-					<span slot="title">文档</span>
-				</el-menu-item>
-				<el-menu-item
-					index="3"
-					:route="{ name: 'File', query: { fileType: 3 } }"
-				>
-					<i class="el-icon-video-camera"></i>
-					<span slot="title">视频</span>
-				</el-menu-item>
-				<el-menu-item
-					index="4"
-					:route="{ name: 'File', query: { fileType: 4 } }"
-				>
-					<i class="el-icon-headset"></i>
-					<span slot="title">音乐</span>
-				</el-menu-item>
-				<el-menu-item
-					index="5"
-					:route="{ name: 'File', query: { fileType: 5 } }"
-				>
-					<i class="el-icon-takeaway-box"></i>
-					<span slot="title">其他</span>
-				</el-menu-item>
-			</el-submenu>
-			<el-menu-item
-				index="6"
-				:route="{ name: 'File', query: { fileType: 6 } }"
-				class="recovery"
+			<!-- collapse 属性：控制菜单收缩展开 -->
+			<el-menu
+				class="side-menu"
+				:default-active="activeIndex"
+				:router="true"
+				:collapse="isCollapse"
 			>
-				<i class="el-icon-delete"></i>
-				<span slot="title">回收站</span>
-			</el-menu-item>
-			<el-menu-item
-				index="8"
-				:route="{ name: 'File', query: { fileType: 8, filePath: '/' } }"
-				class="my-share"
-			>
-				<i class="el-icon-share"></i>
-				<span slot="title">我的分享</span>
-			</el-menu-item>
-		</el-menu>
-		<!-- 存储信息显示 -->
-		<div class="storage-wrapper" :class="{ fold: isCollapse }">
-			<el-progress
-				:percentage="storagePercentage"
-				:color="storageColor"
-				:show-text="false"
-				:type="isCollapse ? 'circle' : 'line'"
-				:width="32"
-				:stroke-width="isCollapse ? 4 : 6"
-				stroke-linecap="square"
-			></el-progress>
-			<div class="text" v-show="!isCollapse">
-				<span class="label">存储</span>
-				<span
-					>{{ storageValue | storageTrans }} /
-					{{ totalStorageValue | storageTrans }}</span
+				<el-submenu index="myFile" class="my-file">
+					<template slot="title">
+						<!-- 图标均来自 Element UI 官方图标库 https://element.eleme.cn/#/zh-CN/component/icon -->
+						<i class="el-icon-files"></i>
+						<span slot="title">我的文件</span>
+					</template>
+					<el-menu-item
+						index="0"
+						:route="{ name: 'File', query: { fileType: 0, filePath: '/' } }"
+					>
+						<i class="el-icon-menu"></i>
+						<span slot="title">全部</span>
+					</el-menu-item>
+					<el-menu-item
+						index="1"
+						:route="{ name: 'File', query: { fileType: 1 } }"
+					>
+						<i class="el-icon-picture-outline"></i>
+						<span slot="title">图片</span>
+					</el-menu-item>
+					<el-menu-item
+						index="2"
+						:route="{ name: 'File', query: { fileType: 2 } }"
+					>
+						<i class="el-icon-document"></i>
+						<span slot="title">文档</span>
+					</el-menu-item>
+					<el-menu-item
+						index="3"
+						:route="{ name: 'File', query: { fileType: 3 } }"
+					>
+						<i class="el-icon-video-camera"></i>
+						<span slot="title">视频</span>
+					</el-menu-item>
+					<el-menu-item
+						index="4"
+						:route="{ name: 'File', query: { fileType: 4 } }"
+					>
+						<i class="el-icon-headset"></i>
+						<span slot="title">音乐</span>
+					</el-menu-item>
+					<el-menu-item
+						index="5"
+						:route="{ name: 'File', query: { fileType: 5 } }"
+					>
+						<i class="el-icon-takeaway-box"></i>
+						<span slot="title">其他</span>
+					</el-menu-item>
+				</el-submenu>
+				<el-menu-item
+					index="6"
+					:route="{ name: 'File', query: { fileType: 6 } }"
+					class="recovery"
 				>
+					<i class="el-icon-delete"></i>
+					<span slot="title">回收站</span>
+				</el-menu-item>
+				<el-menu-item
+					index="8"
+					:route="{ name: 'File', query: { fileType: 8, filePath: '/' } }"
+					class="my-share"
+				>
+					<i class="el-icon-share"></i>
+					<span slot="title">我的分享</span>
+				</el-menu-item>
+			</el-menu>
+			<!-- 存储信息显示 -->
+			<div class="storage-wrapper" :class="{ fold: isCollapse }">
+				<el-progress
+					:percentage="storagePercentage"
+					:color="storageColor"
+					:show-text="false"
+					:type="isCollapse ? 'circle' : 'line'"
+					:width="32"
+					:stroke-width="isCollapse ? 4 : 6"
+					stroke-linecap="square"
+				></el-progress>
+				<div class="text" v-show="!isCollapse">
+					<span class="label">存储</span>
+					<span
+						>{{ storageValue | storageTrans }} /
+						{{ totalStorageValue | storageTrans }}</span
+					>
+				</div>
+				<div class="text" v-show="isCollapse">
+					<span>{{ storageValue | storageTrans }}</span>
+				</div>
 			</div>
-			<div class="text" v-show="isCollapse">
-				<span>{{ storageValue | storageTrans }}</span>
+		</el-drawer>
+		<!-- 768px 以上，平铺展示 -->
+		<template v-else>
+			<!-- collapse 属性：控制菜单收缩展开 -->
+			<el-menu
+				class="side-menu"
+				:default-active="activeIndex"
+				:router="true"
+				:collapse="isCollapse"
+			>
+				<el-submenu index="myFile" class="my-file">
+					<template slot="title">
+						<!-- 图标均来自 Element UI 官方图标库 https://element.eleme.cn/#/zh-CN/component/icon -->
+						<i class="el-icon-files"></i>
+						<span slot="title">我的文件</span>
+					</template>
+					<el-menu-item
+						index="0"
+						:route="{ name: 'File', query: { fileType: 0, filePath: '/' } }"
+					>
+						<i class="el-icon-menu"></i>
+						<span slot="title">全部</span>
+					</el-menu-item>
+					<el-menu-item
+						index="1"
+						:route="{ name: 'File', query: { fileType: 1 } }"
+					>
+						<i class="el-icon-picture-outline"></i>
+						<span slot="title">图片</span>
+					</el-menu-item>
+					<el-menu-item
+						index="2"
+						:route="{ name: 'File', query: { fileType: 2 } }"
+					>
+						<i class="el-icon-document"></i>
+						<span slot="title">文档</span>
+					</el-menu-item>
+					<el-menu-item
+						index="3"
+						:route="{ name: 'File', query: { fileType: 3 } }"
+					>
+						<i class="el-icon-video-camera"></i>
+						<span slot="title">视频</span>
+					</el-menu-item>
+					<el-menu-item
+						index="4"
+						:route="{ name: 'File', query: { fileType: 4 } }"
+					>
+						<i class="el-icon-headset"></i>
+						<span slot="title">音乐</span>
+					</el-menu-item>
+					<el-menu-item
+						index="5"
+						:route="{ name: 'File', query: { fileType: 5 } }"
+					>
+						<i class="el-icon-takeaway-box"></i>
+						<span slot="title">其他</span>
+					</el-menu-item>
+				</el-submenu>
+				<el-menu-item
+					index="6"
+					:route="{ name: 'File', query: { fileType: 6 } }"
+					class="recovery"
+				>
+					<i class="el-icon-delete"></i>
+					<span slot="title">回收站</span>
+				</el-menu-item>
+				<el-menu-item
+					index="8"
+					:route="{ name: 'File', query: { fileType: 8, filePath: '/' } }"
+					class="my-share"
+				>
+					<i class="el-icon-share"></i>
+					<span slot="title">我的分享</span>
+				</el-menu-item>
+			</el-menu>
+			<!-- 存储信息显示 -->
+			<div class="storage-wrapper" :class="{ fold: isCollapse }">
+				<el-progress
+					:percentage="storagePercentage"
+					:color="storageColor"
+					:show-text="false"
+					:type="isCollapse ? 'circle' : 'line'"
+					:width="32"
+					:stroke-width="isCollapse ? 4 : 6"
+					stroke-linecap="square"
+				></el-progress>
+				<div class="text" v-show="!isCollapse">
+					<span class="label">存储</span>
+					<span
+						>{{ storageValue | storageTrans }} /
+						{{ totalStorageValue | storageTrans }}</span
+					>
+				</div>
+				<div class="text" v-show="isCollapse">
+					<span>{{ storageValue | storageTrans }}</span>
+				</div>
 			</div>
-		</div>
+		</template>
 		<!-- 展开 & 收缩分类栏 -->
 		<el-tooltip
 			effect="dark"
@@ -120,6 +227,7 @@ export default {
 	name: 'SideMenu',
 	data() {
 		return {
+			isDrawer: false, //  控制移动端菜单抽屉是否显示
 			isCollapse: false, //  控制菜单收缩展开
 			// 菜单 index 和名称 Map
 			myFileMenuMap: {
@@ -157,6 +265,10 @@ export default {
 			return this.totalStorageValue
 				? (this.storageValue / this.totalStorageValue) * 100
 				: 0
+		},
+		// 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
 		}
 	},
 	watch: {
@@ -165,10 +277,15 @@ export default {
 			document.title = `${this.myFileMenuMap[Number(newValue)]} - ${
 				this.$config.siteName
 			}`
+			this.isDrawer = false
 		},
 		// 监听收缩状态变化，存储在 localStorage 中，保证页面刷新时仍然保存设置的状态
 		isCollapse(newValue) {
 			localStorage.setItem('isCollapse', newValue)
+			if (this.screenWidth <= 768 && newValue) {
+				this.isDrawer = true
+				this.isCollapse = false
+			}
 		}
 	},
 	created() {

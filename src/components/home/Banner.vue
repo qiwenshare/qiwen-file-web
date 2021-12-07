@@ -8,10 +8,11 @@
 			<div class="carousel-wrap">
 				<div class="carousel-caption">
 					<h1 class="bounce">{{ item.title }}</h1>
-					<ul>
+					<ul class="list">
 						<li
 							v-for="(descItem, descIndex) in item.descList"
 							:key="`desc-${index}-${descIndex}`"
+							class="item"
 						>
 							{{ descItem }}
 						</li>
@@ -111,17 +112,17 @@ export default {
         color: #fff;
         text-align: center;
 
-        h1 {
+        .bounce {
           font-weight: normal;
           margin: 0;
           font-size: 30px;
           animation-delay: 1s;
         }
 
-        ul {
+        .list {
           padding: 25px 0 25px 20px;
 
-          li {
+          .item {
             line-height: 2.2;
             font-size: 15px;
           }
@@ -152,6 +153,12 @@ export default {
 
             .link-name {
               margin-right: 16px;
+            }
+
+            &:nth-last-of-type(1) {
+              .link-name {
+                margin-right: 0;
+              }
             }
           }
         }

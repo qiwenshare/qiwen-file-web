@@ -52,7 +52,8 @@ import {
 	Popover,
 	Carousel,
 	CarouselItem,
-	DatePicker
+	DatePicker,
+	Drawer
 } from 'element-ui'
 
 const element = {
@@ -107,6 +108,7 @@ const element = {
 		Vue.use(Carousel)
 		Vue.use(CarouselItem)
 		Vue.use(DatePicker)
+		Vue.use(Drawer)
 		Vue.prototype.$loading = Loading.service
 		Vue.prototype.$msgbox = MessageBox
 		Vue.prototype.$alert = MessageBox.alert

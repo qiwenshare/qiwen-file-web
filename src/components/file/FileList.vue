@@ -1,7 +1,7 @@
 <template>
 	<div class="file-list-wrapper">
 		<!-- 操作按钮 -->
-		<el-header>
+		<el-header height="auto">
 			<OperationMenu
 				:fileType="fileType"
 				:filePath="filePath"
@@ -49,7 +49,11 @@
 				:page-size="pageData.pageCount"
 				:total="pageData.total"
 				:page-sizes="[10, 50, 100, 200]"
-				layout="sizes, total, prev, pager, next"
+				:layout="
+					screenWidth <= 768
+						? 'total, prev, next, jumper'
+						: 'sizes, total, prev, pager, next'
+				"
 				@current-change="handleCurrentChange"
 				@size-change="handleSizeChange"
 			>
@@ -107,6 +111,10 @@ export default {
 		// 文件查看模式 0列表模式 1网格模式 2 时间线模式
 		fileModel() {
 			return this.$store.getters.fileModel
+		},
+		// 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
 		}
 	},
 	watch: {
