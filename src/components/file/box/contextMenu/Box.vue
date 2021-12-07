@@ -290,7 +290,10 @@ export default {
 		 * 关闭右键列表
 		 */
 		closeRightMenu(event) {
-			if (!event.target.className.includes('operate-more-')) {
+			if (
+				!event.target.className.includes('operate-more-') &&
+				!event.target.className.includes('unzip-menu-item')
+			) {
 				this.visible = false
 				this.callback('cancel')
 			}
