@@ -107,6 +107,12 @@ export default {
 		activeExtendName() {
 			return this.imgList[this.activeIndex].extendName
 		},
+		imageHeight() {
+			return this.imgList[this.activeIndex].imageHeight
+		},
+		imageWidth() {
+			return this.imgList[this.activeIndex].imageWidth
+		},
 		// 对用户而言 显示的图片索引 从 1 开始 顶部栏输入框控制此值变化
 		inputActiveIndex: {
 			get() {
@@ -124,10 +130,10 @@ export default {
 	watch: {
 		// 监听 图片查看组件 显隐状态变化
 		visible(val) {
-			let body = document.querySelector('body')
+			let bodyDom = document.querySelector('body')
 			if (val) {
 				this.activeIndex = this.defaultIndex
-				body.style.overflow = 'hidden'
+				bodyDom.style.overflow = 'hidden'
 				// 添加键盘Esc事件
 				this.$nextTick(() => {
 					document.addEventListener('keyup', (e) => {
@@ -137,10 +143,20 @@ export default {
 					})
 				})
 				this.$nextTick(() => {
-					this.$refs.imgLarge[this.activeIndex].style.zoom = '40%'
+					this.imgZoom = Number(
+						(
+							Math.min(
+								bodyDom.clientWidth / this.imageWidth,
+								bodyDom.clientHeight / this.imageHeight
+							) *
+								100 -
+							10
+						).toFixed(0)
+					)
+					this.$refs.imgLarge[this.activeIndex].style.zoom = `${this.imgZoom}%`
 				})
 			} else {
-				body.style.overflow = 'auto'
+				bodyDom.style.overflow = 'auto'
 				document.removeEventListener('keyup', (e) => {
 					if (e.keyCode === 27) {
 						this.closeImgReview()
@@ -157,8 +173,18 @@ export default {
 						this.$refs.imgLarge[newValue].style.zoom.split('%')[0]
 					)
 				} else {
-					this.$refs.imgLarge[newValue].style.zoom = '40%'
-					this.imgZoom = 40
+					let bodyDom = document.querySelector('body')
+					this.imgZoom = Number(
+						(
+							Math.min(
+								bodyDom.clientWidth / this.imageWidth,
+								bodyDom.clientHeight / this.imageHeight
+							) *
+								100 -
+							10
+						).toFixed(0)
+					)
+					this.$refs.imgLarge[newValue].style.zoom = `${this.imgZoom}%`
 				}
 			})
 		}

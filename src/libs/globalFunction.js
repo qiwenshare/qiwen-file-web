@@ -248,7 +248,9 @@ const globalFunction = {
 							fileUrl: this.getViewFilePath(item),
 							downloadLink: this.getDownloadFilePath(item),
 							fileName: item.fileName,
-							extendName: item.extendName
+							extendName: item.extendName,
+							imageWidth: item.imageWidth,
+							imageHeight: item.imageHeight
 						}
 				  })
 				: [
@@ -256,7 +258,9 @@ const globalFunction = {
 							fileUrl: this.getViewFilePath(imgInfo),
 							downloadLink: this.getDownloadFilePath(imgInfo),
 							fileName: imgInfo.fileName,
-							extendName: imgInfo.extendName
+							extendName: imgInfo.extendName,
+							imageWidth: imgInfo.imageWidth,
+							imageHeight: imgInfo.imageHeight
 						}
 				  ]
 		const defaultIndex =
