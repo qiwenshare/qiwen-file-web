@@ -383,6 +383,18 @@ const globalFunction = {
 			: `${file.fileName}${
 					file.isDir === 0 && file.extendName ? `.${file.extendName}` : ''
 			  }`
+	},
+	/**
+	 * 获取文件分享过期状态
+	 * @param {string} time 日期
+	 * @returns {boolean} 是否过期
+	 */
+	getFileShareStatus(time) {
+		if (new Date(time).getTime() > new Date().getTime()) {
+			return false
+		} else {
+			return true
+		}
 	}
 }
 

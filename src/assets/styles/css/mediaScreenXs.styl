@@ -188,7 +188,7 @@
               .file-type-0 {
                 height: calc(100vh - 218px) !important;
                 .el-table__body-wrapper {
-                  height: calc(100vh - 298px) !important;
+                  height: calc(100vh - 260px) !important;
                 }
               }
               .file-icon-column {
@@ -234,6 +234,8 @@
           .file-grid-wrapper {
             margin: 0 -16px 0 -8px;
             .file-list {
+              height: calc(100vh - 224px);
+              padding-bottom: 8px;
               padding-left: 8px;
               align-items: initial;
               .file-item {
@@ -320,6 +322,24 @@
     .el-dialog {
       border-radius: 8px;
       width: 80% !important;
+    }
+    // 文件详情对话框
+    &.file-info-dialog {
+      .el-dialog__body {
+        padding: 16px;
+      }
+      .file-info-form {
+        .el-form-item {
+          .el-form-item__label {
+            padding-right: 8px;
+          }
+          .el-form-item__content {
+            .el-input__inner {
+              padding: 0;
+            }
+          }
+        }
+      }
     }
   }
   // 消息提示

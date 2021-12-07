@@ -328,16 +328,6 @@ export default {
 			this.$refs.multipleTable.clearSelection()
 		},
 		/**
-		 * 获取文件分享过期状态
-		 */
-		getFileShareStatus(time) {
-			if (new Date(time).getTime() > new Date().getTime()) {
-				return false
-			} else {
-				return true
-			}
-		},
-		/**
 		 * 表格选择项发生变化时的回调函数
 		 * @param {[]} selection 勾选的行数据
 		 */

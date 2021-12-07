@@ -115,6 +115,13 @@
 			>
 				<i class="el-icon-edit"></i> 复制链接
 			</li>
+			<li
+				class="right-menu-item"
+				@click="handleShowDetailInfo(selectedFile)"
+				v-if="detailInfoBtnShow"
+			>
+				<i class="el-icon-document"></i> 文件详情
+			</li>
 		</ul>
 	</transition>
 </template>
@@ -215,6 +222,12 @@ export default {
 		// 复制链接按钮是否显示
 		copyLinkBtnShow() {
 			return this.fileType === 8
+		},
+		// 文件详情按钮是否显示
+		detailInfoBtnShow() {
+			return (
+				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
+			)
 		}
 	},
 	watch: {
@@ -280,16 +293,6 @@ export default {
 			if (!event.target.className.includes('operate-more-')) {
 				this.visible = false
 				this.callback('cancel')
-			}
-		},
-		/**
-		 * 获取文件分享过期状态
-		 */
-		getFileShareStatus(time) {
-			if (new Date(time).getTime() > new Date().getTime()) {
-				return false
-			} else {
-				return true
 			}
 		},
 		/**
@@ -390,6 +393,15 @@ export default {
 					}
 				]
 			})
+		},
+		/**
+		 * 文件详情按钮点击事件
+		 * @description 打开对话框展示文件完整信息
+		 * @param {object} fileInfo 文件信息
+		 */
+		handleShowDetailInfo(fileInfo) {
+			this.visible = false
+			this.$showFileDetailInfo({ fileInfo })
 		}
 	}
 }
