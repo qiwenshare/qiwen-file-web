@@ -307,6 +307,10 @@ const globalFunction = {
 	 * @param {array} fileList 文件列表
 	 */
 	handleFileNameClick(row, currentIndex, fileList = []) {
+		// 如果当前文件在回收站中，则不允许预览
+		if (row.deleteFlag !== 0) {
+			return false
+		}
 		// 若是文件夹则进入该文件夹
 		if (row.isDir) {
 			if (router.currentRoute.name === 'Share') {

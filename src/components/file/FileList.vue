@@ -44,6 +44,7 @@
 		></FileTimeLine>
 		<div class="pagination-wrapper">
 			<div class="current-page-count">当前页{{ fileList.length }}条</div>
+			<!-- 回收站不展示分页组件 -->
 			<el-pagination
 				:current-page="pageData.currentPage"
 				:page-size="pageData.pageCount"
@@ -56,6 +57,7 @@
 				"
 				@current-change="handleCurrentChange"
 				@size-change="handleSizeChange"
+				v-if="fileType !== 6"
 			>
 			</el-pagination>
 		</div>
