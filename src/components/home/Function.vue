@@ -35,7 +35,7 @@ export default {
 				{
 					icon: require('_a/images/home/function/store.png'),
 					title: '多种存储方式',
-					desc: '使用奇文社区自研框架 ufo，支持本地磁盘、阿里云 OSS 对象存储、FastDFS 存储、MinIO 存储、七牛云 KODO 对象存储',
+					desc: '使用奇文社区自研框架 ufop，支持本地磁盘、阿里云 OSS 对象存储、FastDFS 存储、MinIO 存储、七牛云 KODO 对象存储',
 					link: 'https://pan.qiwenshare.com/docs/config/#%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F%E9%85%8D%E7%BD%AE'
 				},
 				{
