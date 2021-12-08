@@ -423,6 +423,7 @@ export default {
   z-index: 2;
   padding: 4px 0;
   color: $RegularText;
+  list-style: none;
 
   .right-menu-item,
   .unzip-item {
@@ -449,6 +450,7 @@ export default {
     .unzip-list {
       position: absolute;
       display: none;
+      list-style: none;
       .unzip-item {
         width: 200px;
         setEllipsis(1)

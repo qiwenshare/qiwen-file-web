@@ -121,6 +121,7 @@ export default {
 
         .list {
           padding: 25px 0 25px 20px;
+          list-style: none;
 
           .item {
             line-height: 2.2;

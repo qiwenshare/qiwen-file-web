@@ -245,27 +245,28 @@ const globalFunction = {
 			Number(router.currentRoute.query.fileType) === 1
 				? imgInfoList.map((item) => {
 						return {
+							...item,
 							fileUrl: this.getViewFilePath(item),
-							downloadLink: this.getDownloadFilePath(item),
-							fileName: item.fileName,
-							extendName: item.extendName,
-							imageWidth: item.imageWidth,
-							imageHeight: item.imageHeight
+							downloadLink: this.getDownloadFilePath(item)
 						}
 				  })
 				: [
 						{
+							...imgInfo,
 							fileUrl: this.getViewFilePath(imgInfo),
-							downloadLink: this.getDownloadFilePath(imgInfo),
-							fileName: imgInfo.fileName,
-							extendName: imgInfo.extendName,
-							imageWidth: imgInfo.imageWidth,
-							imageHeight: imgInfo.imageHeight
+							downloadLink: this.getDownloadFilePath(imgInfo)
 						}
 				  ]
 		const defaultIndex =
 			Number(router.currentRoute.query.fileType) === 1 ? currentIndex : 0
 		Vue.prototype.$previewImg({ imgList, defaultIndex })
+	},
+	/**
+	 * markdown 文档预览
+	 * @param {object} fileInfo 文件信息
+	 */
+	handleMarkdownPreview(fileInfo) {
+		Vue.prototype.$previewMarkdown({ fileInfo })
 	},
 	/**
 	 * 视频预览
@@ -281,18 +282,14 @@ const globalFunction = {
 						return {
 							...item,
 							fileUrl: this.getViewFilePath(item),
-							downloadLink: this.getDownloadFilePath(item),
-							fileName: item.fileName,
-							extendName: item.extendName
+							downloadLink: this.getDownloadFilePath(item)
 						}
 				  })
 				: [
 						{
 							...videoInfo,
 							fileUrl: this.getViewFilePath(videoInfo),
-							downloadLink: this.getDownloadFilePath(videoInfo),
-							fileName: videoInfo.fileName,
-							extendName: videoInfo.extendName
+							downloadLink: this.getDownloadFilePath(videoInfo)
 						}
 				  ]
 		const defaultIndex =
@@ -359,6 +356,12 @@ const globalFunction = {
 			const CODE = ['html', 'js', 'css', 'json', 'c', 'java', 'txt']
 			if (CODE.includes(row.extendName.toLowerCase())) {
 				window.open(this.getViewFilePath(row), '_blank')
+				return false
+			}
+			//  若当前点击项是 markdown 文档
+			const MARKDOWN = ['markdown', 'md']
+			if (MARKDOWN.includes(row.extendName.toLowerCase())) {
+				this.handleMarkdownPreview(row)
 				return false
 			}
 			//  若当前点击项是视频mp4格式

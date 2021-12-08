@@ -366,7 +366,7 @@ export default {
     position: absolute;
     top: calc(50% - 50px);
     right: 0;
-    z-index: 3;
+    z-index: 2;
     background: $BorderBase;
     color: #fff;
     width: 12px;

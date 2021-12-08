@@ -39,7 +39,9 @@ export const fileImgMap = new Map([
 	['vue', require('_a/images/file/file_vue.png')],
 	['xls', require('_a/images/file/file_excel.png')],
 	['xlsx', require('_a/images/file/file_excel.png')],
-	['zip', require('_a/images/file/file_zip.png')]
+	['zip', require('_a/images/file/file_zip.png')],
+	['md', require('_a/images/file/file_markdown.png')],
+	['markdown', require('_a/images/file/file_markdown.png')]
 ])
 
 /**

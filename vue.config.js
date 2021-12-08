@@ -43,7 +43,8 @@ module.exports = {
 			_v: path.resolve(__dirname, './src/views'),
 			_c: path.resolve(__dirname, './src/components'),
 			_a: path.resolve(__dirname, './src/assets'),
-			_r: path.resolve(__dirname, './src/request')
+			_r: path.resolve(__dirname, './src/request'),
+			_public: path.resolve(__dirname, './public')
 		}
 	}
 }

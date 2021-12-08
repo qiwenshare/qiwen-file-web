@@ -125,6 +125,7 @@ export default {
     .join-list {
       margin-top: 16px;
       display: flex;
+      list-style: none;
 
       .join-item {
         .iconfont {

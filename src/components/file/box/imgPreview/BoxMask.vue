@@ -3,13 +3,13 @@
 		<div
 			class="img-preview-wrapper"
 			v-show="visible"
-			@click.self="closeImgReview"
+			@click.self="closeImgPreview"
 			@mousewheel.prevent="rollImg()"
 		>
 			<!-- 顶部信息栏 & 工具栏 -->
 			<div class="tip-wrapper" v-if="visible">
-				<div class="name" :title="activeFileName + activeExtendName">
-					{{ activeFileName }}.{{ activeExtendName }}
+				<div class="name" :title="activeImageName">
+					{{ activeImageName }}
 				</div>
 				<div class="opera-btn-group">
 					<el-input-number
@@ -30,7 +30,7 @@
 						class="item download-link"
 						target="_blank"
 						:href="activeDownloadLink"
-						:download="activeFileName + '.' + activeExtendName"
+						:download="activeImageName"
 					>
 						<i class="el-icon-download" title="保存到本地"></i>
 					</a>
@@ -43,7 +43,7 @@
 						</div>
 						<div class="item text-wrapper">
 							<span class="text">操作提示</span>
-							<i class="el-icon-question"></i>
+							<i class="el-icon-s-opportunity"></i>
 						</div>
 					</el-tooltip>
 				</div>
@@ -86,6 +86,8 @@
 </template>
 
 <script>
+import store from '@/store/index.js'
+
 export default {
 	name: 'ImgPreview',
 	data() {
@@ -99,19 +101,17 @@ export default {
 		}
 	},
 	computed: {
-		// 当前显示的图片名称
-		activeFileName() {
-			return this.imgList[this.activeIndex].fileName
+		activeImage() {
+			return this.imgList[this.activeIndex]
 		},
-		// 当前显示的图片扩展名
-		activeExtendName() {
-			return this.imgList[this.activeIndex].extendName
+		activeImageName() {
+			return this.getFileNameComplete(this.activeImage)
 		},
 		imageHeight() {
-			return this.imgList[this.activeIndex].imageHeight
+			return this.activeImage.imageHeight
 		},
 		imageWidth() {
-			return this.imgList[this.activeIndex].imageWidth
+			return this.activeImage.imageWidth
 		},
 		// 对用户而言 显示的图片索引 从 1 开始 顶部栏输入框控制此值变化
 		inputActiveIndex: {
@@ -124,7 +124,15 @@ export default {
 		},
 		// 当前显示的图片下载链接
 		activeDownloadLink() {
-			return this.imgList[this.activeIndex].downloadLink
+			return this.activeImage.downloadLink
+		},
+		// 屏幕宽度
+		screenWidth() {
+			return store.state.common.screenWidth
+		},
+		// 在原比例上再缩小的比例
+		reduceNumber() {
+			return this.screenWidth > 768 ? 10 : 4
 		}
 	},
 	watch: {
@@ -138,7 +146,7 @@ export default {
 				this.$nextTick(() => {
 					document.addEventListener('keyup', (e) => {
 						if (e.keyCode === 27) {
-							this.closeImgReview()
+							this.closeImgPreview()
 						}
 					})
 				})
@@ -150,7 +158,7 @@ export default {
 								bodyDom.clientHeight / this.imageHeight
 							) *
 								100 -
-							10
+							this.reduceNumber
 						).toFixed(0)
 					)
 					this.$refs.imgLarge[this.activeIndex].style.zoom = `${this.imgZoom}%`
@@ -159,7 +167,7 @@ export default {
 				bodyDom.style.overflow = 'auto'
 				document.removeEventListener('keyup', (e) => {
 					if (e.keyCode === 27) {
-						this.closeImgReview()
+						this.closeImgPreview()
 					}
 				})
 			}
@@ -181,7 +189,7 @@ export default {
 								bodyDom.clientHeight / this.imageHeight
 							) *
 								100 -
-							10
+							this.reduceNumber
 						).toFixed(0)
 					)
 					this.$refs.imgLarge[newValue].style.zoom = `${this.imgZoom}%`
@@ -193,7 +201,7 @@ export default {
 		/**
 		 * 关闭图片预览，恢复旋转角度
 		 */
-		closeImgReview() {
+		closeImgPreview() {
 			this.rotate = 0
 			this.$refs.imgLarge[
 				this.activeIndex
@@ -256,7 +264,7 @@ export default {
   overflow: auto;
   width: 100%;
   height: 100%;
-  z-index: 2010;
+  z-index: 2;
   text-align: center;
   display: flex;
   align-items: center;
@@ -291,7 +299,7 @@ export default {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 2011;
+    z-index: 2;
     background: rgba(0, 0, 0, 0.5);
     padding: 0 48px;
     width: 100%;

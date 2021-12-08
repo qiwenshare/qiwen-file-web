@@ -110,6 +110,7 @@ export default {
     display flex
     flex-wrap wrap
     justify-content space-between
+    list-style: none;
     .function-item {
       margin-bottom 24px
       width: 32%;

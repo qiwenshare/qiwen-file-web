@@ -23,10 +23,7 @@
 			size="small"
 		>
 			<el-form-item label="文件名" prop="fileName">
-				<el-input
-					:value="getFileNameComplete(fileInfo, true)"
-					readonly
-				></el-input>
+				<el-input :value="getFileNameComplete(fileInfo)" readonly></el-input>
 			</el-form-item>
 			<el-form-item
 				:label="fileType === 6 ? '原路径' : '路径'"
