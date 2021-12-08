@@ -9,7 +9,9 @@
 			<div class="tip-wrapper" v-if="visible">
 				<div class="name" :title="getFileNameComplete(fileInfo)">
 					{{ getFileNameComplete(fileInfo) }}
+					<span class="un-save" v-show="isModify">（未保存）</span>
 				</div>
+				<div class="editor-preveiw">在线编辑 & 预览</div>
 				<div class="tool-wrapper">
 					<a
 						class="item download-link"
@@ -24,7 +26,7 @@
 							操作提示：<br />
 							1. 点击文档以外的区域可退出查看；<br />
 							2. 按 Esc 键可退出查看；<br />
-							3. markdown 在线编辑功能即将上线，敬请期待
+							3. 支持在线编辑、保存、下载
 						</div>
 						<div class="item text-wrapper">
 							<span class="text">操作提示</span>
@@ -39,16 +41,15 @@
 				</div>
 			</div>
 			<!-- mavon-editor 组件，配置项说明文档 https://www.npmjs.com/package/mavon-editor -->
-			<!-- :editable="false" 这里暂时不允许编辑，等待后台提供更新 markdown 文档内容的接口 -->
 			<mavonEditor
 				ref="mavonEditor"
 				v-model="markdownText"
 				:toolbars="toolbars"
 				:externalLink="externalLink"
-				:editable="false"
 				:subfield="screenWidth > 768 ? true : false"
 				defaultOpen="preview"
 				v-loading="markdownLoading"
+				@save="handleModifyFileContent"
 			></mavonEditor>
 		</div>
 	</transition>
@@ -61,7 +62,7 @@ import 'mavon-editor/dist/css/index.css'
 import '_public/mavonEditor/css/tomorrow-night.css'
 import '_public/mavonEditor/css/github-markdown.css'
 import store from '@/store/index.js'
-import { getFilePreview } from '_r/file.js'
+import { getFilePreview, modifyFileContent } from '_r/file.js'
 
 export default {
 	name: 'ImgPreview',
@@ -71,8 +72,45 @@ export default {
 	data() {
 		return {
 			visible: false, //  markdown 预览遮罩层组件是否显示
-			markdownText: '', //  markdown 原文
-			markdownLoading: false //  markdown 内容是否加载中
+			originalMarkdownText: '', //  markdown 原本的文本
+			markdownText: '', //  markdown 实时修改的文本
+			markdownLoading: false, //  markdown 内容是否加载中
+			// 工具栏
+			toolbars: {
+				bold: true, // 粗体
+				italic: true, // 斜体
+				header: true, // 标题
+				underline: true, // 下划线
+				strikethrough: true, // 中划线
+				mark: true, // 标记
+				superscript: true, // 上角标
+				subscript: true, // 下角标
+				quote: true, // 引用
+				ol: true, // 有序列表
+				ul: true, // 无序列表
+				link: true, // 链接
+				imagelink: true, // 图片链接
+				code: true, // code
+				table: true, // 表格
+				fullscreen: true, // 全屏编辑
+				readmodel: true, // 沉浸式阅读
+				htmlcode: true, // 展示html源码
+				help: true, // 帮助
+				/* 1.3.5 */
+				undo: true, // 上一步
+				redo: true, // 下一步
+				trash: true, // 清空
+				save: true, // 保存（触发 events 中的 save 事件）
+				/* 1.4.2 */
+				navigation: true, // 导航目录
+				/* 2.1.8 */
+				alignleft: true, // 左对齐
+				aligncenter: true, // 居中
+				alignright: true, // 右对齐
+				/* 2.2.1 */
+				subfield: true, // 单双栏模式
+				preview: true // 预览
+			}
 		}
 	},
 	computed: {
@@ -80,49 +118,9 @@ export default {
 		screenWidth() {
 			return store.state.common.screenWidth
 		},
-		// 工具栏
-		toolbars() {
-			let res = {
-				// bold: true, // 粗体
-				// italic: true, // 斜体
-				// header: true, // 标题
-				// underline: true, // 下划线
-				// strikethrough: true, // 中划线
-				// mark: true, // 标记
-				// superscript: true, // 上角标
-				// subscript: true, // 下角标
-				// quote: true, // 引用
-				// ol: true, // 有序列表
-				// ul: true, // 无序列表
-				// link: true, // 链接
-				// imagelink: true, // 图片链接
-				// code: true, // code
-				// table: true, // 表格
-				fullscreen: true, // 全屏编辑
-				readmodel: true, // 沉浸式阅读
-				htmlcode: true, // 展示html源码
-				help: true, // 帮助
-				// /* 1.3.5 */
-				// undo: true, // 上一步
-				// redo: true, // 下一步
-				// trash: true, // 清空
-				/* 1.4.2 */
-				navigation: true, // 导航目录
-				// /* 2.1.8 */
-				// alignleft: true, // 左对齐
-				// aligncenter: true, // 居中
-				// alignright: true, // 右对齐
-				/* 2.2.1 */
-				subfield: true, // 单双栏模式
-				preview: true // 预览
-			}
-			return res
-			// if (this.screenWidth > 768) {
-			// 	return res
-			// } else {
-			// 	delete res.navigation
-			// 	return res
-			// }
+		// 是否修改
+		isModify() {
+			return this.originalMarkdownText !== this.markdownText
 		},
 		// 外链 cdn 改为本地引入
 		externalLink() {
@@ -182,7 +180,7 @@ export default {
 	},
 	methods: {
 		/**
-		 * 获取 markdown 原文
+		 * 获取 markdown 文本内容
 		 */
 		getMarkdownText() {
 			this.markdownLoading = true
@@ -194,11 +192,26 @@ export default {
 				token: this.getCookies(this.$config.tokenKeyName)
 			}).then((res) => {
 				this.markdownLoading = false
+				this.originalMarkdownText = res
 				this.markdownText = res
 			})
 		},
 		/**
-		 * 关闭 markdown 预览，恢复旋转角度
+		 * 修改 markdown 文本内容
+		 */
+		handleModifyFileContent() {
+			modifyFileContent({
+				userFileId: this.fileInfo.userFileId,
+				fileContent: this.markdownText
+			}).then((res) => {
+				if (res.success) {
+					this.$message.success('已保存')
+					this.getMarkdownText()
+				}
+			})
+		},
+		/**
+		 * 关闭 markdown 预览
 		 */
 		closeMarkdownPreview() {
 			this.visible = false
@@ -267,6 +280,10 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      .un-save {
+        color: $Warning;
+        font-size: 14px;
+      }
     }
     .tool-wrapper {
       flex: 1;
@@ -281,12 +298,16 @@ export default {
           opacity: 0.7;
         }
       }
+      .save-img {
+        margin: 16px 0;
+        width: 16px;
+        height: 16px;
+      }
       .download-link {
         color: inherit;
         font-size: 18px;
       }
       .text-wrapper {
-        margin-left: 32px;
         .text {
           margin-right: 8px;
         }
@@ -299,12 +320,10 @@ export default {
 		border: 1px solid $BorderBase;
 		.v-note-op {
 			border-bottom-color: $BorderBase;
-      .v-left-item {
-        display: none;
-      }
-      .v-right-item {
-        max-width: 100%;
-        width: 100%;
+      .op-image {
+        .dropdown-item:nth-of-type(2) {
+          display: none;
+        }
       }
 		}
 		.v-note-navigation-wrapper {
@@ -325,8 +344,7 @@ export default {
 	}
 	>>> .v-note-wrapper:not(.fullscreen) {
     margin: 56px auto 0 auto;
-    min-width: 50vw;
-    max-width: 90vw;
+    width: 90vw;
 		height: calc(100vh - 80px);
 	}
 }

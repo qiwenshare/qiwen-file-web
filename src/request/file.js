@@ -89,3 +89,5 @@ export const batchDeleteRecoveryFile = (p) =>
  */
 // 文件预览
 export const getFilePreview = (p) => get('/filetransfer/preview', p)
+// 文件修改
+export const modifyFileContent = (p) => post('/file/update', p)
