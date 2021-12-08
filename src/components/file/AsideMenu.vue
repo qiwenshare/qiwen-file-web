@@ -281,7 +281,7 @@ export default {
 		},
 		// 监听收缩状态变化，存储在 localStorage 中，保证页面刷新时仍然保存设置的状态
 		isCollapse(newValue) {
-			localStorage.setItem('isCollapse', newValue)
+			localStorage.setItem('qiwen_is_collapse', newValue)
 			if (this.screenWidth <= 768 && newValue) {
 				this.isDrawer = true
 				this.isCollapse = false
@@ -289,7 +289,7 @@ export default {
 		}
 	},
 	created() {
-		this.isCollapse = localStorage.getItem('isCollapse') === 'true' //  读取保存的状态
+		this.isCollapse = localStorage.getItem('qiwen_is_collapse') === 'true' //  读取保存的状态
 	},
 	mounted() {
 		document.title = `${this.myFileMenuMap[Number(this.activeIndex)]} - ${

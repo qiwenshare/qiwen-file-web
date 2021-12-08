@@ -30,7 +30,7 @@ const config = {
 	/**
 	 * 存放 token 时的命名方式
 	 */
-	tokenKeyName: 'qiwen-file-token'
+	tokenKeyName: 'token'
 }
 
 export default config

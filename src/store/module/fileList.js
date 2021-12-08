@@ -1,11 +1,13 @@
 export default {
 	state: {
 		// 表格中显示的列
-		selectedColumnList: localStorage.getItem('selectedColumnList'),
+		selectedColumnList: localStorage.getItem('qiwen_selected_column_list'),
 		// 文件展示模式 0 列表模式 | 1 网格模式 | 2 时间线模式
-		fileModel: localStorage.getItem('fileModel'),
+		fileModel: localStorage.getItem('qiwen_file_model'),
 		// 网格模式 & 时间线模式下 图标大小 单位px
-		gridSize: 80,
+		gridSize: localStorage.getItem('qiwen_grid_size')
+			? Number(localStorage.getItem('qiwen_grid_size'))
+			: 80,
 		// 批量模式下：被选中的文件列表
 		selectedFiles: [],
 		// 是否批量操作：true - 批量，false - 单文件
@@ -19,7 +21,7 @@ export default {
 		 * @param {[]} data 表格需要显示的列数组
 		 */
 		changeSelectedColumnList(state, data) {
-			localStorage.setItem('selectedColumnList', data.toString())
+			localStorage.setItem('qiwen_selected_column_list', data.toString())
 			state.selectedColumnList = data.toString()
 		},
 		/**
@@ -29,7 +31,7 @@ export default {
 		 * @param {string} data 文件展示模式
 		 */
 		changeFileModel(state, data) {
-			localStorage.setItem('fileModel', data)
+			localStorage.setItem('qiwen_file_model', data)
 			state.fileModel = data
 		},
 		/**
@@ -39,7 +41,7 @@ export default {
 		 * @param {string} data 文件图标大小
 		 */
 		changeGridSize(state, data) {
-			localStorage.setItem('gridSize', data)
+			localStorage.setItem('qiwen_grid_size', data)
 			state.gridSize = data
 		},
 		/**
