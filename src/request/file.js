@@ -83,3 +83,9 @@ export const restoreRecoveryFile = (p) => post('/recoveryfile/restorefile', p)
 // 回收站文件批量删除
 export const batchDeleteRecoveryFile = (p) =>
 	post('/recoveryfile/batchdelete', p)
+
+/**
+ * 文件公共接口
+ */
+// 文件预览
+export const getFilePreview = (p) => get('/filetransfer/preview', p)

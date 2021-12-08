@@ -106,6 +106,7 @@ export default {
       .image-list {
         display: flex;
         flex-wrap: wrap;
+        list-style: none;
 
         .image-item {
           margin: 0 16px 16px 0;

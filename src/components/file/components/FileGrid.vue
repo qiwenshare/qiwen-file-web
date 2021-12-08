@@ -176,6 +176,7 @@ export default {
     flex-wrap: wrap;
     align-items: flex-start;
     align-content: flex-start;
+    list-style: none;
     setScrollbar(6px, transparent, #C0C4CC);
 
     .file-item {

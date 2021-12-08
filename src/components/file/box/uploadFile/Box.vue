@@ -533,6 +533,7 @@ export default {
       overflow-y: auto;
       background-color: #fff;
       font-size: 12px;
+      list-style: none;
       setScrollbar(6px, #EBEEF5, #C0C4CC);
 
       .file-item {

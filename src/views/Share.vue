@@ -140,7 +140,9 @@ export default {
 				shareBatchNum: this.shareBatchNum
 			}).then((res) => {
 				if (res.success) {
-					if (localStorage.getItem(`share_${this.shareBatchNum}`) === 'true') {
+					if (
+						localStorage.getItem(`qiwen_share_${this.shareBatchNum}`) === 'true'
+					) {
 						this.checkShareComplete()
 					} else {
 						this.dialogShareFile.visible = true
@@ -193,7 +195,7 @@ export default {
 						shareBatchNum: this.shareBatchNum
 					}).then((res) => {
 						if (res.success) {
-							localStorage.setItem(`share_${this.shareBatchNum}`, true)
+							localStorage.setItem(`qiwen_share_${this.shareBatchNum}`, true)
 							this.$refs[formName].resetFields() //  清空表单
 							this.checkShareComplete()
 						} else {

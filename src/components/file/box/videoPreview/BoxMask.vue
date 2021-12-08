@@ -241,6 +241,7 @@ export default {
         cursor: pointer;
         height: calc(100% - 42px);
         overflow: auto;
+        list-style: none;
         setScrollbar(8px);
 
         .video-item {
