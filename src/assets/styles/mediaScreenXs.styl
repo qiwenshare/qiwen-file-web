@@ -387,4 +387,22 @@
       right: calc(50vw - 150px) !important;
     }
   }
+  // 日期组件
+  .el-date-picker.has-sidebar.has-time {
+    width: 350px !important;
+    .el-picker-panel__body-wrapper {
+      .el-picker-panel__sidebar {
+        width: 56px;
+      }
+      .el-picker-panel__sidebar+.el-picker-panel__body {
+        margin-left: 56px;
+        .el-date-picker__header {
+          margin: 8px;
+        }
+        .el-picker-panel__content {
+          margin: 8px 0;
+        }
+      }
+    }
+  }
 }
