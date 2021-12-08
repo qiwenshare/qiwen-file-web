@@ -51,7 +51,7 @@
 			<el-form-item
 				label="修改日期"
 				prop="uploadTime"
-				v-if="![7, 8].includes(fileType)"
+				v-if="![7, 8].includes(fileType) && !['Share'].includes(this.routeName)"
 			>
 				<el-input :value="fileInfo.uploadTime" readonly></el-input>
 			</el-form-item>
@@ -67,12 +67,18 @@
 			<el-form-item label="分享时间" prop="shareTime" v-if="fileType === 8">
 				<el-input :value="fileInfo.shareTime" readonly></el-input>
 			</el-form-item>
-			<el-form-item label="过期时间" prop="endTime" v-if="fileType === 8">
+			<el-form-item
+				label="过期时间"
+				prop="endTime"
+				v-if="fileType === 8"
+				class="form-item-end-time"
+			>
+				<el-input :value="fileInfo.endTime" readonly></el-input>
 				<i
-					class="el-icon-warning"
+					class="status-icon el-icon-warning"
 					v-if="getFileShareStatus(fileInfo.endTime)"
 				></i>
-				<el-input :value="fileInfo.endTime" readonly></el-input>
+				<i class="status-icon el-icon-time" v-else></i>
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
@@ -97,6 +103,10 @@ export default {
 			return router.currentRoute.query.fileType
 				? Number(router.currentRoute.query.fileType)
 				: 0
+		},
+		// 路由名称
+		routeName() {
+			return router.currentRoute.name
 		}
 	},
 	methods: {
@@ -124,6 +134,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+@import '~_a/styles/varibles.styl';
+
 .file-img {
   display: block;
   margin: 0 auto 8px auto;
@@ -136,6 +148,27 @@ export default {
     margin-bottom: 16px;
     .el-input__inner {
       border: none;
+    }
+    &.form-item-end-time {
+      .el-form-item__content {
+        display: flex;
+        align-items: center;
+        .el-input {
+          width: 141px;
+          .el-input__inner {
+            padding-right: 0;
+          }
+        }
+        .status-icon {
+          font-size: 14px;
+        }
+        .el-icon-warning {
+          color: $Warning;
+        }
+        .el-icon-time {
+          color: $Success;
+        }
+      }
     }
   }
 }
