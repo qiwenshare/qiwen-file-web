@@ -140,6 +140,7 @@
 				v-if="
 					selectedColumnList.includes('uploadTime') &&
 					![7, 8].includes(fileType) &&
+					!['Share'].includes(this.routeName) &&
 					screenWidth > 768
 				"
 			></el-table-column>

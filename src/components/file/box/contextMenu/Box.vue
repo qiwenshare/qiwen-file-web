@@ -225,9 +225,7 @@ export default {
 		},
 		// 文件详情按钮是否显示
 		detailInfoBtnShow() {
-			return (
-				![6, 8].includes(this.fileType) && !['Share'].includes(this.routeName)
-			)
+			return true
 		}
 	},
 	watch: {
