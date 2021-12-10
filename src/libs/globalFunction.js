@@ -346,7 +346,11 @@ const globalFunction = {
 				return false
 			}
 			//  若当前点击项是代码或文本文件
-			if (fileSuffixCodeModeMap.has(row.extendName.toLowerCase())) {
+			let codeFileSuffix = row.extendName.toLowerCase()
+			if (codeFileSuffix === 'yaml') {
+				codeFileSuffix = 'yml'
+			}
+			if (fileSuffixCodeModeMap.has(codeFileSuffix)) {
 				Vue.prototype.$previewCode({ fileInfo: row })
 				return false
 			}
