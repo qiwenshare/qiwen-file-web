@@ -25,6 +25,7 @@ import showVideoPreviewBox from '_c/file/box/videoPreview/index.js'
 import showUploadFileBox from '_c/file/box/uploadFile/index.js'
 import showAudioPreviewBox from '_c/file/box/audioPreview/index.js'
 import showMarkdownPreviewBox from '_c/file/box/markdownPreview/index.js'
+import showCodePreviewBox from '_c/file/box/codePreview/index.js'
 
 const operateElement = {
 	install: (Vue) => {
@@ -47,6 +48,7 @@ const operateElement = {
 		Vue.prototype.$uploadFile = showUploadFileBox
 		Vue.prototype.$preivewAudio = showAudioPreviewBox
 		Vue.prototype.$previewMarkdown = showMarkdownPreviewBox
+		Vue.prototype.$previewCode = showCodePreviewBox
 	}
 }
 export default operateElement

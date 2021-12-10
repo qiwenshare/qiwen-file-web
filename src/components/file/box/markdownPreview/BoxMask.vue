@@ -200,12 +200,14 @@ export default {
 		 * 修改 markdown 文本内容
 		 */
 		handleModifyFileContent() {
+			this.markdownLoading = true
 			modifyFileContent({
 				userFileId: this.fileInfo.userFileId,
 				fileContent: this.markdownText
 			}).then((res) => {
 				if (res.success) {
 					this.$message.success('已保存')
+					this.markdownLoading = false
 					this.getMarkdownText()
 				}
 			})

@@ -101,6 +101,13 @@
 			</li>
 			<li
 				class="right-menu-item"
+				@click="handleClickFolderEdit"
+				v-if="folderEditBtnShow"
+			>
+				<i class="el-icon-edit"></i> 编辑文件夹
+			</li>
+			<li
+				class="right-menu-item"
 				@click="getFileOnlineEditPathByOffice(selectedFile)"
 				v-if="onlineEditBtnShow"
 			>
@@ -209,6 +216,14 @@ export default {
 				![6, 8].includes(this.fileType) &&
 				!['Share'].includes(this.routeName) &&
 				['zip', 'rar'].includes(this.selectedFile.extendName)
+			)
+		},
+		// 编辑文件夹按钮是否显示
+		folderEditBtnShow() {
+			return (
+				![6, 8].includes(this.fileType) &&
+				this.selectedFile.isDir === 1 &&
+				!['Share'].includes(this.routeName)
 			)
 		},
 		// 在线编辑按钮是否显示
@@ -393,6 +408,15 @@ export default {
 						userFileId: fileInfo.userFileId
 					}
 				]
+			})
+		},
+		/**
+		 * 编辑文件夹按钮点击事件
+		 */
+		handleClickFolderEdit() {
+			router.push({
+				name: 'WebIDE',
+				params: { filePath: this.selectedFile.filePath }
 			})
 		},
 		/**

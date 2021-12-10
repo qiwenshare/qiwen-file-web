@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 import router from '@/router/router'
 import config from '@/config/index.js'
 import { Message } from 'element-ui'
-import { fileImgMap, unknownImg } from '@/libs/map.js'
+import { fileImgMap, unknownImg, fileSuffixCodeModeMap } from '@/libs/map.js'
 
 // 全局函数
 const globalFunction = {
@@ -262,13 +262,6 @@ const globalFunction = {
 		Vue.prototype.$previewImg({ imgList, defaultIndex })
 	},
 	/**
-	 * markdown 文档预览
-	 * @param {object} fileInfo 文件信息
-	 */
-	handleMarkdownPreview(fileInfo) {
-		Vue.prototype.$previewMarkdown({ fileInfo })
-	},
-	/**
 	 * 视频预览
 	 * @param {*} currentIndex 当前视频索引
 	 * @param {*} videoInfo 单个视频信息
@@ -353,15 +346,14 @@ const globalFunction = {
 				return false
 			}
 			//  若当前点击项是代码或文本文件
-			const CODE = ['html', 'js', 'css', 'json', 'c', 'java', 'txt']
-			if (CODE.includes(row.extendName.toLowerCase())) {
-				window.open(this.getViewFilePath(row), '_blank')
+			if (fileSuffixCodeModeMap.has(row.extendName.toLowerCase())) {
+				Vue.prototype.$previewCode({ fileInfo: row })
 				return false
 			}
 			//  若当前点击项是 markdown 文档
 			const MARKDOWN = ['markdown', 'md']
 			if (MARKDOWN.includes(row.extendName.toLowerCase())) {
-				this.handleMarkdownPreview(row)
+				Vue.prototype.$previewMarkdown({ fileInfo: row })
 				return false
 			}
 			//  若当前点击项是视频mp4格式
