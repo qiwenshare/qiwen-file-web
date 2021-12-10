@@ -204,13 +204,20 @@ export default {
 			modifyFileContent({
 				userFileId: this.fileInfo.userFileId,
 				fileContent: this.markdownText
-			}).then((res) => {
-				if (res.success) {
-					this.$message.success('已保存')
-					this.markdownLoading = false
-					this.getMarkdownText()
-				}
 			})
+				.then((res) => {
+					this.markdownLoading = false
+					if (res.success) {
+						this.$message.success('已保存')
+						this.getMarkdownText()
+					} else {
+						this.$message.error(res.message)
+					}
+				})
+				.catch((err) => {
+					this.markdownLoading = false
+					this.$message.error(err.message)
+				})
 		},
 		/**
 		 * 关闭 markdown 预览

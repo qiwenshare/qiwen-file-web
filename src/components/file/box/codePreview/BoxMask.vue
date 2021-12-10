@@ -51,7 +51,7 @@
 						size="small"
 						label-width="88px"
 						label-position="right"
-						label-suffix="："
+						label-suffix=":"
 					>
 						<el-form-item label-width="0px">
 							<el-checkbox
@@ -67,10 +67,10 @@
 								@change="handleChangeCodeMirrorOption"
 							>
 								<el-option
-									v-for="(value, key, index) in codeFileSuffixMap"
+									v-for="(value, key, index) in fileSuffixCodeModeMap"
 									:key="index"
-									:value="fileSuffixCodeModeMap.get(value)"
-									:label="key"
+									:value="value[1].mime"
+									:label="value[1].language"
 								></el-option>
 							</el-select>
 						</el-form-item>
@@ -80,6 +80,7 @@
 								filterable
 								@change="handleChangeCodeMirrorOption"
 							>
+								<el-option value="default" label="default"></el-option>
 								<el-option
 									v-for="(item, index) in codeMirrorThemeList"
 									:key="index"
@@ -110,11 +111,7 @@ import 'codemirror/lib/codemirror.css' // codemirror 样式
 import './theme.js' //  codemirror 高亮代码主题
 import './mode.js' // codemirror 的解析语言模式
 import './fold.js' //  codemirror 的代码折叠功能相关
-import {
-	codeFileSuffixMap,
-	fileSuffixCodeModeMap,
-	codeMirrorThemeList
-} from '@/libs/map.js'
+import { fileSuffixCodeModeMap, codeMirrorThemeList } from '@/libs/map.js'
 // 文件修改相关
 import store from '@/store/index.js'
 import { getFilePreview, modifyFileContent } from '_r/file.js'
@@ -126,7 +123,6 @@ export default {
 	},
 	data() {
 		return {
-			codeFileSuffixMap,
 			fileSuffixCodeModeMap,
 			codeMirrorThemeList,
 			visible: false, // 代码预览遮罩层组件是否显示
@@ -137,7 +133,7 @@ export default {
 			codeMirrorOptions: {
 				tabSize: 4, //  制表符的宽度。默认为 4。
 				mode: 'text/html', //  解析当前代码的模式，参考 https://codemirror.net/mode/ 每种语言的示例页面的底部都有对应的 MIME 类型，如果当前文件后缀没有匹配的语言，按照 html 来解析
-				theme: 'base16-light', //  代码高亮主题色，其他主题色参考 https://codemirror.net/theme/
+				theme: 'default', //  代码高亮主题色，其他主题色参考 https://codemirror.net/theme/
 				lineNumbers: true, //  是否在编辑器左侧显示行号
 				line: true,
 				autoCloseBrackets: true, //  自动补全括号
@@ -168,14 +164,17 @@ export default {
 		visible(val) {
 			if (val) {
 				// codemirror 解析模式设置
-				const fileSuffix = this.fileInfo.extendName.toLowerCase()
+				let fileSuffix = this.fileInfo.extendName.toLowerCase()
+				if (fileSuffix === 'yaml') {
+					fileSuffix = 'yml'
+				}
 				if (this.fileSuffixCodeModeMap.has(fileSuffix)) {
 					this.codeMirrorOptions.mode =
-						this.fileSuffixCodeModeMap.get(fileSuffix)
+						this.fileSuffixCodeModeMap.get(fileSuffix).mime
 				}
 				// codemirror 主题获取
 				this.codeMirrorOptions.theme =
-					localStorage.getItem('qiwen_file_codemirror_theme') || 'base16-light'
+					localStorage.getItem('qiwen_file_codemirror_theme') || 'default'
 				this.getCodeText()
 				// 添加键盘 Esc 事件
 				this.$nextTick(() => {
@@ -193,6 +192,7 @@ export default {
 				})
 			}
 		},
+		// 监听主题变化
 		'codeMirrorOptions.theme'(val) {
 			localStorage.setItem('qiwen_file_codemirror_theme', val)
 		}
@@ -211,7 +211,8 @@ export default {
 				token: this.getCookies(this.$config.tokenKeyName)
 			}).then((res) => {
 				this.codeMirrorLoading = false
-				this.originalCodeText = res
+				this.originalCodeText =
+					typeof res === 'object' ? JSON.stringify(res) : res
 				this.codeMirrorText = this.originalCodeText
 			})
 		},
@@ -223,13 +224,20 @@ export default {
 			modifyFileContent({
 				userFileId: this.fileInfo.userFileId,
 				fileContent: this.codeMirrorText
-			}).then((res) => {
-				if (res.success) {
-					this.$message.success('已保存')
-					this.codeMirrorLoading = false
-					this.getCodeText()
-				}
 			})
+				.then((res) => {
+					this.codeMirrorLoading = false
+					if (res.success) {
+						this.$message.success('已保存')
+						this.getCodeText()
+					} else {
+						this.$message.error(res.message)
+					}
+				})
+				.catch((err) => {
+					this.codeMirrorLoading = false
+					this.$message.error(err.message)
+				})
 		},
 		/**
 		 * codemirror 配置项改变时触发
