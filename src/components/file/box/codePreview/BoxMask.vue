@@ -193,6 +193,7 @@ export default {
 				})
 			}
 		},
+		// 监听主题变化
 		'codeMirrorOptions.theme'(val) {
 			localStorage.setItem('qiwen_file_codemirror_theme', val)
 		}
@@ -223,13 +224,20 @@ export default {
 			modifyFileContent({
 				userFileId: this.fileInfo.userFileId,
 				fileContent: this.codeMirrorText
-			}).then((res) => {
-				if (res.success) {
-					this.$message.success('已保存')
-					this.codeMirrorLoading = false
-					this.getCodeText()
-				}
 			})
+				.then((res) => {
+					this.codeMirrorLoading = false
+					if (res.success) {
+						this.$message.success('已保存')
+						this.getCodeText()
+					} else {
+						this.$message.error(res.message)
+					}
+				})
+				.catch((err) => {
+					this.codeMirrorLoading = false
+					this.$message.error(err.message)
+				})
 		},
 		/**
 		 * codemirror 配置项改变时触发
