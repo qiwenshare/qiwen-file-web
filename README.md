@@ -21,6 +21,7 @@
         <a href="https://pan.qiwenshare.com/docs/"  target="_blank">说明文档</a> |
     	<a href="https://www.qiwenshare.com/essay/detail/1190"  target="_blank">课程链接</a> |
         <a href="https://pan.qiwenshare.com/docs/log/backend.html"  target="_blank">更新日志</a>
+</p>
 
 ---
 
@@ -57,18 +58,20 @@
 
 ### 特色功能
 
-| 功能         | 描述                                                                                                                                                                                                                                                                                                                                                      |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 在线编辑功能 | Word、Excel、PowerPoint 文档的在线创建、**在线编辑**、协同编辑功能<br />集成 [OnlyOffice](https://api.onlyoffice.com/)，安装方式参考 [安装 ONLYOFFICE](https://www.qiwenshare.com/essay/detail/1208)                                                                                                                                                      |
-| 文件分类查看 | 图片、视频、音乐、文档、其他，分类查看更快捷                                                                                                                                                                                                                                                                                                              |
-| 多种查看模式 | 支持网格模式、列表模式、时间线模式<br />网格模式下图标支持手动控制显示大小                                                                                                                                                                                                                                                                                |
-| 回收站       | 删除文件自动移入回收站，支持在回收站中彻底删除、还原文件                                                                                                                                                                                                                                                                                                  |
-| 多种存储方式 | 基于奇文社区自研框架 [UFOP](https://gitee.com/qiwen-cloud/ufop-spring-boot-starter)，实现文件多样化存储。<br/>支持**本地**磁盘、**阿里云 OSS** 对象存储、**FastDFS** 存储、**MinIO** 存储、<br />**七牛云 KODO** 对象存储，点击查看配置方式[存储方式配置](https://pan.qiwenshare.com/docs/config/#%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F%E9%85%8D%E7%BD%AE) |
-| 支持分片上传 | 基于奇文社区自研框架 [UFOP](https://gitee.com/qiwen-cloud/ufop-spring-boot-starter), 实现文件分片上传。<br />集成优秀开源项目 [vue-simple-uploader](https://github.com/simple-uploader/vue-uploader/blob/master/README_zh-CN.md)                                                                                                                          |
-| 支持极速秒传 | 计算文件 MD5，实现极速秒传效果，提高上传效率                                                                                                                                                                                                                                                                                                              |
-| 支持断点续传 | 同一个文件，当上传过程中网络中断，可以从断点处继续上传                                                                                                                                                                                                                                                                                                    |
-| 实时进度显示 | 页面实时显示上传文件进度、速度、结果等信息                                                                                                                                                                                                                                                                                                                |
-| 存储容量显示 | 可实时显示文件存储占用情况及总存储容量                                                                                                                                                                                                                                                                                                                    |
+| 功能              | 描述                                                                                                                                                                                                                                                                                                                                                      |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| office 在线编辑   | Word、Excel、PowerPoint 文档的在线创建、**在线编辑**、协同编辑功能<br />集成 [OnlyOffice](https://api.onlyoffice.com/)，安装方式参考 [安装 ONLYOFFICE](https://www.qiwenshare.com/essay/detail/1208)                                                                                                                                                      |
+| markdown 在线编辑 | 支持 **markdown** 文件在线预览、编辑、保存功能<br />集成 [mavon-editor](https://www.npmjs.com/package/mavon-editor) ，已内置到前端工程中                                                                                                                                                                                                                  |
+| 代码在线编辑      | 支持 **C、C++、C#、Java、JavaScript、HTML、CSS、Less、Sass、Stylus** <br />等常用代码类文件的在线预览、编辑、保存<br />集成 [vue-codemirror](https://github.com/surmon-china/vue-codemirror)，已内置到前端工程中，<br />可参考 [codemirror](https://codemirror.net/index.html) 官网说明添加更多语言                                                       |
+| 文件分类查看      | 图片、视频、音乐、文档、其他，分类查看更快捷                                                                                                                                                                                                                                                                                                              |
+| 多种查看模式      | 支持网格模式、列表模式、时间线模式<br />网格模式下图标支持手动控制显示大小                                                                                                                                                                                                                                                                                |
+| 回收站            | 删除文件自动移入回收站，支持在回收站中彻底删除、还原文件                                                                                                                                                                                                                                                                                                  |
+| 多种存储方式      | 基于奇文社区自研框架 [UFOP](https://gitee.com/qiwen-cloud/ufop-spring-boot-starter)，实现文件多样化存储。<br/>支持**本地**磁盘、**阿里云 OSS** 对象存储、**FastDFS** 存储、**MinIO** 存储、<br />**七牛云 KODO** 对象存储，点击查看配置方式[存储方式配置](https://pan.qiwenshare.com/docs/config/#%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F%E9%85%8D%E7%BD%AE) |
+| 支持分片上传      | 基于奇文社区自研框架 [UFOP](https://gitee.com/qiwen-cloud/ufop-spring-boot-starter), 实现文件分片上传。<br />集成优秀开源项目 [vue-simple-uploader](https://github.com/simple-uploader/vue-uploader/blob/master/README_zh-CN.md)                                                                                                                          |
+| 支持极速秒传      | 计算文件 MD5，实现极速秒传效果，提高上传效率                                                                                                                                                                                                                                                                                                              |
+| 支持断点续传      | 同一个文件，当上传过程中网络中断，可以从断点处继续上传                                                                                                                                                                                                                                                                                                    |
+| 实时进度显示      | 页面实时显示上传文件进度、速度、结果等信息                                                                                                                                                                                                                                                                                                                |
+| 存储容量显示      | 可实时显示文件存储占用情况及总存储容量                                                                                                                                                                                                                                                                                                                    |
 
 ## 源码地址
 
@@ -264,7 +267,21 @@
 例如：word 文件在线编辑：
 <img src="https://pan.qiwenshare.com/docs/img/guide/function/edit.png" alt="文件在线编辑">
 
-#### 8.2 视频在线预览
+#### 8.2 markdown 在线预览 & 编辑
+
+支持 **markdown** 文件在线预览、编辑、保存功能，集成 [mavon-editor](https://www.npmjs.com/package/mavon-editor) ，已内置到前端工程中
+
+<img src="https://pan.qiwenshare.com/docs/img/guide/function/markdown.png" alt="mavon-editor 代码编辑器">
+
+#### 8.3 代码类文件在线预览 & 编辑
+
+支持 **C、C++、C#、Java、JavaScript、HTML、CSS、Less、Sass、Stylus ……** 等常用代码类文件的在线预览、编辑、保存
+
+集成 [vue-codemirror](https://github.com/surmon-china/vue-codemirror)，已内置到前端工程中，可参考 [codemirror](https://codemirror.net/index.html) 官网说明添加更多语言
+
+<img src="https://pan.qiwenshare.com/docs/img/guide/function/codemirror.png" alt="codemirror 代码编辑器">
+
+#### 8.4 视频在线预览
 
 文件类型为视频时，点击即可打开预览窗口，展示播放列表，支持快进、后退、暂停、倍速播放、全屏播放、下载视频和折叠播放列表。
 
@@ -272,7 +289,7 @@
 
 <img src="https://pan.qiwenshare.com/docs/img/guide/function/video.png" alt="视频在线预览">
 
-#### 8.3 音频在线播放
+#### 8.5 音频在线播放
 
 MP3 格式的文件支持在线播放。
 
