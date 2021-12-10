@@ -16,6 +16,7 @@
     "qs": "^6.8.0",
     "spark-md5": "^3.0.1",
     "vue": "^2.6.10",
+    "vue-codemirror": "^4.0.6",
     "vue-router": "^3.0.3",
     "vue-simple-uploader": "^0.7.6",
     "vue-video-player": "^5.0.2",
