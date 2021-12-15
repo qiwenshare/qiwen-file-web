@@ -1,6 +1,10 @@
 <template>
 	<transition name="el-fade-in-linear el-fade-in">
-		<div class="code-preview-wrapper" v-show="visible">
+		<div
+			class="code-preview-wrapper"
+			v-show="visible"
+			@keydown.s.ctrl.prevent="handleModifyFileContent"
+		>
 			<!-- 顶部信息栏 & 工具栏 -->
 			<div class="tip-wrapper" v-if="visible">
 				<div class="name" :title="getFileNameComplete(fileInfo)">
@@ -40,7 +44,7 @@
 				<div class="operate-wrapper">
 					<i
 						class="save-icon iconfont icon-baocun"
-						title="保存"
+						title="保存（ctrl+s）"
 						v-show="isModify"
 						@click="handleModifyFileContent"
 					></i>
@@ -49,18 +53,27 @@
 						:model="codeMirrorOptions"
 						:inline="true"
 						size="small"
-						label-width="88px"
 						label-position="right"
 						label-suffix=":"
 					>
-						<el-form-item label-width="0px">
+						<el-form-item label-width="0px" class="line-wrapper">
 							<el-checkbox
 								v-model="codeMirrorOptions.lineWrapping"
 								@change="handleChangeCodeMirrorOption"
 								>自动换行</el-checkbox
 							>
 						</el-form-item>
-						<el-form-item label="代码语言">
+						<el-form-item label-width="0px" class="font-size">
+							<el-select v-model="codeMirrorCustomOptions.fontSize" filterable>
+								<el-option
+									v-for="(item, index) in fontSizeList"
+									:key="index"
+									:value="item"
+									:label="`${item} px`"
+								></el-option>
+							</el-select>
+						</el-form-item>
+						<el-form-item label-width="80px" label="代码语言" class="lanaguage">
 							<el-select
 								v-model="codeMirrorOptions.mode"
 								filterable
@@ -74,7 +87,7 @@
 								></el-option>
 							</el-select>
 						</el-form-item>
-						<el-form-item label="主题" label-width="56px">
+						<el-form-item label="主题" label-width="56px" class="theme">
 							<el-select
 								v-model="codeMirrorOptions.theme"
 								filterable
@@ -98,6 +111,7 @@
 					:options="codeMirrorOptions"
 					v-loading="codeMirrorLoading"
 					v-if="isShow"
+					:style="`font-size: ${codeMirrorCustomOptions.fontSize}px;`"
 				/>
 			</div>
 		</div>
@@ -111,7 +125,11 @@ import 'codemirror/lib/codemirror.css' // codemirror 样式
 import './theme.js' //  codemirror 高亮代码主题
 import './mode.js' // codemirror 的解析语言模式
 import './fold.js' //  codemirror 的代码折叠功能相关
-import { fileSuffixCodeModeMap, codeMirrorThemeList } from '@/libs/map.js'
+import {
+	fontSizeList,
+	fileSuffixCodeModeMap,
+	codeMirrorThemeList
+} from '@/libs/map.js'
 // 文件修改相关
 import store from '@/store/index.js'
 import { getFilePreview, modifyFileContent } from '_r/file.js'
@@ -123,6 +141,7 @@ export default {
 	},
 	data() {
 		return {
+			fontSizeList,
 			fileSuffixCodeModeMap,
 			codeMirrorThemeList,
 			visible: false, // 代码预览遮罩层组件是否显示
@@ -146,7 +165,11 @@ export default {
 					'CodeMirror-lint-markers'
 				]
 			},
-			isShow: true
+			isShow: true, //  codemirror 是否展示
+			// codemirror 自定义配置项
+			codeMirrorCustomOptions: {
+				fontSize: 14
+			}
 		}
 	},
 	computed: {
@@ -220,6 +243,10 @@ export default {
 		 * 修改代码文本内容
 		 */
 		handleModifyFileContent() {
+			console.log('触发了修改')
+			if (!this.isModify) {
+				return false
+			}
 			this.codeMirrorLoading = true
 			modifyFileContent({
 				userFileId: this.fileInfo.userFileId,
@@ -372,6 +399,27 @@ export default {
         text-align: right;
         >>> .el-form-item {
           margin-bottom: 0;
+          &.font-size {
+            .el-form-item__content {
+              .el-select {
+                width: 96px;
+              }
+            }
+          }
+          &.lanaguage {
+            .el-form-item__content {
+              .el-select {
+                width: 120px;
+              }
+            }
+          }
+          &.theme {
+            .el-form-item__content {
+              .el-select {
+                width: 190px;
+              }
+            }
+          }
         }
       }
      }
@@ -380,6 +428,10 @@ export default {
       >>> .CodeMirror {
         border-radius: 0 0 8px 8px;
         height: inherit;
+        font-size: inherit;
+        * {
+          font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace !important;
+        }
         .CodeMirror-vscrollbar,
         .CodeMirror-hscrollbar {
           display: none !important;
@@ -387,8 +439,8 @@ export default {
         .CodeMirror-scroll {
           width: 100%;
           padding: 8px 0 0 0;
-          line-height: 24px;
-          font-size: 14px;
+          line-height: 1.5;
+          font-size: inherit;
           setScrollbar(12px, transparent, #C0C4CC);
         }
       }
