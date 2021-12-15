@@ -56,6 +56,7 @@ import 'codemirror/theme/shadowfox.css'
 import 'codemirror/theme/solarized.css'
 import 'codemirror/theme/ssms.css'
 import 'codemirror/theme/the-matrix.css'
+import '_public/codemirror/css/tomorrow-night.css' //  自定义高亮样式文件
 import 'codemirror/theme/tomorrow-night-bright.css'
 import 'codemirror/theme/tomorrow-night-eighties.css'
 import 'codemirror/theme/ttcn.css'

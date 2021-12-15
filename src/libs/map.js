@@ -180,6 +180,7 @@ export const codeMirrorThemeList = [
 	'solarized',
 	'ssms',
 	'the-matrix',
+	'tomorrow-night',
 	'tomorrow-night-bright',
 	'tomorrow-night-eighties',
 	'ttcn',
@@ -191,3 +192,8 @@ export const codeMirrorThemeList = [
 	'yonce',
 	'zenburn'
 ]
+
+/**
+ * codemirror 编辑器代码字体大小
+ */
+export const fontSizeList = [12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
