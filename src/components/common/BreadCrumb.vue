@@ -93,6 +93,8 @@ export default {
 									? '全部文件'
 									: this.fileType === 8
 									? '我的分享'
+									: this.$route.name === 'Share'
+									? '全部分享'
 									: ''
 						})
 					}

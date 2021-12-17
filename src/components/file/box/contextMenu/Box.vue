@@ -99,13 +99,13 @@
 					</li>
 				</ul>
 			</li>
-			<li
+			<!-- <li
 				class="right-menu-item"
 				@click="handleClickFolderEdit"
 				v-if="folderEditBtnShow"
 			>
 				<i class="el-icon-edit"></i> 编辑文件夹
-			</li>
+			</li> -->
 			<li
 				class="right-menu-item"
 				@click="getFileOnlineEditPathByOffice(selectedFile)"
@@ -416,7 +416,7 @@ export default {
 		handleClickFolderEdit() {
 			router.push({
 				name: 'WebIDE',
-				params: { filePath: this.selectedFile.filePath }
+				query: { filePath: this.selectedFile.filePath }
 			})
 		},
 		/**
