@@ -298,11 +298,12 @@ const globalFunction = {
 	 */
 	handleFileNameClick(row, currentIndex, fileList = []) {
 		// 如果当前文件在回收站中，则不允许预览
-		if (row.deleteFlag !== 0) {
+		if (row.deleteFlag !== undefined && row.deleteFlag !== 0) {
 			return false
 		}
 		// 若是文件夹则进入该文件夹
 		if (row.isDir) {
+			console.log(router.currentRoute.name)
 			if (router.currentRoute.name === 'Share') {
 				// 当前是查看他人分享列表的页面
 				router.push({
