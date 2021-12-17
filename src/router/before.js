@@ -26,7 +26,10 @@ router.beforeEach((to, from, next) => {
 	}
 	// 路由发生变化修改浏览器标签 title
 	if (to.meta.title) {
-		document.title = `${to.meta.title} - ${config.siteName}`
+		document.title =
+			to.name === 'Home'
+				? `${config.siteName} - ${to.meta.title}`
+				: `${to.meta.title} - ${config.siteName}`
 	}
 	// 路由发生变化修改页面 meta 描述信息
 	if (to.meta.content) {
