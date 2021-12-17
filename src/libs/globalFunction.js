@@ -303,7 +303,6 @@ const globalFunction = {
 		}
 		// 若是文件夹则进入该文件夹
 		if (row.isDir) {
-			console.log(router.currentRoute.name)
 			if (router.currentRoute.name === 'Share') {
 				// 当前是查看他人分享列表的页面
 				router.push({
