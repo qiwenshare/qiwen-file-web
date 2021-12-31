@@ -70,6 +70,32 @@ export default new Router({
 			props: true
 		},
 		{
+			path: '/notice',
+			name: 'Notice',
+			component: () =>
+				import(/* webpackChunkName: "noticeList" */ '_v/notice/NoticeList.vue'),
+			meta: {
+				title: '公告',
+				content: {
+					description: '公告列表'
+				}
+			}
+		},
+		{
+			path: '/notice/:noticeId',
+			name: 'NoticeDetail',
+			component: () =>
+				import(
+					/* webpackChunkName: "noticeDetail" */ '_v/notice/NoticeDetail.vue'
+				),
+			meta: {
+				title: '公告详情',
+				content: {
+					description: '公告详情'
+				}
+			}
+		},
+		{
 			path: '*',
 			name: 'Error_404',
 			component: () =>
