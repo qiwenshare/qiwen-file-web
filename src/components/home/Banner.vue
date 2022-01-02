@@ -1,5 +1,5 @@
 <template>
-	<el-carousel height="580px" class="el-carousel">
+	<el-carousel height="360px" class="el-carousel">
 		<el-carousel-item
 			class="carosel-inner"
 			v-for="(item, index) in bannerList"
@@ -17,7 +17,9 @@
 							{{ descItem }}
 						</li>
 					</ul>
-					<el-button round @click="goFile">{{ item.btn }}</el-button>
+					<el-button type="warning" round @click="goFile">
+						{{ item.btn }}
+					</el-button>
 					<div class="version-wrapper">
 						<a
 							class="version-item"
@@ -50,12 +52,9 @@ export default {
 				{
 					title: '一款功能齐全的文件管理系统',
 					descList: [
-						'多种存储方式',
-						'支持分享文件',
-						'单个、批量操作文件、文件夹',
+						'多种存储方式、支持分享文件；单个、批量操作文件、文件夹',
 						'在线解压缩、在线预览、在线编辑文档',
-						'回收站，防止文件误删',
-						'全局搜索文件'
+						'支持回收站、防止文件误删、全局搜索文件'
 					],
 					btn: '开源免费，立即体验',
 					linkList: [
@@ -106,7 +105,7 @@ export default {
       .carousel-caption {
         position: absolute;
         left: 0;
-        top: 96px;
+        top: 32px;
         text-shadow: none;
         max-width: 550px;
         color: #fff;
@@ -115,12 +114,12 @@ export default {
         .bounce {
           font-weight: normal;
           margin: 0;
-          font-size: 30px;
+          font-size: 26px;
           animation-delay: 1s;
         }
 
         .list {
-          padding: 25px 0 25px 20px;
+          padding: 25px 0 40px 20px;
           list-style: none;
 
           .item {
@@ -129,23 +128,12 @@ export default {
           }
         }
 
-        >>> .el-button {
-          border-width: 2px;
-          background: transparent;
-          color: #fff;
-
-          &:hover {
-            border-color: transparent;
-            background: $Warning;
-          }
-        }
-
         .version-wrapper {
-          margin: 0 0 10px;
+          margin: 24px 0 10px;
 
           .version-item {
             display: inline-block;
-            margin: 50px 0 0 18px;
+            margin: 0 0 0 18px;
             color: rgba(255, 255, 255, 0.8);
 
             &:hover {
@@ -166,10 +154,10 @@ export default {
       }
 
       .carousel-img {
-        max-width: 580px;
+        max-width: 443px;
         position: absolute;
         right: 0px;
-        top: 0;
+        top: -40px;
 
         img {
           max-width: 100%;

@@ -39,9 +39,9 @@ const globalFunction = {
 	getImgMinPath(row) {
 		return `${config.baseContext}/filetransfer/preview?userFileId=${
 			row.userFileId
-		}&isMin=true&shareBatchNum=${row.shareBatchNum}&extractionCode=${
-			row.extractionCode
-		}&token=${globalFunction.getCookies(config.tokenKeyName)}`
+		}&isMin=true&shareBatchNum=${
+			row.shareBatchNum == null ? '' : row.shareBatchNum
+		}&extractionCode=${row.extractionCode == null ? '' : row.extractionCode}`
 	},
 	/**
 	 * 获取文件查看路径
@@ -51,9 +51,9 @@ const globalFunction = {
 	getViewFilePath(row) {
 		return `${config.baseContext}/filetransfer/preview?userFileId=${
 			row.userFileId
-		}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${
-			row.extractionCode
-		}&token=${globalFunction.getCookies(config.tokenKeyName)}`
+		}&isMin=false&shareBatchNum=${
+			row.shareBatchNum == null ? '' : row.shareBatchNum
+		}&extractionCode=${row.extractionCode == null ? '' : row.extractionCode}`
 	},
 	/**
 	 * 获取文件下载路径
@@ -63,9 +63,9 @@ const globalFunction = {
 	getDownloadFilePath(row) {
 		return `${config.baseContext}/filetransfer/downloadfile?userFileId=${
 			row.userFileId
-		}&shareBatchNum=${row.shareBatchNum}&extractionCode=${
-			row.extractionCode
-		}&token=${globalFunction.getCookies(config.tokenKeyName)}`
+		}&shareBatchNum=${
+			row.shareBatchNum == null ? '' : row.shareBatchNum
+		}&extractionCode=${row.shareBatchNum == null ? '' : row.shareBatchNum}`
 	},
 	/**
 	 * 获取 Onlyoffice 文件创建路径

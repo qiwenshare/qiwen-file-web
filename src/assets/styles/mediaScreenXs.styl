@@ -70,7 +70,7 @@
         }
       }
       // 首页
-      &.home-swapper {
+      &.home-wrapper {
         // 轮播图
         .el-carousel {
           .el-carousel__container {
@@ -83,10 +83,12 @@
                   margin: 0 auto;
                   padding-top: 32px;
                   .bounce {
+                    margin-bottom: 16px;
                     font-size: 22px;
                   }
                   .list {
-                    padding: 8px;
+                    padding: 8px 8px 48px 8px;
+                    font-size: 14px;
                   }
                   .version-wrapper {
                     margin-top: 16px;
@@ -106,6 +108,19 @@
                   }
                 }
               }
+            }
+          }
+        }
+        .notice-wrapper {
+          .notice-inner {
+            width: 96%;
+            .notice-list {
+              .create-time {
+                display: none;
+              }
+            }
+            .change-btn, .page-count {
+              display: none;
             }
           }
         }
@@ -146,6 +161,11 @@
               }
             }
           }
+        }
+      }
+      &.notice-detail-wrapper {
+        .notice-detail-inner {
+          width: 96%;
         }
       }
       // 网盘页面
