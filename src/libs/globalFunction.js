@@ -65,7 +65,7 @@ const globalFunction = {
 			row.userFileId
 		}&shareBatchNum=${
 			row.shareBatchNum == null ? '' : row.shareBatchNum
-		}&extractionCode=${row.shareBatchNum == null ? '' : row.shareBatchNum}`
+		}&extractionCode=${row.extractionCode == null ? '' : row.extractionCode}`
 	},
 	/**
 	 * 获取 Onlyoffice 文件创建路径
