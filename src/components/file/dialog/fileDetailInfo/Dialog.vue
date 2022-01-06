@@ -41,7 +41,9 @@
 			</el-form-item>
 			<el-form-item label="大小" prop="fileSize">
 				<el-input
-					:value="calculateFileSize(fileInfo.fileSize)"
+					:value="
+						fileInfo.isDir === 0 ? calculateFileSize(fileInfo.fileSize) : ''
+					"
 					readonly
 				></el-input>
 			</el-form-item>
@@ -145,6 +147,7 @@ export default {
     margin-bottom: 16px;
     .el-input__inner {
       border: none;
+      font-size: 14px;
     }
     &.form-item-end-time {
       .el-form-item__content {

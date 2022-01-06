@@ -3,7 +3,6 @@ import App from './App.vue'
 import router from './router/router'
 import store from '@/store/index.js'
 import globalFunction from '@/libs/globalFunction.js'
-import * as filters from '@/filters/index.js'
 import '_a/styles/css/base.css'
 import '_a/styles/css/element-cover.css'
 import '_a/styles/iconfont/iconfont.css'
@@ -35,10 +34,6 @@ Vue.use(element)
 Vue.prototype.$config = config
 Vue.use(uploader)
 Vue.use(operateElement) //  挂载自定义插件
-
-Object.keys(filters).forEach((key) => {
-	Vue.filter(key, filters[key])
-})
 
 new Vue({
 	router,

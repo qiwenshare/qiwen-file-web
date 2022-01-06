@@ -27,11 +27,19 @@ export default {
 				if (res.success) {
 					context.commit(
 						'setStorageValue',
-						res.data ? Number(res.data.storageSize) : 0
+						res.data
+							? res.data.storageSize === null
+								? 0
+								: Number(res.data.storageSize)
+							: 0
 					)
 					context.commit(
 						'setTotalStorageValue',
-						res.data ? Number(res.data.totalStorageSize) : 0
+						res.data
+							? res.data.totalStorageSize === null
+								? 0
+								: Number(res.data.totalStorageSize)
+							: 0
 					)
 				} else {
 					this.$message.error(res.message)
