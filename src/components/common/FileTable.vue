@@ -67,7 +67,7 @@
 							{{ scope.row.uploadTime }}
 							<span class="file-size">
 								{{
-									scope.row.fileSize
+									scope.row.isDir === 0
 										? calculateFileSize(scope.row.fileSize)
 										: ''
 								}}
@@ -124,9 +124,9 @@
 				v-if="selectedColumnList.includes('fileSize') && screenWidth > 768"
 			>
 				<template slot-scope="scope">
-					<div style="padding: 0 10px">
-						{{ calculateFileSize(scope.row.fileSize) }}
-					</div>
+					{{
+						scope.row.isDir === 0 ? calculateFileSize(scope.row.fileSize) : ''
+					}}
 				</template>
 			</el-table-column>
 			<el-table-column

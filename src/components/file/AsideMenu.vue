@@ -94,13 +94,13 @@
 				></el-progress>
 				<div class="text" v-show="!isCollapse">
 					<span class="label">存储</span>
-					<span
-						>{{ storageValue | storageTrans }} /
-						{{ totalStorageValue | storageTrans }}</span
-					>
+					<span>
+						{{ calculateFileSize(storageValue) }} /
+						{{ calculateFileSize(totalStorageValue) }}
+					</span>
 				</div>
 				<div class="text" v-show="isCollapse">
-					<span>{{ storageValue | storageTrans }}</span>
+					<span>{{ calculateFileSize(storageValue) }}</span>
 				</div>
 			</div>
 		</el-drawer>
@@ -193,12 +193,12 @@
 				<div class="text" v-show="!isCollapse">
 					<span class="label">存储</span>
 					<span
-						>{{ storageValue | storageTrans }} /
-						{{ totalStorageValue | storageTrans }}</span
+						>{{ calculateFileSize(storageValue) }} /
+						{{ calculateFileSize(totalStorageValue) }}</span
 					>
 				</div>
 				<div class="text" v-show="isCollapse">
-					<span>{{ storageValue | storageTrans }}</span>
+					<span>{{ calculateFileSize(storageValue) }}</span>
 				</div>
 			</div>
 		</template>
