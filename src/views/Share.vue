@@ -8,6 +8,7 @@
 					type="primary"
 					size="mini"
 					icon="el-icon-takeaway-box"
+					v-show="isLogin"
 					@click="handleSaveBtnClick"
 					>保存到网盘</el-button
 				>
@@ -63,6 +64,7 @@
 <script>
 import BreadCrumb from '_c/common/BreadCrumb.vue'
 import FileTable from '_c/common/FileTable.vue'
+import { mapGetters } from 'vuex'
 import {
 	checkShareLinkEndtime,
 	checkShareLinkType,
@@ -100,6 +102,7 @@ export default {
 		}
 	},
 	computed: {
+		...mapGetters(['isLogin']),
 		shareBatchNum() {
 			return this.$route.params.shareBatchNum
 		},
