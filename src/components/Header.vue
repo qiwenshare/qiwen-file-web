@@ -41,16 +41,22 @@
 					</div>
 				</template>
 			</template>
+			<!-- 生产环境 -->
+			<el-menu-item class="register" v-if="isProductEnv" v-show="!isLogin">
+				<a :href="getAccountHref('/login/account')" target="_self">登录</a>
+			</el-menu-item>
+			<!-- 开发环境 -->
 			<el-menu-item
 				class="login"
 				index="Login"
 				:route="{ name: 'Login' }"
+				v-else
 				v-show="!isLogin"
 				>登录</el-menu-item
 			>
 			<!-- 生产环境 -->
 			<el-menu-item class="register" v-if="isProductEnv" v-show="!isLogin">
-				<a href="https://www.qiwenshare.com/register" target="_blank">注册</a>
+				<a :href="getAccountHref('/register')" target="_blank">注册</a>
 			</el-menu-item>
 			<!-- 开发环境 -->
 			<el-menu-item
@@ -94,15 +100,19 @@ export default {
 		}
 	},
 	methods: {
+		// 奇文社区生产环境账户网址
+		getAccountHref(path) {
+			return `https://account.qiwenshare.com${path}?Rurl=${location.href}`
+		},
 		/**
 		 * 退出登录
 		 * @description 清除 cookie 存放的 token  并跳转到登录页面
 		 */
 		exitButton() {
 			this.$message.success('退出登录成功！')
+			this.removeCookies(this.$config.tokenKeyName)
 			this.$store.dispatch('getUserInfo').then(() => {
-				this.removeCookies(this.$config.tokenKeyName)
-				this.$router.push({ path: '/login' })
+				this.$router.push({ name: 'Home' })
 			})
 		}
 	}
