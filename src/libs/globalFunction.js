@@ -7,6 +7,18 @@ import { fileImgMap, unknownImg, fileSuffixCodeModeMap } from '@/libs/map.js'
 
 // 全局函数
 const globalFunction = {
+	// 跳转到奇文账户域名下的某个路径，默认在当前标签页打开
+	goAccount(path, target = '_self') {
+		open(`https://account.qiwenshare.com${path}?Rurl=${location.href}`, target)
+	},
+	// 检测用户登录状态并做相应的跳转
+	checkIsLogin() {
+		if (this.$store.state.isLogin == false) {
+			globalFunction.goAccount(`/login/account`)
+		} else {
+			return true
+		}
+	},
 	/**
 	 * 格式化文件大小
 	 * @param {number} size 文件大小

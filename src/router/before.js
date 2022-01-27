@@ -1,6 +1,7 @@
 import router from '@/router/router'
 import store from '@/store/index.js'
 import config from '@/config/index.js'
+import globalFunction from '@/libs/globalFunction.js'
 
 // 路由全局前置守卫
 router.beforeEach((to, from, next) => {
@@ -9,11 +10,18 @@ router.beforeEach((to, from, next) => {
 		// 调用获取用户登录状态和信息的接口
 		store.dispatch('getUserInfo').then(() => {
 			if (!store.getters.isLogin) {
-				// 没有登录时，跳转到登录页面
-				next({
-					path: '/login',
-					query: { Rurl: to.fullPath } //  将to参数中的url传递给login页面进行操作
-				})
+				if (
+					process.env.NODE_ENV !== 'development' &&
+					location.origin === 'https://pan.qiwenshare.com'
+				) {
+					globalFunction.goAccount(`/login/account`)
+				} else {
+					// 没有登录时，跳转到登录页面
+					next({
+						path: '/login',
+						query: { Rurl: to.fullPath } //  将to参数中的url传递给login页面进行操作
+					})
+				}
 			} else {
 				next() // 正常跳转
 			}
