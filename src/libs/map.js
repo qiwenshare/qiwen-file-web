@@ -115,7 +115,8 @@ export const fileSuffixCodeModeMap = new Map([
 	['ts', { language: 'Typescript', mime: 'text/typescript' }],
 	['json', { language: 'JSON', mime: 'application/json' }],
 	['jsp', { language: 'JSP', mime: 'application/x-jsp' }],
-	['vue', { language: 'Vue', mime: 'text/x-vue' }],
+	['txt', { language: '', mime: '' }],
+	['vue', { language: 'HTML', mime: 'text/html' }],
 	['sql', { language: 'SQL', mime: 'text/x-sql' }],
 	['swift', { language: 'Swift', mime: 'text/x-swift' }],
 	['yml', { language: 'YAML', mime: 'text/x-yaml' }]

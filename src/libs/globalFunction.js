@@ -377,7 +377,11 @@ const globalFunction = {
 			if (codeFileSuffix === 'yaml') {
 				codeFileSuffix = 'yml'
 			}
-			if (fileSuffixCodeModeMap.has(codeFileSuffix)) {
+			// 无格式文件也可以在线编辑
+			if (
+				fileSuffixCodeModeMap.has(codeFileSuffix) ||
+				(row.isDir === 0 && row.extendName === '')
+			) {
 				Vue.prototype.$previewCode({ fileInfo: row })
 				return false
 			}
