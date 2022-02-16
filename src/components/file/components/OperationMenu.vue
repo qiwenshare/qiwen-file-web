@@ -136,7 +136,35 @@
 			v-if="fileModel === 1 && fileType !== 8"
 			@click="handleBatchOperationChange()"
 		></i>
-		<el-divider direction="vertical" v-if="fileModel === 1"></el-divider>
+		<i
+			class="refresh-icon el-icon-refresh"
+			title="刷新文件列表"
+			@click="$emit('getTableDataByType')"
+		></i>
+		<el-divider direction="vertical"></el-divider>
+		<template v-if="screenWidth > 768">
+			<!-- 文件展示模式 -->
+			<i
+				class="model-icon el-icon-notebook-2"
+				:class="{ active: fileGroupLable === 0 }"
+				title="列表模式"
+				@click="handleFileDisplayModelChange(0)"
+			></i>
+			<i
+				class="model-icon el-icon-s-grid"
+				:class="{ active: fileGroupLable === 1 }"
+				title="网格模式"
+				@click="handleFileDisplayModelChange(1)"
+			></i>
+			<i
+				class="model-icon el-icon-date"
+				:class="{ active: fileGroupLable === 2 }"
+				title="时间线模式"
+				v-if="fileType === 1"
+				@click="handleFileDisplayModelChange(2)"
+			></i>
+			<el-divider direction="vertical"></el-divider>
+		</template>
 
 		<!-- 操作栏收纳 -->
 		<el-popover
@@ -151,9 +179,8 @@
 			></i>
 			<!-- 选择表格列 -->
 			<SelectColumn></SelectColumn>
-			<el-divider class="split-line"></el-divider>
 			<!-- 文件展示模式 -->
-			<div class="change-file-model">
+			<div class="change-file-model" v-if="screenWidth <= 768">
 				<div class="title">查看模式</div>
 				<el-radio-group
 					v-model="fileGroupLable"
@@ -161,7 +188,7 @@
 					@change="handleFileDisplayModelChange"
 				>
 					<el-radio-button :label="0">
-						<i class="el-icon-tickets"></i> 列表
+						<i class="el-icon-notebook-2"></i> 列表
 					</el-radio-button>
 					<el-radio-button :label="1">
 						<i class="el-icon-s-grid"></i> 网格
@@ -171,20 +198,20 @@
 					</el-radio-button>
 				</el-radio-group>
 			</div>
-			<!-- 图标大小调整 -->
-			<div
-				class="change-grid-size"
-				v-if="fileGroupLable === 1 || fileGroupLable === 2"
-			>
-				<div class="title">调整图标大小</div>
-				<el-slider
-					v-model="gridSize"
-					:min="20"
-					:max="150"
-					:step="10"
-					:format-tooltip="formatTooltip"
-				></el-slider>
-			</div>
+			<template v-if="fileGroupLable === 1 || fileGroupLable === 2">
+				<el-divider class="split-line"></el-divider>
+				<!-- 图标大小调整 -->
+				<div class="change-grid-size">
+					<div class="title">调整图标大小</div>
+					<el-slider
+						v-model="gridSize"
+						:min="20"
+						:max="150"
+						:step="10"
+						:format-tooltip="formatTooltip"
+					></el-slider>
+				</div>
+			</template>
 		</el-popover>
 
 		<!-- 多选文件下载，页面隐藏 -->
@@ -415,6 +442,7 @@ export default {
 		 * @param {number} label 0 列表 1 网格 2 时间线
 		 */
 		handleFileDisplayModelChange(label) {
+			this.fileGroupLable = label
 			// 关闭右键菜单事件
 			this.$openContextMenu.close()
 			this.$store.commit('changeFileModel', label)
@@ -485,11 +513,19 @@ export default {
     }
   }
 
-  .batch-opera-btn {
+  .batch-icon,
+  .model-icon {
     margin-right: 8px;
+    &:last-of-type {
+      margin-right: 0;
+    }
   }
 
-  .batch-icon, .setting-icon {
+  .model-icon.active {
+    color: $Primary;
+  }
+
+  .refresh-icon, .batch-icon, .model-icon, .setting-icon {
     font-size: 20px;
     cursor: pointer;
     color: $SecondaryText;
@@ -506,13 +542,5 @@ export default {
 
 .split-line {
   margin: 8px 0;
-}
-
-.change-file-model, .change-grid-size {
-  .title {
-    margin: 8px 0;
-    color: $SecondaryText;
-    font-size: 14px;
-  }
 }
 </style>
