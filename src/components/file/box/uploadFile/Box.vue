@@ -167,7 +167,8 @@ export default {
 				src: '',
 				name: ''
 			},
-			pasteImgObj: null //  粘贴图片 File 对象
+			pasteImgObj: null, //  粘贴图片 File 对象
+			filesLength: 0 //  上传的文件个数
 		}
 	},
 	computed: {
@@ -271,6 +272,7 @@ export default {
 				files.ignored = true //  本次选择的文件过滤掉
 			} else {
 				// 批量或单个选择的文件未超出剩余存储空间，正常上传
+				this.filesLength += files.length
 				files.forEach((file) => {
 					this.dropBoxShow = false
 					this.panelShow = true
@@ -294,13 +296,19 @@ export default {
 
 			let result = JSON.parse(response)
 			if (result.success) {
-				this.$message.success(`${file.name} - 上传完毕`)
 				file.statusStr = ''
-				this.callback(true)
+				if (this.filesLength === 1) {
+					// 本次所有的文件均已上传完毕
+					this.$message.success(`上传完毕`)
+					this.serviceEl.$emit('getTableDataByType')
+					this.serviceEl.$store.dispatch('showStorage')
+					this.callback(true)
+				}
 			} else {
 				this.$message.error(result.message)
 				file.statusStr = '上传失败'
 			}
+			this.filesLength--
 		},
 		/**
 		 * 文件上传失败 回调函数

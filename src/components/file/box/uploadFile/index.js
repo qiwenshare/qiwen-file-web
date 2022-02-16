@@ -9,14 +9,16 @@ let uploadFileInstance = null
  * 初始化右键菜单实例
  * @param {string} params 上传文件组件参数
  * @param {object} uploadWay 上传方式 0-文件上传 1-文件夹上传 2-粘贴图片或拖拽上传
+ * @param {el} serviceEl 组件实例
  */
-const initInstanceUploadFile = (params, uploadWay) => {
+const initInstanceUploadFile = (params, uploadWay, serviceEl) => {
 	uploadFileInstance = new UploadFileConstructor({
 		el: document.createElement('div'),
 		data() {
 			return {
 				params,
-				uploadWay
+				uploadWay,
+				serviceEl
 			}
 		}
 	})
@@ -28,24 +30,25 @@ const initInstanceUploadFile = (params, uploadWay) => {
 const showUploadFileBox = (obj) => {
 	// 非首次调用服务时，在 DOM 中移除上个实例
 	if (uploadFileInstance !== null) {
-		document.body.removeChild(uploadFileInstance.$el)
-	}
-	let { params, uploadWay } = obj
-	return new Promise((reslove) => {
-		initInstanceUploadFile(params, uploadWay)
-		uploadFileInstance.callback = (res) => {
-			reslove(res)
-			// 服务取消时卸载 DOM
-			if (res === 'cancel' && uploadFileInstance !== null) {
-				document.body.removeChild(uploadFileInstance.$el)
-				uploadFileInstance = null
+		uploadFileInstance.handlePrepareUpload() //  上传组件开始预处理
+	} else {
+		let { params, uploadWay, serviceEl } = obj
+		return new Promise((reslove) => {
+			initInstanceUploadFile(params, uploadWay, serviceEl)
+			uploadFileInstance.callback = (res) => {
+				reslove(res)
+				// 服务取消时卸载 DOM
+				if (res === 'cancel' && uploadFileInstance !== null) {
+					document.body.removeChild(uploadFileInstance.$el)
+					uploadFileInstance = null
+				}
 			}
-		}
-		document.body.appendChild(uploadFileInstance.$el) //  挂载 DOM
-		Vue.nextTick(() => {
-			uploadFileInstance.handlePrepareUpload() //  上传组件开始预处理
+			document.body.appendChild(uploadFileInstance.$el) //  挂载 DOM
+			Vue.nextTick(() => {
+				uploadFileInstance.handlePrepareUpload() //  上传组件开始预处理
+			})
 		})
-	})
+	}
 }
 
 export default showUploadFileBox
