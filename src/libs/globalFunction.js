@@ -419,6 +419,17 @@ const globalFunction = {
 			  }`
 	},
 	/**
+	 * 文件类型
+	 * @param {object} file 文件信息
+	 */
+	getFileType(file) {
+		return file.isDir === 1
+			? '文件夹'
+			: file.extendName
+			? file.extendName
+			: '文件'
+	},
+	/**
 	 * 获取文件分享过期状态
 	 * @param {string} time 日期
 	 * @returns {boolean} 是否过期
