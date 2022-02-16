@@ -37,7 +37,7 @@
 				></el-input>
 			</el-form-item>
 			<el-form-item label="类型" prop="fileName">
-				<el-input :value="fileInfo.extendName || '文件夹'" readonly></el-input>
+				<el-input :value="getFileType(fileInfo)" readonly></el-input>
 			</el-form-item>
 			<el-form-item label="大小" prop="fileSize">
 				<el-input

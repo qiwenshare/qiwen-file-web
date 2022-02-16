@@ -7,6 +7,18 @@ import { fileImgMap, unknownImg, fileSuffixCodeModeMap } from '@/libs/map.js'
 
 // 全局函数
 const globalFunction = {
+	// 跳转到奇文账户域名下的某个路径，默认在当前标签页打开
+	goAccount(path, target = '_self') {
+		open(`https://account.qiwenshare.com${path}?Rurl=${location.href}`, target)
+	},
+	// 检测用户登录状态并做相应的跳转
+	checkIsLogin() {
+		if (this.$store.state.isLogin == false) {
+			globalFunction.goAccount(`/login/account`)
+		} else {
+			return true
+		}
+	},
 	/**
 	 * 格式化文件大小
 	 * @param {number} size 文件大小
@@ -365,7 +377,11 @@ const globalFunction = {
 			if (codeFileSuffix === 'yaml') {
 				codeFileSuffix = 'yml'
 			}
-			if (fileSuffixCodeModeMap.has(codeFileSuffix)) {
+			// 无格式文件也可以在线编辑
+			if (
+				fileSuffixCodeModeMap.has(codeFileSuffix) ||
+				(row.isDir === 0 && row.extendName === '')
+			) {
 				Vue.prototype.$previewCode({ fileInfo: row })
 				return false
 			}
@@ -405,6 +421,17 @@ const globalFunction = {
 			: `${file.fileName}${
 					file.isDir === 0 && file.extendName ? `.${file.extendName}` : ''
 			  }`
+	},
+	/**
+	 * 文件类型
+	 * @param {object} file 文件信息
+	 */
+	getFileType(file) {
+		return file.isDir === 1
+			? '文件夹'
+			: file.extendName
+			? file.extendName
+			: '文件'
 	},
 	/**
 	 * 获取文件分享过期状态

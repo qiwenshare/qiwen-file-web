@@ -374,6 +374,7 @@ export default {
 		 * @param {object} fileInfo 文件信息
 		 */
 		handleRestoreFileBtnClick(fileInfo) {
+			this.visible = false
 			this.$restoreFile({
 				deleteBatchNum: fileInfo.deleteBatchNum,
 				filePath: fileInfo.filePath
