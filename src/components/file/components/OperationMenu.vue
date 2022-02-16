@@ -1,5 +1,9 @@
 <template>
-	<div class="operation-menu-wrapper" :class="'file-type-' + fileType">
+	<div
+		class="operation-menu-wrapper"
+		:class="'file-type-' + fileType"
+		ref="operationMenuRef"
+	>
 		<el-button-group
 			class="create-operate-group"
 			v-if="(!selectedFiles.length || !isBatchOperation) && fileType === 0"
@@ -330,12 +334,8 @@ export default {
 		handleUploadFileBtnClick(uploadWay) {
 			this.$uploadFile({
 				params: this.uploadFileParams,
-				uploadWay
-			}).then((res) => {
-				if (res) {
-					this.$emit('getTableDataByType')
-					this.$store.dispatch('showStorage')
-				}
+				uploadWay,
+				serviceEl: this
 			})
 		},
 
