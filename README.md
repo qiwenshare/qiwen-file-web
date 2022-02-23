@@ -2,7 +2,7 @@
 	<a href="http://fileos.qiwenshare.com/"><img width="30%" src="https://images.gitee.com/uploads/images/2021/0511/141109_0a709933_947714.png" ></a>
 </p>
 <p align="center">
-	<strong>基于Spring Boot + VUE CLI@3 框架开发的分布式文件系统，旨在为用户和企业提供一个简单、方便的文件存储方案，能够以完善的目录结构体系，对文件进行管理 。</strong>
+	<strong>基于Spring Boot + Vue3 框架开发的分布式文件系统，旨在为用户和企业提供一个简单、方便的文件存储方案，能够以完善的目录结构体系，对文件进行管理 。</strong>
 </p>
 <p align="center">
 	<a target="_blank" href="https://baike.baidu.com/item/MIT%E8%AE%B8%E5%8F%AF%E8%AF%81/6671281?fr=aladdin">
@@ -63,6 +63,28 @@
 | 奇文网盘前端 | [https://gitee.com/qiwen-cloud/qiwen-file-web](https://gitee.com/qiwen-cloud/qiwen-file-web) |
 | 奇文网盘后台 | [https://gitee.com/qiwen-cloud/qiwen-file](https://gitee.com/qiwen-cloud/qiwen-file)         |
 
+## 分支说明
+
+|               | master     | develop    | vue3/typescript/master | vue3/typescript/develop |
+| ------------- | ---------- | ---------- | ---------------------- | ----------------------- |
+| 稳定性        | 稳定分支   | 开发分支   | 稳定分支               | 开发分支                |
+| Vue.js 版本   | Vue 2      | Vue 2      | Vue 3                  | Vue 3                   |
+| 脚手架        | @vue/cli 5 | @vue/cli 5 | Vite                   | Vite                    |
+| 路由          | vue-router | vue-router | vue-router@4           | vue-router@4            |
+| 状态管理器    | Vuex       | Vuex       | Pinia                  | Pinia                   |
+| UI 组件库     | Element UI | Element UI | Element Plus           | Element Plus            |
+| JavaScript 库 | JavaScript | JavaScript | TypeScript             | TypeScript              |
+| XHR 请求      | Axios      | Axios      | Axios                  | Axios                   |
+
+分支合并路径为：
+
+1. develop -> master
+2. vue3/typescript/develop -> vue3/typescript/master
+
+目前 vue2 相关的两个分支已趋于稳定，vue3 相关的两个分支正在快速迭代中……
+
+**注意**：如果需要从 **vue2** 相关的分支切换到 **vue3** 相关的分支，建议您在本地再次 clone 此工程，在两个工程中切换到不同 vue 版本对应的分支，并执行`npm install`、`npm run dev` 、`npm run build` 等安装、运行、打包命令，来生成 `node_modules`或 `dist` 部署包，以避免由于脚手架、Vue 版本、状态管理器的不同，带来的运行和打包矛盾。
+
 ## 网络拓扑图
 
 ![网络拓扑图](https://images.gitee.com/uploads/images/2021/0324/225520_d55b109e_947714.png '屏幕截图.png')
@@ -71,7 +93,7 @@
 
 该项目采用前后端分离的方式进行开发和部署,主要用到以下关键技术
 
-**前端**：Element UI、Vue CLI@3、Node.js、Webpack
+**前端**：Element Plus、Vite、Vue3、Pinia、Vue Router、Node.js、TypeScript
 
 **后台**：Spring Boot、MyBatis、JPA、JWT
 
