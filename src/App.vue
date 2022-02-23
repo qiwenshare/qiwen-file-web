@@ -1,74 +1,66 @@
 <template>
-  <div id="app">
-    <Header v-if="isHeaderShow" id="headWrapper"></Header>
-    <router-view class="mainContent"></router-view>
-    <Footer v-if="isFooterShow"></Footer>
-    <el-backtop class="backtop" target="#app" title="回到顶部"></el-backtop>
-    <!-- 将上传组件全局注册 -->
-    <global-uploader v-if="isFileAboutShow"></global-uploader>
-    <!-- 图片预览 -->
-    <img-preview v-if="isFileAboutShow"></img-preview>
-    <!-- 视频预览 -->
-    <video-preview v-if="isFileAboutShow"></video-preview>
-  </div>
+	<div id="app">
+		<HeaderNav v-if="isHeaderShow" id="headWrapper"></HeaderNav>
+		<router-view class="main-content"></router-view>
+		<FooterNav v-if="isFooterShow"></FooterNav>
+		<el-backtop class="backtop" title="回到顶部"></el-backtop>
+	</div>
 </template>
 
-<script>
-import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
-import globalUploader from '@/components//common/GlobalUploader.vue'
-import ImgPreview from '@/components/common/ImgPreview'
-import VideoPreview from '@/components/common/VideoPreview'
+<script setup lang="ts">
+import HeaderNav from '_c/HeaderNav.vue'
+import FooterNav from '_c/FooterNav.vue'
+import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { commonStore } from './store/common'
+const route: any = useRoute()
+const common = commonStore()
 
-export default {
-  name: 'App',
-  components: {
-    Header,
-    Footer,
-    globalUploader,
-    ImgPreview,
-    VideoPreview
-  },
-  computed: {
-    //  头部是否显示
-    isHeaderShow() {
-      let routerNameList = ['Error_401', 'Error_404', 'Error_500']
-      return routerNameList.includes(this.$route.name) ? false : true
-    },
-    //  底部是否显示
-    isFooterShow() {
-      let routerNameList = ['File', 'Share', 'MyShare', 'Error_401', 'Error_404', 'Error_500']
-      return routerNameList.includes(this.$route.name) ? false : true
-    },
-    // 网盘页面文件上传/预览相关组件是否显示
-    isFileAboutShow() {
-      let routerNameList = ['Login', 'Register']
-      return routerNameList.includes(this.$route.name) ? false : true
-    }
-  }
-}
+//  头部是否显示
+const isHeaderShow = computed(() => {
+	let routerNameList = ['Onlyoffice', 'Error_401', 'Error_404', 'Error_500']
+	return routerNameList.includes(route.name) ? false : true
+})
+//  底部是否显示
+const isFooterShow = computed(() => {
+	let routerNameList = [
+		'Onlyoffice',
+		'File',
+		'Share',
+		'Error_401',
+		'Error_404',
+		'Error_500'
+	]
+	return routerNameList.includes(route.name) ? false : true
+})
+
+onMounted(() => {
+	window.addEventListener('resize', function () {
+		return (() => {
+			common.changeScreenWidth(document.body.clientWidth)
+		})()
+	})
+})
 </script>
-<style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl';
+<style lang="scss" scoped>
+@import '_a/styles/element-plus-varibles.scss';
 
 #app {
-  height: 100%;
-  overflow-x: hidden;
-  -webkit-text-size-adjust: none;
-  overflow-y: auto;
-
-  >>> .el-backtop {
-    background-color: $Success;
-    color: #fff;
-    z-index: 3;
-  }
-
-  .mainContent {
-    flex: 1;
-    width: 90%;
-    min-height: calc(100vh - 70px);
-    margin: 0 auto;
-    display: flex;
-  }
+	height: 100%;
+	overflow-x: hidden;
+	-webkit-text-size-adjust: none;
+	overflow-y: auto;
+	:deep(.el-backtop) {
+		background-color: $Success;
+		color: #fff;
+		z-index: 3;
+	}
+	.main-content {
+		flex: 1;
+		width: 90%;
+		min-height: calc(100vh - 70px);
+		margin: 0 auto;
+		display: flex;
+	}
 }
 </style>

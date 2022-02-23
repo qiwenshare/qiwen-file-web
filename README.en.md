@@ -2,7 +2,7 @@
 	<a href="http://fileos.qiwenshare.com/"><img width="30%" src="https://images.gitee.com/uploads/images/2021/0511/141109_0a709933_947714.png" ></a>
 </p>
 <p align="center">
-	<strong>The distributed file system based on Spring Boot + VUE CLI@3 framework is designed to provide a simple and convenient file storage scheme for users and enterprises. It can manage files with a perfect directory structure system.</strong>
+	<strong>The distributed file system based on Spring Boot + Vue3 framework is designed to provide a simple and convenient file storage scheme for users and enterprises. It can manage files with a perfect directory structure system.</strong>
 </p>
 <p align="center">
 	<a target="_blank" href="https://baike.baidu.com/item/MIT%E8%AE%B8%E5%8F%AF%E8%AF%81/6671281?fr=aladdin">
@@ -71,7 +71,7 @@ The software follows the MIT open source protocol
 
 The project was developed and deployed in a front-end separation approach, using the following key technologies
 
-**Front**：Element UI、Vue CLI@3、Node.js、Webpack
+**Front**：Element Plus、Vite、Vue3、Pinia、Vue Router、Node.js、TypeScript
 
 **Background **：Spring Boot、MyBatis、JPA、JWT
 

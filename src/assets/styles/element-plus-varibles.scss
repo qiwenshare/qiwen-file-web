@@ -1,0 +1,27 @@
+// 主题色
+$Primary: var(--el-color-primary);
+$Success: var(--el-color-success);
+$Warning: var(--el-color-warning);
+$Danger: var(--el-color-danger);
+$Info: var(--el-color-info);
+// 主题色的 Hover 颜色
+$PrimaryHover: var(--el-color-primary-light-9);
+$SuccessHover: var(--el-color-success-lighter);
+$WarningHover: var(--el-color-warning-lighter);
+$DangerHover: var(--el-color-danger-lighter);
+$InfoHover: var(--el-color-info-light);
+// 文字颜色
+$PrimaryText: var(--el-text-color-primary);
+$RegularText: var(--el-text-color-regular);
+$SecondaryText: var(--el-text-color-secondary);
+$Placeholder: var(--el-text-color-placeholder);
+// 边框颜色
+$BorderBase: var(--el-border-color-base);
+$BorderLight: var(--el-border-color-light);
+$BorderLighter: var(--el-border-color-lighter);
+$BorderExtralight: var(--el-border-color-extra-light);
+// 背景色
+$tabBackColor: var(--el-bg-color);
+// 阴影颜色
+$tabBoxShadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+$tabBoxShadowMin: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
