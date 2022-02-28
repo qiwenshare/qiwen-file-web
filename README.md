@@ -80,6 +80,28 @@
 | 奇文网盘前端 | [https://gitee.com/qiwen-cloud/qiwen-file-web](https://gitee.com/qiwen-cloud/qiwen-file-web) |
 | 奇文网盘后台 | [https://gitee.com/qiwen-cloud/qiwen-file](https://gitee.com/qiwen-cloud/qiwen-file)         |
 
+## 分支说明
+
+|               | master     | develop    | vue3/typescript/master | vue3/typescript/develop |
+| ------------- | ---------- | ---------- | ---------------------- | ----------------------- |
+| 稳定性        | 稳定分支   | 开发分支   | 稳定分支               | 开发分支                |
+| Vue.js 版本   | Vue 2      | Vue 2      | Vue 3                  | Vue 3                   |
+| 脚手架        | @vue/cli 5 | @vue/cli 5 | Vite                   | Vite                    |
+| 路由          | vue-router | vue-router | vue-router@4           | vue-router@4            |
+| 状态管理器    | Vuex       | Vuex       | Pinia                  | Pinia                   |
+| UI 组件库     | Element UI | Element UI | Element Plus           | Element Plus            |
+| JavaScript 库 | JavaScript | JavaScript | TypeScript             | TypeScript              |
+| XHR 请求      | Axios      | Axios      | Axios                  | Axios                   |
+
+分支合并路径为：
+
+1. develop -> master
+2. vue3/typescript/develop -> vue3/typescript/master
+
+目前 vue2 相关的两个分支已趋于稳定，vue3 相关的两个分支正在快速迭代中……
+
+**注意**：如果需要从 **vue2** 相关的分支切换到 **vue3** 相关的分支，建议您在本地再次 clone 此工程，在两个工程中切换到不同 vue 版本对应的分支，并执行`npm install`、`npm run dev` 、`npm run build` 等安装、运行、打包命令，来生成 `node_modules`或 `dist` 部署包，以避免由于脚手架、Vue 版本、状态管理器的不同，带来的运行和打包矛盾。
+
 ## 网络拓扑图
 
 ![网络拓扑图](https://pan.qiwenshare.com/docs/img/guide/web-expand.png)
