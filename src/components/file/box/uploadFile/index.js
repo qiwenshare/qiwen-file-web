@@ -30,6 +30,10 @@ const initInstanceUploadFile = (params, uploadWay, serviceEl) => {
 const showUploadFileBox = (obj) => {
 	// 非首次调用服务时，在 DOM 中移除上个实例
 	if (uploadFileInstance !== null) {
+		let { params, uploadWay, serviceEl } = obj
+		uploadFileInstance.params = params
+		uploadFileInstance.uploadWay = uploadWay
+		uploadFileInstance.serviceEl = serviceEl
 		uploadFileInstance.handlePrepareUpload() //  上传组件开始预处理
 	} else {
 		let { params, uploadWay, serviceEl } = obj
