@@ -42,7 +42,11 @@
 				</template>
 			</template>
 			<!-- 生产环境 -->
-			<el-menu-item class="register" v-if="isProductEnv" v-show="!isLogin">
+			<el-menu-item
+				class="login external-link"
+				v-if="isProductEnv"
+				v-show="!isLogin"
+			>
 				<a :href="getAccountHref('/login/account')" target="_self">登录</a>
 			</el-menu-item>
 			<!-- 开发环境 -->
@@ -55,8 +59,12 @@
 				>登录</el-menu-item
 			>
 			<!-- 生产环境 -->
-			<el-menu-item class="register" v-if="isProductEnv" v-show="!isLogin">
-				<a :href="getAccountHref('/register')" target="_blank">注册</a>
+			<el-menu-item
+				class="register external-link"
+				v-if="isProductEnv"
+				v-show="!isLogin"
+			>
+				<a :href="getAccountHref('/register')" target="_self">注册</a>
 			</el-menu-item>
 			<!-- 开发环境 -->
 			<el-menu-item
