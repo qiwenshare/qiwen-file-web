@@ -7,7 +7,7 @@
 				:alt="$store.getters.imgAlt + 'footerLogo'"
 			/>
 			<div class="copy-right">
-				<span>奇文共赏 2020 版权所有</span>
+				<span>{{ webSiteName }} {{ copyrightYear }} 版权所有</span>
 				<span class="split">|</span>
 				<span
 					><a
@@ -15,7 +15,7 @@
 						style="color: white"
 						href="http://beian.miit.gov.cn/"
 						target="_blank"
-						>陕ICP备19020251号</a
+						>{{ licenseNo }}</a
 					>&nbsp;</span
 				>
 				<p class="tip-website">
@@ -46,11 +46,15 @@
 </template>
 
 <script>
+import { getParamsDetail } from '_r/home.js'
+
 export default {
 	name: 'Footer',
 	data() {
 		return {
 			logoUrl: require('_a/images/common/logo_footer.png'),
+			webSiteName: '网站名称XXX',
+			licenseNo: '备案号XXX',
 			joinList: [
 				{
 					class: 'qq',
@@ -71,6 +75,28 @@ export default {
 					title: '码云 开源社区'
 				}
 			]
+		}
+	},
+	computed: {
+		copyrightYear() {
+			return new Date().getFullYear()
+		}
+	},
+	created() {
+		this.getParamsDetailData()
+	},
+	methods: {
+		/**
+		 * 获取系统参数信息
+		 */
+		getParamsDetailData() {
+			getParamsDetail({ groupName: 'copyright' }).then((res) => {
+				if (res.success) {
+					console.log(res.data)
+					this.licenseNo = res.data.licenseKey || '备案号XXX'
+					this.webSiteName = res.data.domainChineseName || '网站名称XXX'
+				}
+			})
 		}
 	}
 }
