@@ -43,6 +43,15 @@ export default {
 				that.$store.commit('changeScreenWidth', document.body.clientWidth)
 			})()
 		})
+		document
+			.querySelector('meta[name="keywords"]')
+			.setAttribute(
+				'content',
+				process.env.NODE_ENV === 'production' &&
+					location.host.indexOf('.qiwenshare.com') !== -1
+					? this.$config.siteName
+					: '网盘名称'
+			)
 	}
 }
 </script>

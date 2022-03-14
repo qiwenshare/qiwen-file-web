@@ -92,7 +92,6 @@ export default {
 		getParamsDetailData() {
 			getParamsDetail({ groupName: 'copyright' }).then((res) => {
 				if (res.success) {
-					console.log(res.data)
 					this.licenseNo = res.data.licenseKey || '备案号XXX'
 					this.webSiteName = res.data.domainChineseName || '网站名称XXX'
 				}
