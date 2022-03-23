@@ -7,11 +7,12 @@
 				:alt="`${globalConfig.siteName} footerLogo`"
 			/>
 			<div class="copy-right">
-				<span>奇文共赏 2020 版权所有</span>
+				<span>{{ webSiteName }} {{ copyrightYear }} 版权所有</span>
 				<span class="split">|</span>
 				<span
-					><a class="link" href="http://beian.miit.gov.cn/" target="_blank"
-						>陕ICP备19020251号</a
+					><a class="link" href="http://beian.miit.gov.cn/" target="_blank">{{
+						licenseNo
+					}}</a
 					>&nbsp;</span
 				>
 				<p class="tip-website">
@@ -46,6 +47,12 @@ import qqImg from '/images/footer/QQImg.png'
 import wechatImg from '/images/footer/wechatImg.png'
 import giteeImg from '/images/footer/giteeImg.png'
 import globalConfig from '@/config/index'
+import { computed, onMounted } from 'vue'
+import { getParamsDetail } from '_r/home'
+
+let webSiteName = '网站名称XXX'
+let copyrightYear = computed(() => new Date().getFullYear())
+let licenseNo = '备案号XXX'
 
 const joinList = [
 	{
@@ -67,6 +74,19 @@ const joinList = [
 		title: '码云 开源社区'
 	}
 ]
+
+onMounted(() => {
+	getParamsDetailData()
+})
+
+const getParamsDetailData = () => {
+	getParamsDetail({ groupName: 'copyright' }).then((res) => {
+		if (res.success) {
+			licenseNo = res.data.licenseKey || '备案号XXX'
+			webSiteName = res.data.domainChineseName || '网站名称XXX'
+		}
+	})
+}
 </script>
 
 <style lang="scss" scoped>

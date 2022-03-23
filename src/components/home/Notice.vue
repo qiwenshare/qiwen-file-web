@@ -1,7 +1,7 @@
 <template>
 	<div class="notice-wrapper">
 		<div class="notice-inner">
-			<img class="notice-img" :src="noticeImg" alt="奇文网盘 平台公告" />
+			<img class="notice-img" :src="noticeImg" alt="平台公告" />
 			<ul class="notice-list">
 				<li v-for="(item, index) in noticeList" :key="index">
 					<transition name="el-zoom-in-top">
@@ -29,7 +29,8 @@
 				@click="handleChangePage('up')"
 			></el-button>
 			<div class="page-count">
-				{{ activeNoticeIndex + 1 }} / {{ noticeList.length }}
+				{{ noticeList.length > 0 ? activeNoticeIndex + 1 : 0 }} /
+				{{ noticeList.length }}
 			</div>
 			<el-button
 				class="change-btn"

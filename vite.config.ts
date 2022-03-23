@@ -17,9 +17,11 @@ export default defineConfig({
 		}
 	},
 	server: {
+		host: true,
+		open: true,
 		proxy: {
 			'/api': {
-				target: 'http://www.qiwenshare.com:8763/',
+				target: 'http://localhost:8080/',
 				changeOrigin: true,
 				rewrite: (path) => path.replace(/^\/api/, '')
 			}

@@ -79,7 +79,6 @@ const handleClickLoginBtn = (formEl: FormInstance | undefined) => {
 					loginBtnLoading.value = false
 				})
 		} else {
-			console.log('error submit!')
 			return false
 		}
 	})

@@ -1,20 +1,26 @@
 <template>
-	<div id="app">
-		<HeaderNav v-if="isHeaderShow" id="headWrapper"></HeaderNav>
-		<router-view class="main-content"></router-view>
-		<FooterNav v-if="isFooterShow"></FooterNav>
-		<el-backtop class="backtop" title="回到顶部"></el-backtop>
-	</div>
+	<el-config-provider :locale="locale">
+		<div id="app">
+			<HeaderNav v-if="isHeaderShow" id="headWrapper"></HeaderNav>
+			<router-view class="main-content"></router-view>
+			<FooterNav v-if="isFooterShow"></FooterNav>
+			<el-backtop class="backtop" title="回到顶部"></el-backtop>
+		</div>
+	</el-config-provider>
 </template>
 
 <script setup lang="ts">
 import HeaderNav from '_c/HeaderNav.vue'
 import FooterNav from '_c/FooterNav.vue'
+import globalConfig from '@/config/index'
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { commonStore } from './store/common'
+import { ElConfigProvider } from 'element-plus'
+import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 const route: any = useRoute()
 const common = commonStore()
+const locale = zhCn
 
 //  头部是否显示
 const isHeaderShow = computed(() => {
@@ -40,6 +46,15 @@ onMounted(() => {
 			common.changeScreenWidth(document.body.clientWidth)
 		})()
 	})
+	document
+		.querySelector('meta[name="keywords"]')!
+		.setAttribute(
+			'content',
+			process.env.NODE_ENV === 'production' &&
+				location.host.indexOf('.qiwenshare.com') !== -1
+				? globalConfig.siteName
+				: '网盘名称'
+		)
 })
 </script>
 <style lang="scss" scoped>
