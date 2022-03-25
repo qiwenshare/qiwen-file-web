@@ -1,10 +1,12 @@
 <template>
 	<!-- 右键列表 -->
 	<transition name="el-fade-in-linear">
+		<!-- 在某个文件上右键 -->
 		<ul
 			class="right-menu-list"
 			id="rightMenuList"
 			v-show="visible"
+			v-if="selectedFile !== undefined"
 			:style="`top: ${rightMenu.top};right: ${rightMenu.right};bottom: ${rightMenu.bottom};left: ${rightMenu.left};`"
 		>
 			<li
@@ -130,6 +132,43 @@
 				<i class="el-icon-document"></i> 文件详情
 			</li>
 		</ul>
+		<!-- 在空白处右键，右键列表展示新建文件夹、新建文件等操作按钮 -->
+		<ul
+			class="right-menu-list add"
+			id="rightMenuList"
+			v-show="visible"
+			v-else
+			:style="`top: ${rightMenu.top};right: ${rightMenu.right};bottom: ${rightMenu.bottom};left: ${rightMenu.left};`"
+		>
+			<li class="right-menu-item" @click="callback('confirm')">
+				<i class="el-icon-refresh"></i> 刷新
+			</li>
+			<template v-if="fileType === 0">
+				<el-divider />
+				<li class="right-menu-item" @click="handleClickAddFolderBtn">
+					<i class="el-icon-folder-add"></i> 新建文件夹
+				</li>
+				<li class="right-menu-item" @click="handleCreateFile('docx')">
+					<img :src="wordImg" />新建 Word 文档
+				</li>
+				<li class="right-menu-item" @click="handleCreateFile('xlsx')">
+					<img :src="excelImg" />新建 Excel 工作表
+				</li>
+				<li class="right-menu-item" @click="handleCreateFile('pptx')">
+					<img :src="pptImg" />新建 PPT 演示文稿
+				</li>
+				<el-divider />
+				<li class="right-menu-item" @click="handleUploadFileBtnClick(1)">
+					<i class="el-icon-upload2"></i> 上传文件
+				</li>
+				<li class="right-menu-item" @click="handleUploadFileBtnClick(2)">
+					<i class="el-icon-folder-opened"></i> 上传文件夹
+				</li>
+				<li class="right-menu-item" @click="handleUploadFileBtnClick(3)">
+					<i class="el-icon-thumb"></i> 拖拽上传
+				</li>
+			</template>
+		</ul>
 	</transition>
 </template>
 
@@ -156,7 +195,11 @@ export default {
 				bottom: 'auto',
 				left: '138px',
 				right: 'auto'
-			}
+			},
+			dirImg: require('_a/images/file/dir.png'),
+			wordImg: require('_a/images/file/file_word.svg'),
+			excelImg: require('_a/images/file/file_excel.svg'),
+			pptImg: require('_a/images/file/file_ppt.svg')
 		}
 	},
 	computed: {
@@ -169,6 +212,10 @@ export default {
 			return router.currentRoute.query.fileType
 				? Number(router.currentRoute.query.fileType)
 				: 0
+		},
+		// 当前路径
+		filePath() {
+			return router.currentRoute.query.filePath
 		},
 		// 查看按钮是否显示
 		seeBtnShow() {
@@ -241,6 +288,13 @@ export default {
 		// 文件详情按钮是否显示
 		detailInfoBtnShow() {
 			return true
+		},
+		// 上传文件组件参数
+		uploadFileParams() {
+			return {
+				filePath: this.filePath,
+				isDir: 0
+			}
 		}
 	},
 	watch: {
@@ -308,7 +362,10 @@ export default {
 				!event.target.className.includes('unzip-menu-item')
 			) {
 				this.visible = false
-				this.callback('cancel')
+				if (this.selectedFile !== undefined) {
+					// 不是在空白处右键时
+					this.callback('cancel')
+				}
 			}
 		},
 		/**
@@ -428,6 +485,42 @@ export default {
 		handleShowDetailInfo(fileInfo) {
 			this.visible = false
 			this.$showFileDetailInfo({ fileInfo })
+		},
+		/**
+		 * 新建文件夹按钮点击事件
+		 * @description 调用新建文件夹服务，并在弹窗确认回调事件中刷新文件列表
+		 */
+		handleClickAddFolderBtn() {
+			this.$addFolder({
+				filePath: router.currentRoute.query.filePath || '/'
+			}).then((res) => {
+				this.callback(res)
+			})
+		},
+		/**
+		 * 新建 office 文件
+		 * @description 调用新建 office 文件服务，并在弹窗确认回调事件中刷新文件列表
+		 * @param {string} 文件扩展名 docx xlsx pptx
+		 */
+		handleCreateFile(extendName) {
+			this.$addFile({
+				extendName: extendName
+			}).then((res) => {
+				this.callback(res)
+			})
+		},
+		/**
+		 * 上传文件按钮点击事件
+		 * @description 通过Bus通信，开启全局上传文件流程
+		 * @param {boolean} uploadWay 上传方式 0-文件上传 1-文件夹上传 2-粘贴图片或拖拽上传
+		 */
+		handleUploadFileBtnClick(uploadWay) {
+			this.$uploadFile({
+				params: this.uploadFileParams,
+				uploadWay,
+				serviceEl: this.serviceEl,
+				callType: true //  callType 调用此服务的方式：1 - 顶部栏，2 - 右键菜单
+			})
 		}
 	}
 }
@@ -465,6 +558,21 @@ export default {
     }
   }
 
+  &.add {
+    .right-menu-item {
+      display: flex;
+      align-items: center;
+      img {
+        margin-right: 4px;
+        height: 20px;
+      }
+      i {
+        margin-right: 4px;
+        font-size: 18px;
+      }
+    }
+  }
+
   .unzip-menu-item {
     position: relative;
     &:hover {
@@ -487,10 +595,14 @@ export default {
 .unzip-list {
   background: #fff;
   border: 1px solid $BorderLighter;
-  border-radius: 4px;
+  border-radius: 6px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   z-index: 2;
-  padding: 4px 0;
+  padding: 8px 0;
   color: $RegularText;
+  font-size: 14px;
+  .el-divider {
+    margin: 2px 0;
+  }
 }
 </style>

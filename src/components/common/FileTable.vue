@@ -304,6 +304,8 @@ export default {
 		 * @param {object} event 当前右键元素
 		 */
 		handleContextMenu(row, column, event) {
+			// 阻止右键事件冒泡
+			event.cancelBubble = true
 			// xs 以上的屏幕
 			if (this.screenWidth > 768) {
 				event.preventDefault()

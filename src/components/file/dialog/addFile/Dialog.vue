@@ -83,7 +83,7 @@ export default {
 					})
 						.then((res) => {
 							this.sureBtnLoading = false
-							if (res.success) {
+							if (res.success && res.code === 0) {
 								this.$message.success('文件创建成功')
 								this.$refs[formName].resetFields()
 								this.visible = false

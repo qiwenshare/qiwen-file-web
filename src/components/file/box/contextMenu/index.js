@@ -7,16 +7,25 @@ const ContextMenuConstructor = Vue.extend(ContextMenu)
 let contextMenuInstance = null
 /**
  * 初始化右键菜单实例
- * @param {string} selectedFile 文件信息
+ * @param {string} selectedFile 文件信息，如果此值为 undefined，证明是在空白触右键
  * @param {object} domEvent 当前右键点击的元素
+ * @param {} serviceEl 调用当前服务的组件实例
+ * @param {} callType 是否组件本身
  */
-const initInstanceContextMenu = (selectedFile, domEvent) => {
+const initInstanceContextMenu = (
+	selectedFile,
+	domEvent,
+	serviceEl,
+	callType
+) => {
 	contextMenuInstance = new ContextMenuConstructor({
 		el: document.createElement('div'),
 		data() {
 			return {
 				selectedFile,
-				domEvent
+				domEvent,
+				serviceEl,
+				callType
 			}
 		}
 	})
@@ -30,9 +39,9 @@ const showContextMenuBox = (obj) => {
 	if (contextMenuInstance !== null) {
 		document.body.removeChild(contextMenuInstance.$el)
 	}
-	let { selectedFile, domEvent } = obj
+	let { selectedFile, domEvent, serviceEl, callType } = obj
 	return new Promise((reslove) => {
-		initInstanceContextMenu(selectedFile, domEvent)
+		initInstanceContextMenu(selectedFile, domEvent, serviceEl, callType)
 		contextMenuInstance.callback = (res) => {
 			reslove(res)
 			// 服务取消时卸载 DOM
