@@ -118,6 +118,8 @@ export default {
 		 * @param {object} event 鼠标事件信息
 		 */
 		handleContextMenu(item, index, event) {
+			// 阻止右键事件冒泡
+			event.cancelBubble = true
 			// xs 以上的屏幕
 			if (this.screenWidth > 768) {
 				this.selectedFile = item

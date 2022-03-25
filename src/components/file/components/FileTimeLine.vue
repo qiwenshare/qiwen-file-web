@@ -28,6 +28,7 @@
 						:key="`${index}-${imageIndex}`"
 						:style="`width: ${gridSize + 40}px; `"
 						@click="handleImgPreview(imageIndex, {}, item.imageList)"
+						@contextmenu.prevent="handleContextMenu(item, imageIndex, $event)"
 					>
 						<img
 							class="image"
@@ -84,6 +85,39 @@ export default {
 		// 图标大小
 		gridSize() {
 			return this.$store.getters.gridSize
+		},
+		// 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
+		}
+	},
+	methods: {
+		/**
+		 * 文件鼠标右键事件
+		 * @param {object} item 文件信息
+		 * @param {number} index 文件索引
+		 * @param {object} event 鼠标事件信息
+		 */
+		handleContextMenu(item, index, event) {
+			// 阻止右键事件冒泡
+			event.cancelBubble = true
+			// xs 以上的屏幕
+			if (this.screenWidth > 768) {
+				this.selectedFile = item
+				if (!this.isBatchOperation) {
+					event.preventDefault()
+					this.$openContextMenu({
+						selectedFile: item,
+						domEvent: event
+					}).then((res) => {
+						this.selectedFile = {}
+						if (res === 'confirm') {
+							this.$emit('getTableDataByType') //  刷新文件列表
+							this.$store.dispatch('showStorage') //  刷新存储容量
+						}
+					})
+				}
+			}
 		}
 	}
 }

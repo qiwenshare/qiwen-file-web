@@ -26,6 +26,7 @@
 			:loading.sync="loading"
 			v-if="fileModel === 0"
 			@getTableDataByType="getTableDataByType"
+			@click.native.right="handleClickRight"
 		></FileTable>
 		<!-- 文件列表-网格模式 -->
 		<FileGrid
@@ -35,12 +36,16 @@
 			:loading="loading"
 			v-if="fileModel === 1"
 			@getTableDataByType="getTableDataByType"
+			@click.native.right="handleClickRight"
 		></FileGrid>
 		<!-- 图片-时间线模式 -->
 		<FileTimeLine
 			class="image-model"
 			:fileList="fileList"
+			:loading.sync="loading"
 			v-if="fileModel === 2 && fileType === 1"
+			@getTableDataByType="getTableDataByType"
+			@click.native.right="handleClickRight"
 		></FileTimeLine>
 		<div class="pagination-wrapper">
 			<div class="current-page-count">当前页{{ fileList.length }}条</div>
@@ -143,6 +148,26 @@ export default {
 		this.getTableDataByType()
 	},
 	methods: {
+		/**
+		 * 文件展示区域的空白处右键事件
+		 * @param {Document} event 右键事件对象
+		 */
+		handleClickRight(event) {
+			event.preventDefault()
+			// 只有在全部页面才可以进行以下操作
+			if (![6, 8].includes(this.fileType)) {
+				this.$openContextMenu({
+					selectedFile: undefined,
+					domEvent: event,
+					serviceEl: this
+				}).then((res) => {
+					if (res === 'confirm') {
+						this.getTableDataByType() //  刷新文件列表
+						this.$store.dispatch('showStorage') //  刷新存储容量
+					}
+				})
+			}
+		},
 		/**
 		 * 表格数据获取相关事件 | 调整分页大小
 		 */

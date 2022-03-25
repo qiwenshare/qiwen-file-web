@@ -31,40 +31,32 @@
 					>
 				</el-dropdown-menu>
 			</el-dropdown>
-			<el-button
-				size="mini"
-				type="primary"
-				icon="el-icon-plus"
-				@click="handleClickAddFolderBtn"
-				>新建文件夹</el-button
-			>
+
 			<el-dropdown class="create-drop" trigger="hover">
 				<el-button
 					size="mini"
 					type="primary"
-					icon="el-icon-edit-outline"
+					icon="el-icon-plus"
 					id="uploadFileId"
-					>新建在线文档<i class="el-icon-arrow-down el-icon--right"></i
+					>新建<i class="el-icon-arrow-down el-icon--right"></i
 				></el-button>
 				<el-dropdown-menu slot="dropdown">
-					<el-dropdown-item @click.native="handleCreateFile('docx')">
-						<img
-							:src="wordImg"
-							style="width: 24px; max-height: 24px; cursor: pointer"
-						/>Word 文档</el-dropdown-item
-					>
+					<el-dropdown-item @click.native="handleClickAddFolderBtn">
+						<div class="img-text-wrapper"><img :src="dirImg" /> 新建文件夹</div>
+					</el-dropdown-item>
+					<el-dropdown-item divided @click.native="handleCreateFile('docx')">
+						<div class="img-text-wrapper"><img :src="wordImg" />Word 文档</div>
+					</el-dropdown-item>
 					<el-dropdown-item @click.native="handleCreateFile('xlsx')">
-						<img
-							:src="excelImg"
-							style="width: 24px; max-height: 24px; cursor: pointer"
-						/>Excel 工作表</el-dropdown-item
-					>
-					<el-dropdown-item @click.native="handleCreateFile('pptx')"
-						><img
-							:src="pptImg"
-							style="width: 24px; max-height: 24px; cursor: pointer"
-						/>PPT 演示文稿</el-dropdown-item
-					>
+						<div class="img-text-wrapper">
+							<img :src="excelImg" />Excel 工作表
+						</div>
+					</el-dropdown-item>
+					<el-dropdown-item @click.native="handleCreateFile('pptx')">
+						<div class="img-text-wrapper">
+							<img :src="pptImg" />PPT 演示文稿
+						</div>
+					</el-dropdown-item>
 				</el-dropdown-menu>
 			</el-dropdown>
 		</el-button-group>
@@ -255,26 +247,18 @@ export default {
 			},
 			operatePopoverVisible: false, //  收纳栏是否显示
 			fileGroupLable: 0, //  文件展示模式
-			wordImg: require('_a/images/file/file_word.png'),
-			excelImg: require('_a/images/file/file_excel.png'),
-			pptImg: require('_a/images/file/file_ppt.png')
+			dirImg: require('_a/images/file/dir.png'),
+			wordImg: require('_a/images/file/file_word.svg'),
+			excelImg: require('_a/images/file/file_excel.svg'),
+			pptImg: require('_a/images/file/file_ppt.svg')
 		}
 	},
 	computed: {
 		// 上传文件组件参数
-		uploadFileParams: {
-			get() {
-				let res = {
-					filePath: this.filePath,
-					isDir: 0
-				}
-				return res
-			},
-			set() {
-				return {
-					filePath: '/',
-					isDir: 0
-				}
+		uploadFileParams() {
+			return {
+				filePath: this.filePath,
+				isDir: 0
 			}
 		},
 		// 文件查看模式 0 列表模式 1 网格模式 2 时间线模式
@@ -362,7 +346,8 @@ export default {
 			this.$uploadFile({
 				params: this.uploadFileParams,
 				uploadWay,
-				serviceEl: this
+				serviceEl: this,
+				callType: 1 //  callType 调用此服务的方式：1 - 顶部栏，2 - 右键菜单
 			})
 		},
 
@@ -542,5 +527,14 @@ export default {
 
 .split-line {
   margin: 8px 0;
+}
+
+.img-text-wrapper {
+  display: flex;
+  align-items: center;
+  img {
+    margin-right: 4px;
+    height: 24px;
+  }
 }
 </style>
