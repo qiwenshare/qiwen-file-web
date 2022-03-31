@@ -28,9 +28,8 @@
 			</div>
 			<div class="bottom">
 				<video-player
-					class="video-player vjs-custom-skin"
-					ref="videoPlayer"
-					:playsinline="true"
+					class="video-player"
+					ref="VideoPlayer"
 					:options="playerOptions"
 					v-if="visible"
 				></video-player>
@@ -59,19 +58,13 @@
 </template>
 
 <script>
-/**
- * vue-video-player 官方文档 https://github.com/surmon-china/vue-video-player
- * 此插件依赖于 video.js 官方文档 https://docs.videojs.com/
- */
-import { videoPlayer } from 'vue-video-player'
-import 'video.js/dist/video-js.css'
-import 'vue-video-player/src/custom-theme.css'
+import VideoPlayer from './VideoPlayer.vue'
 import store from '@/store/index.js'
 
 export default {
 	name: 'VideoPreview',
 	components: {
-		videoPlayer
+		VideoPlayer
 	},
 	data() {
 		return {
@@ -88,8 +81,8 @@ export default {
 		// 播放器配置项
 		playerOptions() {
 			return {
-				playbackRates: [0.7, 1.0, 1.5, 2.0], // 播放速度
-				autoplay: true, //  如果true,浏览器准备好时开始播放。
+				playbackRates: [0.5, 1.0, 1.5, 2.0], // 播放速度
+				autoplay: false, //  如果true,浏览器准备好时开始播放。
 				muted: false, // 默认情况下将会消除任何音频。
 				loop: false, // 导致视频一结束就重新开始。
 				preload: 'auto', // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
@@ -102,8 +95,8 @@ export default {
 						src: this.videoList[this.activeIndex].fileUrl // url地址
 					}
 				],
-				// poster: 'https://p1.music.126.net/5zs7IvmLv7KahY3BFzUmrg==/109951163635241613.jpg?param=600y500', // 你的封面地址
-				notSupportedMessage: '此视频暂无法播放，请稍后再试', // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
+				notSupportedMessage: '此视频暂无法播放，请稍后再试',
+				controls: true,
 				controlBar: {
 					timeDivider: true,
 					durationDisplay: true,
@@ -208,17 +201,6 @@ export default {
       width: 100%;
       height: 100%;
       object-fit: fill;
-
-      >>> .video-js {
-        width: 100%;
-        height: 100%;
-        padding: 0;
-
-        .vjs-big-play-button {
-          border-radius: 50%;
-          width: 2em;
-        }
-      }
     }
 
     .video-list-wrapper {
