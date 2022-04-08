@@ -4,6 +4,7 @@ import router from '@/router/router'
 import config from '@/config/index.js'
 import { Message } from 'element-ui'
 import { fileImgMap, unknownImg, fileSuffixCodeModeMap } from '@/libs/map.js'
+import { officeFileType } from './map.js'
 
 // 全局函数
 const globalFunction = {
@@ -366,9 +367,7 @@ const globalFunction = {
 				return false
 			}
 			//  若当前点击项是可以使用office在线预览的
-			if (
-				[...this.officeFileType, 'pdf'].includes(row.extendName.toLowerCase())
-			) {
+			if ([...officeFileType, 'pdf'].includes(row.extendName.toLowerCase())) {
 				this.getFileOnlineViewPathByOffice(row)
 				return false
 			}
