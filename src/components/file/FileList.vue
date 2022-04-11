@@ -307,10 +307,10 @@ export default {
 			}).then((res) => {
 				this.loading = false
 				if (res.success) {
-					this.fileList = res.data.searchHits.map((item) => {
+					this.fileList = res.data.map((item) => {
 						return {
-							...item.content,
-							highlightFields: item.highlightFields.fileName[0]
+							...item,
+							highlightFields: item.highLight.fileName[0]
 						}
 					})
 					this.pageData.total = res.data.totalHits
