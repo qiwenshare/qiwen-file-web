@@ -207,15 +207,7 @@
 		</el-popover>
 
 		<!-- 多选文件下载，页面隐藏 -->
-		<a
-			target="_blank"
-			v-for="(item, index) in selectedFiles"
-			:key="index"
-			:href="getDownloadFilePath(item)"
-			:download="item.fileName + '.' + item.extendName"
-			:title="'downloadLink' + index"
-			:ref="'downloadLink' + index"
-		></a>
+		<a target="_blank" :href="batchDownloadLink" ref="batchDownloadRef"></a>
 	</div>
 </template>
 
@@ -285,6 +277,14 @@ export default {
 		// 屏幕宽度
 		screenWidth() {
 			return this.$store.state.common.screenWidth
+		},
+		// 批量下载文件链接
+		batchDownloadLink() {
+			return `${
+				this.$config.baseContext
+			}/filetransfer/batchDownloadFile?userFileIds=${this.selectedFiles
+				.map((item) => item.userFileId)
+				.join(',')}`
 		}
 	},
 	watch: {
@@ -397,13 +397,10 @@ export default {
 			})
 		},
 		/**
-		 * 批量下载按钮点击事件
+		 * 打包批量下载按钮点击事件
 		 */
 		handleBatchDownloadBtnClick() {
-			for (let i = 0; i < this.selectedFiles.length; i++) {
-				let name = 'downloadLink' + i
-				this.$refs[name][0].click()
-			}
+			this.$refs['batchDownloadRef'].click()
 		},
 		/**
 		 * 搜索输入框搜索事件
