@@ -5,12 +5,12 @@
 				<div class="video-name">
 					{{ activeFileObj.fileName }}.{{ activeFileObj.extendName }}
 					<span class="size">{{
-						calculateFileSize(activeFileObj.fileSize)
+						$file.calculateFileSize(activeFileObj.fileSize)
 					}}</span>
 				</div>
 				<a
 					class="download-link"
-					:href="getDownloadFilePath(activeFileObj)"
+					:href="$file.getDownloadFilePath(activeFileObj)"
 					target="_blank"
 					><i class="download-icon el-icon-download" title="下载"></i
 				></a>
@@ -47,7 +47,9 @@
 								<span class="name"
 									>{{ item.fileName }}.{{ item.extendName }}</span
 								>
-								<span class="size">{{ calculateFileSize(item.fileSize) }}</span>
+								<span class="size">{{
+									$file.calculateFileSize(item.fileSize)
+								}}</span>
 							</li>
 						</ul>
 					</div>

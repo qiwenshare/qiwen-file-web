@@ -240,16 +240,18 @@ export default {
 		 */
 		handleSaveBtnClick() {
 			if (this.selectedFiles.length) {
-				this.$saveShareFile({
-					filePath: '',
-					fileInfo: this.selectedFiles.map((item) => {
-						return {
-							userFileId: item.userFileId
-						}
+				this.$openDialog
+					.saveShareFile({
+						filePath: '',
+						fileInfo: this.selectedFiles.map((item) => {
+							return {
+								userFileId: item.userFileId
+							}
+						})
 					})
-				}).then(() => {
-					this.$refs.fileTableInstance.clearSelectedTable() //  清空表格已选项
-				})
+					.then(() => {
+						this.$refs.fileTableInstance.clearSelectedTable() //  清空表格已选项
+					})
 			} else {
 				this.$message.warning('请先勾选要保存的文件')
 			}

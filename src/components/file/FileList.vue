@@ -156,16 +156,18 @@ export default {
 			event.preventDefault()
 			// 只有在全部页面才可以进行以下操作
 			if (![6, 8].includes(this.fileType)) {
-				this.$openContextMenu({
-					selectedFile: undefined,
-					domEvent: event,
-					serviceEl: this
-				}).then((res) => {
-					if (res === 'confirm') {
-						this.getTableDataByType() //  刷新文件列表
-						this.$store.dispatch('showStorage') //  刷新存储容量
-					}
-				})
+				this.$openBox
+					.contextMenu({
+						selectedFile: undefined,
+						domEvent: event,
+						serviceEl: this
+					})
+					.then((res) => {
+						if (res === 'confirm') {
+							this.getTableDataByType() //  刷新文件列表
+							this.$store.dispatch('showStorage') //  刷新存储容量
+						}
+					})
 			}
 		},
 		/**

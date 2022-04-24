@@ -1,54 +1,53 @@
 /**
  * 以服务的方式，将对文件的一些操作挂载到 Vue 上
- * 在 *.vue 文件中，使用 this.$addFolder 调用创建文件夹服务
- * 在 *.js 文件中，需要现在文件顶部引入 Vue ，即 import Vue from 'vue' ，然后使用 Vue.property.$addFolder 调用创建文件夹服务
- * @description 各个服务的参数传递查看服务封装对应目录下的 index.js 文件，里面注明了需要船队的参数
- * @author 李雅婷
+ * @description 各个服务的参数传递查看服务封装对应目录下的 index.js 文件，里面注明了需要传递的参数
+ * @author 小鲤鱼听听
  */
 
-// 导入操作文件的弹窗类组件
-import showAddFolderDialog from '_c/file/dialog/addFolder/index.js'
-import showAddFileDialog from '_c/file/dialog/addFile/index.js'
-import showCopyFileDialog from '_c/file/dialog/copyFile/index.js'
-import showMoveFileDialog from '_c/file/dialog/moveFile/index.js'
-import showSaveShareFileDialog from '_c/file/dialog/saveShareFile/index.js'
-import showShareFileDialog from '_c/file/dialog/shareFile/index.js'
-import showUnzipFileDialog from '_c/file/dialog/unzipFile/index.js'
-import showRenameFileDialog from '_c/file/dialog/renameFile/index.js'
-import showDeleteFileDialog from '_c/file/dialog/deleteFile/index.js'
-import showRestoreFileDialog from '_c/file/dialog/restoreFile/index.js'
-import showFileDetailInfoDialog from '_c/file/dialog/fileDetailInfo/index.js'
-// 导入操作文件的遮罩类组件
-import showContextMenuBox from '_c/file/box/contextMenu/index.js'
-import showImgPreviewBox from '_c/file/box/imgPreview/index.js'
-import showVideoPreviewBox from '_c/file/box/videoPreview/index.js'
-import showUploadFileBox from '_c/file/box/uploadFile/index.js'
-import showAudioPreviewBox from '_c/file/box/audioPreview/index.js'
-import showMarkdownPreviewBox from '_c/file/box/markdownPreview/index.js'
-import showCodePreviewBox from '_c/file/box/codePreview/index.js'
+/**
+ * 动态引入操作文件的弹窗组件
+ */
+const fileOperateDialog = require.context(
+	'_c/file/dialog',
+	true,
+	/\.\/(.*)\/index.js$/
+)
+/**
+ * 服务挂载到 Vue - $openDialog，各个服务的名称为其对应的文件夹的名称
+ * @description 例如，创建文件夹功能：服务封装路径 '_c/file/dialog/addFolder' ，则如下：
+ * 在 *.vue 文件中，使用 this.$openDialog.addFolder 调用创建文件夹服务
+ * 在 *.js 文件中，需要先在文件顶部引入 Vue ，即 import Vue from 'vue' ，然后使用 Vue.property.$openDialog.addFolder 调用创建文件夹服务
+ */
+const openDialog = fileOperateDialog
+	.keys()
+	.map((key) => {
+		return { [key.split('/')[1]]: fileOperateDialog(key).default }
+	})
+	.reduce((pre, next) => {
+		return { ...pre, ...next }
+	}, {})
 
-const operateElement = {
-	install: (Vue) => {
-		// 挂载操作文件的弹窗类组件
-		Vue.prototype.$addFolder = showAddFolderDialog
-		Vue.prototype.$addFile = showAddFileDialog
-		Vue.prototype.$copyFile = showCopyFileDialog
-		Vue.prototype.$moveFile = showMoveFileDialog
-		Vue.prototype.$saveShareFile = showSaveShareFileDialog
-		Vue.prototype.$shareFile = showShareFileDialog
-		Vue.prototype.$unzipFile = showUnzipFileDialog
-		Vue.prototype.$renameFile = showRenameFileDialog
-		Vue.prototype.$deleteFile = showDeleteFileDialog
-		Vue.prototype.$restoreFile = showRestoreFileDialog
-		Vue.prototype.$showFileDetailInfo = showFileDetailInfoDialog
-		// 挂载操作文件的遮罩类组件
-		Vue.prototype.$openContextMenu = showContextMenuBox
-		Vue.prototype.$previewImg = showImgPreviewBox
-		Vue.prototype.$previewVideo = showVideoPreviewBox
-		Vue.prototype.$uploadFile = showUploadFileBox
-		Vue.prototype.$preivewAudio = showAudioPreviewBox
-		Vue.prototype.$previewMarkdown = showMarkdownPreviewBox
-		Vue.prototype.$previewCode = showCodePreviewBox
-	}
-}
-export default operateElement
+/**
+ * 动态添加操作文件的遮罩或浮层组件
+ */
+const fileOperateBox = require.context(
+	'_c/file/box',
+	true,
+	/\.\/(.*)\/index.js$/
+)
+/**
+ * 服务挂载到 Vue - $openBox，各个服务的名称为其对应的文件夹的名称
+ * @description 例如，图片预览功能：服务封装路径 '_c/file/box/imgPreview' ，则如下：
+ * 在 *.vue 文件中，使用 this.$openDialog.imgPreview 调用图片预览服务
+ * 在 *.js 文件中，需要先在文件顶部引入 Vue ，即 import Vue from 'vue' ，然后使用 Vue.property.$openDialog.imgPreview 调用图片预览服务
+ */
+const openBox = fileOperateBox
+	.keys()
+	.map((key) => {
+		return { [key.split('/')[1]]: fileOperateBox(key).default }
+	})
+	.reduce((pre, next) => {
+		return { ...pre, ...next }
+	}, {})
+
+export default { openDialog, openBox }

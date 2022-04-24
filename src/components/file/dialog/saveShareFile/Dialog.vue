@@ -114,11 +114,13 @@ export default {
 		 * @description 调用新建文件夹服务，并在弹窗确认回调事件中刷新文件夹树
 		 */
 		handleAddFolderBtnClick(data) {
-			this.$addFolder({
-				filePath: data.filePath || '/'
-			}).then(() => {
-				this.initFileTree(data.id)
-			})
+			this.$openDialog
+				.addFolder({
+					filePath: data.filePath || '/'
+				})
+				.then(() => {
+					this.initFileTree(data.id)
+				})
 		},
 		/**
 		 * 确定按钮点击事件

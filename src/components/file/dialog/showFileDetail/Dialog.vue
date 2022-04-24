@@ -10,7 +10,7 @@
 	>
 		<img
 			class="file-img"
-			:src="setFileImg(fileInfo)"
+			:src="$file.setFileImg(fileInfo)"
 			:title="`${fileInfo.isDir ? '' : '点击预览'}`"
 		/>
 		<el-form
@@ -23,7 +23,10 @@
 			size="small"
 		>
 			<el-form-item label="文件名" prop="fileName">
-				<el-input :value="getFileNameComplete(fileInfo)" readonly></el-input>
+				<el-input
+					:value="$file.getFileNameComplete(fileInfo)"
+					readonly
+				></el-input>
 			</el-form-item>
 			<el-form-item
 				:label="fileType === 6 ? '原路径' : '路径'"
@@ -37,12 +40,14 @@
 				></el-input>
 			</el-form-item>
 			<el-form-item label="类型" prop="fileName">
-				<el-input :value="getFileType(fileInfo)" readonly></el-input>
+				<el-input :value="$file.getFileType(fileInfo)" readonly></el-input>
 			</el-form-item>
 			<el-form-item label="大小" prop="fileSize">
 				<el-input
 					:value="
-						fileInfo.isDir === 0 ? calculateFileSize(fileInfo.fileSize) : ''
+						fileInfo.isDir === 0
+							? $file.calculateFileSize(fileInfo.fileSize)
+							: ''
 					"
 					readonly
 				></el-input>
@@ -75,7 +80,7 @@
 				<el-input :value="fileInfo.endTime" readonly></el-input>
 				<i
 					class="status-icon el-icon-warning"
-					v-if="getFileShareStatus(fileInfo.endTime)"
+					v-if="$file.getFileShareStatus(fileInfo.endTime)"
 				></i>
 				<i class="status-icon el-icon-time" v-else></i>
 			</el-form-item>

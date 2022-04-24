@@ -32,11 +32,11 @@
 			>
 				<template slot-scope="scope">
 					<img
-						:src="setFileImg(scope.row)"
+						:src="$file.setFileImg(scope.row)"
 						:title="`${scope.row.isDir ? '' : '点击预览'}`"
 						style="width: 30px; max-height: 30px; cursor: pointer"
 						@click="
-							handleFileNameClick(scope.row, scope.$index, sortedFileList)
+							$file.handleFileNameClick(scope.row, scope.$index, sortedFileList)
 						"
 					/>
 				</template>
@@ -54,21 +54,21 @@
 				<template slot-scope="scope">
 					<span
 						@click="
-							handleFileNameClick(scope.row, scope.$index, sortedFileList)
+							$file.handleFileNameClick(scope.row, scope.$index, sortedFileList)
 						"
 					>
 						<span
 							class="file-name"
 							style="cursor: pointer"
 							:title="`${scope.row.isDir ? '' : '点击预览'}`"
-							v-html="getFileNameComplete(scope.row, true)"
+							v-html="$file.getFileNameComplete(scope.row, true)"
 						></span>
 						<div class="file-info" v-if="screenWidth <= 768">
 							{{ scope.row.uploadTime }}
 							<span class="file-size">
 								{{
 									scope.row.isDir === 0
-										? calculateFileSize(scope.row.fileSize)
+										? $file.calculateFileSize(scope.row.fileSize)
 										: ''
 								}}
 							</span>
@@ -109,7 +109,7 @@
 				v-if="selectedColumnList.includes('extendName') && screenWidth > 768"
 			>
 				<template slot-scope="scope">
-					<span>{{ getFileType(scope.row) }}</span>
+					<span>{{ $file.getFileType(scope.row) }}</span>
 				</template>
 			</el-table-column>
 			<el-table-column
@@ -124,7 +124,9 @@
 			>
 				<template slot-scope="scope">
 					{{
-						scope.row.isDir === 0 ? calculateFileSize(scope.row.fileSize) : ''
+						scope.row.isDir === 0
+							? $file.calculateFileSize(scope.row.fileSize)
+							: ''
 					}}
 				</template>
 			</el-table-column>
@@ -195,7 +197,7 @@
 					<div>
 						<i
 							class="el-icon-warning"
-							v-if="getFileShareStatus(scope.row.endTime)"
+							v-if="$file.getFileShareStatus(scope.row.endTime)"
 						></i>
 						<i class="el-icon-time" v-else></i>
 						{{ scope.row.endTime }}
@@ -310,16 +312,18 @@ export default {
 			if (this.screenWidth > 768) {
 				event.preventDefault()
 				this.$refs.multipleTable.setCurrentRow(row) //  选中当前行
-				this.$openContextMenu({
-					selectedFile: row,
-					domEvent: event
-				}).then((res) => {
-					this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
-					if (res === 'confirm') {
-						this.$emit('getTableDataByType') //  刷新文件列表
-						this.$store.dispatch('showStorage') //  刷新存储容量
-					}
-				})
+				this.$openBox
+					.contextMenu({
+						selectedFile: row,
+						domEvent: event
+					})
+					.then((res) => {
+						this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
+						if (res === 'confirm') {
+							this.$emit('getTableDataByType') //  刷新文件列表
+							this.$store.dispatch('showStorage') //  刷新存储容量
+						}
+					})
 			}
 		},
 		/**
@@ -345,16 +349,18 @@ export default {
 		 */
 		handleClickMore(row, event) {
 			this.$refs.multipleTable.setCurrentRow(row) //  选中当前行
-			this.$openContextMenu({
-				selectedFile: row,
-				domEvent: event
-			}).then((res) => {
-				this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
-				if (res === 'confirm') {
-					this.$emit('getTableDataByType') //  刷新文件列表
-					this.$store.dispatch('showStorage') //  刷新存储容量
-				}
-			})
+			this.$openBox
+				.contextMenu({
+					selectedFile: row,
+					domEvent: event
+				})
+				.then((res) => {
+					this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
+					if (res === 'confirm') {
+						this.$emit('getTableDataByType') //  刷新文件列表
+						this.$store.dispatch('showStorage') //  刷新存储容量
+					}
+				})
 		}
 	}
 }

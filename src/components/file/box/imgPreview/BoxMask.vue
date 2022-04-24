@@ -105,7 +105,7 @@ export default {
 			return this.imgList[this.activeIndex]
 		},
 		activeImageName() {
-			return this.getFileNameComplete(this.activeImage)
+			return this.$file.getFileNameComplete(this.activeImage)
 		},
 		imageHeight() {
 			return this.activeImage.imageHeight

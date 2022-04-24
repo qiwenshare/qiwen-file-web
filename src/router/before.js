@@ -1,7 +1,7 @@
 import router from '@/router/router'
 import store from '@/store/index.js'
 import config from '@/config/index.js'
-import globalFunction from '@/libs/globalFunction.js'
+import common from '@/libs/globalFunction/common.js'
 
 // 路由全局前置守卫
 router.beforeEach((to, from, next) => {
@@ -14,7 +14,7 @@ router.beforeEach((to, from, next) => {
 					process.env.NODE_ENV !== 'development' &&
 					location.origin === 'https://pan.qiwenshare.com'
 				) {
-					globalFunction.goAccount(`/login/account`)
+					common.goAccount(`/login/account`)
 				} else {
 					// 没有登录时，跳转到登录页面
 					next({

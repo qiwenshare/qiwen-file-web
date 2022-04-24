@@ -52,7 +52,7 @@
 			</div>
 			<el-form-item label="分享链接" prop="shareBatchNum">
 				<el-input
-					:value="getShareLink(shareData.shareBatchNum)"
+					:value="$file.getShareLink(shareData.shareBatchNum)"
 					:readonly="true"
 					type="textarea"
 					autosize
@@ -70,7 +70,7 @@
 				v-if="shareIsSuccess"
 				type="primary"
 				@click="
-					copyShareLink(shareData.shareBatchNum, shareData.extractionCode)
+					$file.copyShareLink(shareData.shareBatchNum, shareData.extractionCode)
 				"
 				>复制链接及提取码</el-button
 			>

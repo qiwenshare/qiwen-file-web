@@ -1,6 +1,6 @@
 import axios from 'axios'
 import globalConfig from '@/config/index.js'
-import globalFunction from '@/libs/globalFunction.js'
+import common from '@/libs/globalFunction/common.js'
 import router from '@/router/router'
 import { MessageBox, Message } from 'element-ui'
 
@@ -33,9 +33,7 @@ axios.defaults.withCredentials = true
 // 请求拦截器
 axios.interceptors.request.use(
 	(config) => {
-		config.headers['token'] = globalFunction.getCookies(
-			globalConfig.tokenKeyName
-		)
+		config.headers['token'] = common.getCookies(globalConfig.tokenKeyName)
 		return config
 	},
 	(error) => {

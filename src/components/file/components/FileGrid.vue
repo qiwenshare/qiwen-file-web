@@ -10,18 +10,21 @@
 				class="file-item"
 				v-for="(item, index) in fileListSorted"
 				:key="index"
-				:title="getFileNameComplete(item)"
+				:title="$file.getFileNameComplete(item)"
 				:style="`width: ${gridSize + 40}px; `"
 				:class="item.userFileId === selectedFile.userFileId ? 'active' : ''"
-				@click="handleFileNameClick(item, index, fileListSorted)"
+				@click="$file.handleFileNameClick(item, index, fileListSorted)"
 				@contextmenu.prevent="handleContextMenu(item, index, $event)"
 			>
 				<img
 					class="file-img"
-					:src="setFileImg(item)"
+					:src="$file.setFileImg(item)"
 					:style="`width: ${gridSize}px; height: ${gridSize}px;`"
 				/>
-				<div class="file-name" v-html="getFileNameComplete(item, true)"></div>
+				<div
+					class="file-name"
+					v-html="$file.getFileNameComplete(item, true)"
+				></div>
 				<i
 					class="file-operate el-icon-more"
 					:class="`operate-more-${index}`"
@@ -125,16 +128,18 @@ export default {
 				this.selectedFile = item
 				if (!this.isBatchOperation) {
 					event.preventDefault()
-					this.$openContextMenu({
-						selectedFile: item,
-						domEvent: event
-					}).then((res) => {
-						this.selectedFile = {}
-						if (res === 'confirm') {
-							this.$emit('getTableDataByType') //  刷新文件列表
-							this.$store.dispatch('showStorage') //  刷新存储容量
-						}
-					})
+					this.$openBox
+						.contextMenu({
+							selectedFile: item,
+							domEvent: event
+						})
+						.then((res) => {
+							this.selectedFile = {}
+							if (res === 'confirm') {
+								this.$emit('getTableDataByType') //  刷新文件列表
+								this.$store.dispatch('showStorage') //  刷新存储容量
+							}
+						})
 				}
 			}
 		},
@@ -148,16 +153,18 @@ export default {
 			this.selectedFile = item
 			if (!this.isBatchOperation) {
 				event.preventDefault()
-				this.$openContextMenu({
-					selectedFile: item,
-					domEvent: event
-				}).then((res) => {
-					this.selectedFile = {}
-					if (res === 'confirm') {
-						this.$emit('getTableDataByType') //  刷新文件列表
-						this.$store.dispatch('showStorage') //  刷新存储容量
-					}
-				})
+				this.$openBox
+					.contextMenu({
+						selectedFile: item,
+						domEvent: event
+					})
+					.then((res) => {
+						this.selectedFile = {}
+						if (res === 'confirm') {
+							this.$emit('getTableDataByType') //  刷新文件列表
+							this.$store.dispatch('showStorage') //  刷新存储容量
+						}
+					})
 			}
 		}
 	}

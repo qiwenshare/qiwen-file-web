@@ -7,8 +7,8 @@
 		>
 			<!-- 顶部信息栏 & 工具栏 -->
 			<div class="tip-wrapper" v-if="visible">
-				<div class="name" :title="getFileNameComplete(fileInfo)">
-					{{ getFileNameComplete(fileInfo) }}
+				<div class="name" :title="$file.getFileNameComplete(fileInfo)">
+					{{ $file.getFileNameComplete(fileInfo) }}
 					<span class="un-save" v-show="isModify">（未保存）</span>
 				</div>
 				<div class="editor-preveiw">在线编辑 & 预览</div>
@@ -16,8 +16,8 @@
 					<a
 						class="item download-link"
 						target="_blank"
-						:href="getDownloadFilePath(fileInfo)"
-						:download="getFileNameComplete(fileInfo)"
+						:href="$file.getDownloadFilePath(fileInfo)"
+						:download="$file.getFileNameComplete(fileInfo)"
 					>
 						<i class="el-icon-download" title="下载"></i>
 					</a>
@@ -189,7 +189,7 @@ export default {
 				isMin: false,
 				shareBatchNum: this.fileInfo.shareBatchNum,
 				extractionCode: this.fileInfo.extractionCode,
-				token: this.getCookies(this.$config.tokenKeyName)
+				token: this.$common.getCookies(this.$config.tokenKeyName)
 			}).then((res) => {
 				this.markdownLoading = false
 				this.originalMarkdownText = res
