@@ -312,16 +312,18 @@ export default {
 			if (this.screenWidth > 768) {
 				event.preventDefault()
 				this.$refs.multipleTable.setCurrentRow(row) //  选中当前行
-				this.$openContextMenu({
-					selectedFile: row,
-					domEvent: event
-				}).then((res) => {
-					this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
-					if (res === 'confirm') {
-						this.$emit('getTableDataByType') //  刷新文件列表
-						this.$store.dispatch('showStorage') //  刷新存储容量
-					}
-				})
+				this.$openBox
+					.contextMenu({
+						selectedFile: row,
+						domEvent: event
+					})
+					.then((res) => {
+						this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
+						if (res === 'confirm') {
+							this.$emit('getTableDataByType') //  刷新文件列表
+							this.$store.dispatch('showStorage') //  刷新存储容量
+						}
+					})
 			}
 		},
 		/**
@@ -347,16 +349,18 @@ export default {
 		 */
 		handleClickMore(row, event) {
 			this.$refs.multipleTable.setCurrentRow(row) //  选中当前行
-			this.$openContextMenu({
-				selectedFile: row,
-				domEvent: event
-			}).then((res) => {
-				this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
-				if (res === 'confirm') {
-					this.$emit('getTableDataByType') //  刷新文件列表
-					this.$store.dispatch('showStorage') //  刷新存储容量
-				}
-			})
+			this.$openBox
+				.contextMenu({
+					selectedFile: row,
+					domEvent: event
+				})
+				.then((res) => {
+					this.$refs.multipleTable.setCurrentRow() //  取消当前选中行
+					if (res === 'confirm') {
+						this.$emit('getTableDataByType') //  刷新文件列表
+						this.$store.dispatch('showStorage') //  刷新存储容量
+					}
+				})
 		}
 	}
 }

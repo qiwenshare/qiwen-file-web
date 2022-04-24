@@ -106,16 +106,18 @@ export default {
 				this.selectedFile = item
 				if (!this.isBatchOperation) {
 					event.preventDefault()
-					this.$openContextMenu({
-						selectedFile: item,
-						domEvent: event
-					}).then((res) => {
-						this.selectedFile = {}
-						if (res === 'confirm') {
-							this.$emit('getTableDataByType') //  刷新文件列表
-							this.$store.dispatch('showStorage') //  刷新存储容量
-						}
-					})
+					this.$openBox
+						.contextMenu({
+							selectedFile: item,
+							domEvent: event
+						})
+						.then((res) => {
+							this.selectedFile = {}
+							if (res === 'confirm') {
+								this.$emit('getTableDataByType') //  刷新文件列表
+								this.$store.dispatch('showStorage') //  刷新存储容量
+							}
+						})
 				}
 			}
 		}

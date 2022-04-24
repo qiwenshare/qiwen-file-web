@@ -315,13 +315,15 @@ export default {
 		 * @description 调用新建文件夹服务，并在弹窗确认回调事件中刷新文件列表
 		 */
 		handleClickAddFolderBtn() {
-			this.$addFolder({
-				filePath: this.$route.query.filePath || '/'
-			}).then((res) => {
-				if (res === 'confirm') {
-					this.$emit('getTableDataByType')
-				}
-			})
+			this.$openDialog
+				.addFolder({
+					filePath: this.$route.query.filePath || '/'
+				})
+				.then((res) => {
+					if (res === 'confirm') {
+						this.$emit('getTableDataByType')
+					}
+				})
 		},
 		/**
 		 * 新建 office 文件
@@ -329,13 +331,15 @@ export default {
 		 * @param {string} 文件扩展名 docx xlsx pptx
 		 */
 		handleCreateFile(extendName) {
-			this.$addFile({
-				extendName: extendName
-			}).then((res) => {
-				if (res === 'confirm') {
-					this.$emit('getTableDataByType')
-				}
-			})
+			this.$openDialog
+				.addFile({
+					extendName: extendName
+				})
+				.then((res) => {
+					if (res === 'confirm') {
+						this.$emit('getTableDataByType')
+					}
+				})
 		},
 		/**
 		 * 上传文件按钮点击事件
@@ -343,7 +347,7 @@ export default {
 		 * @param {boolean} uploadWay 上传方式 0-文件上传 1-文件夹上传 2-粘贴图片或拖拽上传
 		 */
 		handleUploadFileBtnClick(uploadWay) {
-			this.$uploadFile({
+			this.$openBox.uploadFile({
 				params: this.uploadFileParams,
 				uploadWay,
 				serviceEl: this,
@@ -356,30 +360,34 @@ export default {
 		 * @description 区分 删除到回收站中 | 在回收站中彻底删除，调用相应的删除文件接口
 		 */
 		handleBatchDeleteBtnClick() {
-			this.$deleteFile({
-				isBatchOperation: true,
-				fileInfo: this.selectedFiles,
-				deleteMode: this.fileType === 6 ? 2 : 1 //  删除模式：1-删除到回收站 2-彻底删除
-			}).then((res) => {
-				if (res === 'confirm') {
-					this.$emit('getTableDataByType')
-					this.$store.dispatch('showStorage')
-				}
-			})
+			this.$openDialog
+				.deleteFile({
+					isBatchOperation: true,
+					fileInfo: this.selectedFiles,
+					deleteMode: this.fileType === 6 ? 2 : 1 //  删除模式：1-删除到回收站 2-彻底删除
+				})
+				.then((res) => {
+					if (res === 'confirm') {
+						this.$emit('getTableDataByType')
+						this.$store.dispatch('showStorage')
+					}
+				})
 		},
 		/**
 		 * 批量移动按钮点击事件
 		 */
 		handleBatchMoveBtnClick() {
 			if (this.selectedFiles.length > 0) {
-				this.$moveFile({
-					isBatchOperation: true,
-					fileInfo: this.selectedFiles
-				}).then((res) => {
-					if (res === 'confirm') {
-						this.$emit('getTableDataByType')
-					}
-				})
+				this.$openDialog
+					.moveFile({
+						isBatchOperation: true,
+						fileInfo: this.selectedFiles
+					})
+					.then((res) => {
+						if (res === 'confirm') {
+							this.$emit('getTableDataByType')
+						}
+					})
 			} else {
 				this.$message.warning('请先勾选文件')
 			}
@@ -388,7 +396,7 @@ export default {
 		 * 批量分享按钮点击事件
 		 */
 		handleBatchShareBtnClick() {
-			this.$shareFile({
+			this.$openDialog.shareFile({
 				fileInfo: this.selectedFiles.map((item) => {
 					return {
 						userFileId: item.userFileId
@@ -426,7 +434,7 @@ export default {
 		handleFileDisplayModelChange(label) {
 			this.fileGroupLable = label
 			// 关闭右键菜单事件
-			this.$openContextMenu.close()
+			this.$openBox.contextMenu.close()
 			this.$store.commit('changeFileModel', label)
 			this.handleSearchInputChange(this.searchFile.fileName)
 			// 关闭收纳栏

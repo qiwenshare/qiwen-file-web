@@ -249,7 +249,7 @@ const fileFunction = {
 				  ]
 		const defaultIndex =
 			Number(router.currentRoute.query.fileType) === 1 ? currentIndex : 0
-		Vue.prototype.$previewImg({ imgList, defaultIndex })
+		Vue.prototype.$openBox.imgPreview({ imgList, defaultIndex })
 	},
 	/**
 	 * 视频预览
@@ -277,7 +277,7 @@ const fileFunction = {
 				  ]
 		const defaultIndex =
 			Number(router.currentRoute.query.fileType) === 3 ? currentIndex : 0
-		Vue.prototype.$previewVideo({ videoList, defaultIndex })
+		Vue.prototype.$openBox.videoPreview({ videoList, defaultIndex })
 	},
 	/**
 	 * 文件预览
@@ -343,13 +343,13 @@ const fileFunction = {
 				fileSuffixCodeModeMap.has(codeFileSuffix) ||
 				(row.isDir === 0 && row.extendName === '')
 			) {
-				Vue.prototype.$previewCode({ fileInfo: row })
+				Vue.prototype.$openBox.codePreview({ fileInfo: row })
 				return false
 			}
 			//  若当前点击项是 markdown 文档
 			const MARKDOWN = ['markdown', 'md']
 			if (MARKDOWN.includes(row.extendName.toLowerCase())) {
-				Vue.prototype.$previewMarkdown({ fileInfo: row })
+				Vue.prototype.$openBox.markdownPreview({ fileInfo: row })
 				return false
 			}
 			//  若当前点击项是视频mp4格式
@@ -361,7 +361,7 @@ const fileFunction = {
 			//  若当前点击项是音频mp3格式
 			const AUDIO = ['mp3']
 			if (AUDIO.includes(row.extendName.toLowerCase())) {
-				Vue.prototype.$preivewAudio({
+				Vue.prototype.$openBox.audioPreview({
 					audioObj: row
 				})
 				return false

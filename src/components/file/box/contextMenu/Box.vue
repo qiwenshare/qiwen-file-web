@@ -378,11 +378,13 @@ export default {
 		 */
 		handleCopyFileBtnClick(fileInfo) {
 			this.visible = false
-			this.$copyFile({
-				fileInfo
-			}).then((res) => {
-				this.callback(res)
-			})
+			this.$openDialog
+				.copyFile({
+					fileInfo
+				})
+				.then((res) => {
+					this.callback(res)
+				})
 		},
 		/**
 		 * 移动按钮点击事件
@@ -391,12 +393,14 @@ export default {
 		 */
 		handleMoveFileBtnClick(fileInfo) {
 			this.visible = false
-			this.$moveFile({
-				isBatchMove: false,
-				fileInfo
-			}).then((res) => {
-				this.callback(res)
-			})
+			this.$openDialog
+				.moveFile({
+					isBatchMove: false,
+					fileInfo
+				})
+				.then((res) => {
+					this.callback(res)
+				})
 		},
 		/**
 		 * 解压缩按钮点击事件
@@ -406,12 +410,14 @@ export default {
 		 */
 		handleUnzipFileBtnClick(fileInfo, unzipMode) {
 			this.visible = false
-			this.$unzipFile({
-				unzipMode: unzipMode,
-				userFileId: fileInfo.userFileId
-			}).then((res) => {
-				this.callback(res)
-			})
+			this.$openDialog
+				.unzipFile({
+					unzipMode: unzipMode,
+					userFileId: fileInfo.userFileId
+				})
+				.then((res) => {
+					this.callback(res)
+				})
 		},
 		/**
 		 * 删除按钮点击事件
@@ -420,13 +426,15 @@ export default {
 		 */
 		handleDeleteFileBtnClick(fileInfo) {
 			this.visible = false
-			this.$deleteFile({
-				isBatchOperation: false,
-				fileInfo,
-				deleteMode: this.fileType === 6 ? 2 : 1 //  删除类型：1-删除到回收站 2-彻底删除
-			}).then((res) => {
-				this.callback(res)
-			})
+			this.$openDialog
+				.deleteFile({
+					isBatchOperation: false,
+					fileInfo,
+					deleteMode: this.fileType === 6 ? 2 : 1 //  删除类型：1-删除到回收站 2-彻底删除
+				})
+				.then((res) => {
+					this.callback(res)
+				})
 		},
 		/**
 		 * 还原按钮点击事件
@@ -435,12 +443,14 @@ export default {
 		 */
 		handleRestoreFileBtnClick(fileInfo) {
 			this.visible = false
-			this.$restoreFile({
-				deleteBatchNum: fileInfo.deleteBatchNum,
-				filePath: fileInfo.filePath
-			}).then((res) => {
-				this.callback(res)
-			})
+			this.$openDialog
+				.restoreFile({
+					deleteBatchNum: fileInfo.deleteBatchNum,
+					filePath: fileInfo.filePath
+				})
+				.then((res) => {
+					this.callback(res)
+				})
 		},
 		/**
 		 * 文件重命名按钮点击事件
@@ -449,12 +459,14 @@ export default {
 		 */
 		handleRenameFileBtnClick(fileInfo) {
 			this.visible = false
-			this.$renameFile({
-				oldFileName: fileInfo.fileName,
-				userFileId: fileInfo.userFileId
-			}).then((res) => {
-				this.callback(res)
-			})
+			this.$openDialog
+				.renameFile({
+					oldFileName: fileInfo.fileName,
+					userFileId: fileInfo.userFileId
+				})
+				.then((res) => {
+					this.callback(res)
+				})
 		},
 		/**
 		 * 文件分享按钮点击事件
@@ -463,7 +475,7 @@ export default {
 		 */
 		handleShareFileBtnClick(fileInfo) {
 			this.visible = false
-			this.$shareFile({
+			this.$openDialog.shareFile({
 				fileInfo: [
 					{
 						userFileId: fileInfo.userFileId
@@ -487,18 +499,20 @@ export default {
 		 */
 		handleShowDetailInfo(fileInfo) {
 			this.visible = false
-			this.$showFileDetailInfo({ fileInfo })
+			this.$openDialog.showFileDetail({ fileInfo })
 		},
 		/**
 		 * 新建文件夹按钮点击事件
 		 * @description 调用新建文件夹服务，并在弹窗确认回调事件中刷新文件列表
 		 */
 		handleClickAddFolderBtn() {
-			this.$addFolder({
-				filePath: router.currentRoute.query.filePath || '/'
-			}).then((res) => {
-				this.callback(res)
-			})
+			this.$openDialog
+				.addFolder({
+					filePath: router.currentRoute.query.filePath || '/'
+				})
+				.then((res) => {
+					this.callback(res)
+				})
 		},
 		/**
 		 * 新建 office 文件
@@ -506,11 +520,13 @@ export default {
 		 * @param {string} 文件扩展名 docx xlsx pptx
 		 */
 		handleCreateFile(extendName) {
-			this.$addFile({
-				extendName: extendName
-			}).then((res) => {
-				this.callback(res)
-			})
+			this.$openDialog
+				.addFile({
+					extendName: extendName
+				})
+				.then((res) => {
+					this.callback(res)
+				})
 		},
 		/**
 		 * 上传文件按钮点击事件
@@ -518,7 +534,7 @@ export default {
 		 * @param {boolean} uploadWay 上传方式 0-文件上传 1-文件夹上传 2-粘贴图片或拖拽上传
 		 */
 		handleUploadFileBtnClick(uploadWay) {
-			this.$uploadFile({
+			this.$openBox.uploadFile({
 				params: this.uploadFileParams,
 				uploadWay,
 				serviceEl: this.serviceEl,
