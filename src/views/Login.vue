@@ -225,7 +225,7 @@ export default {
 						this.isShowDragVerify = false
 					}
 					if (res.success) {
-						this.setCookies(this.$config.tokenKeyName, res.data.token) //  存储登录状态
+						this.$common.setCookies(this.$config.tokenKeyName, res.data.token) //  存储登录状态
 						this.$message.success('登录成功！')
 						this.$router.replace(this.url) //  跳转到前一个页面或者网盘主页
 						this.$refs[formName].resetFields() //  清空表单

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router/router'
 import store from '@/store/index.js'
-import globalFunction from '@/libs/globalFunction.js'
+import globalFunction from '@/libs/globalFunction/index.js'
 import '_a/styles/css/base.css'
 import '_a/styles/css/element-cover.css'
 import '_a/styles/iconfont/iconfont.css'
@@ -27,7 +27,7 @@ Vue.component(CollapseTransition.name, CollapseTransition)
 Vue.config.productionTip = false
 
 for (let key in globalFunction) {
-	Vue.prototype[key] = globalFunction[key]
+	Vue.prototype[`$${key}`] = globalFunction[key]
 }
 
 Vue.use(element)

@@ -10,18 +10,21 @@
 				class="file-item"
 				v-for="(item, index) in fileListSorted"
 				:key="index"
-				:title="getFileNameComplete(item)"
+				:title="$file.getFileNameComplete(item)"
 				:style="`width: ${gridSize + 40}px; `"
 				:class="item.userFileId === selectedFile.userFileId ? 'active' : ''"
-				@click="handleFileNameClick(item, index, fileListSorted)"
+				@click="$file.handleFileNameClick(item, index, fileListSorted)"
 				@contextmenu.prevent="handleContextMenu(item, index, $event)"
 			>
 				<img
 					class="file-img"
-					:src="setFileImg(item)"
+					:src="$file.setFileImg(item)"
 					:style="`width: ${gridSize}px; height: ${gridSize}px;`"
 				/>
-				<div class="file-name" v-html="getFileNameComplete(item, true)"></div>
+				<div
+					class="file-name"
+					v-html="$file.getFileNameComplete(item, true)"
+				></div>
 				<i
 					class="file-operate el-icon-more"
 					:class="`operate-more-${index}`"

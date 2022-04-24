@@ -16,7 +16,7 @@
 			<!-- 音频组件 -->
 			<audio
 				class="audio-box"
-				:src="getViewFilePath(audioObj)"
+				:src="$file.getViewFilePath(audioObj)"
 				controls
 				autoplay
 			></audio>

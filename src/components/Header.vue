@@ -118,7 +118,7 @@ export default {
 		 */
 		exitButton() {
 			this.$message.success('退出登录成功！')
-			this.removeCookies(this.$config.tokenKeyName)
+			this.$common.removeCookies(this.$config.tokenKeyName)
 			this.$store.dispatch('getUserInfo').then(() => {
 				this.$router.push({ name: 'Home' })
 			})

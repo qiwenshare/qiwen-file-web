@@ -11,7 +11,7 @@
 		>
 			<li
 				class="right-menu-item"
-				@click="handleFileNameClick(selectedFile, 0, [selectedFile])"
+				@click="$file.handleFileNameClick(selectedFile, 0, [selectedFile])"
 				v-if="seeBtnShow"
 			>
 				<i class="el-icon-view"></i> 查看
@@ -66,7 +66,7 @@
 				<a
 					target="_blank"
 					style="display: block; color: inherit"
-					:href="getDownloadFilePath(selectedFile)"
+					:href="$file.getDownloadFilePath(selectedFile)"
 					:download="selectedFile.fileName + '.' + selectedFile.extendName"
 				>
 					<i class="el-icon-download"></i> 下载
@@ -110,7 +110,7 @@
 			</li> -->
 			<li
 				class="right-menu-item"
-				@click="getFileOnlineEditPathByOffice(selectedFile)"
+				@click="$file.getFileOnlineEditPathByOffice(selectedFile)"
 				v-if="onlineEditBtnShow"
 			>
 				<i class="el-icon-edit"></i> 在线编辑
@@ -118,7 +118,10 @@
 			<li
 				class="right-menu-item"
 				@click="
-					copyShareLink(selectedFile.shareBatchNum, selectedFile.extractionCode)
+					$file.copyShareLink(
+						selectedFile.shareBatchNum,
+						selectedFile.extractionCode
+					)
 				"
 				v-if="copyLinkBtnShow"
 			>

@@ -95,12 +95,12 @@
 				<div class="text" v-show="!isCollapse">
 					<span class="label">存储</span>
 					<span>
-						{{ calculateFileSize(storageValue) }} /
-						{{ calculateFileSize(totalStorageValue) }}
+						{{ $file.calculateFileSize(storageValue) }} /
+						{{ $file.calculateFileSize(totalStorageValue) }}
 					</span>
 				</div>
 				<div class="text" v-show="isCollapse">
-					<span>{{ calculateFileSize(storageValue) }}</span>
+					<span>{{ $file.calculateFileSize(storageValue) }}</span>
 				</div>
 			</div>
 		</el-drawer>
@@ -193,12 +193,12 @@
 				<div class="text" v-show="!isCollapse">
 					<span class="label">存储</span>
 					<span
-						>{{ calculateFileSize(storageValue) }} /
-						{{ calculateFileSize(totalStorageValue) }}</span
+						>{{ $file.calculateFileSize(storageValue) }} /
+						{{ $file.calculateFileSize(totalStorageValue) }}</span
 					>
 				</div>
 				<div class="text" v-show="isCollapse">
-					<span>{{ calculateFileSize(storageValue) }}</span>
+					<span>{{ $file.calculateFileSize(storageValue) }}</span>
 				</div>
 			</div>
 		</template>
