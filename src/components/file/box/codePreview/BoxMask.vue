@@ -9,9 +9,13 @@
 			<div class="tip-wrapper" v-if="visible">
 				<div class="name" :title="$file.getFileNameComplete(fileInfo)">
 					{{ $file.getFileNameComplete(fileInfo) }}
-					<span class="un-save" v-show="isModify">（未保存）</span>
+					<span class="un-save" v-show="isModify && !codeMirrorOptions.readOnly"
+						>（未保存）</span
+					>
 				</div>
-				<div class="editor-preveiw">在线编辑 & 预览</div>
+				<div class="editor-preveiw">
+					在线预览{{ codeMirrorOptions.readOnly ? '' : ' & 编辑' }}
+				</div>
 				<div class="tool-wrapper">
 					<a
 						class="item download-link"
@@ -45,7 +49,7 @@
 					<i
 						class="save-icon iconfont icon-baocun"
 						title="保存（ctrl+s）"
-						v-show="isModify"
+						v-show="isModify && !codeMirrorOptions.readOnly"
 						@click="handleModifyFileContent"
 					></i>
 					<el-form
@@ -153,6 +157,7 @@ export default {
 				tabSize: 4, //  制表符的宽度。默认为 4。
 				mode: 'text/html', //  解析当前代码的模式，参考 https://codemirror.net/mode/ 每种语言的示例页面的底部都有对应的 MIME 类型，如果当前文件后缀没有匹配的语言，按照 html 来解析
 				theme: 'default', //  代码高亮主题色，其他主题色参考 https://codemirror.net/theme/
+				readOnly: true, //  true 只读不可编辑 | false 可编辑 | "nocursor"（而不是简单的 true ），不允许编辑器聚焦。
 				lineNumbers: true, //  是否在编辑器左侧显示行号
 				line: true,
 				autoCloseBrackets: true, //  自动补全括号
@@ -195,6 +200,7 @@ export default {
 					this.codeMirrorOptions.mode =
 						this.fileSuffixCodeModeMap.get(fileSuffix).mime
 				}
+				this.codeMirrorOptions.readOnly = !this.isEdit //  设置编辑器是否只读
 				// codemirror 主题获取
 				this.codeMirrorOptions.theme =
 					localStorage.getItem('qiwen_file_codemirror_theme') || 'default'
@@ -243,8 +249,8 @@ export default {
 		 * 修改代码文本内容
 		 */
 		handleModifyFileContent() {
-			console.log('触发了修改')
-			if (!this.isModify) {
+			// 如果没有修改，或当前为只读状态
+			if (!this.isModify || this.codeMirrorOptions.readOnly) {
 				return false
 			}
 			this.codeMirrorLoading = true

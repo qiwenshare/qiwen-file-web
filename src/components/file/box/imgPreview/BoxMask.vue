@@ -1,13 +1,18 @@
 <template>
 	<transition name="el-fade-in-linear el-fade-in">
-		<div
-			class="img-preview-wrapper"
-			v-show="visible"
-			@click.self="closeImgPreview"
-			@mousewheel.prevent="rollImg()"
-		>
+		<div class="img-preview-wrapper" v-show="visible">
 			<!-- 顶部信息栏 & 工具栏 -->
 			<div class="tip-wrapper" v-if="visible">
+				<i
+					class="fold-icon"
+					:class="
+						isShowMinImgList
+							? 'no-fold el-icon-s-fold'
+							: 'fold el-icon-s-unfold'
+					"
+					:title="isShowMinImgList ? '折叠缩略图' : '展开缩略图'"
+					@click="isShowMinImgList = !isShowMinImgList"
+				></i>
 				<div class="name" :title="activeImageName">
 					{{ activeImageName }}
 				</div>
@@ -48,38 +53,64 @@
 					</el-tooltip>
 				</div>
 			</div>
-			<!-- 大图查看 -->
-			<img
-				class="img-large"
-				ref="imgLarge"
-				v-for="(item, index) in imgList"
-				:key="index"
-				:src="item.fileUrl"
-				v-show="index === activeIndex"
-			/>
-			<!-- 左右切换图标 -->
-			<i
-				class="pre-icon el-icon-arrow-left"
-				title="上一张"
-				v-show="activeIndex > 0"
-				@click.stop="activeIndex--"
-			></i>
-			<i
-				class="next-icon el-icon-arrow-right"
-				title="下一张"
-				v-show="activeIndex < imgList.length - 1"
-				@click.stop="activeIndex++"
-			></i>
-			<!-- 底部显示放大缩小比例 -->
-			<div class="zoom-bar">
-				<el-slider
-					v-model="imgZoom"
-					:min="imgZoomMin"
-					:max="imgZoomMax"
-					:format-tooltip="formatZoom"
-					@input="changeZoom"
-				></el-slider>
-				<div class="zoom-count">{{ imgZoom }}%</div>
+			<!-- 左侧缩略图 -->
+			<ul class="min-img-list" ref="minImgListRef" v-show="isShowMinImgList">
+				<li
+					class="min-img-item"
+					v-for="(item, index) in imgList"
+					:key="index"
+					:class="{ active: activeIndex === index }"
+					:title="$file.getFileNameComplete(item)"
+					ref="minImgRef"
+					@click="activeIndex = index"
+				>
+					<img
+						class="min-img"
+						:src="$file.setFileImg(item)"
+						:alt="`${item.fileName} 缩略图`"
+					/>
+				</li>
+			</ul>
+			<!-- 右侧预览区域 -->
+			<div
+				class="img-wrapper"
+				:class="{ 'full-width': !isShowMinImgList }"
+				@mousewheel.prevent="rollImg()"
+				@click.self="closeImgPreview"
+			>
+				<!-- 大图查看 -->
+				<img
+					class="img-large"
+					ref="imgLarge"
+					v-for="(item, index) in imgList"
+					:key="index"
+					:src="item.fileUrl"
+					v-show="index === activeIndex"
+				/>
+				<!-- 左右切换图标 -->
+				<i
+					class="pre-icon el-icon-arrow-left"
+					title="上一张"
+					v-show="activeIndex > 0"
+					@click.stop="activeIndex--"
+				></i>
+				<i
+					class="next-icon el-icon-arrow-right"
+					title="下一张"
+					v-show="activeIndex < imgList.length - 1"
+					@click.stop="activeIndex++"
+				></i>
+				<!-- 底部显示放大缩小比例 -->
+				<div class="zoom-bar">
+					<el-slider
+						v-model="imgZoom"
+						:min="imgZoomMin"
+						:max="imgZoomMax"
+						:format-tooltip="formatZoom"
+						@input="changeZoom"
+					></el-slider>
+					<div class="zoom-count">{{ imgZoom }}%</div>
+				</div>
 			</div>
 		</div>
 	</transition>
@@ -97,7 +128,8 @@ export default {
 			activeIndex: 0, //  当前图片索引 从 0 开始
 			imgZoom: 40, //  图片缩放比例
 			imgZoomMin: 1, //  图片缩放最小比例
-			imgZoomMax: 200 //  图片缩放最大比例
+			imgZoomMax: 200, //  图片缩放最大比例
+			isShowMinImgList: true //  是否显示缩略图列表
 		}
 	},
 	computed: {
@@ -162,6 +194,10 @@ export default {
 						).toFixed(0)
 					)
 					this.$refs.imgLarge[this.activeIndex].style.zoom = `${this.imgZoom}%`
+					this.isShowMinImgList =
+						localStorage.getItem('qiwen_file_img_preview_show_min') === 'false'
+							? false
+							: true
 				})
 			} else {
 				bodyDom.style.overflow = 'auto'
@@ -194,7 +230,12 @@ export default {
 					)
 					this.$refs.imgLarge[newValue].style.zoom = `${this.imgZoom}%`
 				}
+				this.handleScrollMinImg()
 			})
+		},
+		// 监听 是否展示缩略图列表，将变化值保存在 localStorage 中
+		isShowMinImgList(val) {
+			localStorage.setItem('qiwen_file_img_preview_show_min', val)
 		}
 	},
 	methods: {
@@ -247,6 +288,25 @@ export default {
 			this.$refs.imgLarge[
 				this.activeIndex
 			].style.transform = `rotate(${this.rotate}deg)`
+		},
+		/**
+		 * 将缩略图中当前查看的图片缩略图滚动到视野中
+		 */
+		handleScrollMinImg() {
+			const parentEle = this.$refs.minImgListRef //  包裹缩略图的父元素
+			const activeEle = this.$refs.minImgRef[this.activeIndex] //  当前缩略图
+			// 当前元素距离可视区域顶部的距离
+			const currentEleTop = activeEle.offsetTop - activeEle.clientHeight
+			// 当前元素距离可视区域底部的距离
+			const currentEleBottom = parentEle.clientHeight - activeEle.offsetTop
+			// 如果当前查看的图片缩略图有一部分在可视区域之外（之上或之下）
+			if (
+				currentEleBottom < activeEle.clientHeight ||
+				currentEleTop < activeEle.clientHeight
+			) {
+				// 将父元素的滚动条向可视区域方向滚动两个图片的高度
+				parentEle.scrollTop = -currentEleBottom + activeEle.clientHeight * 2
+			}
 		}
 	}
 }
@@ -254,6 +314,7 @@ export default {
 
 <style lang="stylus" scoped>
 @import '~_a/styles/varibles.styl';
+@import '~_a/styles/mixins.styl';
 
 .img-preview-wrapper {
   position: fixed;
@@ -269,21 +330,8 @@ export default {
   display: flex;
   align-items: center;
   animation: imgPreviewAnimation 0.3s;
-  -webkit-animation: imgPreviewAnimation 0.3s; /* Safari and Chrome */
   animation-iteration-count: 0.3;
-  -webkit-animation-iteration-count: 0.3;
   animation-fill-mode: forwards;
-  -webkit-animation-fill-mode: forwards; /* Safari 和 Chrome */
-
-  @keyframes imgPreviewAnimation {
-    0% {
-      background: transparent;
-    }
-
-    100% {
-      background: rgba(0, 0, 0, 0.8);
-    }
-  }
 
   @keyframes imgPreviewAnimation {
     0% {
@@ -301,7 +349,7 @@ export default {
     left: 0;
     z-index: 2;
     background: rgba(0, 0, 0, 0.5);
-    padding: 0 48px;
+    padding-right: 48px;
     width: 100%;
     height: 48px;
     line-height: 48px;
@@ -309,6 +357,22 @@ export default {
     font-size: 16px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+
+    .fold-icon {
+      margin-right: 16px;
+      font-size: 24px;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.6;
+      }
+      &.no-fold {
+        width: 120px;
+      }
+      &.fold {
+        width: 64px;
+      }
+    }
 
     .name {
       flex: 1;
@@ -379,61 +443,118 @@ export default {
       }
     }
   }
-
-  .img-large {
-    margin: 0 auto;
-    transition: transform 0.5s;
-    -webkit-transition: transform 0.5s; /* Safari */
-  }
-
-  .pre-icon, .next-icon {
-    font-size: 60px;
-    color: #fff;
+  .min-img-list {
     position: fixed;
-    top: 50%;
-    cursor: pointer;
-
-    &:hover {
-      opacity: 0.7;
-    }
-  }
-
-  .pre-icon {
-    left: 64px;
-  }
-
-  .next-icon {
-    right: 64px;
-  }
-
-  .zoom-bar {
-    position: fixed;
-    right: 0;
-    bottom: 20px;
+    top: 48px;
     left: 0;
-    margin: 0 auto;
-    width: 600px;
-    display: flex;
+    background: rgba(0, 0, 0, 0.5);
+    height: calc(100vh - 48px);
+    padding: 8px 16px;
+    overflow-y: auto;
+    list-style: none;
+    setScrollbar(8px, transparent, #C0C4CC);
 
-    >>> .el-slider {
-      flex: 1;
-
-      .el-slider__bar {
-        background: $PrimaryText;
+    .min-img-item {
+      position: relative;
+      margin-bottom: 4px;
+      width: 80px;
+      height: 80px;
+      cursor: pointer;
+      .min-img {
+        width: 100%;
+        height: 100%;
       }
-
-      .el-slider__button {
-        border-color: $PrimaryText;
+      &:last-of-type {
+        margin-bottom: 0;
       }
-    }
-
-    .zoom-count {
-      width: 60px;
-      height: 38px;
-      line-height: 38px;
-      text-align: right;
-      color: #fff;
+      &:not(.active)::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        width: 80px;
+        height: 80px;
+        background: #000;
+        opacity: 0.4;
+      }
+      &:hover {
+        &:not(.active)::after {
+          opacity: 0.2;
+        }
+      }
     }
   }
+  .img-wrapper {
+    position: fixed;
+    top: 48px;
+    right: 0;
+    left: 120px;
+    overflow: auto;
+    height: calc(100vh - 48px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &.full-width {
+      left: 0;
+    }
+    .img-large {
+      margin: 0 auto;
+      transition: transform 0.5s;
+      -webkit-transition: transform 0.5s; /* Safari */
+    }
+
+    .pre-icon, .next-icon {
+      font-size: 60px;
+      color: #fff;
+      position: absolute;
+      top: 50%;
+      cursor: pointer;
+      z-index: 3;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    .pre-icon {
+      left: 64px;
+    }
+
+    .next-icon {
+      right: 64px;
+    }
+
+    .zoom-bar {
+      position: absolute;
+      right: 0;
+      bottom: 20px;
+      left: 0;
+      margin: 0 auto;
+      width: 600px;
+      display: flex;
+
+      >>> .el-slider {
+        flex: 1;
+
+        .el-slider__bar {
+          background: $PrimaryText;
+        }
+
+        .el-slider__button {
+          border-color: $PrimaryText;
+        }
+      }
+
+      .zoom-count {
+        width: 60px;
+        height: 38px;
+        line-height: 38px;
+        text-align: right;
+        color: #fff;
+      }
+    }
+  }
+
 }
 </style>

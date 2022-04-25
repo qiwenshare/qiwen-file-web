@@ -61,6 +61,8 @@ export const fileImgMap = new Map([
 	['xlsx', require('_a/images/file/file_excel.svg')],
 	['xml', require('_a/images/file/file_xml.png')],
 	['zip', require('_a/images/file/file_zip.png')],
+	['7z', require('_a/images/file/file_7z.svg')],
+	['tar', require('_a/images/file/file_tar.svg')],
 	['md', require('_a/images/file/file_markdown.png')],
 	['markdown', require('_a/images/file/file_markdown.png')],
 	['yaml', require('_a/images/file/file_yaml.png')],

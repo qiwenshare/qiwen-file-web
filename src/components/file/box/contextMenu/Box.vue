@@ -110,7 +110,7 @@
 			</li> -->
 			<li
 				class="right-menu-item"
-				@click="$file.getFileOnlineEditPathByOffice(selectedFile)"
+				@click="handleClickFileEdit(selectedFile)"
 				v-if="onlineEditBtnShow"
 			>
 				<i class="el-icon-edit"></i> 在线编辑
@@ -177,13 +177,15 @@
 
 <script>
 import router from '@/router/router.js'
+import { officeFileType, fileSuffixCodeModeMap } from '@/libs/map.js'
 
 export default {
 	name: 'ContextMenu',
 	data() {
 		return {
+			officeFileType,
+			fileSuffixCodeModeMap,
 			visible: false, //  右键菜单是否显示
-			officeFileType: ['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'],
 			sortedFileList: [], //  排序后的表格数据
 			// 右键菜单
 			rightMenu: {
@@ -196,7 +198,7 @@ export default {
 			unzipMenu: {
 				top: 0,
 				bottom: 'auto',
-				left: '138px',
+				left: '126px',
 				right: 'auto'
 			},
 			dirImg: require('_a/images/file/dir.png'),
@@ -265,7 +267,7 @@ export default {
 			return (
 				![6, 8].includes(this.fileType) &&
 				!['Share'].includes(this.routeName) &&
-				['zip', 'rar'].includes(this.selectedFile.extendName)
+				['zip', 'rar', '7z', 'tar', 'gz'].includes(this.selectedFile.extendName)
 			)
 		},
 		// 编辑文件夹按钮是否显示
@@ -280,7 +282,8 @@ export default {
 		onlineEditBtnShow() {
 			return (
 				![6, 8].includes(this.fileType) &&
-				this.officeFileType.includes(this.selectedFile.extendName) &&
+				(this.officeFileType.includes(this.selectedFile.extendName) ||
+					this.fileSuffixCodeModeMap.has(this.selectedFile.extendName)) &&
 				!['Share'].includes(this.routeName)
 			)
 		},
@@ -351,7 +354,7 @@ export default {
 			} else {
 				this.rightMenu.left = `${this.domEvent.clientX + 8}px`
 				this.rightMenu.right = 'auto'
-				this.unzipMenu.left = '138px'
+				this.unzipMenu.left = '126px'
 				this.unzipMenu.right = 'auto'
 			}
 			this.visible = true
@@ -491,6 +494,20 @@ export default {
 				name: 'WebIDE',
 				query: { filePath: this.selectedFile.filePath }
 			})
+		},
+		/**
+		 * 文件在线编辑按钮点击事件
+		 * @description 打开 代码预览对话框 或 office 编辑页面
+		 * @param {object} fileInfo 文件信息
+		 */
+		handleClickFileEdit(fileInfo) {
+			if (this.officeFileType.includes(fileInfo.extendName)) {
+				// office 编辑页面
+				this.$file.getFileOnlineEditPathByOffice(fileInfo)
+			} else {
+				// 代码预览对话框
+				this.$openBox.codePreview({ fileInfo: fileInfo, isEdit: true })
+			}
 		},
 		/**
 		 * 文件详情按钮点击事件

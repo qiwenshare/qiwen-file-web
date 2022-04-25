@@ -343,7 +343,7 @@ const fileFunction = {
 				fileSuffixCodeModeMap.has(codeFileSuffix) ||
 				(row.isDir === 0 && row.extendName === '')
 			) {
-				Vue.prototype.$openBox.codePreview({ fileInfo: row })
+				Vue.prototype.$openBox.codePreview({ fileInfo: row, isEdit: false })
 				return false
 			}
 			//  若当前点击项是 markdown 文档

@@ -137,7 +137,7 @@
 		<template v-if="screenWidth > 768">
 			<!-- 文件展示模式 -->
 			<i
-				class="model-icon el-icon-notebook-2"
+				class="model-icon iconfont icon-liebiao1"
 				:class="{ active: fileGroupLable === 0 }"
 				title="列表模式"
 				@click="handleFileDisplayModelChange(0)"
@@ -180,7 +180,7 @@
 					@change="handleFileDisplayModelChange"
 				>
 					<el-radio-button :label="0">
-						<i class="el-icon-notebook-2"></i> 列表
+						<i class="iconfont icon-liebiao1"></i> 列表
 					</el-radio-button>
 					<el-radio-button :label="1">
 						<i class="el-icon-s-grid"></i> 网格
