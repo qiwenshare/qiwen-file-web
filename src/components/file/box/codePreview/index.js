@@ -8,13 +8,15 @@ let codePreviewInstance = null
 /**
  * 初始化代码预览实例
  * @param {string} fileInfo 文件信息
+ * @param {boolean} isEdit 是否可编辑
  */
-const initInstanceCodePreview = (fileInfo) => {
+const initInstanceCodePreview = (fileInfo, isEdit) => {
 	codePreviewInstance = new CodePreviewConstructor({
 		el: document.createElement('div'),
 		data() {
 			return {
-				fileInfo
+				fileInfo,
+				isEdit
 			}
 		}
 	})
@@ -28,9 +30,9 @@ const showCodePreviewBox = (obj) => {
 	if (codePreviewInstance !== null) {
 		document.body.removeChild(codePreviewInstance.$el)
 	}
-	let { fileInfo } = obj
+	let { fileInfo, isEdit } = obj
 	return new Promise((reslove) => {
-		initInstanceCodePreview(fileInfo)
+		initInstanceCodePreview(fileInfo, isEdit)
 		codePreviewInstance.callback = (res) => {
 			reslove(res)
 			// 服务取消时卸载 DOM
