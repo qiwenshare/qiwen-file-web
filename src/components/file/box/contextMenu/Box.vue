@@ -196,7 +196,7 @@ export default {
 			unzipMenu: {
 				top: 0,
 				bottom: 'auto',
-				left: '138px',
+				left: '126px',
 				right: 'auto'
 			},
 			dirImg: require('_a/images/file/dir.png'),
@@ -265,7 +265,7 @@ export default {
 			return (
 				![6, 8].includes(this.fileType) &&
 				!['Share'].includes(this.routeName) &&
-				['zip', 'rar'].includes(this.selectedFile.extendName)
+				['zip', 'rar', '7z', 'tar', 'gz'].includes(this.selectedFile.extendName)
 			)
 		},
 		// 编辑文件夹按钮是否显示
@@ -351,7 +351,7 @@ export default {
 			} else {
 				this.rightMenu.left = `${this.domEvent.clientX + 8}px`
 				this.rightMenu.right = 'auto'
-				this.unzipMenu.left = '138px'
+				this.unzipMenu.left = '126px'
 				this.unzipMenu.right = 'auto'
 			}
 			this.visible = true
