@@ -177,7 +177,11 @@
 
 <script>
 import router from '@/router/router.js'
-import { officeFileType, fileSuffixCodeModeMap } from '@/libs/map.js'
+import {
+	officeFileType,
+	fileSuffixCodeModeMap,
+	markdownFileType
+} from '@/libs/map.js'
 
 export default {
 	name: 'ContextMenu',
@@ -185,6 +189,7 @@ export default {
 		return {
 			officeFileType,
 			fileSuffixCodeModeMap,
+			markdownFileType,
 			visible: false, //  右键菜单是否显示
 			sortedFileList: [], //  排序后的表格数据
 			// 右键菜单
@@ -283,6 +288,7 @@ export default {
 			return (
 				![6, 8].includes(this.fileType) &&
 				(this.officeFileType.includes(this.selectedFile.extendName) ||
+					this.markdownFileType.includes(this.selectedFile.extendName) ||
 					this.fileSuffixCodeModeMap.has(this.selectedFile.extendName)) &&
 				!['Share'].includes(this.routeName)
 			)
@@ -504,8 +510,14 @@ export default {
 			if (this.officeFileType.includes(fileInfo.extendName)) {
 				// office 编辑页面
 				this.$file.getFileOnlineEditPathByOffice(fileInfo)
+			} else if (this.markdownFileType.includes(fileInfo.extendName)) {
+				// markdown 编辑浮层
+				this.$openBox.markdownPreview({
+					fileInfo: fileInfo,
+					editable: true
+				})
 			} else {
-				// 代码预览对话框
+				// 代码编辑对话框
 				this.$openBox.codePreview({ fileInfo: fileInfo, isEdit: true })
 			}
 		},

@@ -2,7 +2,12 @@ import Vue from 'vue'
 import router from '@/router/router'
 import config from '@/config/index.js'
 import { Message } from 'element-ui'
-import { fileImgMap, unknownImg, fileSuffixCodeModeMap } from '@/libs/map.js'
+import {
+	fileImgMap,
+	unknownImg,
+	fileSuffixCodeModeMap,
+	markdownFileType
+} from '@/libs/map.js'
 import { officeFileType } from '@/libs/map.js'
 import common from './common.js'
 
@@ -347,9 +352,11 @@ const fileFunction = {
 				return false
 			}
 			//  若当前点击项是 markdown 文档
-			const MARKDOWN = ['markdown', 'md']
-			if (MARKDOWN.includes(row.extendName.toLowerCase())) {
-				Vue.prototype.$openBox.markdownPreview({ fileInfo: row })
+			if (markdownFileType.includes(row.extendName.toLowerCase())) {
+				Vue.prototype.$openBox.markdownPreview({
+					fileInfo: row,
+					editable: false
+				})
 				return false
 			}
 			//  若当前点击项是视频mp4格式
