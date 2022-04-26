@@ -67,6 +67,7 @@ axios.interceptors.response.use(
 					Message.error('服务异常，请稍后刷新重试或联系管理员')
 					break
 				default:
+					Message.warning(error.response.data.message)
 					return Promise.reject(error.response)
 			}
 		}
