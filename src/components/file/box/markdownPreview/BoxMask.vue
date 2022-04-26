@@ -11,7 +11,9 @@
 					{{ $file.getFileNameComplete(fileInfo) }}
 					<span class="un-save" v-show="isModify">（未保存）</span>
 				</div>
-				<div class="editor-preveiw">在线编辑 & 预览</div>
+				<div class="editor-preveiw">
+					在线预览{{ editable ? ' & 编辑' : '' }}
+				</div>
 				<div class="tool-wrapper">
 					<a
 						class="item download-link"
@@ -23,10 +25,8 @@
 					</a>
 					<el-tooltip effect="dark" placement="bottom">
 						<div slot="content">
-							操作提示：<br />
-							1. 点击文档以外的区域可退出查看；<br />
-							2. 按 Esc 键可退出查看；<br />
-							3. 支持在线编辑、保存、下载
+							1. 点击文档以外的区域可退出查看<br />
+							2. 按 Esc 键可退出查看
 						</div>
 						<div class="item text-wrapper">
 							<span class="text">操作提示</span>
@@ -45,6 +45,8 @@
 				ref="mavonEditor"
 				v-model="markdownText"
 				:toolbars="toolbars"
+				:editable="editable"
+				:toolbarsFlag="toolbarsFlag"
 				:externalLink="externalLink"
 				:subfield="screenWidth > 768 ? true : false"
 				defaultOpen="preview"
@@ -154,6 +156,10 @@ export default {
 					return `${context}mavonEditor/js/katex.min.js`
 				}
 			}
+		},
+		// 工具栏是否展示
+		toolbarsFlag() {
+			return this.editable
 		}
 	},
 	watch: {

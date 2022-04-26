@@ -75,6 +75,11 @@ export const fileImgMap = new Map([
 export const officeFileType = ['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx']
 
 /**
+ * markdown 文件后缀
+ */
+export const markdownFileType = ['markdown', 'md']
+
+/**
  * 文件展示模式选择列表时，所有可供选择的表格列名
  */
 export const allColumnList = [

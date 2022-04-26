@@ -8,13 +8,15 @@ let markdownPreviewInstance = null
 /**
  * 初始化 markdown 预览实例
  * @param {string} fileInfo 文件信息
+ * @param {boolean} editable 是否可编辑
  */
-const initInstanceMarkdownPreview = (fileInfo) => {
+const initInstanceMarkdownPreview = (fileInfo, editable) => {
 	markdownPreviewInstance = new MarkdownPreviewConstructor({
 		el: document.createElement('div'),
 		data() {
 			return {
-				fileInfo
+				fileInfo,
+				editable
 			}
 		}
 	})
@@ -28,9 +30,9 @@ const showMarkdownPreviewBox = (obj) => {
 	if (markdownPreviewInstance !== null) {
 		document.body.removeChild(markdownPreviewInstance.$el)
 	}
-	let { fileInfo } = obj
+	let { fileInfo, editable } = obj
 	return new Promise((reslove) => {
-		initInstanceMarkdownPreview(fileInfo)
+		initInstanceMarkdownPreview(fileInfo, editable)
 		markdownPreviewInstance.callback = (res) => {
 			reslove(res)
 			// 服务取消时卸载 DOM
