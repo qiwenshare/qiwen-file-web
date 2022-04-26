@@ -7,8 +7,8 @@
 					class="fold-icon"
 					:class="
 						isShowMinImgList
-							? 'no-fold el-icon-s-fold'
-							: 'fold el-icon-s-unfold'
+							? 'no-fold el-icon-d-arrow-left'
+							: 'fold el-icon-d-arrow-right'
 					"
 					:title="isShowMinImgList ? '折叠缩略图' : '展开缩略图'"
 					@click="isShowMinImgList = !isShowMinImgList"
@@ -29,7 +29,7 @@
 					<i
 						class="item el-icon-refresh-right"
 						title="向右旋转"
-						@click="rotateImg"
+						@click="handleRotateImg"
 					></i>
 					<a
 						class="item download-link"
@@ -40,17 +40,24 @@
 						<i class="el-icon-download" title="保存到本地"></i>
 					</a>
 					<el-tooltip effect="dark" placement="bottom">
-						<div slot="content">
-							操作提示：<br />
-							点击图片以外的区域可退出查看；<br />
-							按Esc键可退出查看；<br />
-							鼠标滚轮可放大缩小图片
+						<div slot="content" style="line-height: 1.5">
+							1. 点击图片以外的区域可退出预览<br />
+							2. 按 Escape 键可退出预览<br />
+							3. 按左、右方向键可切换为上一张、下一张图片<br />
+							4. 鼠标滚轮可放大、缩小图片<br />
+							5. 点击左上角
+							<i class="el-icon-d-arrow-left"></i> 图标可折叠、展开缩略图<br />
 						</div>
 						<div class="item text-wrapper">
 							<span class="text">操作提示</span>
 							<i class="el-icon-s-opportunity"></i>
 						</div>
 					</el-tooltip>
+					<i
+						class="item close-icon el-icon-close"
+						title="关闭预览"
+						@click="handleCloseImgPreview"
+					></i>
 				</div>
 			</div>
 			<!-- 左侧缩略图 -->
@@ -75,8 +82,8 @@
 			<div
 				class="img-wrapper"
 				:class="{ 'full-width': !isShowMinImgList }"
-				@mousewheel.prevent="rollImg()"
-				@click.self="closeImgPreview"
+				@mousewheel.prevent="handleMouseWheel()"
+				@click.self="handleCloseImgPreview"
 			>
 				<!-- 大图查看 -->
 				<img
@@ -92,13 +99,13 @@
 					class="pre-icon el-icon-arrow-left"
 					title="上一张"
 					v-show="activeIndex > 0"
-					@click.stop="activeIndex--"
+					@click.stop="handleChangeActiveImg(activeIndex - 1)"
 				></i>
 				<i
 					class="next-icon el-icon-arrow-right"
 					title="下一张"
 					v-show="activeIndex < imgList.length - 1"
-					@click.stop="activeIndex++"
+					@click.stop="handleChangeActiveImg(activeIndex + 1)"
 				></i>
 				<!-- 底部显示放大缩小比例 -->
 				<div class="zoom-bar">
@@ -106,8 +113,8 @@
 						v-model="imgZoom"
 						:min="imgZoomMin"
 						:max="imgZoomMax"
-						:format-tooltip="formatZoom"
-						@input="changeZoom"
+						:format-tooltip="formatZoomSize"
+						@input="handleZoomImg"
 					></el-slider>
 					<div class="zoom-count">{{ imgZoom }}%</div>
 				</div>
@@ -151,7 +158,7 @@ export default {
 				return this.activeIndex + 1
 			},
 			set(value) {
-				this.activeIndex = value - 1
+				this.handleChangeActiveImg(value - 1)
 			}
 		},
 		// 当前显示的图片下载链接
@@ -170,42 +177,21 @@ export default {
 	watch: {
 		// 监听 图片查看组件 显隐状态变化
 		visible(val) {
-			let bodyDom = document.querySelector('body')
 			if (val) {
 				this.activeIndex = this.defaultIndex
-				bodyDom.style.overflow = 'hidden'
-				// 添加键盘Esc事件
+				document.addEventListener('keyup', this.handleAddKeyupEvent) // 添加键盘相关事件
+				// 获取用户是否显示缩略图的操作习惯设置
+				this.isShowMinImgList =
+					localStorage.getItem('qiwen_file_img_preview_show_min') === 'false'
+						? false
+						: true
 				this.$nextTick(() => {
-					document.addEventListener('keyup', (e) => {
-						if (e.keyCode === 27) {
-							this.closeImgPreview()
-						}
-					})
-				})
-				this.$nextTick(() => {
-					this.imgZoom = Number(
-						(
-							Math.min(
-								bodyDom.clientWidth / this.imageWidth,
-								bodyDom.clientHeight / this.imageHeight
-							) *
-								100 -
-							this.reduceNumber
-						).toFixed(0)
-					)
-					this.$refs.imgLarge[this.activeIndex].style.zoom = `${this.imgZoom}%`
-					this.isShowMinImgList =
-						localStorage.getItem('qiwen_file_img_preview_show_min') === 'false'
-							? false
-							: true
+					this.handleCalculateImgZoom(this.activeIndex) // 确定图片缩放比例
+					this.handleScrollMinImg() // 将当前查看图片对应的缩略图滚动到视野中
 				})
 			} else {
-				bodyDom.style.overflow = 'auto'
-				document.removeEventListener('keyup', (e) => {
-					if (e.keyCode === 27) {
-						this.closeImgPreview()
-					}
-				})
+				// 移除键盘相关事件
+				document.removeEventListener('keyup', this.handleAddKeyupEvent)
 			}
 		},
 		// 监听 图片索引变化
@@ -217,20 +203,9 @@ export default {
 						this.$refs.imgLarge[newValue].style.zoom.split('%')[0]
 					)
 				} else {
-					let bodyDom = document.querySelector('body')
-					this.imgZoom = Number(
-						(
-							Math.min(
-								bodyDom.clientWidth / this.imageWidth,
-								bodyDom.clientHeight / this.imageHeight
-							) *
-								100 -
-							this.reduceNumber
-						).toFixed(0)
-					)
-					this.$refs.imgLarge[newValue].style.zoom = `${this.imgZoom}%`
+					// 确定图片缩放比例
+					this.handleCalculateImgZoom(newValue)
 				}
-				this.handleScrollMinImg()
 			})
 		},
 		// 监听 是否展示缩略图列表，将变化值保存在 localStorage 中
@@ -240,9 +215,46 @@ export default {
 	},
 	methods: {
 		/**
+		 * DOM 绑定回车键、左方向键、右方向键的键盘按下事件
+		 * @param {event} event 事件
+		 */
+		handleAddKeyupEvent(event) {
+			switch (event.key) {
+				case 'Escape': {
+					this.handleCloseImgPreview() // 关闭预览
+					break
+				}
+				case 'ArrowLeft': {
+					this.handleChangeActiveImg(this.activeIndex - 1) // 切换到上一张
+					break
+				}
+				case 'ArrowRight': {
+					this.handleChangeActiveImg(this.activeIndex + 1) // 切换到下一张
+					break
+				}
+			}
+		},
+		/**
+		 * 计算图片缩放比例
+		 */
+		handleCalculateImgZoom(currentIndex) {
+			const wrapperDom = document.querySelector('.img-wrapper')
+			this.imgZoom = Number(
+				(
+					Math.min(
+						wrapperDom.clientWidth / this.imageWidth,
+						wrapperDom.clientHeight / this.imageHeight
+					) *
+						100 -
+					this.reduceNumber
+				).toFixed(0)
+			)
+			this.$refs.imgLarge[currentIndex].style.zoom = `${this.imgZoom}%`
+		},
+		/**
 		 * 关闭图片预览，恢复旋转角度
 		 */
-		closeImgPreview() {
+		handleCloseImgPreview() {
 			this.rotate = 0
 			this.$refs.imgLarge[
 				this.activeIndex
@@ -255,22 +267,23 @@ export default {
 		 * @param {number} value 缩放数字
 		 * @returns {string}  图片缩放比例
 		 */
-		formatZoom(value) {
+		formatZoomSize(value) {
 			return value + '%'
 		},
 		/**
 		 * 数据改变时触发（使用鼠标拖曳时，活动过程实时触发）
 		 * @param {number} value 缩放数字
 		 */
-		changeZoom(value) {
+		handleZoomImg(value) {
 			if (this.$refs.imgLarge) {
 				this.$refs.imgLarge[this.activeIndex].style.zoom = value + '%' //  实时设置图片缩放比例
 			}
 		},
 		/**
-		 * 缩放图片
+		 * 鼠标滚动事件
+		 * @description 缩放图片
 		 */
-		rollImg() {
+		handleMouseWheel() {
 			let zoom =
 				parseInt(this.$refs.imgLarge[this.activeIndex].style.zoom) || 100
 			zoom += event.wheelDelta / 12
@@ -283,11 +296,20 @@ export default {
 		/**
 		 * 旋转图片
 		 */
-		rotateImg() {
+		handleRotateImg() {
 			this.rotate += 90
 			this.$refs.imgLarge[
 				this.activeIndex
 			].style.transform = `rotate(${this.rotate}deg)`
+		},
+		/**
+		 * 改变当前查看的图片索引
+		 */
+		handleChangeActiveImg(index) {
+			if (index >= 0 && index < this.imgList.length) {
+				this.activeIndex = index
+				this.handleScrollMinImg()
+			}
 		},
 		/**
 		 * 将缩略图中当前查看的图片缩略图滚动到视野中
@@ -414,6 +436,7 @@ export default {
       flex: 1;
       display: flex;
       justify-content: flex-end;
+      align-items: center;
 
       .item {
         margin-left: 16px;
@@ -424,14 +447,14 @@ export default {
         }
       }
 
-      .el-icon-refresh-right {
-        line-height: 48px;
+      .el-icon-refresh-right,
+      .close-icon,
+      .download-link {
         font-size: 18px;
       }
 
       .download-link {
         color: inherit;
-        font-size: 18px;
       }
 
       .text-wrapper {
@@ -492,16 +515,12 @@ export default {
     left: 120px;
     overflow: auto;
     height: calc(100vh - 48px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     &.full-width {
       left: 0;
     }
     .img-large {
-      margin: 0 auto;
+      position: absolute;
       transition: transform 0.5s;
-      -webkit-transition: transform 0.5s; /* Safari */
     }
 
     .pre-icon, .next-icon {
