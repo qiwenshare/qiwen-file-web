@@ -515,11 +515,14 @@ export default {
     left: 120px;
     overflow: auto;
     height: calc(100vh - 48px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     &.full-width {
       left: 0;
     }
     .img-large {
-      position: absolute;
+      margin: 0 auto;
       transition: transform 0.5s;
     }
 
