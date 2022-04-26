@@ -133,7 +133,7 @@ export default {
 			visible: false, //  图片预览遮罩层组件是否显示
 			rotate: 0, //  旋转角度
 			activeIndex: 0, //  当前图片索引 从 0 开始
-			imgZoom: 40, //  图片缩放比例
+			imgZoom: 100, //  图片缩放比例
 			imgZoomMin: 1, //  图片缩放最小比例
 			imgZoomMax: 200, //  图片缩放最大比例
 			isShowMinImgList: true //  是否显示缩略图列表
@@ -168,10 +168,6 @@ export default {
 		// 屏幕宽度
 		screenWidth() {
 			return store.state.common.screenWidth
-		},
-		// 在原比例上再缩小的比例
-		reduceNumber() {
-			return this.screenWidth > 768 ? 10 : 4
 		}
 	},
 	watch: {
@@ -238,17 +234,31 @@ export default {
 		 * 计算图片缩放比例
 		 */
 		handleCalculateImgZoom(currentIndex) {
+			// 包裹元素
 			const wrapperDom = document.querySelector('.img-wrapper')
-			this.imgZoom = Number(
-				(
-					Math.min(
-						wrapperDom.clientWidth / this.imageWidth,
-						wrapperDom.clientHeight / this.imageHeight
-					) *
-						100 -
-					this.reduceNumber
-				).toFixed(0)
+			// 宽度原比例
+			const widthRate = Number(
+				((wrapperDom.clientWidth - 264) / this.imageWidth).toFixed(2)
 			)
+			// 高度原比例
+			const heightRate = Number(
+				((wrapperDom.clientHeight - 80) / this.imageHeight).toFixed(2)
+			)
+			let zoomRate = 1 // 缩放比例
+			if (widthRate >= 1 && heightRate >= 1) {
+				// 原图宽、高都小于/等于包裹元素
+				zoomRate = 1
+			} else if (widthRate >= 1 && heightRate < 1) {
+				// 原图宽小于/等于显示区域，高大于包裹元素
+				zoomRate = heightRate
+			} else if (widthRate < 1 && heightRate >= 1) {
+				// 原图宽大于显示区域，高小于/等于包裹元素
+				zoomRate = widthRate
+			} else if (widthRate < 1 && heightRate < 1) {
+				// 原图宽、高都大于包裹元素
+				zoomRate = Math.min(widthRate, heightRate)
+			}
+			this.imgZoom = Number(zoomRate.toFixed(2)) * 100 //  缩放百分比
 			this.$refs.imgLarge[currentIndex].style.zoom = `${this.imgZoom}%`
 		},
 		/**
