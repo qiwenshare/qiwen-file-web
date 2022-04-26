@@ -4,7 +4,7 @@
 		title="新建文件夹"
 		:visible.sync="visible"
 		:close-on-click-modal="false"
-		width="550px"
+		width="580px"
 		@close="handleDialogClose"
 	>
 		<el-form
@@ -20,9 +20,10 @@
 					v-model="form.fileName"
 					placeholder="请输入文件夹名称"
 					type="textarea"
-					autosize
+					:autosize="{ minRows: 3, maxRows: 3 }"
 					maxlength="255"
 					show-word-limit
+					@keydown.enter.native.prevent
 				></el-input>
 			</el-form-item>
 		</el-form>
@@ -66,7 +67,31 @@ export default {
 			sureBtnLoading: false
 		}
 	},
+	watch: {
+		/**
+		 * 监听对话框打开、关闭状态
+		 */
+		visible(newValue) {
+			if (newValue) {
+				// 打开时绑定回车事件
+				document.addEventListener('keyup', this.handleAddKeyupEnter)
+			} else {
+				// 关闭时移除回车事件
+				document.removeEventListener('keyup', this.handleAddKeyupEnter)
+			}
+		}
+	},
 	methods: {
+		/**
+		 * DOM 绑定回车事件
+		 * @description 回车触发新增文件夹事件
+		 * @param {event} event 事件
+		 */
+		handleAddKeyupEnter(event) {
+			if (event.key === 'Enter') {
+				this.handleDialogSure('addFolderForm')
+			}
+		},
 		/**
 		 * 取消按钮点击事件 & 对话框关闭的回调
 		 * @description 关闭对话框，重置表单
@@ -85,6 +110,7 @@ export default {
 			this.sureBtnLoading = true
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
+					console.log(this.form.fileName)
 					createFold({
 						fileName: this.form.fileName,
 						filePath: this.filePath,
