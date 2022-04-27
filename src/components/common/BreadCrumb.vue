@@ -77,7 +77,7 @@ export default {
 				let _path = [] //  存放祖先路径
 				for (let i = 0; i < filePathList.length; i++) {
 					if (filePathList[i]) {
-						_path.push(filePathList[i] + '/')
+						_path.push(filePathList[i])
 						res.push({
 							path: _path.join(''),
 							name: filePathList[i]
@@ -125,8 +125,11 @@ export default {
 		handleInputBlurEnter() {
 			this.isShowInput = false
 			if (this.inputFilePath !== this.filePath) {
+				const fixInputFilePath = this.inputFilePath.endsWith('/')
+					? this.inputFilePath.slice(0, -1)
+					: this.inputFilePath
 				this.$router.push({
-					query: { filePath: `${this.inputFilePath}/`, fileType: 0 }
+					query: { filePath: `${fixInputFilePath}`, fileType: 0 }
 				})
 			}
 		},
