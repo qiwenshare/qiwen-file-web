@@ -302,7 +302,9 @@ const fileFunction = {
 				// 当前是查看他人分享列表的页面
 				router.push({
 					query: {
-						filePath: row.shareFilePath + row.fileName + '/'
+						filePath: `${row.shareFilePath === '/' ? '' : row.shareFilePath}/${
+							row.fileName
+						}`
 					}
 				})
 			} else if (Number(router.currentRoute.query.fileType) === 8) {
@@ -310,7 +312,9 @@ const fileFunction = {
 				router.push({
 					query: {
 						fileType: 8,
-						filePath: row.shareFilePath + row.fileName + '/',
+						filePath: `${row.shareFilePath === '/' ? '' : row.shareFilePath}/${
+							row.fileName
+						}`,
 						shareBatchNum: row.shareBatchNum
 					}
 				})
@@ -319,7 +323,9 @@ const fileFunction = {
 				// 网盘页面
 				router.push({
 					query: {
-						filePath: row.filePath + row.fileName + '/',
+						filePath: `${row.filePath === '/' ? '' : row.filePath}/${
+							row.fileName
+						}`,
 						fileType: 0
 					}
 				})

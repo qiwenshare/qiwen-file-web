@@ -22,6 +22,7 @@
 						:min="1"
 						:max="imgList.length"
 						size="mini"
+						@change="handleChangeInputIndex"
 					></el-input-number>
 					<span class="split-line">/</span>{{ imgList.length }}
 				</div>
@@ -131,6 +132,7 @@ export default {
 	data() {
 		return {
 			visible: false, //  图片预览遮罩层组件是否显示
+			inputActiveIndex: 1, //  对用户而言 显示的图片索引 从 1 开始 顶部栏输入框控制此值变化
 			rotate: 0, //  旋转角度
 			activeIndex: 0, //  当前图片索引 从 0 开始
 			imgZoom: 100, //  图片缩放比例
@@ -151,15 +153,6 @@ export default {
 		},
 		imageWidth() {
 			return this.activeImage.imageWidth
-		},
-		// 对用户而言 显示的图片索引 从 1 开始 顶部栏输入框控制此值变化
-		inputActiveIndex: {
-			get() {
-				return this.activeIndex + 1
-			},
-			set(value) {
-				this.handleChangeActiveImg(value - 1)
-			}
 		},
 		// 当前显示的图片下载链接
 		activeDownloadLink() {
@@ -210,6 +203,14 @@ export default {
 		}
 	},
 	methods: {
+		/**
+		 * 顶部栏输入框绑定值被改变时触发
+		 * @param {number} currentValue 当前值
+		 */
+		handleChangeInputIndex(currentValue) {
+			this.activeIndex = currentValue - 1
+			this.handleChangeActiveImg(currentValue - 1)
+		},
 		/**
 		 * DOM 绑定回车键、左方向键、右方向键的键盘按下事件
 		 * @param {event} event 事件

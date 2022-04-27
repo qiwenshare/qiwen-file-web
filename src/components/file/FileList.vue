@@ -221,7 +221,7 @@ export default {
 			getFileListByPath(data).then((res) => {
 				if (res.success) {
 					this.fileList = res.data.list
-					this.pageData.total = res.data.total
+					this.pageData.total = Number(res.data.total)
 					this.loading = false
 				} else {
 					this.$message.error(res.message)
@@ -268,7 +268,7 @@ export default {
 			getMyShareFileList(data).then((res) => {
 				if (res.success) {
 					this.fileList = res.data.list
-					this.pageData.total = res.data.total
+					this.pageData.total = Number(res.data.total)
 					this.loading = false
 				} else {
 					this.$message.error(res.message)
@@ -288,7 +288,7 @@ export default {
 			getFileListByType(data).then((res) => {
 				if (res.success) {
 					this.fileList = res.data.list
-					this.pageData.total = res.data.total
+					this.pageData.total = Number(res.data.total)
 					this.loading = false
 				} else {
 					this.$message.error(res.message)
