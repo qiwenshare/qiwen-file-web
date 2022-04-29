@@ -79,12 +79,12 @@ export default {
 					if (filePathList[i]) {
 						_path.push(filePathList[i])
 						res.push({
-							path: _path.join(''),
+							path: _path.join('/'),
 							name: filePathList[i]
 						})
 					} else if (i === 0) {
 						//  根目录
-						filePathList[i] = '/'
+						filePathList[i] = ''
 						_path.push(filePathList[i])
 						res.push({
 							path: '/',
