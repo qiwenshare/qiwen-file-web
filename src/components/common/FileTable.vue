@@ -82,7 +82,9 @@
 				key="filePath"
 				show-overflow-tooltip
 				v-if="
-					![0, 8].includes(Number($route.query.fileType)) && screenWidth > 768
+					![0, 8].includes(Number($route.query.fileType)) &&
+					routeName !== 'Share' &&
+					screenWidth > 768
 				"
 			>
 				<template slot-scope="scope">
