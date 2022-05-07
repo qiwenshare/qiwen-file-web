@@ -112,7 +112,18 @@ export default {
 					{
 						text: '今天',
 						onClick(picker) {
-							picker.$emit('pick', new Date())
+							const nowDate = new Date()
+							picker.$emit(
+								'pick',
+								new Date(
+									nowDate.getFullYear(),
+									nowDate.getMonth(),
+									nowDate.getDate(),
+									23,
+									59,
+									59
+								)
+							)
 						}
 					},
 					{
