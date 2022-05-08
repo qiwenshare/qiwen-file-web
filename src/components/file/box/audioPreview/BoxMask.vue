@@ -392,6 +392,7 @@ export default {
 							top: 0,
 							behavior: 'smooth'
 						})
+						this.currentLyricsLineIndex = 0
 					}
 				})
 				.catch(() => {
