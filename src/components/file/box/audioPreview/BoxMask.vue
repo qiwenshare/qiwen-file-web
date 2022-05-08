@@ -8,14 +8,18 @@
 					<div slot="content" style="line-height: 2">
 						操作提示: <br />
 						1. 按 Esc 键可退出查看；<br />
-						2. 支持键盘控制：<br />空格 - 暂停/播放，左方向键 - 上一个，右方向键
-						- 下一个
+						2. 支持键盘控制：<br />
+						&nbsp;&nbsp;空格 - 暂停/播放<br />
+						&nbsp;&nbsp;左方向键 - 播放上一个<br />
+						&nbsp;&nbsp;右方向键 - 播放下一个<br />
+						&nbsp;&nbsp;上方向键 - 音量调大<br />
+						&nbsp;&nbsp;下方向键 - 音量减小<br />
 					</div>
 					<i class="tip-icon el-icon-s-opportunity"></i>
 				</el-tooltip>
 				<i
 					class="close-icon el-icon-close"
-					title="关闭"
+					title="关闭（Escape）"
 					@click="handleClosePreview"
 				></i>
 			</div>
@@ -111,19 +115,21 @@
 					<div class="album-name" v-if="audioInfo.album">
 						专辑：{{ audioInfo.album }}
 					</div>
-					<ul class="lyrics-list">
+					<ul
+						class="lyrics-list"
+						ref="lyricsListRef"
+						:class="{ one: lyricsList.length === 1 }"
+						v-if="lyricsList.length"
+					>
 						<li
 							class="lyrics-item"
+							ref="lyricsLineRef"
 							v-for="(item, index) in lyricsList"
 							:key="index"
 							:class="{
-								active: handleCompareTime(
-									item.time,
-									index < lyricsList.length - 1
-										? lyricsList[index + 1].time
-										: undefined
-								)
+								active: currentLyricsLineIndex === index
 							}"
+							@click="handleChangeProgress(transferTimeToSeconds(item.time))"
 						>
 							{{ item.text }}
 						</li>
@@ -135,24 +141,24 @@
 				<div class="control-left">
 					<i
 						class="operate-icon iconfont icon-shangyishou"
-						title="上一个"
+						title="上一个（按左方向键）"
 						@click="handleChangeAudioIndex('pre')"
 					></i>
 					<i
 						class="operate-icon play-icon iconfont icon-icon-7"
 						v-show="!isPlay"
-						title="播放"
+						title="播放（按空格键）"
 						@click="handleClickPlayIcon"
 					></i>
 					<i
 						class="operate-icon pause-icon iconfont icon-icon-3"
 						v-show="isPlay"
-						title="暂停"
+						title="暂停（按空格键）"
 						@click="handleClickPauseIcon"
 					></i>
 					<i
 						class="operate-icon iconfont icon-xiayishou"
-						title="下一个"
+						title="下一个（按右方向键）"
 						@click="handleChangeAudioIndex('next')"
 					></i>
 					<el-slider
@@ -161,8 +167,8 @@
 						:step="progressStep"
 						:max="audioInfo.duration"
 						:format-tooltip="(val) => transferSecondsToTime(val)"
-						@mousedown.native="isChange = true"
-						@mouseup.native="isChange = false"
+						@mousedown.native="isDrop = true"
+						@mouseup.native="isDrop = false"
 						@change="handleChangeProgress"
 					></el-slider>
 					<span class="time control-item"
@@ -210,6 +216,7 @@
 						:max="1"
 						:format-tooltip="(val) => Math.floor(val * 100)"
 						height="100px"
+						title="可按上下方向键调节音量"
 						@input="handleChangeVolumeBar"
 					></el-slider>
 				</div>
@@ -245,11 +252,12 @@ export default {
 				}
 			},
 			isPlay: false, //  是否正在播放
-			isChange: false,
 			currentTime: 0, //  当前播放的秒
+			isDrop: false, //  是否正在拖拽播放进度
 			volume: 0, //  音量
 			audioInfo: {}, //  音频信息
-			lyricsList: [] //  歌词列表
+			lyricsList: [], //  歌词列表
+			currentLyricsLineIndex: 0 //  当前高亮的歌词行索引，从 0 开始
 		}
 	},
 	computed: {
@@ -333,23 +341,6 @@ export default {
 			}
 		},
 		/**
-		 * 比较时间
-		 */
-		handleCompareTime(startTime, endTime) {
-			const _startTimeList = startTime.split('.')[0].split(':')
-			let startSeconds =
-				Number(_startTimeList[1]) + Number(_startTimeList[0]) * 60
-			if (endTime === undefined) {
-				return true
-			} else {
-				const _endTimeList = endTime.split('.')[0].split(':')
-				let endSeconds = Number(_endTimeList[1]) + Number(_endTimeList[0]) * 60
-				return (
-					startSeconds <= this.currentTime && endSeconds >= this.currentTime
-				)
-			}
-		},
-		/**
 		 * 获取文件信息
 		 */
 		getFileDetailData() {
@@ -363,8 +354,12 @@ export default {
 							...res.data.music,
 							duration: res.data.music.trackLength
 						}
-						this.lyricsList = Base64.decode(this.audioInfo.lyrics)
-							.split('[offset:0]\n')[1]
+						let lyricsStr = Base64.decode(this.audioInfo.lyrics)
+						if (lyricsStr.includes('[offset:0]')) {
+							// 有音频文本
+							lyricsStr = lyricsStr.split('[offset:0]\n')[1]
+						}
+						this.lyricsList = lyricsStr
 							.split('\n')
 							.map((item) => {
 								const line = item.split('[')[1].split(']')
@@ -401,22 +396,47 @@ export default {
 				minutes < 10 ? `0${minutes}` : minutes
 			}:${seconds < 10 ? `0${seconds}` : seconds}`
 		},
+		transferTimeToSeconds(time) {
+			const timeList = time.split('.')[0].split(':')
+			return Number(timeList[1]) + Number(timeList[0]) * 60
+		},
 		/**
 		 * audio 当前播放时间改变时触发
 		 */
 		handleTimeUpdate(event) {
-			if (!this.isChange) {
-				console.log(event.target.currentTime)
-				this.currentTime = event.target.currentTime
+			if (this.isDrop) return
+			this.currentTime = event.target.currentTime
+			if (this.lyricsList.length) {
+				this.lyricsList.map((item, index) => {
+					if (index < this.lyricsList.length - 1) {
+						const startSeconds = this.transferTimeToSeconds(item.time)
+						const endSeconds = this.transferTimeToSeconds(
+							this.lyricsList[index + 1].time
+						)
+						if (
+							startSeconds <= this.currentTime &&
+							this.currentTime < endSeconds &&
+							this.currentLyricsLineIndex !== index
+						) {
+							this.currentLyricsLineIndex = index
+							if (this.currentLyricsLineIndex > 2) {
+								this.$refs.lyricsListRef.scrollTo({
+									top:
+										this.$refs.lyricsLineRef[index].clientHeight * (index - 2),
+									behavior: 'smooth'
+								})
+							}
+						}
+					}
+				})
 			}
 		},
 		/**
 		 * 拖动播放进度条触发
 		 */
 		handleChangeProgress(progress) {
-			if (!this.isChange) {
-				this.audioElement.currentTime = progress
-			}
+			this.audioElement.currentTime = progress
+			this.isDrop = false
 		},
 		/**
 		 * 切换循环播放类型
@@ -662,9 +682,19 @@ export default {
         flex: 1;
         overflow: auto;
         setScrollbar(6px, transparent, rgba(0, 0, 0, 0.3))
-        line-height: 2.5;
         -webkit-mask-image: linear-gradient(180deg,hsla(0,0%,100%,0) 0,hsla(0,0%,100%,.6) 15%,#fff 25%,#fff 75%,hsla(0,0%,100%,.6) 85%,hsla(0,0%,100%,0));
+        &.one {
+          .lyrics-item {
+            margin-top: 40px;
+          }
+
+        }
         .lyrics-item {
+          line-height: 40px;
+          cursor: pointer;
+          &:not(.active):hover {
+            color: #fff;
+          }
           &.active {
             color: $Warning;
           }
