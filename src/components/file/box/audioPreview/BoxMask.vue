@@ -236,7 +236,8 @@ export default {
 			visible: false, //  音频预览组件是否可见
 			activeIndex: 0, //  当前打开的音频索引
 			activePlayIcon: require('_a/images/audio/wave.gif'),
-			cycleType: 1, //  音频播放循环模式
+			cycleType: 1, //  音频播放的循环模式
+			// 音频循环模式和图标对应的 Map
 			cycleTypeMap: {
 				1: {
 					icon: 'icon-xunhuanbofang',
@@ -253,7 +254,7 @@ export default {
 			},
 			isPlay: false, //  是否正在播放
 			currentTime: 0, //  当前播放的秒
-			isDrop: false, //  是否正在拖拽播放进度
+			isDrop: false, //  是否正在拖拽播放进度滑块
 			volume: 0, //  音量
 			audioInfo: {}, //  音频信息
 			lyricsList: [], //  歌词列表
@@ -266,6 +267,7 @@ export default {
 			const res = this.audioList.length ? this.audioList[this.activeIndex] : {}
 			return res
 		},
+		// 隐藏的 audio 标签
 		audioElement() {
 			return this.$refs.audioRef
 		},
@@ -275,6 +277,7 @@ export default {
 				? `data:image/jpeg;base64,${this.audioInfo.albumImage}`
 				: require('_a/images/file/file_music.png')
 		},
+		// 播放进度条步长
 		progressStep() {
 			return this.audioInfo.duration / 100
 		}
@@ -354,9 +357,10 @@ export default {
 							...res.data.music,
 							duration: res.data.music.trackLength
 						}
+						// Base64 解码为 lrc 格式的歌词文件
 						let lyricsStr = Base64.decode(this.audioInfo.lyrics)
 						if (lyricsStr.includes('[offset:0]')) {
-							// 有音频文本
+							// 有歌词，从标志位 [offset:0] 下一行开始截取
 							lyricsStr = lyricsStr.split('[offset:0]\n')[1]
 						}
 						this.lyricsList = lyricsStr
@@ -364,11 +368,30 @@ export default {
 							.map((item) => {
 								const line = item.split('[')[1].split(']')
 								return {
-									time: line[0],
-									text: line[1]
+									time: line[0], //  当前行歌词开始播放的秒数
+									text: line[1] //  当前歌词文本
 								}
 							})
 							.filter((item) => item.text !== '')
+						this.lyricsList = this.lyricsList.map((item, index) => {
+							return {
+								...item,
+								// 当前行歌词起始秒数
+								startSeconds: this.transferTimeToSeconds(item.time),
+								// 当前行歌词结束秒数
+								endSeconds:
+									index < this.lyricsList.length - 1
+										? this.transferTimeToSeconds(
+												this.lyricsList[index + 1].time
+										  )
+										: this.audioInfo.duration
+							}
+						})
+						// 当切换完歌曲时，歌词重新滚动到顶部
+						this.$refs.lyricsListRef.scrollTo({
+							top: 0,
+							behavior: 'smooth'
+						})
 					}
 				})
 				.catch(() => {
@@ -396,43 +419,45 @@ export default {
 				minutes < 10 ? `0${minutes}` : minutes
 			}:${seconds < 10 ? `0${seconds}` : seconds}`
 		},
+		/**
+		 * 将分秒转化为秒
+		 * @param {string} time 分秒，格式 00:00
+		 */
 		transferTimeToSeconds(time) {
 			const timeList = time.split('.')[0].split(':')
 			return Number(timeList[1]) + Number(timeList[0]) * 60
 		},
 		/**
-		 * audio 当前播放时间改变时触发
+		 * 当前播放时间改变时触发
 		 */
 		handleTimeUpdate(event) {
+			// 如果正在拖拽进度滑块，函数结束，不计算当前时间
 			if (this.isDrop) return
 			this.currentTime = event.target.currentTime
 			if (this.lyricsList.length) {
-				this.lyricsList.map((item, index) => {
-					if (index < this.lyricsList.length - 1) {
-						const startSeconds = this.transferTimeToSeconds(item.time)
-						const endSeconds = this.transferTimeToSeconds(
-							this.lyricsList[index + 1].time
-						)
-						if (
-							startSeconds <= this.currentTime &&
-							this.currentTime < endSeconds &&
-							this.currentLyricsLineIndex !== index
-						) {
-							this.currentLyricsLineIndex = index
-							if (this.currentLyricsLineIndex > 2) {
-								this.$refs.lyricsListRef.scrollTo({
-									top:
-										this.$refs.lyricsLineRef[index].clientHeight * (index - 2),
-									behavior: 'smooth'
-								})
-							}
+				// 遍历歌词，当前秒对应的歌词整行添加高亮效果
+				this.lyricsList.forEach((item, index) => {
+					if (
+						item.startSeconds <= this.currentTime &&
+						this.currentTime < item.endSeconds &&
+						this.currentLyricsLineIndex !== index
+					) {
+						// 确定高亮歌词行索引
+						this.currentLyricsLineIndex = index
+						// 使高亮歌词行永远保持在第二行
+						if (this.currentLyricsLineIndex > 2) {
+							// 平滑滚动
+							this.$refs.lyricsListRef.scrollTo({
+								top: this.$refs.lyricsLineRef[index].clientHeight * (index - 2),
+								behavior: 'smooth'
+							})
 						}
 					}
 				})
 			}
 		},
 		/**
-		 * 拖动播放进度条触发
+		 * 拖动播放进度滑块触发
 		 */
 		handleChangeProgress(progress) {
 			this.audioElement.currentTime = progress
