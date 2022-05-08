@@ -1,20 +1,22 @@
 import Vue from 'vue'
 // 导入组件
-import AudioPreview from './Box.vue'
+import AudioPreview from './BoxMask.vue'
 // 使用基础 Vue 构造器，创建一个“子类”
 const AudioPreviewConstructor = Vue.extend(AudioPreview)
 
 let audioPreviewInstance = null
 /**
  * 初始化音频预览实例
- * @param {string} audioObj 音频对象
+ * @param {string} audioList 音频列表
+ * @param {object} defaultIndex 当前查看的音频索引
  */
-const initInstanceAudioPreview = (audioObj) => {
+const initInstanceAudioPreview = (audioList, defaultIndex) => {
 	audioPreviewInstance = new AudioPreviewConstructor({
 		el: document.createElement('div'),
 		data() {
 			return {
-				audioObj
+				audioList,
+				defaultIndex
 			}
 		}
 	})
@@ -28,9 +30,9 @@ const showAudioPreviewBox = (obj) => {
 	if (audioPreviewInstance !== null) {
 		document.body.removeChild(audioPreviewInstance.$el)
 	}
-	let { audioObj } = obj
+	let { audioList, defaultIndex } = obj
 	return new Promise((reslove) => {
-		initInstanceAudioPreview(audioObj)
+		initInstanceAudioPreview(audioList, defaultIndex)
 		audioPreviewInstance.callback = (res) => {
 			reslove(res)
 			// 服务取消时卸载 DOM

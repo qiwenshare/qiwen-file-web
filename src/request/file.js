@@ -39,6 +39,8 @@ export const getFoldTree = (p) => get('/file/getfiletree', p)
  */
 // 创建文件
 export const createFold = (p) => post('/file/createfile', p)
+// 获取文件详细信息
+export const getFileDetail = (p) => get('/file/detail', p)
 // 删除文件
 export const deleteFile = (p) => post('/file/deletefile', p)
 // 复制文件

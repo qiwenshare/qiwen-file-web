@@ -285,6 +285,34 @@ const fileFunction = {
 		Vue.prototype.$openBox.videoPreview({ videoList, defaultIndex })
 	},
 	/**
+	 * 音频预览
+	 * @param {*} currentIndex 当前音频索引
+	 * @param {*} audioInfo 单个音频信息
+	 * @param {*} audioInfoList 多个音频列表
+	 */
+	handleAudioPreview(currentIndex, audioInfo = {}, audioInfoList = []) {
+		// 音频分类下 - 传递整个页面的音频列表；非音频分类下 - 由单个音频构建音频列表
+		const audioList =
+			Number(router.currentRoute.query.fileType) === 4
+				? audioInfoList.map((item) => {
+						return {
+							...item,
+							fileUrl: this.getViewFilePath(item),
+							downloadLink: this.getDownloadFilePath(item)
+						}
+				  })
+				: [
+						{
+							...audioInfo,
+							fileUrl: this.getViewFilePath(audioInfo),
+							downloadLink: this.getDownloadFilePath(audioInfo)
+						}
+				  ]
+		const defaultIndex =
+			Number(router.currentRoute.query.fileType) === 4 ? currentIndex : 0
+		Vue.prototype.$openBox.audioPreview({ audioList, defaultIndex })
+	},
+	/**
 	 * 文件预览
 	 * @description 若当前点击的为文件夹，则进入文件夹内部；若是文件，则进行相应的预览。
 	 * @param {object} row 文件信息
@@ -371,12 +399,10 @@ const fileFunction = {
 				this.handleVideoPreview(currentIndex, row, fileList)
 				return false
 			}
-			//  若当前点击项是音频mp3格式
-			const AUDIO = ['mp3']
+			//  若当前点击项是音频 mp3、flac 格式
+			const AUDIO = ['mp3', 'flac']
 			if (AUDIO.includes(row.extendName.toLowerCase())) {
-				Vue.prototype.$openBox.audioPreview({
-					audioObj: row
-				})
+				this.handleAudioPreview(currentIndex, row, fileList)
 				return false
 			}
 		}

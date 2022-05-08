@@ -212,7 +212,7 @@ export default {
 			this.handleChangeActiveImg(currentValue - 1)
 		},
 		/**
-		 * DOM 绑定回车键、左方向键、右方向键的键盘按下事件
+		 * DOM 绑定 Esc 键、左方向键、右方向键的键盘按下事件
 		 * @param {event} event 事件
 		 */
 		handleAddKeyupEvent(event) {

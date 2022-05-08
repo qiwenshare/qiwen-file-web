@@ -39,6 +39,7 @@ export const fileImgMap = new Map([
 	['jsp', require('_a/images/file/file_jsp.png')],
 	['kt', require('_a/images/file/file_kotlin.png')],
 	['mp3', require('_a/images/file/file_music.png')],
+	['flac', require('_a/images/file/file_flac.svg')],
 	['oa', require('_a/images/file/file_oa.png')],
 	['open', require('_a/images/file/file_open.png')],
 	['pdf', require('_a/images/file/file_pdf.png')],
