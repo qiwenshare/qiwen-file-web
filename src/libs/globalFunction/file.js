@@ -53,11 +53,11 @@ const fileFunction = {
 		}
 	},
 	/**
-	 * 获取图片缩略图路径
+	 * 获取流式的缩略图、视频封面图
 	 * @param {object} row 文件信息
-	 * @returns {string} 图片缩略图路径
+	 * @returns {string} 流式图片
 	 */
-	getImgMinPath(row) {
+	getMinImgStream(row) {
 		return `${config.baseContext}/filetransfer/preview?userFileId=${
 			row.userFileId
 		}&isMin=true&shareBatchNum=${
@@ -219,7 +219,7 @@ const fileFunction = {
 			)
 		) {
 			// 图片、视频类型，直接显示缩略图
-			return this.getImgMinPath(file)
+			return this.getMinImgStream(file)
 		} else if (fileImgMap.has(file.extendName.toLowerCase())) {
 			// 可以识别文件类型的文件
 			return fileImgMap.get(file.extendName.toLowerCase())

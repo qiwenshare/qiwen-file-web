@@ -32,7 +32,7 @@
 					>
 						<img
 							class="image"
-							:src="$file.getImgMinPath(image)"
+							:src="$file.getMinImgStream(image)"
 							:alt="$file.getFileNameComplete(image)"
 							:style="`width: ${gridSize}px; height: ${gridSize}px;`"
 						/>
