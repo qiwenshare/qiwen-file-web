@@ -9,7 +9,7 @@ triggers:
         - ''
 stages:
   - name: stage-f911a4d4
-    displayName: 未命名
+    displayName: 编译
     strategy: naturally
     trigger: auto
     executor: []
@@ -25,7 +25,7 @@ stages:
             path:
               - ./dist
   - name: stage-dbe565b9
-    displayName: 未命名
+    displayName: 部署
     strategy: naturally
     trigger: auto
     executor: []
