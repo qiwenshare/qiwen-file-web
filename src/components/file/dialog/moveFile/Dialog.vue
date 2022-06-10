@@ -152,10 +152,8 @@ export default {
 			} else {
 				//  单文件移动
 				let data = {
-					oldFilePath: this.fileInfo.filePath,
-					filePath: this.targetPath,
-					fileName: this.fileInfo.fileName,
-					extendName: this.fileInfo.extendName
+					userFileId: this.fileInfo.userFileId,
+					filePath: this.targetPath
 				}
 				moveFile(data)
 					.then((res) => {
