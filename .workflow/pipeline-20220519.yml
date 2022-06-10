@@ -1,0 +1,54 @@
+version: '1.0'
+name: pipeline-20220519
+displayName: pipeline-20220519
+triggers:
+  trigger: manual
+  push:
+    branches:
+      prefix:
+        - ''
+stages:
+  - name: stage-f911a4d4
+    displayName: 编译
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@nodejs
+        name: build_nodejs
+        displayName: Nodejs 构建
+        nodeVersion: 14.16.0
+        commands:
+          - npm install && rm -rf ./dist && npm run build
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - ./dist
+  - name: stage-dbe565b9
+    displayName: 部署
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: deploy@agent
+        name: deploy_agent
+        displayName: 主机部署
+        hostGroupID: qiwen
+        deployArtifact:
+          - source: build
+            name: qiwen-file-web
+            target: ~/gitee_go/deploy/qiwen-file-web
+            dependArtifact: BUILD_ARTIFACT
+        script: |-
+          # 请在此输入部署脚本，如启动Java应用如下
+          # nohup java -jar test.jar > nohup.out &
+          cd ~/gitee_go/deploy/qiwen-file-web
+          tar -zxvf qiwen-file-web.tar.gz
+          rm -r /home/html/opensoftware/file
+          cp -r dist /home/html/opensoftware/file
+           echo 'Hello Gitee!'
+        strategy:
+          retry: '0'
+permissions:
+  - role: admin
+    members: []
