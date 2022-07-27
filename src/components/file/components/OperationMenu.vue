@@ -347,11 +347,22 @@ export default {
 		 * @param {boolean} uploadWay 上传方式 0-文件上传 1-文件夹上传 2-粘贴图片或拖拽上传
 		 */
 		handleUploadFileBtnClick(uploadWay) {
-			this.$openBox.uploadFile({
-				params: this.uploadFileParams,
-				uploadWay,
-				serviceEl: this,
-				callType: 1 //  callType 调用此服务的方式：1 - 顶部栏，2 - 右键菜单
+			this.$openDialog.authWeChat({}).then((res) => {
+				switch (res) {
+					case 'confirm': {
+						this.$common.goAccount('/settings/account')
+						break
+					}
+					case 'go': {
+						this.$openBox.uploadFile({
+							params: this.uploadFileParams,
+							uploadWay,
+							serviceEl: this,
+							callType: 1 //  callType 调用此服务的方式：1 - 顶部栏，2 - 右键菜单
+						})
+						break
+					}
+				}
 			})
 		},
 
