@@ -47,6 +47,8 @@ stages:
           rm -r /home/html/opensoftware/file
           cp -r dist /home/html/opensoftware/file
            echo 'Hello Gitee!'
+        strategy:
+          retry: '0'
 permissions:
   - role: admin
     members: []
