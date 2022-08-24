@@ -73,8 +73,8 @@ export default {
 						this.tableData = res.data
 						this.total = res.meta.count
 					} else {
-						this.tableData = res.data.list
-						this.total = Number(res.data.total)
+						this.tableData = res.dataList
+						this.total = Number(res.total)
 					}
 					this.$emit('handleGetTableDataSuccess', res.data)
 					this.loading = false

@@ -74,7 +74,7 @@ export default {
 		getNoticeListData() {
 			getNoticeList().then((res) => {
 				if (res.success) {
-					this.noticeList = res.data.list.slice(0, 3)
+					this.noticeList = res.dataList.slice(0, 3)
 					this.setNoticeInterval()
 				}
 			})
