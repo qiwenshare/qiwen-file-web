@@ -248,7 +248,7 @@ export default {
 		showFileRecovery() {
 			getRecoveryFile().then((res) => {
 				if (res.success) {
-					this.fileList = res.data
+					this.fileList = res.dataList
 					this.loading = false
 				} else {
 					this.$message.error(res.message)
@@ -309,7 +309,7 @@ export default {
 			}).then((res) => {
 				this.loading = false
 				if (res.success) {
-					this.fileList = res.data.map((item) => {
+					this.fileList = res.dataList.map((item) => {
 						return {
 							...item,
 							highlightFields: item.highLight.fileName[0]
