@@ -199,7 +199,7 @@ export default {
 						break
 					}
 					default: {
-						this.showFileListByType()
+						this.showFileList()
 						break
 					}
 				}
@@ -214,6 +214,7 @@ export default {
 		 */
 		showFileList() {
 			let data = {
+				fileType: this.fileType,
 				filePath: this.filePath,
 				currentPage: this.pageData.currentPage,
 				pageCount: this.pageData.pageCount
