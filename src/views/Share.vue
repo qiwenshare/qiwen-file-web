@@ -228,7 +228,7 @@ export default {
 				shareBatchNum: this.shareBatchNum
 			}).then((res) => {
 				if (res.success) {
-					this.fileList = res.data
+					this.fileList = res.dataList
 					this.loading = false
 				} else {
 					this.$message.error(res.message)
