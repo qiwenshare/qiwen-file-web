@@ -2,7 +2,7 @@
 import { post } from './http'
 
 // 创建文档
-export const createOfficeFile = (p) => post('/office/createofficefile', p)
+export const createOfficeFile = (p) => post('/file/createFile', p)
 // 编辑文档
 export const editOfficeFile = (p) => post('/office/editofficefile', p)
 // 查看文档

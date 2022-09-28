@@ -38,7 +38,7 @@ export const getFoldTree = (p) => get('/file/getfiletree', p)
  * 单文件操作相关接口
  */
 // 创建文件
-export const createFold = (p) => post('/file/createfile', p)
+export const createFold = (p) => post('/file/createFold', p)
 // 获取文件详细信息
 export const getFileDetail = (p) => get('/file/detail', p)
 // 删除文件
