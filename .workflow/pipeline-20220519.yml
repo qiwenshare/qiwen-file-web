@@ -19,11 +19,24 @@ stages:
         displayName: Nodejs 构建
         nodeVersion: 14.16.0
         commands:
-          - npm install && rm -rf ./dist && npm run build
+          - '# 设置NPM源，提升安装速度'
+          - ''
+          - npm config set registry https://registry.npmmirror.com
+          - ''
+          - ''
+          - ''
+          - '# 执行编译命令'
+          - ''
+          - npm install && npm run build
         artifacts:
           - name: BUILD_ARTIFACT
             path:
               - ./dist
+        caches:
+          - ~/.npm
+          - ~/.yarn
+        strategy:
+          retry: '0'
   - name: stage-dbe565b9
     displayName: 部署
     strategy: naturally
