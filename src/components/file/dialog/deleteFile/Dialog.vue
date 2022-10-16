@@ -71,7 +71,11 @@ export default {
 					// 回收站中彻底删除
 					case 2: {
 						res = await batchDeleteRecoveryFile({
-							recoveryFileIds: JSON.stringify(this.fileInfo)
+							userFileIds: this.fileInfo
+								.map((item) => {
+									return item.userFileId
+								})
+								.join(',')
 						})
 						break
 					}
@@ -90,7 +94,7 @@ export default {
 					// 回收站中彻底删除
 					case 2: {
 						res = await deleteRecoveryFile({
-							recoveryFileId: this.fileInfo.recoveryFileId
+							userFileId: this.fileInfo.userFileId
 						})
 						break
 					}
