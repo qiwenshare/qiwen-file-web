@@ -60,7 +60,11 @@ export default {
 					// 删除文件到回收站
 					case 1: {
 						res = await batchDeleteFile({
-							files: JSON.stringify(this.fileInfo)
+							userFileIds: this.fileInfo
+								.map((item) => {
+									return item.userFileId
+								})
+								.join(',')
 						})
 						break
 					}
