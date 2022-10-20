@@ -327,7 +327,20 @@ MP3 格式的文件支持在线播放。
 
 **QQ 交流群**、**微信公众号 **或 **Gitee** 请扫描下面二维码
 
-<img src="https://pan.qiwenshare.com/docs/img/guide/contact/contactUs.png" alt="交流群">
+<div style="display: flex; text-align: center;">
+  <div style="width: 30%; margin-right: 5%">
+    <p>奇文社区 QQ 群（3群）</p>
+    <img src="https://pan.qiwenshare.com/docs/img/guide/contact/QQ.png" alt="交流群">
+  </div>
+  <div style="width: 30%; margin-right: 5%">
+    <p>微信公众号</p>
+    <img src="https://pan.qiwenshare.com/docs/img/guide/contact/wechat.png" alt="交流群">
+  </div>
+  <div style="width: 30%;">
+    <p>Gitee 社区</p>
+    <img src="https://pan.qiwenshare.com/docs/img/guide/contact/Gitee.png" alt="交流群">
+  </div>
+</div>
 
 项目的发展离不开你的支持，如果觉得这个项目帮助到了你，请点击评论区上方的捐赠，请作者喝杯咖啡吧！
 
