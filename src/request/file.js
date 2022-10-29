@@ -26,7 +26,7 @@ export const getFileListByPath = (p) => get('/file/getfilelist', p)
 // 获取文件列表（区分文件类型）
 export const getFileListByType = (p) => get('/file/selectfilebyfiletype', p)
 // 获取回收站文件列表
-export const getRecoveryFile = (p) => post('/recoveryfile/list', p)
+export const getRecoveryFile = (p) => get('/recoveryfile/list', p)
 // 获取我已分享的文件列表
 export const getMyShareFileList = (p) => get('/share/shareList', p)
 // 获取存储占用
