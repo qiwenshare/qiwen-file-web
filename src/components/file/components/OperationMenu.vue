@@ -213,7 +213,7 @@
 
 <script>
 import SelectColumn from './SelectColumn.vue'
-
+import { mapState } from 'vuex'
 export default {
 	name: 'OperationMenu',
 	props: {
@@ -246,6 +246,9 @@ export default {
 		}
 	},
 	computed: {
+    ...mapState({
+      showUploadMask: state => state.uploadFile.showUploadMask
+    }),
 		// 上传文件组件参数
 		uploadFileParams() {
 			return {
@@ -288,6 +291,10 @@ export default {
 		}
 	},
 	watch: {
+    // 显示拖拽上传文件遮罩
+    showUploadMask() {
+        this.handleUploadFileBtnClick(3);
+    },
 		fileType(newValue, oldValue) {
 			if (oldValue === 1 && this.fileModel === 2) {
 				this.$store.commit('changeFileModel', 0)

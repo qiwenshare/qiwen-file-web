@@ -1,5 +1,5 @@
 <template>
-	<div class="file-wrapper">
+	<div class="file-wrapper" @dragenter="showUploadMask">
 		<el-container class="el-container">
 			<el-aside width="auto">
 				<AsideMenu></AsideMenu>
@@ -22,7 +22,17 @@ export default {
 	components: {
 		AsideMenu,
 		FileList
-	}
+	},
+  methods: {
+    // 显示拖拽上传文件遮罩
+    showUploadMask(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      console.log("showUploadMask")
+      this.$store.commit("showUploadMask");
+    },
+  },
+
 }
 </script>
 
