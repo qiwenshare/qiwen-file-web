@@ -242,7 +242,7 @@ export default {
 				this.codeMirrorLoading = false
 				this.originalCodeText =
 					typeof res === 'object' ? JSON.stringify(res) : res
-				this.codeMirrorText = this.originalCodeText
+				this.codeMirrorText = this.originalCodeText + ''
 			})
 		},
 		/**
