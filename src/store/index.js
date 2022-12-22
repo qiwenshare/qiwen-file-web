@@ -5,7 +5,7 @@ import user from './module/user' //  用户模块
 import fileList from './module/fileList' //  文件列表模块
 import sideMenu from './module/sideMenu' //  左侧菜单模块
 import common from './module/common' //  公共模块
-
+import uploadFile from './module/uploadFile' //  拖拽上传文件模块
 import { allColumnList } from '@/libs/map.js'
 
 Vue.use(Vuex)
@@ -45,6 +45,7 @@ export default new Vuex.Store({
 		user,
 		fileList,
 		sideMenu,
-		common
+		common,
+		uploadFile
 	}
 })
