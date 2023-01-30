@@ -10,14 +10,11 @@
 			:default-active="activeIndex"
 			class="top-menu-list"
 			mode="horizontal"
-			router
+			@select="menuItemClick"
 		>
-			<el-menu-item index="Home" :route="{ name: 'Home' }">首页</el-menu-item>
-			<el-menu-item
-				index="File"
-				:route="{ name: 'File', query: { fileType: 0, filePath: '/' } }"
-				>网盘</el-menu-item
-			>
+			<el-menu-item index="Home">首页</el-menu-item>
+			<el-menu-item index="File">网盘</el-menu-item>
+
 			<li class="el-menu-item external-link">
 				<a href="https://pan.qiwenshare.com/docs/" target="_blank">文档</a>
 			</li>
@@ -41,38 +38,14 @@
 					</div>
 				</template>
 			</template>
-			<!-- 生产环境 -->
-			<el-menu-item
-				class="login external-link"
-				v-if="isProductEnv"
-				v-show="!isLogin"
-			>
-				<a :href="getAccountHref('/login/account')" target="_self">登录</a>
-			</el-menu-item>
+
 			<!-- 开发环境 -->
-			<el-menu-item
-				class="login"
-				index="Login"
-				:route="{ name: 'Login' }"
-				v-else
-				v-show="!isLogin"
+			<el-menu-item class="login" index="Login" v-show="!isLogin"
 				>登录</el-menu-item
 			>
-			<!-- 生产环境 -->
-			<el-menu-item
-				class="register external-link"
-				v-if="isProductEnv"
-				v-show="!isLogin"
-			>
-				<a :href="getAccountHref('/register')" target="_self">注册</a>
-			</el-menu-item>
+
 			<!-- 开发环境 -->
-			<el-menu-item
-				class="register"
-				v-else
-				v-show="!isLogin"
-				index="Register"
-				:route="{ name: 'Register' }"
+			<el-menu-item class="register" v-show="!isLogin" index="Register"
 				>注册</el-menu-item
 			>
 		</el-menu>
@@ -122,6 +95,28 @@ export default {
 			this.$store.dispatch('getUserInfo').then(() => {
 				this.$router.push({ name: 'Home' })
 			})
+		},
+
+		menuItemClick(key) {
+			if (key === 'exit') {
+				this.exitButton()
+			} else if (key === 'Login') {
+				if (this.isProductEnv) {
+					this.getAccountHref('/login/account')
+				} else {
+					this.$router.push({ name: key })
+				}
+			} else if (key === 'Register') {
+				if (this.isProductEnv) {
+					this.getAccountHref('/register')
+				} else {
+					this.$router.push({ name: key })
+				}
+			} else if (key === 'File') {
+				this.$router.push({ name: key, query: { fileType: 0, filePath: '/' } })
+			} else {
+				this.$router.push({ name: key })
+			}
 		}
 	}
 }
