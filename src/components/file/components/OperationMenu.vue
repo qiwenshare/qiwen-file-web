@@ -213,7 +213,7 @@
 
 <script>
 import SelectColumn from './SelectColumn.vue'
-
+import { mapState } from 'vuex'
 export default {
 	name: 'OperationMenu',
 	props: {
@@ -246,6 +246,9 @@ export default {
 		}
 	},
 	computed: {
+    ...mapState({
+      showUploadMask: state => state.uploadFile.showUploadMask
+    }),
 		// 上传文件组件参数
 		uploadFileParams() {
 			return {
@@ -288,6 +291,10 @@ export default {
 		}
 	},
 	watch: {
+    // 显示拖拽上传文件遮罩
+    showUploadMask() {
+        this.handleUploadFileBtnClick(3);
+    },
 		fileType(newValue, oldValue) {
 			if (oldValue === 1 && this.fileModel === 2) {
 				this.$store.commit('changeFileModel', 0)
@@ -347,11 +354,22 @@ export default {
 		 * @param {boolean} uploadWay 上传方式 0-文件上传 1-文件夹上传 2-粘贴图片或拖拽上传
 		 */
 		handleUploadFileBtnClick(uploadWay) {
-			this.$openBox.uploadFile({
-				params: this.uploadFileParams,
-				uploadWay,
-				serviceEl: this,
-				callType: 1 //  callType 调用此服务的方式：1 - 顶部栏，2 - 右键菜单
+			this.$openDialog.authWeChat({}).then((res) => {
+				switch (res) {
+					case 'confirm': {
+						this.$common.goAccount('/settings/account')
+						break
+					}
+					case 'go': {
+						this.$openBox.uploadFile({
+							params: this.uploadFileParams,
+							uploadWay,
+							serviceEl: this,
+							callType: 1 //  callType 调用此服务的方式：1 - 顶部栏，2 - 右键菜单
+						})
+						break
+					}
+				}
 			})
 		},
 

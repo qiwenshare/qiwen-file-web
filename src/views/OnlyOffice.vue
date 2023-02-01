@@ -129,12 +129,12 @@ export default {
 			}
 			previewOfficeFile(data).then((res) => {
 				if (res.code === 200) {
-					let config = {
-						...res.data.file,
-						type: this.platform
-					}
-					config.document.permissions.edit = false //  预览模式下编辑权限为 false
-					this.initDocEditor(res.data.docserviceApiUrl, config)
+					// let config = {
+					// 	...res.data.file,
+					// 	type: this.platform
+					// }
+					// config.document.permissions.edit = false //  预览模式下编辑权限为 false
+					this.initDocEditor(res.data.docserviceApiUrl, res.data.file)
 				}
 			})
 		},
@@ -148,11 +148,11 @@ export default {
 			}
 			editOfficeFile(data).then((res) => {
 				if (res.code === 200) {
-					let config = {
-						...res.data.file,
-						type: this.platform
-					}
-					this.initDocEditor(res.data.docserviceApiUrl, config)
+					// let config = {
+					// 	...res.data.file,
+					// 	type: this.platform
+					// }
+					this.initDocEditor(res.data.docserviceApiUrl, res.data.file)
 				}
 			})
 		},

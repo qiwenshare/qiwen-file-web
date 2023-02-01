@@ -25,3 +25,5 @@ export const login = (p) => get('/user/login', p)
 export const checkUserLoginInfo = (p) => get('/user/checkuserlogininfo', p)
 // 用户注册
 export const addUser = (p) => post('/user/register', p)
+// 获取微信订阅号认证状态
+export const getWeChatAuthState = (p) => get('/user/checkWxAuth', p)

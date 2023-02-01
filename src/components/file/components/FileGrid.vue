@@ -16,10 +16,11 @@
 				@click="$file.handleFileNameClick(item, index, fileListSorted)"
 				@contextmenu.prevent="handleContextMenu(item, index, $event)"
 			>
-				<img
+				<el-image
 					class="file-img"
 					:src="$file.setFileImg(item)"
 					:style="`width: ${gridSize}px; height: ${gridSize}px;`"
+					fit="cover"
 				/>
 				<div
 					class="file-name"

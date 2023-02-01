@@ -26,7 +26,7 @@ export const getFileListByPath = (p) => get('/file/getfilelist', p)
 // 获取文件列表（区分文件类型）
 export const getFileListByType = (p) => get('/file/selectfilebyfiletype', p)
 // 获取回收站文件列表
-export const getRecoveryFile = (p) => post('/recoveryfile/list', p)
+export const getRecoveryFile = (p) => get('/recoveryfile/list', p)
 // 获取我已分享的文件列表
 export const getMyShareFileList = (p) => get('/share/shareList', p)
 // 获取存储占用
@@ -38,7 +38,7 @@ export const getFoldTree = (p) => get('/file/getfiletree', p)
  * 单文件操作相关接口
  */
 // 创建文件
-export const createFold = (p) => post('/file/createfile', p)
+export const createFold = (p) => post('/file/createFold', p)
 // 获取文件详细信息
 export const getFileDetail = (p) => get('/file/detail', p)
 // 删除文件

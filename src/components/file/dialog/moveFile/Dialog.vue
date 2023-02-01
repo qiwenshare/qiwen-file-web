@@ -132,7 +132,11 @@ export default {
 				//  批量移动
 				let data = {
 					filePath: this.targetPath,
-					files: JSON.stringify(this.fileInfo)
+					userFileIds: this.fileInfo
+						.map((item) => {
+							return item.userFileId
+						})
+						.join(',')
 				}
 				batchMoveFile(data)
 					.then((res) => {

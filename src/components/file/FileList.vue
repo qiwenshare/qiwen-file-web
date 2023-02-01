@@ -199,7 +199,7 @@ export default {
 						break
 					}
 					default: {
-						this.showFileListByType()
+						this.showFileList()
 						break
 					}
 				}
@@ -214,14 +214,15 @@ export default {
 		 */
 		showFileList() {
 			let data = {
+				fileType: this.fileType,
 				filePath: this.filePath,
 				currentPage: this.pageData.currentPage,
 				pageCount: this.pageData.pageCount
 			}
 			getFileListByPath(data).then((res) => {
 				if (res.success) {
-					this.fileList = res.data.list
-					this.pageData.total = Number(res.data.total)
+					this.fileList = res.dataList
+					this.pageData.total = Number(res.total)
 					this.loading = false
 				} else {
 					this.$message.error(res.message)
@@ -248,7 +249,7 @@ export default {
 		showFileRecovery() {
 			getRecoveryFile().then((res) => {
 				if (res.success) {
-					this.fileList = res.data
+					this.fileList = res.dataList
 					this.loading = false
 				} else {
 					this.$message.error(res.message)
@@ -267,8 +268,8 @@ export default {
 			}
 			getMyShareFileList(data).then((res) => {
 				if (res.success) {
-					this.fileList = res.data.list
-					this.pageData.total = Number(res.data.total)
+					this.fileList = res.dataList
+					this.pageData.total = Number(res.total)
 					this.loading = false
 				} else {
 					this.$message.error(res.message)
@@ -287,8 +288,8 @@ export default {
 			}
 			getFileListByType(data).then((res) => {
 				if (res.success) {
-					this.fileList = res.data.list
-					this.pageData.total = Number(res.data.total)
+					this.fileList = res.dataList
+					this.pageData.total = Number(res.total)
 					this.loading = false
 				} else {
 					this.$message.error(res.message)
@@ -309,7 +310,7 @@ export default {
 			}).then((res) => {
 				this.loading = false
 				if (res.success) {
-					this.fileList = res.data.map((item) => {
+					this.fileList = res.dataList.map((item) => {
 						return {
 							...item,
 							highlightFields: item.highLight.fileName[0]

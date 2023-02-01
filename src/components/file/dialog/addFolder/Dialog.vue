@@ -112,8 +112,7 @@ export default {
 				if (valid) {
 					createFold({
 						fileName: this.form.fileName,
-						filePath: this.filePath,
-						isDir: 1
+						filePath: this.filePath
 					})
 						.then((res) => {
 							this.sureBtnLoading = false
