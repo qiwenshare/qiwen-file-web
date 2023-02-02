@@ -368,9 +368,13 @@ const fileFunction = {
 				return false
 			}
 			//  若当前点击项是可以使用office在线预览的
-			if ([...officeFileType, 'pdf'].includes(row.extendName.toLowerCase())) {
+			if ([...officeFileType].includes(row.extendName.toLowerCase())) {
 				this.getFileOnlineViewPathByOffice(row)
 				return false
+			}
+			//  若当前点击项是pdf
+			if (row.extendName.toLowerCase() === 'pdf') {
+				window.open(this.getViewFilePath(row), '_blank')
 			}
 			//  若当前点击项是代码或文本文件
 			let codeFileSuffix = row.extendName.toLowerCase()
