@@ -102,13 +102,13 @@ export default {
 				this.exitButton()
 			} else if (key === 'Login') {
 				if (this.isProductEnv) {
-					this.getAccountHref('/login/account')
+					location.href = this.getAccountHref('/login/account')
 				} else {
 					this.$router.push({ name: key })
 				}
 			} else if (key === 'Register') {
 				if (this.isProductEnv) {
-					this.getAccountHref('/register')
+					location.href = this.getAccountHref('/register')
 				} else {
 					this.$router.push({ name: key })
 				}
