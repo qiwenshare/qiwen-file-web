@@ -229,6 +229,21 @@ const fileFunction = {
 		}
 	},
 	/**
+	 * 判断是否是视频文件
+	 * @param {object} file 文件信息
+	 */
+	isVideoFile(file) {
+		if (
+			['avi', 'mp4', 'mpg', 'mov', 'swf'].includes(
+				file.extendName?.toLowerCase()
+			)
+		) {
+			return true
+		} else {
+			return false
+		}
+	},
+	/**
 	 * 图片预览
 	 * @param {*} currentIndex 当前图片索引
 	 * @param {*} imgInfo 单个图片信息
