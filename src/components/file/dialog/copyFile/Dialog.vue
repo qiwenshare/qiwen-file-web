@@ -130,7 +130,7 @@ export default {
 			this.sureBtnLoading = true
 			let data = {
 				filePath: this.targetPath,
-				userFileId: this.fileInfo.userFileId
+				userFileIds: this.fileInfo.userFileId
 			}
 			copyFile(data)
 				.then((res) => {

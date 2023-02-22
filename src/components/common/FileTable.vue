@@ -31,6 +31,11 @@
 				class-name="file-icon-column"
 			>
 				<template slot-scope="scope">
+					<video
+						style="width: 30px; max-height: 30px; cursor: pointer"
+						v-if="$file.isVideoFile(scope.row)"
+						:src="$file.setFileImg(scope.row)"
+					></video>
 					<img
 						:src="$file.setFileImg(scope.row)"
 						:title="`${scope.row.isDir ? '' : '点击预览'}`"
@@ -38,6 +43,7 @@
 						@click="
 							$file.handleFileNameClick(scope.row, scope.$index, sortedFileList)
 						"
+						v-else
 					/>
 				</template>
 			</el-table-column>

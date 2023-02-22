@@ -229,6 +229,21 @@ const fileFunction = {
 		}
 	},
 	/**
+	 * 判断是否是视频文件
+	 * @param {object} file 文件信息
+	 */
+	isVideoFile(file) {
+		if (
+			['avi', 'mp4', 'mpg', 'mov', 'swf'].includes(
+				file.extendName?.toLowerCase()
+			)
+		) {
+			return true
+		} else {
+			return false
+		}
+	},
+	/**
 	 * 图片预览
 	 * @param {*} currentIndex 当前图片索引
 	 * @param {*} imgInfo 单个图片信息
@@ -368,9 +383,13 @@ const fileFunction = {
 				return false
 			}
 			//  若当前点击项是可以使用office在线预览的
-			if ([...officeFileType, 'pdf'].includes(row.extendName.toLowerCase())) {
+			if ([...officeFileType].includes(row.extendName.toLowerCase())) {
 				this.getFileOnlineViewPathByOffice(row)
 				return false
+			}
+			//  若当前点击项是pdf
+			if (row.extendName.toLowerCase() === 'pdf') {
+				window.open(this.getViewFilePath(row), '_blank')
 			}
 			//  若当前点击项是代码或文本文件
 			let codeFileSuffix = row.extendName.toLowerCase()
