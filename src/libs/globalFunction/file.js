@@ -9,7 +9,6 @@ import {
 	markdownFileType
 } from '@/libs/map.js'
 import { officeFileType } from '@/libs/map.js'
-import common from './common.js'
 
 // 全局函数 - 文件相关
 const fileFunction = {
