@@ -113,29 +113,12 @@ const fileFunction = {
 	 * @returns {string} office 文件在线预览路径
 	 */
 	getFileOnlineViewPathByOffice(row) {
-		let fileUrl = ''
-		let fileName = row.fileName + '.' + row.extendName
-		let filePath = row.fileUrl
-		let fileId = row.fileId
 		let userFileId = row.userFileId
-		let extendName = row.extendName
 
-		fileUrl = `${location.protocol}//${location.host}${
-			config.baseContext
-		}/filetransfer/preview?userFileId=${
-			row.userFileId
-		}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${
-			row.extractionCode
-		}&token=${common.getCookies(config.tokenKeyName)}`
 		const { href } = router.resolve({
 			name: 'Onlyoffice',
 			query: {
-				fileUrl: fileUrl,
-				fileName: fileName,
-				filePath: filePath,
-				fileId: fileId,
 				userFileId: userFileId,
-				extendName: extendName,
 				ot: 'detail'
 			}
 		})
@@ -147,29 +130,12 @@ const fileFunction = {
 	 * @returns {string} office 文件在线编辑路径
 	 */
 	getFileOnlineEditPathByOffice(row) {
-		let fileUrl = ''
-		let fileName = row.fileName + '.' + row.extendName
-		let filePath = row.fileUrl
-		let fileId = row.fileId
 		let userFileId = row.userFileId
-		let extendName = row.extendName
 
-		fileUrl = `${location.protocol}//${location.host}${
-			config.baseContext
-		}/filetransfer/preview?userFileId=${
-			row.userFileId
-		}&isMin=false&shareBatchNum=${row.shareBatchNum}&extractionCode=${
-			row.extractionCode
-		}&token=${common.getCookies(config.tokenKeyName)}`
 		const { href } = router.resolve({
 			name: 'Onlyoffice',
 			query: {
-				fileUrl: fileUrl,
-				fileName: fileName,
-				filePath: filePath,
-				fileId: fileId,
 				userFileId: userFileId,
-				extendName: extendName,
 				ot: 'edit'
 			}
 		})
