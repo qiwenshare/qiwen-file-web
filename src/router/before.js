@@ -30,7 +30,11 @@ router.beforeEach((to, from, next) => {
 		// 正常跳转
 		next()
 		// 调用获取用户登录状态和信息的接口，以便显示顶部导航栏的用户登录信息
-		if (!['Login', 'Home', 'Register'].includes(String(to.name))) {
+		if (
+			!['Login', 'Home', 'Register', 'Notice', 'NoticeDetail'].includes(
+				String(to.name)
+			)
+		) {
 			store.dispatch('getUserInfo')
 		}
 	}
