@@ -188,7 +188,7 @@ export default {
 					shareFile({
 						...this.form,
 						remarks: '',
-						userFileIds: this.fileInfo.userFileId
+						userFileIds: this.fileInfo.map((res) => res.userFileId).join(',')
 					})
 						.then((res) => {
 							this.sureBtnLoading = false
