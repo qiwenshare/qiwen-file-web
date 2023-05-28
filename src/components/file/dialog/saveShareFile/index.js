@@ -9,12 +9,13 @@ let saveShareFileInstance = null
  * 初始化保存分享文件实例
  * @param {array} fileInfo 要保存的文件数组
  */
-const initInstanceSaveShareFile = (fileInfo) => {
+const initInstanceSaveShareFile = (userFileIds, shareBatchNum) => {
 	saveShareFileInstance = new SaveShareFileConstructor({
 		el: document.createElement('div'),
 		data() {
 			return {
-				fileInfo
+				userFileIds,
+				shareBatchNum
 			}
 		}
 	})
@@ -28,9 +29,9 @@ const showSaveShareFileDialog = (obj) => {
 	if (saveShareFileInstance !== null) {
 		document.body.removeChild(saveShareFileInstance.$el)
 	}
-	let { fileInfo } = obj
+	let { userFileIds, shareBatchNum } = obj
 	return new Promise((reslove) => {
-		initInstanceSaveShareFile(fileInfo)
+		initInstanceSaveShareFile(userFileIds, shareBatchNum)
 		saveShareFileInstance.callback = (res) => {
 			reslove(res)
 			// 服务取消时卸载 DOM

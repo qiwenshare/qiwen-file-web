@@ -243,11 +243,10 @@ export default {
 				this.$openDialog
 					.saveShareFile({
 						filePath: '',
-						fileInfo: this.selectedFiles.map((item) => {
-							return {
-								userFileId: item.userFileId
-							}
-						})
+						shareBatchNum: this.shareBatchNum,
+						userFileIds: this.selectedFiles
+							.map((item) => item.userFileId)
+							.join(',')
 					})
 					.then(() => {
 						this.$refs.fileTableInstance.clearSelectedTable() //  清空表格已选项
