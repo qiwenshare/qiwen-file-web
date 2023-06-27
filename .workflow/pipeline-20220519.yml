@@ -60,8 +60,8 @@ stages:
           - '# nohup java -jar test.jar > nohup.out &'
           - cd ~/gitee_go/deploy/qiwen-file-web
           - tar -zxvf qiwen-file-web.tar.gz
-          - rm -r /home/html/opensoftware/file
-          - cp -r dist /home/html/opensoftware/file
+          - rm -r ~/gitee_go/deploy/html/file
+          - cp -r dist ~/gitee_go/deploy/html/file
           - ' echo ''Hello Gitee!'''
         strategy:
           retry: '0'
