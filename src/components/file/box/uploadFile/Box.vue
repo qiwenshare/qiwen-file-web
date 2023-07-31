@@ -10,7 +10,7 @@
 			@files-added="handleFilesAdded"
 			@file-success="handleFileSuccess"
 			@file-error="handleFileError"
-      @dragleave="hideUploadMask"
+			@dragleave="hideUploadMask"
 		>
 			<uploader-unsupport></uploader-unsupport>
 			<!-- 选择按钮 在这里隐藏 -->
@@ -91,7 +91,9 @@
 							<ul class="file-list" v-show="!collapse">
 								<li
 									class="file-item"
-									:class="{ 'custom-status-item': file.statusStr !== '' }"
+									:class="{
+										'custom-status-item': uploadStatus[file.id] !== ''
+									}"
 									v-for="file in props.fileList"
 									:key="file.id"
 								>
@@ -101,7 +103,7 @@
 										:list="true"
 									></uploader-file>
 									<!-- 自定义状态 -->
-									<span class="custom-status">{{ file.statusStr }}</span>
+									<span class="custom-status">{{ uploadStatus[file.id] }}</span>
 								</li>
 								<div class="no-file" v-if="!props.fileList.length">
 									<i class="icon-empty-file"></i> 暂无待上传文件
@@ -123,6 +125,7 @@ import { mapState } from 'vuex'
 export default {
 	data() {
 		return {
+			uploadStatus: {},
 			// 上传组件配置项
 			options: {
 				target: `${this.$config.baseContext}/filetransfer/uploadfile`, // 上传文件-目标 URL
@@ -174,23 +177,23 @@ export default {
 		}
 	},
 	computed: {
-    ...mapState(['showUploadMask']),
+		...mapState(['showUploadMask']),
 		// Uploader	上传组件实例
 		uploaderInstance() {
 			return this.$refs.uploader.uploader
 		},
 		// 剩余存储空间
 		remainderStorageValue() {
-			return store.getters.remainderStorageValue;
+			return store.getters.remainderStorageValue
 		}
 	},
 	methods: {
-    // 隐藏拖拽上传遮罩
-    hideUploadMask(e) {
-      e.stopPropagation();
-      e.preventDefault();
-      this.dropBoxShow = false;
-    },
+		// 隐藏拖拽上传遮罩
+		hideUploadMask(e) {
+			e.stopPropagation()
+			e.preventDefault()
+			this.dropBoxShow = false
+		},
 		/**
 		 * 上传组件预处理
 		 */
@@ -300,7 +303,7 @@ export default {
 		 */
 		handleFileSuccess(rootFile, file, response) {
 			if (response == '') {
-				file.statusStr = '上传失败'
+				this.uploadStatus[file.id] = '上传失败'
 				this.callback(false)
 				return
 			}
@@ -322,7 +325,7 @@ export default {
 				}
 			} else {
 				this.$message.error(result.message)
-				file.statusStr = '上传失败'
+				this.uploadStatus[file.id] = '上传失败'
 			}
 			this.filesLength--
 		},
@@ -353,7 +356,7 @@ export default {
 			let chunks = Math.ceil(file.size / chunkSize)
 			let spark = new SparkMD5.ArrayBuffer()
 			// 文件状态设为"计算MD5"
-			file.statusStr = '计算MD5'
+			this.uploadStatus[file.id] = '计算MD5'
 			file.pause()
 			loadNext()
 			fileReader.onload = (e) => {
@@ -362,9 +365,11 @@ export default {
 					currentChunk++
 					loadNext()
 					// 实时展示MD5的计算进度
-					file.statusStr = `校验MD5 ${((currentChunk / chunks) * 100).toFixed(
-						0
-					)}%`
+					this.uploadStatus[file.id] = `校验MD5 ${(
+						(currentChunk / chunks) *
+						100
+					).toFixed(0)}%`
+					this.uploadStatus = JSON.parse(JSON.stringify(this.uploadStatus))
 				} else {
 					let md5 = spark.end()
 					this.calculateFileMD5End(md5, file)
@@ -400,7 +405,8 @@ export default {
 			file.uniqueIdentifier = md5
 			file.resume()
 			// 移除自定义状态
-			file.statusStr = ''
+			this.uploadStatus[file.id] = ''
+			this.uploadStatus = JSON.parse(JSON.stringify(this.uploadStatus))
 		},
 		/**
 		 * 关闭上传面板，并停止上传
