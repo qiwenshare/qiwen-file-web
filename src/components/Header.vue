@@ -14,10 +14,15 @@
 		>
 			<el-menu-item index="Home">首页</el-menu-item>
 			<el-menu-item index="File">网盘</el-menu-item>
-
 			<li class="el-menu-item external-link">
-				<a href="https://pan.qiwenshare.com/docs/" target="_blank">文档</a>
+        <a href="https://pan.qiwenshare.com/docs/" target="_blank">文档</a>
 			</li>
+      <li class="el-menu-item external-link">
+        <a class="beta-link" href="https://netdisk.qiwenshare.com" target="_blank">
+          <span class="beta-text">企业网盘</span>
+          <el-tag class="beta-tag" type="warning" size="mini" effect="dark">内测</el-tag>
+        </a>
+      </li>
 			<template v-if="isLogin">
 				<el-submenu
 					class="user-exit-submenu"
@@ -151,8 +156,13 @@ export default {
     .external-link {
       padding: 0;
       a {
-        display: block;
+        display: inline-block;
         padding: 0 20px;
+      }
+      .beta-link {
+        .beta-text {
+          margin-right: 8px;
+        }
       }
     }
   }

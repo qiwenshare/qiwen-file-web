@@ -46,7 +46,10 @@ stages:
       - step: deploy@agent
         name: deploy_agent
         displayName: 主机部署
-        hostGroupID: qiwen
+        hostGroupID:
+          ID: qiwen
+          hostID:
+            - 4e449710-088b-4e36-acd7-bcf7958ffcda
         deployArtifact:
           - source: build
             name: qiwen-file-web
@@ -57,8 +60,8 @@ stages:
           - '# nohup java -jar test.jar > nohup.out &'
           - cd ~/gitee_go/deploy/qiwen-file-web
           - tar -zxvf qiwen-file-web.tar.gz
-          - rm -r /home/html/opensoftware/file
-          - cp -r dist /home/html/opensoftware/file
+          - rm -rf /home/html/file
+          - cp -r dist /home/html/file
           - ' echo ''Hello Gitee!'''
         strategy:
           retry: '0'
