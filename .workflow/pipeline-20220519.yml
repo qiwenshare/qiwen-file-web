@@ -49,7 +49,7 @@ stages:
         hostGroupID:
           ID: qiwen
           hostID:
-            - 4e449710-088b-4e36-acd7-bcf7958ffcda
+            - 9d02a5c6-6ccc-4f58-ae11-7e543cc9e392
         deployArtifact:
           - source: build
             name: qiwen-file-web
