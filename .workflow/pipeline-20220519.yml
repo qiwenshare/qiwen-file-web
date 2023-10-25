@@ -47,9 +47,9 @@ stages:
         name: deploy_agent
         displayName: 主机部署
         hostGroupID:
-          ID: qiwen
+          ID: qiwen1
           hostID:
-            - be68f662-db28-4330-88d0-720f26ab532a
+            - 0bcc1be2-b945-4430-822a-c0a04d684154
         deployArtifact:
           - source: build
             name: qiwen-file-web
